@@ -1,0 +1,16 @@
+[
+{
+  "modid": "tiamatitems",
+  "name": "Tiamat Items",
+  "description": "Dynamic items with dynamic textures",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Laike_Endaril"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
