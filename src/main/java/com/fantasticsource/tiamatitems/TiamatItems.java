@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.PNG;
+import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -25,6 +26,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.LinkedHashMap;
 
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.027,);required-after:iitemrenderer@[1.0,)")
 public class TiamatItems
@@ -32,6 +35,10 @@ public class TiamatItems
     public static final String MODID = "tiamatitems";
     public static final String NAME = "Tiamat Items";
     public static final String VERSION = "1.12.2.000";
+
+
+    public static File texturesDir;
+    public static LinkedHashMap<String, Pair<Integer, Integer>> validTextureNamesAndSizes = new LinkedHashMap<>();
 
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID)
@@ -67,25 +74,32 @@ public class TiamatItems
         {
             //Physical client
 
-            File file = new File(MCTools.getConfigDir() + MODID);
-            if (!file.exists()) file.mkdir();
+            texturesDir = new File(MCTools.getConfigDir() + MODID);
+            if (!texturesDir.exists()) texturesDir.mkdir();
             else
             {
                 System.out.println("==================================================================================================================");
-                for (File imageFile : file.listFiles())
+                for (File imageFile : texturesDir.listFiles())
                 {
                     String name = imageFile.getName();
                     if (!name.substring(name.lastIndexOf(".") + 1).equals("png")) continue;
 
-                    PNG png = new PNG(file.getAbsolutePath() + File.separator + name);
+                    PNG png = new PNG(texturesDir.getAbsolutePath() + File.separator + name);
+                    validTextureNamesAndSizes.put(name.substring(0, name.length() - 4), new Pair<>(png.getWidth(), png.getHeight()));
+                    ByteBuffer buffer = png.getDirectBuffer();
+                    int r, g, b, a;
                     for (int y = 0; y < png.getHeight(); y++)
                     {
                         for (int x = 0; x < png.getWidth(); x++)
                         {
-                            System.out.println((png.getDirectBuffer().get() & 0xff) + ", " + (png.getDirectBuffer().get() & 0xff) + ", " + (png.getDirectBuffer().get() & 0xff) + ", " + (png.getDirectBuffer().get() & 0xff));
+                            r = buffer.get() & 0xff;
+                            g = buffer.get() & 0xff;
+                            b = buffer.get() & 0xff;
+                            a = buffer.get() & 0xff;
                         }
                     }
                     png.free();
+
                 }
             }
         }
