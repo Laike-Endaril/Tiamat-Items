@@ -4,13 +4,13 @@ import net.minecraft.item.Item;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class ItemDynamic extends Item
+public class TiamatItem extends Item
 {
-    public ItemDynamic()
+    public TiamatItem()
     {
         setCreativeTab(TiamatItems.creativeTab);
 
-        setUnlocalizedName(MODID + ":dynamicitem");
-        setRegistryName("dynamicitem");
+        setUnlocalizedName(MODID + ":tiamatitem");
+        setRegistryName("tiamatitem");
     }
 }

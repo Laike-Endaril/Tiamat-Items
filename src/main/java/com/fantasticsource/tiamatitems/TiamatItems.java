@@ -39,7 +39,7 @@ public class TiamatItems
         @Override
         public ItemStack getTabIconItem()
         {
-            return new ItemStack(dynamicItem);
+            return new ItemStack(tiamatItem);
         }
 
         @Override
@@ -50,8 +50,8 @@ public class TiamatItems
     };
 
 
-    @GameRegistry.ObjectHolder(MODID + ":dynamicitem")
-    private static ItemDynamic dynamicItem;
+    @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
+    private static TiamatItem tiamatItem;
 
 
     @Mod.EventHandler
@@ -102,13 +102,13 @@ public class TiamatItems
     public static void itemRegistry(RegistryEvent.Register<Item> event)
     {
         IForgeRegistry<Item> registry = event.getRegistry();
-        registry.register(new ItemDynamic());
+        registry.register(new TiamatItem());
     }
 
     @SubscribeEvent
     public static void modelRegistry(ModelRegistryEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(dynamicItem, 0, new ModelResourceLocation(MODID + ":dynamicitem", "inventory"));
-        IItemRendererHandler.register(dynamicItem, new TiamatItemRenderer());
+        ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
+        IItemRendererHandler.register(tiamatItem, new TiamatItemRenderer());
     }
 }
