@@ -204,10 +204,13 @@ public class TiamatItemRenderer implements IItemRenderer
 
                     for (TextureLayer layer : layers)
                     {
-                        r = Tools.min(255, r + layer.colors[x * layer.xScale][y * layer.yScale][0]);
-                        g = Tools.min(255, g + layer.colors[x * layer.xScale][y * layer.yScale][1]);
-                        b = Tools.min(255, b + layer.colors[x * layer.xScale][y * layer.yScale][2]);
-                        a = Tools.min(255, a + layer.colors[x * layer.xScale][y * layer.yScale][3]);
+                        int layerA = layer.colors[x * layer.xScale][y * layer.yScale][3];
+
+                        r = (int) Tools.min(255, r + layer.colors[x * layer.xScale][y * layer.yScale][0] * layerA / 255d);
+                        g = (int) Tools.min(255, g + layer.colors[x * layer.xScale][y * layer.yScale][1] * layerA / 255d);
+                        b = (int) Tools.min(255, b + layer.colors[x * layer.xScale][y * layer.yScale][2] * layerA / 255d);
+
+                        a = Tools.min(255, a + layerA);
                     }
 
                     processedTexture.pixels[x][y][0] = r;
