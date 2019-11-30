@@ -187,7 +187,7 @@ public class TiamatItemRenderer implements IItemRenderer
         if (!stack.isEmpty())
         {
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+            GlStateManager.translate(-0.5, -0.5, -0.5);
 
             if (model.isBuiltInRenderer())
             {
