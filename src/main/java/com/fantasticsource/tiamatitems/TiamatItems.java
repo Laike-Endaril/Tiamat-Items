@@ -29,7 +29,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.027,);required-after:iitemrenderer@[1.0,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.027a,);required-after:iitemrenderer@[1.0,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
