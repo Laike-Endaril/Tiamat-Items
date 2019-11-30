@@ -88,6 +88,19 @@ public class TiamatItems
                     validTextureNamesAndSizes.put(name.substring(0, name.length() - 4), new Pair<>(png.getWidth(), png.getHeight()));
                     ByteBuffer buffer = png.getDirectBuffer();
                     int r, g, b, a;
+                    buffer.mark();
+                    for (int y = 0; y < png.getHeight(); y++)
+                    {
+                        for (int x = 0; x < png.getWidth(); x++)
+                        {
+                            r = buffer.get() & 0xff;
+                            g = buffer.get() & 0xff;
+                            b = buffer.get() & 0xff;
+                            a = buffer.get() & 0xff;
+                        }
+                    }
+
+                    buffer.reset();
                     for (int y = 0; y < png.getHeight(); y++)
                     {
                         for (int x = 0; x < png.getWidth(); x++)
