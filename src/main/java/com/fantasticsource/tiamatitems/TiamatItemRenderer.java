@@ -21,6 +21,8 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class TiamatItemRenderer implements IItemRenderer
 {
     public static final VertexFormat VOXEL = new VertexFormat();
+    private static double voxelSizeX, voxelSizeY;
+    private static final double Z1 = -0.5d / 16, Z2 = 0.5d / 16;
     private static LinkedHashMap<String, LinkedHashMap<Integer, String>> readyTextures = new LinkedHashMap<>();
 
     static
@@ -54,6 +56,10 @@ public class TiamatItemRenderer implements IItemRenderer
             return;
         }
 
+        int width = textureSize.getKey(), height = textureSize.getValue();
+        voxelSizeX = 1d / width;
+        voxelSizeY = 1d / height;
+
         LinkedHashMap<Integer, String> recoloredTextures = readyTextures.computeIfAbsent(textureName, o -> new LinkedHashMap<>());
 
         for (String key : new String[]{"r", "g", "b"})
@@ -84,7 +90,13 @@ public class TiamatItemRenderer implements IItemRenderer
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             bufferBuilder.begin(GL_QUADS, VOXEL);
-            voxel(bufferBuilder, 0, 0, 0, 255, 0, 0, 90);
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    voxel(bufferBuilder, x, y, 0, (int) (255 * ((double) x / width)), 0, (int) (255 * ((double) y / height)), 90);
+                }
+            }
             tessellator.draw();
 
             GlStateManager.enableTexture2D();
@@ -104,9 +116,46 @@ public class TiamatItemRenderer implements IItemRenderer
     private static void voxel(BufferBuilder bufferBuilder, double x, double y, double z, int r, int g, int b, int a)
     {
         //THE BUFFERBUILDER ONLY USES COLOR PER-QUAD, NOT PER-VERTEX!  IT WILL ALWAYS USE THE COLOR OF THE LAST VERTEX IN THE QUAD FOR THE ENTIRE QUAD!
-        bufferBuilder.pos(-0.5, -0.5, 0).color(r, g, b, a).endVertex();
-        bufferBuilder.pos(0.5, -0.5, 0).color(r, g, b, a).endVertex();
-        bufferBuilder.pos(0.5, 0.5, 0).color(r, g, b, a).endVertex();
-        bufferBuilder.pos(-0.5, 0.5, 0).color(r, g, b, a).endVertex();
+
+        //All orientations are as seen from holder
+
+        double x1 = -0.5 + voxelSizeX * x, x2 = -0.5 + voxelSizeX * (x + 1);
+        double y1 = -0.5 + voxelSizeY * y, y2 = -0.5 + voxelSizeY * (y + 1);
+
+        //Front
+        bufferBuilder.pos(x1, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y2, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y2, Z2).color(r, g, b, a).endVertex();
+
+        //Back
+        bufferBuilder.pos(x1, y1, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y2, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y2, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y1, Z1).color(r, g, b, a).endVertex();
+
+        //Left
+        bufferBuilder.pos(x1, y2, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y1, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y2, Z2).color(r, g, b, a).endVertex();
+
+        //Right
+        bufferBuilder.pos(x2, y2, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y1, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y2, Z1).color(r, g, b, a).endVertex();
+
+        //Top
+        bufferBuilder.pos(x1, y2, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y2, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y2, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y2, Z1).color(r, g, b, a).endVertex();
+
+        //Bottom
+        bufferBuilder.pos(x2, y1, Z1).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x2, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y1, Z2).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y1, Z1).color(r, g, b, a).endVertex();
     }
 }
