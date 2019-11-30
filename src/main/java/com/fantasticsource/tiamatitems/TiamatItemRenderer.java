@@ -99,52 +99,19 @@ public class TiamatItemRenderer implements IItemRenderer
             //START TEST CODE
 
 
-//            GlStateManager.enableCull();
-//            GlStateManager.disableLighting();
-//            GlStateManager.disableTexture2D();
-//
-//            Tessellator tessellator = Tessellator.getInstance();
-//            BufferBuilder bufferBuilder = tessellator.getBuffer();
-//            bufferBuilder.begin(GL_QUADS, VOXEL);
-//            voxel(bufferBuilder, 0, 0, 0, 255, 0, 0, 120);
-//            tessellator.draw();
-//
-//            GlStateManager.enableTexture2D();
-//            GlStateManager.enableLighting();
-//            GlStateManager.disableCull();
-
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.disableTexture2D();
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            List<BakedQuad> quads = model.getQuads(null, null, 0);
-            bufferBuilder.begin(GL_QUADS, quads.get(0).getFormat());
-            for (BakedQuad quad : quads)
-            {
-                bufferBuilder.addVertexData(quad.getVertexData());
-
-                int color = 0xffff0000;
-                float cb = color & 0xFF;
-                float cg = (color >>> 8) & 0xFF;
-                float cr = (color >>> 16) & 0xFF;
-                float ca = (color >>> 24) & 0xFF;
-                VertexFormat format = quad.getFormat();
-                int size = format.getIntegerSize();
-                int offset = format.getColorOffset() / 4; // assumes that color is aligned
-                for (int i = 0; i < 4; i++)
-                {
-                    int vc = quad.getVertexData()[offset + size * i];
-                    float vcr = vc & 0xFF;
-                    float vcg = (vc >>> 8) & 0xFF;
-                    float vcb = (vc >>> 16) & 0xFF;
-                    float vca = (vc >>> 24) & 0xFF;
-                    int ncr = Math.min(0xFF, (int) (cr * vcr / 0xFF));
-                    int ncg = Math.min(0xFF, (int) (cg * vcg / 0xFF));
-                    int ncb = Math.min(0xFF, (int) (cb * vcb / 0xFF));
-                    int nca = Math.min(0xFF, (int) (ca * vca / 0xFF));
-                    bufferBuilder.putColorRGBA(bufferBuilder.getColorIndex(4 - i), ncr, ncg, ncb, nca);
-                }
-            }
+            bufferBuilder.begin(GL_QUADS, VOXEL);
+            voxel(bufferBuilder, 0, 0, 0, 255, 0, 0, 90);
             tessellator.draw();
+
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableLighting();
+            GlStateManager.disableCull();
 
 
             //END TEST CODE
