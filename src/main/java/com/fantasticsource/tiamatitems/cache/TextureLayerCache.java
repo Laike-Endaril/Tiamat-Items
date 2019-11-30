@@ -30,7 +30,7 @@ public class TextureLayerCache
 
         int count = max / min;
         TextureLayer[] layers = new TextureLayer[count];
-        for (int i = 0; i < count; i++) layers[i] = new TextureLayer(width, height);
+        for (int i = 0; i < count; i++) layers[i] = new TextureLayer(min, min);
 
         ByteBuffer buffer = png.getDirectBuffer();
 
@@ -40,7 +40,7 @@ public class TextureLayerCache
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    layers[x / width + y / height].colors[x % width][y % height][i] = buffer.get() & 0xff;
+                    layers[x / min + y / min].colors[x % min][y % min][i] = buffer.get() & 0xff;
                 }
             }
         }
