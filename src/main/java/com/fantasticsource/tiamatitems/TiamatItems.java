@@ -4,6 +4,9 @@ import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.cache.ProcessedTextureCache;
 import com.fantasticsource.tiamatitems.cache.TextureLayerCache;
+import com.fantasticsource.tiamatitems.itemeditor.BlockItemTexturer;
+import com.fantasticsource.tiamatitems.itemeditor.ItemItemTexturer;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -45,6 +48,11 @@ public class TiamatItems
 
     @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
     private static TiamatItem tiamatItem;
+
+    @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
+    public static BlockItemTexturer blockItemTexturer;
+    @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
+    public static ItemItemTexturer itemItemTexturer;
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID)
     {
@@ -99,9 +107,18 @@ public class TiamatItems
 
 
     @SubscribeEvent
+    public static void blockRegistry(RegistryEvent.Register<Block> event)
+    {
+        IForgeRegistry<Block> registry = event.getRegistry();
+        registry.register(new BlockItemTexturer());
+    }
+
+    @SubscribeEvent
     public static void itemRegistry(RegistryEvent.Register<Item> event)
     {
         IForgeRegistry<Item> registry = event.getRegistry();
+        registry.register(new ItemItemTexturer());
+
         registry.register(new TiamatItem());
     }
 
