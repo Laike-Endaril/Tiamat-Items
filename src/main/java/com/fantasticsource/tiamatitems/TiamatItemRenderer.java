@@ -4,8 +4,8 @@ import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
@@ -34,19 +35,52 @@ public class TiamatItemRenderer implements IItemRenderer
         NBTTagCompound mainTag = stack.getTagCompound();
         if (mainTag == null || !mainTag.hasKey(MODID))
         {
-            GlStateManager.enableCull();
-            GlStateManager.disableLighting();
-            GlStateManager.disableTexture2D();
+//            GlStateManager.enableCull();
+//            GlStateManager.disableLighting();
+//            GlStateManager.disableTexture2D();
+//
+//            Tessellator tessellator = Tessellator.getInstance();
+//            BufferBuilder bufferBuilder = tessellator.getBuffer();
+//            bufferBuilder.begin(GL_QUADS, VOXEL);
+//            voxel(bufferBuilder, 0, 0, 0, 255, 0, 0, 120);
+//            tessellator.draw();
+//
+//            GlStateManager.enableTexture2D();
+//            GlStateManager.enableLighting();
+//            GlStateManager.disableCull();
+
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            bufferBuilder.begin(GL_QUADS, VOXEL);
-            voxel(bufferBuilder, 0, 0, 0, 255, 0, 0, 120);
-            tessellator.draw();
+            List<BakedQuad> quads = model.getQuads(null, null, 0);
+            bufferBuilder.begin(GL_QUADS, quads.get(0).getFormat());
+            for (BakedQuad quad : quads)
+            {
+                bufferBuilder.addVertexData(quad.getVertexData());
 
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableLighting();
-            GlStateManager.disableCull();
+                int color = 0xffff0000;
+                float cb = color & 0xFF;
+                float cg = (color >>> 8) & 0xFF;
+                float cr = (color >>> 16) & 0xFF;
+                float ca = (color >>> 24) & 0xFF;
+                VertexFormat format = quad.getFormat();
+                int size = format.getIntegerSize();
+                int offset = format.getColorOffset() / 4; // assumes that color is aligned
+                for (int i = 0; i < 4; i++)
+                {
+                    int vc = quad.getVertexData()[offset + size * i];
+                    float vcr = vc & 0xFF;
+                    float vcg = (vc >>> 8) & 0xFF;
+                    float vcb = (vc >>> 16) & 0xFF;
+                    float vca = (vc >>> 24) & 0xFF;
+                    int ncr = Math.min(0xFF, (int) (cr * vcr / 0xFF));
+                    int ncg = Math.min(0xFF, (int) (cg * vcg / 0xFF));
+                    int ncb = Math.min(0xFF, (int) (cb * vcb / 0xFF));
+                    int nca = Math.min(0xFF, (int) (ca * vca / 0xFF));
+                    bufferBuilder.putColorRGBA(bufferBuilder.getColorIndex(4 - i), ncr, ncg, ncb, nca);
+                }
+            }
+            tessellator.draw();
             return;
         }
 
