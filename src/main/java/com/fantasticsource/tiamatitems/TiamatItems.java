@@ -125,6 +125,8 @@ public class TiamatItems
     @SubscribeEvent
     public static void modelRegistry(ModelRegistryEvent event)
     {
+        ModelLoader.setCustomModelResourceLocation(itemItemTexturer, 0, new ModelResourceLocation(MODID + ":itemtexturer", "inventory"));
+
         ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
         IItemRendererHandler.register(tiamatItem, new TiamatItemRenderer());
     }

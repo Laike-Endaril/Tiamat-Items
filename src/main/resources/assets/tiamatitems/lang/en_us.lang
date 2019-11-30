@@ -1,3 +1,5 @@
 itemGroup.tiamatitems=Tiamat Items
 
 item.tiamatitems:tiamatitem.name=Tiamat Item
+
+tile.tiamatitems:itemtexturer.name=Item Texturer

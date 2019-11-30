@@ -43,4 +43,11 @@ public class ItemEditorGUI extends GUIScreen
 
 //        navbar.addRecalcActions(() -> navigator.height = 1 - navbar.height);
     }
+
+    @Override
+    public void onClosed()
+    {
+        super.onClosed();
+        //TODO send packet to create or edit item
+    }
 }
