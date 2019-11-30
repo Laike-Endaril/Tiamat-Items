@@ -47,7 +47,6 @@ public class TiamatItemRenderer implements IItemRenderer
             //START TEST CODE
 
 
-            System.out.println(transformType);
             int color = 0x99ff0000;
 
             boolean cachedEnch = allowEnchants;
@@ -70,7 +69,6 @@ public class TiamatItemRenderer implements IItemRenderer
 
             GlStateManager.disableCull();
             allowEnchants = cachedEnch;
-            System.out.println();
 
 
             //END TEST CODE
