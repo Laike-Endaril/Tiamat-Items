@@ -16,11 +16,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -49,12 +47,12 @@ public class TiamatItemRenderer implements IItemRenderer
             //START TEST CODE
 
 
+            System.out.println(transformType);
             int color = 0x99ff0000;
 
             boolean cachedEnch = allowEnchants;
             allowEnchants = true;
             GlStateManager.enableCull();
-            GlStateManager.depthMask(false);
 
             GlStateManager.pushMatrix();
             if (IItemRendererHandler.isRunning)
@@ -70,30 +68,13 @@ public class TiamatItemRenderer implements IItemRenderer
             }
             GlStateManager.popMatrix();
 
-            GlStateManager.depthMask(true);
-            GlStateManager.colorMask(false, false, false, false);
-
-            GlStateManager.pushMatrix();
-            if (IItemRendererHandler.isRunning)
-            {
-                GlStateManager.translate(0.5, 0.5, 0.5);
-                applyTransforms(model);
-                renderItem(stack, model, color);
-            }
-            else
-            {
-                applyTransforms(model);
-                renderItem(stack, model, color);
-            }
-            GlStateManager.popMatrix();
-
-            GlStateManager.colorMask(true, true, true, true);
             GlStateManager.disableCull();
             allowEnchants = cachedEnch;
+            System.out.println();
 
 
             //END TEST CODE
-            
+
 
             return;
         }
@@ -195,7 +176,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
     private static void voxel(BufferBuilder bufferBuilder, double x, double y, double z, int r, int g, int b, int a)
     {
-        //THE BUFFERBUILDER ONLY USES COLOR PER-QUAD, NOT PER-VERTEX!  IT WILL ALWAYS USE THE COLOR OF THE LAST VERTEX FOR THE ENTIRE QUAD!
+        //THE BUFFERBUILDER ONLY USES COLOR PER-QUAD, NOT PER-VERTEX!  IT WILL ALWAYS USE THE COLOR OF THE LAST VERTEX IN THE QUAD FOR THE ENTIRE QUAD!
         bufferBuilder.pos(0, 0, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(1, 0, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(1, 1, 0).color(r, g, b, a).endVertex();
@@ -264,16 +245,13 @@ public class TiamatItemRenderer implements IItemRenderer
 
     private void renderModel(IBakedModel model, int color)
     {
-        List<BakedQuad> quads = new ArrayList<>();
-        for (EnumFacing enumfacing : EnumFacing.values())
-        {
-            quads.addAll(model.getQuads(null, enumfacing, 0));
-        }
-        quads.addAll(model.getQuads(null, null, 0));
+        List<BakedQuad> quads = model.getQuads(null, null, 0);
+        if (quads.size() == 0) return;
+
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.ITEM);
+        bufferbuilder.begin(GL_QUADS, quads.get(0).getFormat());
 
         for (BakedQuad quad : quads)
         {
