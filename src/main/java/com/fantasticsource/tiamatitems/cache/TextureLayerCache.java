@@ -13,7 +13,7 @@ public class TextureLayerCache
 
     public static int addTextureLayers(String fullFilePathAndName, String name)
     {
-        PNG png = new PNG(fullFilePathAndName);
+        PNG png = PNG.load(fullFilePathAndName);
         if (!png.isLoaded()) return 0;
 
 
