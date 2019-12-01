@@ -6,7 +6,7 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-public class ItemEditorGUI extends GUIScreen
+public class TexturerGUI extends GUIScreen
 {
     public static final Color T_BLACK = Color.BLACK.copy().setAF(0.85f);
 
@@ -21,7 +21,7 @@ public class ItemEditorGUI extends GUIScreen
 
     public static void show()
     {
-        ItemEditorGUI gui = new ItemEditorGUI();
+        TexturerGUI gui = new TexturerGUI();
 
         //Make sure GUI exists
         Minecraft.getMinecraft().displayGuiScreen(gui);

@@ -35,7 +35,7 @@ public class BlockItemTexturer extends Block
     {
         if (!worldIn.isRemote) return true;
 
-        ItemEditorGUI.show();
+        TexturerGUI.show();
         return true;
     }
 }

@@ -1,1 +1,9 @@
 Folder support for importing
+
+Dynamic texture GUI
+...texture layers
+.....texture (alphabetical list with renders)
+.....subimage
+.....color (hex, decimal, sliders, maybe color picker)
+
+Change depth masking to fix render of mixed transparent/non transparent textures
