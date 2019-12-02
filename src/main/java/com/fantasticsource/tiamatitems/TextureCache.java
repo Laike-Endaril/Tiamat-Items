@@ -33,7 +33,7 @@ public class TextureCache
             if (!relativeFilename.substring(relativeFilename.lastIndexOf(".") + 1).equals("png")) continue;
 
 
-            String fullFilePathAndName = mainTextureDir + File.separator + relativeFilename;
+            String fullFilePathAndName = mainTextureDir + '/' + relativeFilename;
 
             PNG png = PNG.load(fullFilePathAndName);
             if (!png.isLoaded()) continue;
@@ -72,6 +72,7 @@ public class TextureCache
             {
                 String textureName = relativeFilename.substring(0, relativeFilename.length() - 4) + ":" + i++ + ":ffffffff";
                 TextureCache.rawTextures.add(textureName);
+                System.out.println(textureName);
                 TextureCache.textures.put(textureName, texture);
             }
 
