@@ -1,9 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
-import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.tiamatitems.cache.ProcessedTextureCache;
-import com.fantasticsource.tiamatitems.cache.TextureLayerCache;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemTexturer;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemTexturer;
 import net.minecraft.block.Block;
@@ -34,26 +31,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.io.File;
-
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.027a,);required-after:iitemrenderer@[1.0,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
     public static final String NAME = "Tiamat Items";
     public static final String VERSION = "1.12.2.000";
-
-
-    public static File texturesDir;
-
-    @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
-    private static TiamatItem tiamatItem;
-
     @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
     public static BlockItemTexturer blockItemTexturer;
     @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
     public static ItemItemTexturer itemItemTexturer;
-
+    @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
+    private static TiamatItem tiamatItem;
     public static CreativeTabs creativeTab = new CreativeTabs(MODID)
     {
         @Override
@@ -82,20 +71,7 @@ public class TiamatItems
         {
             //Physical client
 
-            texturesDir = new File(MCTools.getConfigDir() + MODID);
-            if (!texturesDir.exists()) texturesDir.mkdir();
-            else
-            {
-                int i = 0;
-                for (File imageFile : texturesDir.listFiles())
-                {
-                    String name = imageFile.getName();
-                    if (!name.substring(name.lastIndexOf(".") + 1).equals("png")) continue;
-
-                    i += TextureLayerCache.addTextureLayers(texturesDir.getAbsolutePath() + File.separator + name, name);
-                }
-                System.out.println("Cached " + i + " raw texture layer" + (i == 1 ? "" : "s"));
-            }
+            TextureCache.addRawTextureLayers();
         }
     }
 
@@ -135,7 +111,7 @@ public class TiamatItems
     @SubscribeEvent
     public static void clientDisconnectFromServer(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
-        ProcessedTextureCache.clear(event);
+        TextureCache.clear(event);
     }
 
 

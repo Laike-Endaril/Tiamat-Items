@@ -2,8 +2,6 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
-import com.fantasticsource.tiamatitems.cache.ProcessedTextureCache;
-import com.fantasticsource.tiamatitems.cache.TextureLayerCache;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -129,21 +127,24 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
         //Check and load/generate/cache texture
-        ProcessedTextureCache.Reference reference = new ProcessedTextureCache.Reference(layerKeys);
-        ProcessedTexture processedTexture = ProcessedTextureCache.textures.get(reference);
+        StringBuilder combinedReference = new StringBuilder(layerKeys[0]);
+        for (int i = 1; i < layerKeys.length; i++) combinedReference.append("|").append(layerKeys[i]);
+
         int width = 0, height = 0;
-        if (processedTexture == null)
+        Texture texture = TextureCache.textures.get(combinedReference.toString());
+
+        if (texture == null)
         {
             //Check and load/generate/cache layers
-            ArrayList<TextureLayer> layers = new ArrayList<>();
+            ArrayList<Texture> layers = new ArrayList<>();
             for (String key : layerKeys)
             {
-                TextureLayer layer = TextureLayerCache.layers.get(key);
+                Texture layer = TextureCache.textures.get(key);
                 if (layer == null)
                 {
                     //Get raw ("white") layer (may not actually be grayscale)
                     String[] tokens = Tools.fixedSplit(key, ":");
-                    TextureLayer whiteLayer = TextureLayerCache.layers.get(tokens[0] + ":" + tokens[1] + ":ffffffff");
+                    Texture whiteLayer = TextureCache.textures.get(tokens[0] + ":" + tokens[1] + ":ffffffff");
                     if (whiteLayer == null) return;
 
 
@@ -152,7 +153,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
                     //Generate layer
-                    layer = new TextureLayer(whiteLayer.width, whiteLayer.height);
+                    layer = new Texture(whiteLayer.width, whiteLayer.height);
                     for (int x = 0; x < layer.width; x++)
                     {
                         for (int y = 0; y < layer.height; y++)
@@ -160,10 +161,9 @@ public class TiamatItemRenderer implements IItemRenderer
                             int[] c = whiteLayer.colors[x][y];
                             Color whiteColor = new Color(c[0], c[1], c[2], c[3]);
 
-                            layer.colors[x][y][0] = (int) (blendColor.r() * whiteColor.vf());
-                            layer.colors[x][y][1] = (int) (blendColor.g() * whiteColor.vf());
-                            layer.colors[x][y][2] = (int) (blendColor.b() * whiteColor.vf());
-
+                            layer.colors[x][y][0] = (int) (blendColor.r() * whiteColor.rf());
+                            layer.colors[x][y][1] = (int) (blendColor.g() * whiteColor.gf());
+                            layer.colors[x][y][2] = (int) (blendColor.b() * whiteColor.bf());
                             layer.colors[x][y][3] = (int) (blendColor.a() * whiteColor.af());
                         }
                     }
@@ -172,7 +172,7 @@ public class TiamatItemRenderer implements IItemRenderer
                     //Cache
                     if (compound.getBoolean("cacheLayers"))
                     {
-                        TextureLayerCache.layers.put(key, layer);
+                        TextureCache.textures.put(key, layer);
                     }
                 }
 
@@ -185,9 +185,9 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
             //Generate final texture
-            processedTexture = new ProcessedTexture(width, height);
+            texture = new Texture(width, height);
             int r, g, b, a;
-            for (TextureLayer layer : layers)
+            for (Texture layer : layers)
             {
                 layer.xScale = width / layer.width;
                 layer.yScale = height / layer.height;
@@ -202,7 +202,7 @@ public class TiamatItemRenderer implements IItemRenderer
                     g = 0;
                     a = 0;
 
-                    for (TextureLayer layer : layers)
+                    for (Texture layer : layers)
                     {
                         int layerA = layer.colors[x * layer.xScale][y * layer.yScale][3];
 
@@ -213,10 +213,10 @@ public class TiamatItemRenderer implements IItemRenderer
                         a = Tools.min(255, a + layerA);
                     }
 
-                    processedTexture.pixels[x][y][0] = r;
-                    processedTexture.pixels[x][y][1] = g;
-                    processedTexture.pixels[x][y][2] = b;
-                    processedTexture.pixels[x][y][3] = a;
+                    texture.colors[x][y][0] = r;
+                    texture.colors[x][y][1] = g;
+                    texture.colors[x][y][2] = b;
+                    texture.colors[x][y][3] = a;
                 }
             }
 
@@ -224,7 +224,7 @@ public class TiamatItemRenderer implements IItemRenderer
             //Cache
             if (compound.getBoolean("cacheTexture"))
             {
-                ProcessedTextureCache.textures.put(reference, processedTexture);
+                TextureCache.textures.put(combinedReference.toString(), texture);
             }
         }
 
@@ -242,7 +242,7 @@ public class TiamatItemRenderer implements IItemRenderer
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(GL_QUADS, VOXEL);
 
-        int[][][] colors = processedTexture.pixels;
+        int[][][] colors = texture.colors;
 
         voxelSizeX = 1d / width;
         voxelSizeY = 1d / height;

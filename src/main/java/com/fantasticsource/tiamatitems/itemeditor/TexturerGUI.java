@@ -41,7 +41,7 @@ public class TexturerGUI extends GUIScreen
         GUINavbar navbar = new GUINavbar(this, Color.AQUA);
         root.add(navbar);
 
-//        navbar.addRecalcActions(() -> navigator.height = 1 - navbar.height);
+//        navbar.addRecalcActions(() -> xxx.height = 1 - navbar.height);
     }
 
     @Override
