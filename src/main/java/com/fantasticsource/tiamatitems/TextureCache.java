@@ -5,7 +5,6 @@ import com.fantasticsource.tools.PNG;
 import com.fantasticsource.tools.Tools;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -72,7 +71,6 @@ public class TextureCache
             {
                 String textureName = relativeFilename.substring(0, relativeFilename.length() - 4) + ":" + i++ + ":ffffffff";
                 TextureCache.rawTextures.add(textureName);
-                System.out.println(textureName);
                 TextureCache.textures.put(textureName, texture);
             }
 
