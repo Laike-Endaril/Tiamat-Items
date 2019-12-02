@@ -244,8 +244,11 @@ public class TiamatItemRenderer implements IItemRenderer
 
         int[][][] colors = texture.colors;
 
+        width = texture.width;
+        height = texture.height;
         voxelSizeX = 1d / width;
         voxelSizeY = 1d / height;
+
         int color[], alpha, leftAlpha, rightAlpha, upAlpha, downAlpha;
         for (int y = 0; y < height; y++)
         {
