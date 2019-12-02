@@ -1,5 +1,3 @@
-Folder support for importing
-
 Dynamic texture GUI
 ...texture layers
 .....texture (alphabetical list with renders)
