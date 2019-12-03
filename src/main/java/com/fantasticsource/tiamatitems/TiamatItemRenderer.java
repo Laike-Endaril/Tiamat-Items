@@ -230,24 +230,25 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
         //Render
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0.5, 0.5, 0.5);
-        IItemRendererHandler.applyTransforms(model);
-
-        GlStateManager.enableCull();
-        GlStateManager.disableLighting();
-        GlStateManager.disableTexture2D();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(GL_QUADS, VOXEL);
-
         int[][][] colors = texture.colors;
 
         width = texture.width;
         height = texture.height;
         voxelSizeX = 1d / width;
         voxelSizeY = 1d / height;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.5, 0.5, 0.5);
+        IItemRendererHandler.applyTransforms(model);
+
+        GlStateManager.disableLighting();
+        GlStateManager.disableTexture2D();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
+
+        bufferBuilder.begin(GL_QUADS, VOXEL);
 
         int color[], alpha, leftAlpha, rightAlpha, upAlpha, downAlpha;
         for (int y = 0; y < height; y++)
@@ -270,9 +271,9 @@ public class TiamatItemRenderer implements IItemRenderer
 
         tessellator.draw();
 
+
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
-        GlStateManager.disableCull();
 
         GlStateManager.popMatrix();
     }
