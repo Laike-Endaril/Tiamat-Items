@@ -5,6 +5,7 @@ import com.fantasticsource.tools.PNG;
 import com.fantasticsource.tools.Tools;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -27,6 +28,8 @@ public class TextureCache
         String mainTextureDir = MCTools.getConfigDir() + MODID;
 
         int loaded = 0;
+        File file = new File(mainTextureDir);
+        if (!file.exists()) file.mkdir();
         for (String relativeFilename : Tools.allRecursiveRelativeFilenames(mainTextureDir))
         {
             if (!relativeFilename.substring(relativeFilename.lastIndexOf(".") + 1).equals("png")) continue;
