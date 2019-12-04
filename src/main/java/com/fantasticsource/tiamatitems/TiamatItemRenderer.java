@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
+import com.fantasticsource.mctools.Render;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -243,6 +244,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
         GlStateManager.disableLighting();
         GlStateManager.disableTexture2D();
+        GlStateManager.enableCull();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -265,13 +267,13 @@ public class TiamatItemRenderer implements IItemRenderer
                 upAlpha = y == 0 ? 0 : colors[x][y - 1][3];
                 downAlpha = y == height - 1 ? 0 : colors[x][y + 1][3];
 
-                voxel(bufferBuilder, x, y, color[0], color[1], color[2], alpha, leftAlpha == 0 || (leftAlpha != 255 && alpha == 255), rightAlpha == 0 || (rightAlpha != 255 && alpha == 255), upAlpha == 0 || (upAlpha != 255 && alpha == 255), downAlpha == 0 || (downAlpha != 255 && alpha == 255));
+                voxel(bufferBuilder, x, y, color[0], color[1], color[2], alpha, leftAlpha == 0, rightAlpha == 0, upAlpha == 0, downAlpha == 0);
             }
         }
 
         tessellator.draw();
 
-
+        GlStateManager.disableCull();
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
 

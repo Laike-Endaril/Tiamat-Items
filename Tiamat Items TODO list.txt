@@ -4,4 +4,4 @@ Dynamic texture GUI
 .....subimage
 .....color (hex, decimal, sliders, maybe color picker)
 
-Change depth masking to fix render of mixed transparent/non transparent textures
+Improve render via back-to-front voxel ordering?  Not sure how to determine which direction to move in for in-world renders...
