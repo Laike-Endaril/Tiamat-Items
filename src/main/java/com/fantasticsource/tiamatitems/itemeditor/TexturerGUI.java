@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.itemeditor;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.text.GUIColor;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -41,7 +42,8 @@ public class TexturerGUI extends GUIScreen
         GUINavbar navbar = new GUINavbar(this, Color.AQUA);
         root.add(navbar);
 
-//        navbar.addRecalcActions(() -> xxx.height = 1 - navbar.height);
+        root.add(new GUIColor(this, Color.WHITE.copy(), textScale));
+        root.add(new GUIColor(this, Color.RED.copy(), textScale));
     }
 
     @Override
