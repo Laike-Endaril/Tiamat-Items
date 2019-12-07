@@ -4,11 +4,11 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.other.GUITab;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIColor;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
@@ -34,24 +34,33 @@ public class TexturerGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput texture = new GUILabeledTextInput(gui, "File: ", "aaaa", FilterNotEmpty.INSTANCE);
-                GUILabeledTextInput subimage = new GUILabeledTextInput(gui, "Index: ", "", FilterNotEmpty.INSTANCE);
+                GUILabeledTextInput texture = new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE);
+                GUILabeledTextInput subimage = new GUILabeledTextInput(gui, "Index: ", "0", FilterNotEmpty.INSTANCE);
+                GUITab tab = new GUITab(screen, 0.4, 0);
+                GUITab tab2 = new GUITab(screen, 0.7, 0);
 
-                return new GUIElement[]{texture, subimage, new GUIColor(gui), new GUIText(screen, "Test: "), new GUIText(screen, "aaaaaa"), new GUIText(screen, "IIIIIIII"), new GUIText(screen, "ccccc: ")};
-            }
-
-            @Override
-            public GUIElement newLineBackgroundElement()
-            {
-                return new GUIGradientBorder(gui, 0, 0, 1, 1, 0.1, Color.WHITE, Color.BLANK);
+                return new GUIElement[]
+                        {
+                                texture,
+                                tab.addRecalcActions(() -> System.out.println("tab: " + tab.absolutePxX() + ", " + tab.absolutePxY() + ", " + tab.absolutePxWidth() + ", " + tab.absolutePxHeight())),
+                                subimage,
+                                tab2.addRecalcActions(() -> System.out.println("tab2: " + tab2.absolutePxX() + ", " + tab2.absolutePxY() + ", " + tab2.absolutePxWidth() + ", " + tab2.absolutePxHeight())),
+                                new GUIColor(gui),
+                                new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
+                        };
             }
         };
-        gui.root.add(arrayList);
-        gui.root.add(new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList));
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - navbar.height, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
+
+        gui.root.addAll(arrayList, scrollbar);
 
 
         //Add actions
-        navbar.addRecalcActions(() -> arrayList.height = 1 - navbar.height);
+        navbar.addRecalcActions(() ->
+        {
+            arrayList.height = 1 - navbar.height;
+            scrollbar.height = 1 - navbar.height;
+        });
     }
 
     @Override
