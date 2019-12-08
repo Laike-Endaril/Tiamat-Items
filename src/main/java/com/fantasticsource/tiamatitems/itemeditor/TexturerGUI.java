@@ -28,6 +28,10 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class TexturerGUI extends GUIScreen
 {
+    public static final Color
+            AL_WHITE = Color.WHITE.copy().setAF(0.3f),
+            AL_BLACK = Color.BLACK.copy().setAF(0.3f);
+
     public static void show()
     {
         ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
@@ -60,9 +64,14 @@ public class TexturerGUI extends GUIScreen
                         {
                                 new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE),
                                 new GUILabeledTextInput(gui, 0.4, 0, "Index: ", "0", FILTER_POSITIVE),
-                                new GUIColor(gui, 0.7, 0),
-                                new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
+                                new GUIColor(gui, 0.7, 0)
                         };
+            }
+
+            @Override
+            public GUIElement newLineBackgroundElement()
+            {
+                return new GUIGradient(gui, 1, 1, AL_WHITE, AL_WHITE, AL_BLACK, AL_BLACK);
             }
         };
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
@@ -86,9 +95,9 @@ public class TexturerGUI extends GUIScreen
 
                         arrayList.addLine();
                         GUIAutocroppedView line = arrayList.get(arrayList.lineCount() - 1);
-                        ((GUILabeledTextInput) line.get(2)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
-                        ((GUILabeledTextInput) line.get(3)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
-                        ((GUIColor) line.get(4)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
+                        ((GUILabeledTextInput) line.get(3)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
+                        ((GUILabeledTextInput) line.get(4)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
+                        ((GUIColor) line.get(5)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
                     }
                 }
             }
@@ -109,11 +118,11 @@ public class TexturerGUI extends GUIScreen
             {
                 GUIAutocroppedView line = arrayList.get(i);
 
-                GUILabeledTextInput texture = (GUILabeledTextInput) line.get(2);
-                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(3);
+                GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
+                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
                 if (!texture.input.valid() || !subimage.input.valid()) return;
 
-                GUIColor color = (GUIColor) line.get(4);
+                GUIColor color = (GUIColor) line.get(5);
 
                 layers[i] = texture.input.getText().trim() + ':' + subimage.input.getText().trim() + ':' + color.getText();
             }
