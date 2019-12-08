@@ -33,6 +33,7 @@ public class Network
     public static class EditItemPacket implements IMessage
     {
         String name;
+        String lore;
         String[] layers;
 
         public EditItemPacket()
@@ -40,9 +41,10 @@ public class Network
             //Required
         }
 
-        public EditItemPacket(String name, String[] layers)
+        public EditItemPacket(String name, String lore, String[] layers)
         {
             this.name = name;
+            this.lore = lore;
             this.layers = layers;
         }
 
@@ -50,6 +52,7 @@ public class Network
         public void toBytes(ByteBuf buf)
         {
             ByteBufUtils.writeUTF8String(buf, name);
+            ByteBufUtils.writeUTF8String(buf, lore);
 
             buf.writeInt(layers.length);
             for (String layer : layers) ByteBufUtils.writeUTF8String(buf, layer);
@@ -59,6 +62,7 @@ public class Network
         public void fromBytes(ByteBuf buf)
         {
             name = ByteBufUtils.readUTF8String(buf);
+            lore = ByteBufUtils.readUTF8String(buf);
 
             layers = new String[buf.readInt()];
             for (int i = 0; i < layers.length; i++) layers[i] = ByteBufUtils.readUTF8String(buf);
@@ -80,6 +84,8 @@ public class Network
                     if (stack.getItem() == TiamatItems.tiamatItem)
                     {
                         stack.setStackDisplayName(packet.name);
+
+                        MCTools.setLore(stack, packet.lore);
 
                         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
                         NBTTagCompound compound = stack.getTagCompound();

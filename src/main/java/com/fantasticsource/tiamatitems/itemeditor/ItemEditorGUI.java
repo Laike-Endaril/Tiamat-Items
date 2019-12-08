@@ -1,17 +1,17 @@
 package com.fantasticsource.tiamatitems.itemeditor;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
-import com.fantasticsource.mctools.gui.element.text.GUIColor;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
@@ -24,6 +24,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -65,9 +67,20 @@ public class ItemEditorGUI extends GUIScreen
 
         //General tab
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
+        ArrayList<String> loreLines = MCTools.getLore(stack);
+        StringBuilder loreString = new StringBuilder();
+        if (loreLines != null && loreLines.size() > 0)
+        {
+            loreString.append(loreLines.get(0));
+            for (int i = 1; i < loreLines.size(); i++) loreString.append("\n").append(loreLines.get(i));
+        }
+        GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 0.5, new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
         tabView.tabViews.get(0).addAll
                 (
-                        name
+                        name,
+                        new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
+                        lore,
+                        new GUIVerticalScrollbar(gui, 0.02, 0.5, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore)
                 );
 
 
@@ -142,7 +155,7 @@ public class ItemEditorGUI extends GUIScreen
                 layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
             }
 
-            Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), layers));
+            Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), layers));
             gui.close();
         });
     }
