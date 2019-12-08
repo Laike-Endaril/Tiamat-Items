@@ -79,7 +79,7 @@ public class Network
                         if (!compound.hasKey(MODID)) compound.setTag(MODID, new NBTTagCompound());
                         compound = compound.getCompoundTag(MODID);
 
-                        if (!compound.hasKey("layers")) compound.setTag("layers", new NBTTagList());
+                        compound.setTag("layers", new NBTTagList());
                         NBTTagList layerList = compound.getTagList("layers", Constants.NBT.TAG_STRING);
 
                         for (String layer : packet.layers)
