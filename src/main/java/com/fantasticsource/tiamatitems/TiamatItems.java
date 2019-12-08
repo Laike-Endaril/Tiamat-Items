@@ -2,8 +2,8 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
-import com.fantasticsource.tiamatitems.itemeditor.BlockItemTexturer;
-import com.fantasticsource.tiamatitems.itemeditor.ItemItemTexturer;
+import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
+import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -41,10 +41,10 @@ public class TiamatItems
 
     public static final FilterRangedInt FILTER_POSITIVE = FilterRangedInt.get(0, Integer.MAX_VALUE);
 
-    @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
-    public static BlockItemTexturer blockItemTexturer;
-    @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
-    public static ItemItemTexturer itemItemTexturer;
+    @GameRegistry.ObjectHolder(MODID + ":itemeditor")
+    public static BlockItemEditor blockItemEditor;
+    @GameRegistry.ObjectHolder(MODID + ":itemeditor")
+    public static ItemItemEditor itemItemEditor;
     @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
     public static TiamatItem tiamatItem;
 
@@ -92,14 +92,14 @@ public class TiamatItems
     public static void blockRegistry(RegistryEvent.Register<Block> event)
     {
         IForgeRegistry<Block> registry = event.getRegistry();
-        registry.register(new BlockItemTexturer());
+        registry.register(new BlockItemEditor());
     }
 
     @SubscribeEvent
     public static void itemRegistry(RegistryEvent.Register<Item> event)
     {
         IForgeRegistry<Item> registry = event.getRegistry();
-        registry.register(new ItemItemTexturer());
+        registry.register(new ItemItemEditor());
 
         registry.register(new TiamatItem());
     }
@@ -107,7 +107,7 @@ public class TiamatItems
     @SubscribeEvent
     public static void modelRegistry(ModelRegistryEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(itemItemTexturer, 0, new ModelResourceLocation(MODID + ":itemtexturer", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(itemItemEditor, 0, new ModelResourceLocation(MODID + ":itemeditor", "inventory"));
 
         ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
         IItemRendererHandler.register(tiamatItem, new TiamatItemRenderer());

@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "tiamatitems:itemtexturer"
+        "model": "tiamatitems:itemeditor"
     },
     "variants": {
         "normal": [

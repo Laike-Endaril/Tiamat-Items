@@ -21,12 +21,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class TexturerGUI extends GUIScreen
+public class ItemEditorGUI extends GUIScreen
 {
     public static final Color
             AL_WHITE = Color.WHITE.copy().setAF(0.3f),
@@ -35,10 +37,14 @@ public class TexturerGUI extends GUIScreen
     public static void show()
     {
         ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
-        if (stack.getItem() != TiamatItems.tiamatItem) return;
+        if (stack.getItem() != TiamatItems.tiamatItem)
+        {
+            Minecraft.getMinecraft().player.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "Right click this block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName() + " to start"));
+            return;
+        }
 
 
-        TexturerGUI gui = new TexturerGUI();
+        ItemEditorGUI gui = new ItemEditorGUI();
         Minecraft.getMinecraft().displayGuiScreen(gui);
 
 
@@ -135,6 +141,6 @@ public class TexturerGUI extends GUIScreen
     @Override
     public String title()
     {
-        return "Item Texturer";
+        return "Item Editor";
     }
 }

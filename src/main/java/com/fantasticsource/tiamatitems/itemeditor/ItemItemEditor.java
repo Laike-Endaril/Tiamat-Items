@@ -5,13 +5,13 @@ import net.minecraft.item.ItemBlock;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class ItemItemTexturer extends ItemBlock
+public class ItemItemEditor extends ItemBlock
 {
-    public ItemItemTexturer()
+    public ItemItemEditor()
     {
-        super(TiamatItems.blockItemTexturer);
+        super(TiamatItems.blockItemEditor);
 
-        setUnlocalizedName(MODID + ":itemtexturer");
-        setRegistryName("itemtexturer");
+        setUnlocalizedName(MODID + ":itemeditor");
+        setRegistryName("itemeditor");
     }
 }

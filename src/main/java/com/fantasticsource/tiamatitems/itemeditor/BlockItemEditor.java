@@ -13,9 +13,9 @@ import net.minecraft.world.World;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class BlockItemTexturer extends Block
+public class BlockItemEditor extends Block
 {
-    public BlockItemTexturer()
+    public BlockItemEditor()
     {
         super(Material.ROCK);
         setSoundType(SoundType.STONE);
@@ -25,8 +25,8 @@ public class BlockItemTexturer extends Block
 
         setCreativeTab(TiamatItems.creativeTab);
 
-        setUnlocalizedName(MODID + ":itemtexturer");
-        setRegistryName("itemtexturer");
+        setUnlocalizedName(MODID + ":itemeditor");
+        setRegistryName("itemeditor");
     }
 
 
@@ -35,7 +35,7 @@ public class BlockItemTexturer extends Block
     {
         if (!worldIn.isRemote) return true;
 
-        TexturerGUI.show();
+        ItemEditorGUI.show();
         return true;
     }
 }
