@@ -1,7 +1,1 @@
-Dynamic texture GUI
-...texture layers
-.....texture (alphabetical list with renders)
-.....subimage
-.....color (hex, decimal, sliders, maybe color picker)
-
 Improve render via back-to-front voxel ordering?  Not sure how to determine which direction to move in for in-world renders...

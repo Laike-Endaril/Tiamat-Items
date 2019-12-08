@@ -9,57 +9,124 @@ import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIColor;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
+import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
+import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
+
+import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
+import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class TexturerGUI extends GUIScreen
 {
     public static void show()
     {
+        ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        if (stack.getItem() != TiamatItems.tiamatItem) return;
+
+
         TexturerGUI gui = new TexturerGUI();
         Minecraft.getMinecraft().displayGuiScreen(gui);
 
 
-        //Root
+        //Background
         gui.root.add(new GUIGradient(gui, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
 
-        GUINavbar navbar = new GUINavbar(gui, Color.AQUA);
-        gui.root.add(navbar);
 
-        GUIScrollView arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1 - navbar.height)
+        //Header
+        GUINavbar navbar = new GUINavbar(gui, Color.AQUA);
+        GUITextButton save = new GUITextButton(gui, "Save", Color.GREEN);
+        GUITextButton cancel = new GUITextButton(gui, "Cancel", Color.RED);
+        GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.01, 0.3, Color.GRAY, Color.BLANK);
+        gui.root.addAll(navbar, save, cancel, separator);
+
+
+        //Main
+        GUIScrollView arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1 - (separator.y + separator.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput texture = new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE);
-                GUILabeledTextInput subimage = new GUILabeledTextInput(gui, "Index: ", "0", FilterNotEmpty.INSTANCE);
-                GUITab tab = new GUITab(screen, 0.4, 0);
-                GUITab tab2 = new GUITab(screen, 0.7, 0);
-
                 return new GUIElement[]
                         {
-                                texture,
-                                tab.addRecalcActions(() -> System.out.println("tab: " + tab.absolutePxX() + ", " + tab.absolutePxY() + ", " + tab.absolutePxWidth() + ", " + tab.absolutePxHeight())),
-                                subimage,
-                                tab2.addRecalcActions(() -> System.out.println("tab2: " + tab2.absolutePxX() + ", " + tab2.absolutePxY() + ", " + tab2.absolutePxWidth() + ", " + tab2.absolutePxHeight())),
+                                new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE),
+                                new GUITab(gui, 0.4, 0),
+                                new GUILabeledTextInput(gui, "Index: ", "0", FILTER_POSITIVE),
+                                new GUITab(gui, 0.7, 0),
                                 new GUIColor(gui),
                                 new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - navbar.height, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
-
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
         gui.root.addAll(arrayList, scrollbar);
 
 
-        //Add actions
-        navbar.addRecalcActions(() ->
+        //Add existing layers
+        if (stack.hasTagCompound())
         {
-            arrayList.height = 1 - navbar.height;
-            scrollbar.height = 1 - navbar.height;
+            NBTTagCompound compound = stack.getTagCompound();
+            if (compound.hasKey(MODID))
+            {
+                compound = compound.getCompoundTag(MODID);
+                if (compound.hasKey("layers"))
+                {
+                    NBTTagList layers = compound.getTagList("layers", Constants.NBT.TAG_STRING);
+                    for (int i = 0; i < layers.tagCount(); i++)
+                    {
+                        String[] tokens = Tools.fixedSplit(layers.getStringTagAt(i), ":");
+                        if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
+
+                        ((GUIArrayList<GUIElement>) arrayList).addLine(
+                                new GUILabeledTextInput(gui, "File: ", FilterNotEmpty.INSTANCE.parse(tokens[0]), FilterNotEmpty.INSTANCE),
+                                new GUITab(gui, 0.4, 0),
+                                new GUILabeledTextInput(gui, "Index: ", "" + FILTER_POSITIVE.parse(tokens[1]), FILTER_POSITIVE),
+                                new GUITab(gui, 0.7, 0),
+                                new GUIColor(gui, new Color(FilterColor.INSTANCE.parse(tokens[2]))),
+                                new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
+                        );
+                    }
+                }
+            }
+        }
+
+
+        //Add actions
+        separator.addRecalcActions(() ->
+        {
+            arrayList.height = 1 - (separator.y + separator.height);
+            scrollbar.height = 1 - (separator.y + separator.height);
+        });
+        cancel.addClickActions(gui::close);
+        save.addClickActions(() ->
+        {
+            String[] layers = new String[((GUIArrayList<GUIElement>) arrayList).lineCount()];
+            for (int i = 0; i < layers.length; i++)
+            {
+                GUIAutocroppedView line = (GUIAutocroppedView) arrayList.get(i);
+
+                GUILabeledTextInput texture = (GUILabeledTextInput) line.get(2);
+                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
+                if (!texture.input.valid() || !subimage.input.valid()) return;
+
+                GUIColor color = (GUIColor) line.get(6);
+
+                layers[i] = texture.input.getText().trim() + ':' + subimage.input.getText().trim() + ':' + color.getText();
+            }
+
+            Network.WRAPPER.sendToServer(new Network.SaveItemTexturePacket(layers));
+            gui.close();
         });
     }
 
@@ -67,12 +134,5 @@ public class TexturerGUI extends GUIScreen
     public String title()
     {
         return "Item Texturer";
-    }
-
-    @Override
-    public void onClosed()
-    {
-        super.onClosed();
-        //TODO send packet to create or edit item
     }
 }

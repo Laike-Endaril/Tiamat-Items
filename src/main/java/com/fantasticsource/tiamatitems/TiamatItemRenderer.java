@@ -95,15 +95,15 @@ public class TiamatItemRenderer implements IItemRenderer
     @Override
     public void render(ItemStack stack, IBakedModel model, ItemCameraTransforms.TransformType transformType, float v)
     {
-        NBTTagCompound mainTag = stack.getTagCompound();
+        NBTTagCompound compound = stack.getTagCompound();
 
-        if (mainTag == null || !mainTag.hasKey(MODID))
+        if (compound == null || !compound.hasKey(MODID))
         {
             IItemRendererHandler.renderItemStack(stack, model);
             return;
         }
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(MODID);
         if (!compound.hasKey("layers"))
         {
             IItemRendererHandler.renderItemStack(stack, model);

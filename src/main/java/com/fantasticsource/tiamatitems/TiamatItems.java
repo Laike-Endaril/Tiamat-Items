@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemTexturer;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemTexturer;
 import net.minecraft.block.Block;
@@ -37,12 +38,16 @@ public class TiamatItems
     public static final String MODID = "tiamatitems";
     public static final String NAME = "Tiamat Items";
     public static final String VERSION = "1.12.2.000";
+
+    public static final FilterRangedInt FILTER_POSITIVE = FilterRangedInt.get(0, Integer.MAX_VALUE);
+
     @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
     public static BlockItemTexturer blockItemTexturer;
     @GameRegistry.ObjectHolder(MODID + ":itemtexturer")
     public static ItemItemTexturer itemItemTexturer;
     @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
-    private static TiamatItem tiamatItem;
+    public static TiamatItem tiamatItem;
+
     public static CreativeTabs creativeTab = new CreativeTabs(MODID)
     {
         @Override
@@ -61,6 +66,7 @@ public class TiamatItems
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
+        Network.init();
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
     }
 
