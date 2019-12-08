@@ -144,4 +144,37 @@ public class TiamatItems
             list.appendTag(new NBTTagString("Test:0:ff000077"));
         }
     }
+
+
+    public static boolean itemHasCategoryTag(ItemStack stack, String category, String tag)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(MODID)) return false;
+
+        compound = compound.getCompoundTag(MODID);
+        if (!compound.hasKey(category)) return false;
+
+        NBTTagList list = compound.getTagList(category, Constants.NBT.TAG_STRING);
+        for (int i = list.tagCount() - 1; i >= 0; i--) if (list.getStringTagAt(i).equals(tag)) return true;
+        return false;
+    }
+
+
+    public static void addItemCategoryTag(ItemStack stack, String category, String tag)
+    {
+        if (itemHasCategoryTag(stack, category, tag)) return;
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(MODID)) compound.setTag(MODID, new NBTTagCompound());
+        compound = compound.getCompoundTag(MODID);
+
+        if (!compound.hasKey(category)) compound.setTag(category, new NBTTagList());
+        NBTTagList list = compound.getTagList(category, Constants.NBT.TAG_STRING);
+
+        list.appendTag(new NBTTagString(tag));
+    }
 }

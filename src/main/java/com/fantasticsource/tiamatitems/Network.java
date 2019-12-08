@@ -34,11 +34,17 @@ public class Network
     {
         String name;
         String lore;
-        String[] layers;
+        String[] layers = null;
 
         public EditItemPacket()
         {
             //Required
+        }
+
+        public EditItemPacket(String name, String lore)
+        {
+            this.name = name;
+            this.lore = lore;
         }
 
         public EditItemPacket(String name, String lore, String[] layers)
@@ -54,8 +60,12 @@ public class Network
             ByteBufUtils.writeUTF8String(buf, name);
             ByteBufUtils.writeUTF8String(buf, lore);
 
-            buf.writeInt(layers.length);
-            for (String layer : layers) ByteBufUtils.writeUTF8String(buf, layer);
+            buf.writeBoolean(layers != null);
+            if (layers != null)
+            {
+                buf.writeInt(layers.length);
+                for (String layer : layers) ByteBufUtils.writeUTF8String(buf, layer);
+            }
         }
 
         @Override
@@ -64,8 +74,11 @@ public class Network
             name = ByteBufUtils.readUTF8String(buf);
             lore = ByteBufUtils.readUTF8String(buf);
 
-            layers = new String[buf.readInt()];
-            for (int i = 0; i < layers.length; i++) layers[i] = ByteBufUtils.readUTF8String(buf);
+            if (buf.readBoolean())
+            {
+                layers = new String[buf.readInt()];
+                for (int i = 0; i < layers.length; i++) layers[i] = ByteBufUtils.readUTF8String(buf);
+            }
         }
     }
 
@@ -81,12 +94,13 @@ public class Network
                 if (player.isCreative() || MCTools.isOP(player))
                 {
                     ItemStack stack = player.getHeldItemMainhand();
-                    if (stack.getItem() == TiamatItems.tiamatItem)
+
+                    stack.setStackDisplayName(packet.name);
+
+                    MCTools.setLore(stack, packet.lore);
+
+                    if (packet.layers != null && stack.getItem() == TiamatItems.tiamatItem)
                     {
-                        stack.setStackDisplayName(packet.name);
-
-                        MCTools.setLore(stack, packet.lore);
-
                         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
                         NBTTagCompound compound = stack.getTagCompound();
 

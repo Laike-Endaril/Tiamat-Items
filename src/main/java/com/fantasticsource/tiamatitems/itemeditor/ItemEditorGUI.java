@@ -21,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
@@ -39,11 +38,6 @@ public class ItemEditorGUI extends GUIScreen
     public static void show()
     {
         ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
-        if (stack.getItem() != TiamatItems.tiamatItem)
-        {
-            Minecraft.getMinecraft().player.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "Right click this block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName() + " to start"));
-            return;
-        }
 
 
         ItemEditorGUI gui = new ItemEditorGUI();
@@ -133,6 +127,13 @@ public class ItemEditorGUI extends GUIScreen
             }
         }
 
+        if (stack.getItem() != TiamatItems.tiamatItem)
+        {
+            arrayList.clear();
+            tabView.tabViews.get(1).remove(1);
+            tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "This feature only works when right clicking the block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName()));
+        }
+
 
         //Add actions
         cancel.addRecalcActions(() -> tabView.height = 1 - (cancel.y + cancel.height));
@@ -141,21 +142,28 @@ public class ItemEditorGUI extends GUIScreen
         {
             if (!name.valid()) return;
 
-            String[] layers = new String[arrayList.lineCount()];
-            for (int i = 0; i < layers.length; i++)
+            if (stack.getItem() == TiamatItems.tiamatItem)
             {
-                GUIAutocroppedView line = arrayList.get(i);
+                String[] layers = new String[arrayList.lineCount()];
+                for (int i = 0; i < layers.length; i++)
+                {
+                    GUIAutocroppedView line = arrayList.get(i);
 
-                GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
-                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
-                if (!texture.valid() || !subimage.valid()) return;
+                    GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
+                    GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
+                    if (!texture.valid() || !subimage.valid()) return;
 
-                GUIColor color = (GUIColor) line.get(5);
+                    GUIColor color = (GUIColor) line.get(5);
 
-                layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
+                    layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
+                }
+
+                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), layers));
             }
-
-            Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), layers));
+            else
+            {
+                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText()));
+            }
             gui.close();
         });
     }
