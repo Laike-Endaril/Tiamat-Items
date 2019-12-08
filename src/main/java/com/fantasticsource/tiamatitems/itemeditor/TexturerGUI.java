@@ -4,7 +4,6 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
-import com.fantasticsource.mctools.gui.element.other.GUITab;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIColor;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
@@ -14,7 +13,6 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
-import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tools.Tools;
@@ -53,7 +51,7 @@ public class TexturerGUI extends GUIScreen
 
 
         //Main
-        GUIScrollView arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1 - (separator.y + separator.height))
+        GUIArrayList<GUIElement> arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1 - (separator.y + separator.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -61,10 +59,8 @@ public class TexturerGUI extends GUIScreen
                 return new GUIElement[]
                         {
                                 new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE),
-                                new GUITab(gui, 0.4, 0),
-                                new GUILabeledTextInput(gui, "Index: ", "0", FILTER_POSITIVE),
-                                new GUITab(gui, 0.7, 0),
-                                new GUIColor(gui),
+                                new GUILabeledTextInput(gui, 0.4, 0, "Index: ", "0", FILTER_POSITIVE),
+                                new GUIColor(gui, 0.7, 0),
                                 new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
                         };
             }
@@ -88,14 +84,11 @@ public class TexturerGUI extends GUIScreen
                         String[] tokens = Tools.fixedSplit(layers.getStringTagAt(i), ":");
                         if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
 
-                        ((GUIArrayList<GUIElement>) arrayList).addLine(
-                                new GUILabeledTextInput(gui, "File: ", FilterNotEmpty.INSTANCE.parse(tokens[0]), FilterNotEmpty.INSTANCE),
-                                new GUITab(gui, 0.4, 0),
-                                new GUILabeledTextInput(gui, "Index: ", "" + FILTER_POSITIVE.parse(tokens[1]), FILTER_POSITIVE),
-                                new GUITab(gui, 0.7, 0),
-                                new GUIColor(gui, new Color(FilterColor.INSTANCE.parse(tokens[2]))),
-                                new GUIGradientBorder(gui, 1, 0.1, 0.3, Color.GRAY, Color.BLANK)
-                        );
+                        arrayList.addLine();
+                        GUIAutocroppedView line = arrayList.get(arrayList.lineCount() - 1);
+                        ((GUILabeledTextInput) line.get(2)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
+                        ((GUILabeledTextInput) line.get(3)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
+                        ((GUIColor) line.get(4)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
                     }
                 }
             }
@@ -111,16 +104,16 @@ public class TexturerGUI extends GUIScreen
         cancel.addClickActions(gui::close);
         save.addClickActions(() ->
         {
-            String[] layers = new String[((GUIArrayList<GUIElement>) arrayList).lineCount()];
+            String[] layers = new String[arrayList.lineCount()];
             for (int i = 0; i < layers.length; i++)
             {
-                GUIAutocroppedView line = (GUIAutocroppedView) arrayList.get(i);
+                GUIAutocroppedView line = arrayList.get(i);
 
                 GUILabeledTextInput texture = (GUILabeledTextInput) line.get(2);
-                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
+                GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(3);
                 if (!texture.input.valid() || !subimage.input.valid()) return;
 
-                GUIColor color = (GUIColor) line.get(6);
+                GUIColor color = (GUIColor) line.get(4);
 
                 layers[i] = texture.input.getText().trim() + ':' + subimage.input.getText().trim() + ':' + color.getText();
             }
