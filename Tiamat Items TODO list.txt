@@ -1,1 +1,8 @@
+Fix render issue in GUI (added space between lines)
+
+Add layer renders to GUI
+
+Use dropdown for layer texture
+Use dropdown for layer index
+
 Improve render via back-to-front voxel ordering?  Not sure how to determine which direction to move in for in-world renders...
