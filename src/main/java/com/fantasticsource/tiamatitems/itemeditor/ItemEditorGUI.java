@@ -3,7 +3,6 @@ package com.fantasticsource.tiamatitems.itemeditor;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIColor;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
@@ -13,6 +12,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tools.Tools;
@@ -56,12 +56,23 @@ public class ItemEditorGUI extends GUIScreen
         GUINavbar navbar = new GUINavbar(gui, Color.AQUA);
         GUITextButton save = new GUITextButton(gui, "Save", Color.GREEN);
         GUITextButton cancel = new GUITextButton(gui, "Cancel", Color.RED);
-        GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.01, 0.3, Color.GRAY, Color.BLANK);
-        gui.root.addAll(navbar, save, cancel, separator);
+        gui.root.addAll(navbar, save, cancel);
 
 
-        //Main
-        GUIArrayList<GUIElement> arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1 - (separator.y + separator.height))
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture");
+        gui.root.add(tabView);
+
+
+        //General tab
+        GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
+        tabView.tabViews.get(0).addAll
+                (
+                        name
+                );
+
+
+        //Texture tab
+        GUIArrayList<GUIElement> arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -80,8 +91,8 @@ public class ItemEditorGUI extends GUIScreen
                 return new GUIGradient(gui, 1, 1, AL_WHITE, AL_WHITE, AL_BLACK, AL_BLACK);
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
-        gui.root.addAll(arrayList, scrollbar);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
+        tabView.tabViews.get(1).addAll(arrayList, scrollbar);
 
 
         //Add existing layers
@@ -111,14 +122,12 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Add actions
-        separator.addRecalcActions(() ->
-        {
-            arrayList.height = 1 - (separator.y + separator.height);
-            scrollbar.height = 1 - (separator.y + separator.height);
-        });
+        cancel.addRecalcActions(() -> tabView.height = 1 - (cancel.y + cancel.height));
         cancel.addClickActions(gui::close);
         save.addClickActions(() ->
         {
+            if (!name.valid()) return;
+
             String[] layers = new String[arrayList.lineCount()];
             for (int i = 0; i < layers.length; i++)
             {
@@ -126,14 +135,14 @@ public class ItemEditorGUI extends GUIScreen
 
                 GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
                 GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
-                if (!texture.input.valid() || !subimage.input.valid()) return;
+                if (!texture.valid() || !subimage.valid()) return;
 
                 GUIColor color = (GUIColor) line.get(5);
 
-                layers[i] = texture.input.getText().trim() + ':' + subimage.input.getText().trim() + ':' + color.getText();
+                layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
             }
 
-            Network.WRAPPER.sendToServer(new Network.SaveItemTexturePacket(layers));
+            Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), layers));
             gui.close();
         });
     }

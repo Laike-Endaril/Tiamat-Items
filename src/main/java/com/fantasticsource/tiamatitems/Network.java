@@ -26,27 +26,31 @@ public class Network
 
     public static void init()
     {
-        WRAPPER.registerMessage(SaveItemTexturePacketHandler.class, SaveItemTexturePacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
     }
 
 
-    public static class SaveItemTexturePacket implements IMessage
+    public static class EditItemPacket implements IMessage
     {
+        String name;
         String[] layers;
 
-        public SaveItemTexturePacket()
+        public EditItemPacket()
         {
             //Required
         }
 
-        public SaveItemTexturePacket(String[] layers)
+        public EditItemPacket(String name, String[] layers)
         {
+            this.name = name;
             this.layers = layers;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
+            ByteBufUtils.writeUTF8String(buf, name);
+
             buf.writeInt(layers.length);
             for (String layer : layers) ByteBufUtils.writeUTF8String(buf, layer);
         }
@@ -54,15 +58,17 @@ public class Network
         @Override
         public void fromBytes(ByteBuf buf)
         {
+            name = ByteBufUtils.readUTF8String(buf);
+
             layers = new String[buf.readInt()];
             for (int i = 0; i < layers.length; i++) layers[i] = ByteBufUtils.readUTF8String(buf);
         }
     }
 
-    public static class SaveItemTexturePacketHandler implements IMessageHandler<SaveItemTexturePacket, IMessage>
+    public static class EditItemPacketHandler implements IMessageHandler<EditItemPacket, IMessage>
     {
         @Override
-        public IMessage onMessage(SaveItemTexturePacket packet, MessageContext ctx)
+        public IMessage onMessage(EditItemPacket packet, MessageContext ctx)
         {
             EntityPlayerMP player = ctx.getServerHandler().player;
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -73,6 +79,8 @@ public class Network
                     ItemStack stack = player.getHeldItemMainhand();
                     if (stack.getItem() == TiamatItems.tiamatItem)
                     {
+                        stack.setStackDisplayName(packet.name);
+
                         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
                         NBTTagCompound compound = stack.getTagCompound();
 
