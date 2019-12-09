@@ -8,7 +8,7 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
-import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tiamatitems.CategoryTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -53,7 +53,7 @@ public class TagCategoryGUI extends GUIScreen
 
         //Tags
         StringBuilder tags;
-        ArrayList<String> tagList = TiamatItems.getItemCategoryTags(stack, category);
+        ArrayList<String> tagList = CategoryTags.getItemCategoryTags(stack, category);
         if (tagList.size() > 0)
         {
             tags = new StringBuilder(tagList.get(0));
@@ -75,9 +75,9 @@ public class TagCategoryGUI extends GUIScreen
         cancel.addClickActions(this::close);
         save.addClickActions(() ->
         {
-            TiamatItems.removeItemCategory(stack, category);
+            CategoryTags.removeItemCategory(stack, category);
 
-            for (String tag : Tools.fixedSplit(tagsElement.getText(), "\n")) TiamatItems.addItemCategoryTag(stack, category, tag);
+            for (String tag : Tools.fixedSplit(tagsElement.getText(), "\n")) CategoryTags.addItemCategoryTag(stack, category, tag);
             close();
         });
     }

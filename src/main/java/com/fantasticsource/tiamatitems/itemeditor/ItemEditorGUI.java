@@ -13,6 +13,8 @@ import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
+import com.fantasticsource.tiamatitems.CategoryTags;
+import com.fantasticsource.tiamatitems.LayerTags;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tools.Tools;
@@ -25,7 +27,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -59,7 +60,10 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //General tab
+        //Name
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
+
+        //Lore
         ArrayList<String> loreLines = MCTools.getLore(stack);
         StringBuilder loreString = new StringBuilder();
         if (loreLines != null && loreLines.size() > 0)
@@ -78,6 +82,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Texture tab
+        //List
         GUIArrayList<GUIElement> layerArrayElement = new GUIArrayList<GUIElement>(gui, 0.98, 1)
         {
             @Override
@@ -119,6 +124,7 @@ public class ItemEditorGUI extends GUIScreen
             }
         }
 
+        //Remove and replace with explanation if item is not compatible with texture layers
         if (stack.getItem() != TiamatItems.tiamatItem)
         {
             layerArrayElement.clear();
@@ -136,7 +142,7 @@ public class ItemEditorGUI extends GUIScreen
                 GUITextInput categoryInput = new GUITextInput(gui, "Type", FilterNotEmpty.INSTANCE);
                 categoryInput.addRecalcActions(() ->
                 {
-                    if (categoryInput.valid()) TiamatItems.renameItemCategory(stack, categoryInput.oldText, categoryInput.getText());
+                    if (categoryInput.valid()) CategoryTags.renameItemCategory(stack, categoryInput.oldText, categoryInput.getText());
                 });
 
                 GUIText tagsButton = new GUIText(gui, "<Edit Tags>", getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
@@ -168,17 +174,14 @@ public class ItemEditorGUI extends GUIScreen
         cancel.addClickActions(gui::close);
         save.addClickActions(() ->
         {
+            //Validation
+            //General
             if (!name.valid()) return;
 
-            LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<>();
-            for (String category : TiamatItems.getItemCategories(stack))
-            {
-                map.put(category, new ArrayList<>(TiamatItems.getItemCategoryTags(stack, category)));
-            }
-
+            //Layers
+            String[] layers = new String[layerArrayElement.lineCount()];
             if (stack.getItem() == TiamatItems.tiamatItem)
             {
-                String[] layers = new String[layerArrayElement.lineCount()];
                 for (int i = 0; i < layers.length; i++)
                 {
                     GUIAutocroppedView line = layerArrayElement.get(i);
@@ -191,13 +194,22 @@ public class ItemEditorGUI extends GUIScreen
 
                     layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
                 }
+            }
 
-                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), map, layers));
-            }
-            else
-            {
-                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), map));
-            }
+
+            //Set stack params
+            //General
+            stack.setStackDisplayName(name.getText());
+            MCTools.setLore(stack, lore.getText());
+
+            //Layers
+            LayerTags.removeLayers(stack);
+            for (String layer : layers) LayerTags.addItemLayer(stack, layer);
+
+            //Category tags are already stored in the stack via GUI logic
+
+            //Send to server
+            Network.WRAPPER.sendToServer(new Network.EditItemPacket(stack));
             gui.close();
         });
     }
@@ -210,13 +222,13 @@ public class ItemEditorGUI extends GUIScreen
 
     private void addCategories(ItemStack stack)
     {
-        for (String category : TiamatItems.getItemCategories(stack))
+        for (String category : CategoryTags.getItemCategories(stack))
         {
             categories.addLine();
             GUIAutocroppedView line = categories.get(categories.lineCount() - 1);
             GUITextInput categoryInput = (GUITextInput) line.get(3);
             categoryInput.setText(FilterNotEmpty.INSTANCE.parse(category));
-            line.get(2).addClickActions(() -> TiamatItems.removeItemCategory(stack, categoryInput.getText()));
+            line.get(2).addClickActions(() -> CategoryTags.removeItemCategory(stack, categoryInput.getText()));
         }
     }
 }
