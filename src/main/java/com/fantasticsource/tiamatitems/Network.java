@@ -17,6 +17,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class Network
@@ -35,22 +39,26 @@ public class Network
         String name;
         String lore;
         String[] layers = null;
+        LinkedHashMap<String, ArrayList<String>> categoryTags;
 
         public EditItemPacket()
         {
             //Required
         }
 
-        public EditItemPacket(String name, String lore)
+        public EditItemPacket(String name, String lore, LinkedHashMap<String, ArrayList<String>> categoryTags)
         {
             this.name = name;
             this.lore = lore;
+            this.categoryTags = categoryTags;
         }
 
-        public EditItemPacket(String name, String lore, String[] layers)
+        public EditItemPacket(String name, String lore, LinkedHashMap<String, ArrayList<String>> categoryTags, String[] layers)
         {
             this.name = name;
             this.lore = lore;
+            this.categoryTags = categoryTags;
+
             this.layers = layers;
         }
 
@@ -59,6 +67,14 @@ public class Network
         {
             ByteBufUtils.writeUTF8String(buf, name);
             ByteBufUtils.writeUTF8String(buf, lore);
+
+            buf.writeInt(categoryTags.size());
+            for (Map.Entry<String, ArrayList<String>> entry : categoryTags.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buf, entry.getKey());
+                buf.writeInt(entry.getValue().size());
+                for (String tag : entry.getValue()) ByteBufUtils.writeUTF8String(buf, tag);
+            }
 
             buf.writeBoolean(layers != null);
             if (layers != null)
@@ -73,6 +89,14 @@ public class Network
         {
             name = ByteBufUtils.readUTF8String(buf);
             lore = ByteBufUtils.readUTF8String(buf);
+
+            categoryTags = new LinkedHashMap<>();
+            for (int i = buf.readInt(); i > 0; i--)
+            {
+                ArrayList<String> category = new ArrayList<>();
+                categoryTags.put(ByteBufUtils.readUTF8String(buf), category);
+                for (int i2 = buf.readInt(); i2 > 0; i2--) category.add(ByteBufUtils.readUTF8String(buf));
+            }
 
             if (buf.readBoolean())
             {
@@ -98,6 +122,12 @@ public class Network
                     stack.setStackDisplayName(packet.name);
 
                     MCTools.setLore(stack, packet.lore);
+
+                    TiamatItems.clearItemCategories(stack);
+                    for (Map.Entry<String, ArrayList<String>> entry : packet.categoryTags.entrySet())
+                    {
+                        for (String tag : entry.getValue()) TiamatItems.addItemCategoryTag(stack, entry.getKey(), tag);
+                    }
 
                     if (packet.layers != null && stack.getItem() == TiamatItems.tiamatItem)
                     {

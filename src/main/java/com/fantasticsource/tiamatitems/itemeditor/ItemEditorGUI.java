@@ -25,19 +25,18 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class ItemEditorGUI extends GUIScreen
 {
-    public static final Color
-            AL_WHITE = Color.WHITE.copy().setAF(0.3f),
-            AL_BLACK = Color.BLACK.copy().setAF(0.3f);
+    private GUIArrayList<GUIText> categories;
 
     public static void show()
     {
-        ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand().copy();
 
 
         ItemEditorGUI gui = new ItemEditorGUI();
@@ -55,7 +54,7 @@ public class ItemEditorGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags");
         gui.root.add(tabView);
 
 
@@ -79,7 +78,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Texture tab
-        GUIArrayList<GUIElement> arrayList = new GUIArrayList<GUIElement>(gui, 0.98, 1)
+        GUIArrayList<GUIElement> layerArrayElement = new GUIArrayList<GUIElement>(gui, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -91,16 +90,9 @@ public class ItemEditorGUI extends GUIScreen
                                 new GUIColor(gui, 0.7, 0)
                         };
             }
-
-            @Override
-            public GUIElement newLineBackgroundElement()
-            {
-                return new GUIGradient(gui, 1, 1, AL_WHITE, AL_WHITE, AL_BLACK, AL_BLACK);
-            }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList);
-        tabView.tabViews.get(1).addAll(arrayList, scrollbar);
-
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
+        tabView.tabViews.get(1).addAll(layerArrayElement, scrollbar);
 
         //Add existing layers
         if (stack.hasTagCompound())
@@ -117,8 +109,8 @@ public class ItemEditorGUI extends GUIScreen
                         String[] tokens = Tools.fixedSplit(layers.getStringTagAt(i), ":");
                         if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
 
-                        arrayList.addLine();
-                        GUIAutocroppedView line = arrayList.get(arrayList.lineCount() - 1);
+                        layerArrayElement.addLine();
+                        GUIAutocroppedView line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
                         ((GUILabeledTextInput) line.get(3)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
                         ((GUILabeledTextInput) line.get(4)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
                         ((GUIColor) line.get(5)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
@@ -129,10 +121,46 @@ public class ItemEditorGUI extends GUIScreen
 
         if (stack.getItem() != TiamatItems.tiamatItem)
         {
-            arrayList.clear();
+            layerArrayElement.clear();
             tabView.tabViews.get(1).remove(1);
             tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "This feature only works when right clicking the block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName()));
         }
+
+
+        //Category tags tab
+        gui.categories = new GUIArrayList<GUIText>(gui, 0.98, 1)
+        {
+            @Override
+            public GUIText[] newLineDefaultElements()
+            {
+                GUITextInput categoryInput = new GUITextInput(gui, "Type", FilterNotEmpty.INSTANCE);
+                categoryInput.addRecalcActions(() ->
+                {
+                    if (categoryInput.valid()) TiamatItems.renameItemCategory(stack, categoryInput.oldText, categoryInput.getText());
+                });
+
+                GUIText tagsButton = new GUIText(gui, "<Edit Tags>", getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
+                tagsButton.addClickActions(() ->
+                {
+                    if (categoryInput.valid())
+                    {
+                        TagCategoryGUI categoryGUI = new TagCategoryGUI(stack, categoryInput.getText());
+                        categoryGUI.addOnClosedActions(() ->
+                        {
+                            while (gui.categories.lineCount() > 0) gui.categories.remove(0);
+                            gui.addCategories(stack);
+                        });
+                    }
+                });
+
+                return new GUIText[]{categoryInput, tagsButton};
+            }
+        };
+        scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
+        tabView.tabViews.get(2).addAll(gui.categories, scrollbar);
+
+        //Add existing categories
+        gui.addCategories(stack);
 
 
         //Add actions
@@ -142,12 +170,18 @@ public class ItemEditorGUI extends GUIScreen
         {
             if (!name.valid()) return;
 
+            LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<>();
+            for (String category : TiamatItems.getItemCategories(stack))
+            {
+                map.put(category, new ArrayList<>(TiamatItems.getItemCategoryTags(stack, category)));
+            }
+
             if (stack.getItem() == TiamatItems.tiamatItem)
             {
-                String[] layers = new String[arrayList.lineCount()];
+                String[] layers = new String[layerArrayElement.lineCount()];
                 for (int i = 0; i < layers.length; i++)
                 {
-                    GUIAutocroppedView line = arrayList.get(i);
+                    GUIAutocroppedView line = layerArrayElement.get(i);
 
                     GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
                     GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
@@ -158,11 +192,11 @@ public class ItemEditorGUI extends GUIScreen
                     layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
                 }
 
-                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), layers));
+                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), map, layers));
             }
             else
             {
-                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText()));
+                Network.WRAPPER.sendToServer(new Network.EditItemPacket(name.getText(), lore.getText(), map));
             }
             gui.close();
         });
@@ -172,5 +206,17 @@ public class ItemEditorGUI extends GUIScreen
     public String title()
     {
         return "Item Editor";
+    }
+
+    private void addCategories(ItemStack stack)
+    {
+        for (String category : TiamatItems.getItemCategories(stack))
+        {
+            categories.addLine();
+            GUIAutocroppedView line = categories.get(categories.lineCount() - 1);
+            GUITextInput categoryInput = (GUITextInput) line.get(3);
+            categoryInput.setText(FilterNotEmpty.INSTANCE.parse(category));
+            line.get(2).addClickActions(() -> TiamatItems.removeItemCategory(stack, categoryInput.getText()));
+        }
     }
 }
