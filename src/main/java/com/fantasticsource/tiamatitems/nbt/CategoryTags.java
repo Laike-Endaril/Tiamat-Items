@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems;
+package com.fantasticsource.tiamatitems.nbt;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

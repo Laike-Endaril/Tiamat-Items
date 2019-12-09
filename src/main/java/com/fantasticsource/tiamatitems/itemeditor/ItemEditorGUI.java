@@ -13,8 +13,8 @@ import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
-import com.fantasticsource.tiamatitems.CategoryTags;
-import com.fantasticsource.tiamatitems.LayerTags;
+import com.fantasticsource.tiamatitems.nbt.CategoryTags;
+import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tools.Tools;
@@ -82,7 +82,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Texture tab
-        //List
+        //Layer list
         GUIArrayList<GUIElement> layerArrayElement = new GUIArrayList<GUIElement>(gui, 0.98, 1)
         {
             @Override
@@ -203,7 +203,7 @@ public class ItemEditorGUI extends GUIScreen
             MCTools.setLore(stack, lore.getText());
 
             //Layers
-            LayerTags.removeLayers(stack);
+            LayerTags.clearItemLayers(stack);
             for (String layer : layers) LayerTags.addItemLayer(stack, layer);
 
             //Category tags are already stored in the stack via GUI logic

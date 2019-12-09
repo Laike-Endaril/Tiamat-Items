@@ -8,7 +8,7 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
-import com.fantasticsource.tiamatitems.CategoryTags;
+import com.fantasticsource.tiamatitems.nbt.CategoryTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
