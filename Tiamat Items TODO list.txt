@@ -1,7 +1,5 @@
 * GUI
 
-Change category edit button from text to an image, and put it on left side
-
 Create GUIItemStack
 Add layer renders to GUI
 

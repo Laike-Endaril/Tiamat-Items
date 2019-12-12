@@ -3,14 +3,15 @@ package com.fantasticsource.tiamatitems.itemeditor;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
-import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
@@ -29,7 +30,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 
 public class ItemEditorGUI extends GUIScreen
 {
-    private GUIArrayList<GUIText> categories;
+    private GUIList categories;
 
     public static void show()
     {
@@ -79,7 +80,7 @@ public class ItemEditorGUI extends GUIScreen
 
         //Texture tab
         //Layer list
-        GUIArrayList<GUIElement> layerArrayElement = new GUIArrayList<GUIElement>(gui, 0.98, 1)
+        GUIList layerArrayElement = new GUIList(gui, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -118,10 +119,10 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Category tags tab
-        gui.categories = new GUIArrayList<GUIText>(gui, 0.98, 1)
+        gui.categories = new GUIList(gui, 0.98, 1)
         {
             @Override
-            public GUIText[] newLineDefaultElements()
+            public GUIElement[] newLineDefaultElements()
             {
                 GUITextInput categoryInput = new GUITextInput(gui, "Type", FilterNotEmpty.INSTANCE);
                 categoryInput.addRecalcActions(() ->
@@ -129,7 +130,7 @@ public class ItemEditorGUI extends GUIScreen
                     if (categoryInput.valid()) CategoryTags.renameItemCategory(stack, categoryInput.oldText, categoryInput.getText());
                 });
 
-                GUIText tagsButton = new GUIText(gui, "<Edit Tags>", getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
+                GUIButton tagsButton = GUIButton.newListButton(screen);
                 tagsButton.addClickActions(() ->
                 {
                     if (categoryInput.valid())
@@ -143,7 +144,7 @@ public class ItemEditorGUI extends GUIScreen
                     }
                 });
 
-                return new GUIText[]{categoryInput, tagsButton};
+                return new GUIElement[]{tagsButton, categoryInput};
             }
         };
         scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
