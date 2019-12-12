@@ -9,18 +9,13 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -118,30 +113,5 @@ public class TiamatItems
     public static void clientDisconnectFromServer(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
         TextureCache.clear(event);
-    }
-
-
-    @SubscribeEvent
-    public static void rightClickItem(PlayerInteractEvent.RightClickItem event)
-    {
-        ItemStack stack = event.getItemStack();
-
-        if (stack.getItem() == tiamatItem)
-        {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound == null)
-            {
-                compound = new NBTTagCompound();
-                stack.setTagCompound(compound);
-            }
-
-            compound.setTag(MODID, new NBTTagCompound());
-            compound = compound.getCompoundTag(MODID);
-
-            compound.setTag("layers", new NBTTagList());
-            NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
-
-            list.appendTag(new NBTTagString("Test:0:ff000077"));
-        }
     }
 }
