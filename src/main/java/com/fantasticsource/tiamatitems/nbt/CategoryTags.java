@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
-import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
+import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class CategoryTags
 {
@@ -17,9 +17,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return false;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return false;
+        if (!compound.hasKey(DOMAIN)) return false;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return false;
 
         compound = compound.getCompoundTag("categories");
@@ -37,9 +37,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return result;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return result;
+        if (!compound.hasKey(DOMAIN)) return result;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return result;
 
         compound = compound.getCompoundTag("categories");
@@ -58,9 +58,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return result;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return result;
+        if (!compound.hasKey(DOMAIN)) return result;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return result;
 
         compound = compound.getCompoundTag("categories");
@@ -76,8 +76,8 @@ public class CategoryTags
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey(MODID)) compound.setTag(MODID, new NBTTagCompound());
-        compound = compound.getCompoundTag(MODID);
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
 
         if (!compound.hasKey("categories")) compound.setTag("categories", new NBTTagCompound());
         compound = compound.getCompoundTag("categories");
@@ -94,9 +94,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return;
+        if (!compound.hasKey(DOMAIN)) return;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return;
 
         compound = compound.getCompoundTag("categories");
@@ -119,13 +119,13 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(MODID)) return;
+        if (!mainTag.hasKey(DOMAIN)) return;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return;
 
         compound.removeTag("categories");
-        if (compound.hasNoTags()) mainTag.removeTag(MODID);
+        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
     public static void removeItemCategory(ItemStack stack, String category)
@@ -133,9 +133,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(MODID)) return;
+        if (!mainTag.hasKey(DOMAIN)) return;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return;
 
         NBTTagCompound categories = compound.getCompoundTag("categories");
@@ -146,7 +146,7 @@ public class CategoryTags
         if (categories.getKeySet().size() == 0)
         {
             compound.removeTag("categories");
-            if (compound.hasNoTags()) mainTag.removeTag(MODID);
+            if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
         }
     }
 
@@ -157,9 +157,9 @@ public class CategoryTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(MODID)) return;
+        if (!mainTag.hasKey(DOMAIN)) return;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
         if (!compound.hasKey("categories")) return;
 
         NBTTagCompound categories = compound.getCompoundTag("categories");

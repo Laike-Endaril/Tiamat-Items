@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
+import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -13,13 +14,10 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class TiamatItemRenderer implements IItemRenderer
@@ -97,38 +95,19 @@ public class TiamatItemRenderer implements IItemRenderer
     {
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (compound == null || !compound.hasKey(MODID))
+        if (!LayerTags.itemHasMainLayerTag(stack))
         {
             IItemRendererHandler.renderItemStack(stack, model);
             return;
         }
 
-        compound = compound.getCompoundTag(MODID);
-        if (!compound.hasKey("layers"))
-        {
-            IItemRendererHandler.renderItemStack(stack, model);
-            return;
-        }
-
-        NBTTagList layersNBT = compound.getTagList("layers", Constants.NBT.TAG_STRING);
-        int count = layersNBT.tagCount();
-        if (count == 0) return;
-
-        String[] layerKeys = new String[count];
-        for (int i = 0; i < count; i++)
-        {
-            String layer = layersNBT.getStringTagAt(i);
-            int colons = 0;
-            for (char c : layer.toCharArray()) if (c == ':') colons++;
-            if (colons != 2) return;
-
-            layerKeys[i] = layer;
-        }
+        ArrayList<String> layerKeys = LayerTags.getItemLayers(stack);
+        if (layerKeys.size() == 0) return;
 
 
         //Check and load/generate/cache texture
-        StringBuilder combinedReference = new StringBuilder(layerKeys[0]);
-        for (int i = 1; i < layerKeys.length; i++) combinedReference.append("|").append(layerKeys[i]);
+        StringBuilder combinedReference = new StringBuilder(layerKeys.get(0));
+        for (int i = 1; i < layerKeys.size(); i++) combinedReference.append("|").append(layerKeys.get(i));
 
         int width = 0, height = 0;
         Texture texture = TextureCache.textures.get(combinedReference.toString());

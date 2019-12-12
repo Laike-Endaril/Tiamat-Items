@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
-import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
+import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class LayerTags
 {
@@ -19,9 +19,9 @@ public class LayerTags
         if (!stack.hasTagCompound()) return result;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return result;
+        if (!compound.hasKey(DOMAIN)) return result;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("layers")) return result;
 
         NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
@@ -35,13 +35,13 @@ public class LayerTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(MODID)) return;
+        if (!mainTag.hasKey(DOMAIN)) return;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
         if (!compound.hasKey("layers")) return;
 
         compound.removeTag("layers");
-        if (compound.hasNoTags()) mainTag.removeTag(MODID);
+        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
     public static void removeItemLayer(ItemStack stack, String layer)
@@ -49,9 +49,9 @@ public class LayerTags
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(MODID)) return;
+        if (!mainTag.hasKey(DOMAIN)) return;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(MODID);
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
         if (!compound.hasKey("layers")) return;
 
         NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
@@ -63,7 +63,7 @@ public class LayerTags
                 if (list.tagCount() == 0)
                 {
                     compound.removeTag("layers");
-                    if (compound.hasNoTags()) mainTag.removeTag(MODID);
+                    if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
                 }
                 break;
             }
@@ -77,8 +77,8 @@ public class LayerTags
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey(MODID)) compound.setTag(MODID, new NBTTagCompound());
-        compound = compound.getCompoundTag(MODID);
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
 
         if (!compound.hasKey("layers")) compound.setTag("layers", new NBTTagList());
         NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
@@ -91,13 +91,24 @@ public class LayerTags
         if (!stack.hasTagCompound()) return false;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(MODID)) return false;
+        if (!compound.hasKey(DOMAIN)) return false;
 
-        compound = compound.getCompoundTag(MODID);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("layers")) return false;
 
         NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
         for (int i = list.tagCount() - 1; i >= 0; i--) if (list.getStringTagAt(i).equals(layer)) return true;
         return false;
+    }
+
+    public static boolean itemHasMainLayerTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return false;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        return compound.hasKey("layers");
     }
 }

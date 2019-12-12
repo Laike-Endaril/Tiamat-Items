@@ -13,23 +13,19 @@ import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
-import com.fantasticsource.tiamatitems.nbt.CategoryTags;
-import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tiamatitems.nbt.CategoryTags;
+import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
-import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class ItemEditorGUI extends GUIScreen
 {
@@ -100,28 +96,16 @@ public class ItemEditorGUI extends GUIScreen
         tabView.tabViews.get(1).addAll(layerArrayElement, scrollbar);
 
         //Add existing layers
-        if (stack.hasTagCompound())
+        for (String layerString : LayerTags.getItemLayers(stack))
         {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound.hasKey(MODID))
-            {
-                compound = compound.getCompoundTag(MODID);
-                if (compound.hasKey("layers"))
-                {
-                    NBTTagList layers = compound.getTagList("layers", Constants.NBT.TAG_STRING);
-                    for (int i = 0; i < layers.tagCount(); i++)
-                    {
-                        String[] tokens = Tools.fixedSplit(layers.getStringTagAt(i), ":");
-                        if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
+            String[] tokens = Tools.fixedSplit(layerString, ":");
+            if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
 
-                        layerArrayElement.addLine();
-                        GUIAutocroppedView line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
-                        ((GUILabeledTextInput) line.get(3)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
-                        ((GUILabeledTextInput) line.get(4)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
-                        ((GUIColor) line.get(5)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
-                    }
-                }
-            }
+            layerArrayElement.addLine();
+            GUIAutocroppedView line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
+            ((GUILabeledTextInput) line.get(3)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
+            ((GUILabeledTextInput) line.get(4)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
+            ((GUIColor) line.get(5)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
         }
 
         //Remove and replace with explanation if item is not compatible with texture layers
