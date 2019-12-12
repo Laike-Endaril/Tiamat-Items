@@ -1,20 +1,17 @@
 * GUI
 
-Add caching options to GUI
-Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)
-Add attributes to GUI
 Change category edit button from text to an image, and put it on left side
-Add affixes to GUI
-
-
-
-* CONVENIENCE
 
 Create GUIItemStack
 Add layer renders to GUI
 
 Use dropdown for layer texture
 Use dropdown for layer index
+
+Add caching options to GUI
+Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)
+Add attributes to GUI
+Add affixes to GUI
 
 
 
