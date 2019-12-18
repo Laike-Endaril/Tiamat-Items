@@ -111,4 +111,80 @@ public class LayerTags
         compound = compound.getCompoundTag(DOMAIN);
         return compound.hasKey("layers");
     }
+
+
+    public static void removeItemLayerCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("cacheLayers")) return;
+
+        compound.removeTag("cacheLayers");
+    }
+
+    public static void addItemLayerCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        if (!compound.hasKey("cacheLayers")) compound.setBoolean("cacheLayers", true);
+    }
+
+    public static boolean hasItemLayerCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return false;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("cacheLayers")) return false;
+
+        return compound.getBoolean("cacheLayers");
+    }
+
+
+    public static void removeItemTextureCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("cacheTexture")) return;
+
+        compound.removeTag("cacheTexture");
+    }
+
+    public static void addItemTextureCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        if (!compound.hasKey("cacheTexture")) compound.setBoolean("cacheTexture", true);
+    }
+
+    public static boolean hasItemTextureCacheTag(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return false;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("cacheTexture")) return false;
+
+        return compound.getBoolean("cacheTexture");
+    }
 }
