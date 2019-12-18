@@ -1,9 +1,10 @@
 * GUI
 
-Add layer renders to GUI
+Fix issue where item layers don't appear if GUI is opened while maximized (but are fine if GUI is opened while windowed)
 
-Use dropdown for layer texture
-Use dropdown for layer index
+Re-add layer editing
+
+Use arraylist for texture selection, with existing white-layer textures in alphabetical:index order
 
 Add caching options to GUI
 Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)

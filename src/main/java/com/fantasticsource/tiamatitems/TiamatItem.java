@@ -26,7 +26,10 @@ public class TiamatItem extends Item
     public static ItemStack get(boolean cacheLayers, boolean cacheTexture, String... layers)
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
-        for (String layer : layers) LayerTags.addItemLayer(stack, layer);
+        for (String layer : layers)
+        {
+            if (layer != null) LayerTags.addItemLayer(stack, layer);
+        }
         if (cacheLayers) LayerTags.addItemLayerCacheTag(stack);
         if (cacheTexture) LayerTags.addItemTextureCacheTag(stack);
         return stack;

@@ -87,9 +87,7 @@ public class ItemEditorGUI extends GUIScreen
             {
                 return new GUIElement[]
                         {
-                                new GUILabeledTextInput(gui, "File: ", "FILENAME", FilterNotEmpty.INSTANCE),
-                                new GUILabeledTextInput(gui, 0.4, 0, "Index: ", "0", FILTER_POSITIVE),
-                                new GUIColor(gui, 0.7, 0)
+                                new GUIItemLayer(screen, 16, 16, null)
                         };
             }
         };
@@ -104,9 +102,7 @@ public class ItemEditorGUI extends GUIScreen
 
             layerArrayElement.addLine();
             GUIAutocroppedView line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
-            ((GUILabeledTextInput) line.get(3)).setInput(FilterNotEmpty.INSTANCE.parse(tokens[0]));
-            ((GUILabeledTextInput) line.get(4)).setInput("" + FILTER_POSITIVE.parse(tokens[1]));
-            ((GUIColor) line.get(5)).setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
+            ((GUIItemLayer) line.get(3)).setLayer(layerString);
         }
 
         //Remove and replace with explanation if item is not compatible with texture layers
