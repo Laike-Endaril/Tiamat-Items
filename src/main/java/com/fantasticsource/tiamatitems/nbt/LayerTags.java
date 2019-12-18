@@ -137,7 +137,7 @@ public class LayerTags
         if (!compound.hasKey("cacheLayers")) compound.setBoolean("cacheLayers", true);
     }
 
-    public static boolean hasItemLayerCacheTag(ItemStack stack)
+    public static boolean itemHasLayerCacheTag(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return false;
 
@@ -175,7 +175,7 @@ public class LayerTags
         if (!compound.hasKey("cacheTexture")) compound.setBoolean("cacheTexture", true);
     }
 
-    public static boolean hasItemTextureCacheTag(ItemStack stack)
+    public static boolean itemHasTextureCacheTag(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return false;
 

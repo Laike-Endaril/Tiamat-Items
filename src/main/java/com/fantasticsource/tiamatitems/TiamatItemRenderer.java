@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -93,8 +92,6 @@ public class TiamatItemRenderer implements IItemRenderer
     @Override
     public void render(ItemStack stack, IBakedModel model, ItemCameraTransforms.TransformType transformType, float v)
     {
-        NBTTagCompound compound = stack.getTagCompound();
-
         if (!LayerTags.itemHasMainLayerTag(stack))
         {
             IItemRendererHandler.renderItemStack(stack, model);
@@ -149,7 +146,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
                     //Cache
-                    if (compound.getBoolean("cacheLayers"))
+                    if (LayerTags.itemHasLayerCacheTag(stack))
                     {
                         TextureCache.textures.put(key, layer);
                     }
@@ -201,7 +198,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
             //Cache
-            if (compound.getBoolean("cacheTexture"))
+            if (LayerTags.itemHasTextureCacheTag(stack))
             {
                 TextureCache.textures.put(combinedReference.toString(), texture);
             }
