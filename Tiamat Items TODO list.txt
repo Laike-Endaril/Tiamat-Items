@@ -1,6 +1,5 @@
 * GUI
 
-Create GUIItemStack
 Add layer renders to GUI
 
 Use dropdown for layer texture
