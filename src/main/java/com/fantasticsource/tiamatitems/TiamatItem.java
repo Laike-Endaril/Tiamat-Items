@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
+import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -20,6 +21,15 @@ public class TiamatItem extends Item
 
         setUnlocalizedName(MODID + ":tiamatitem");
         setRegistryName("tiamatitem");
+    }
+
+    public static ItemStack get(boolean cacheLayers, boolean cacheTexture, String... layers)
+    {
+        ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
+        for (String layer : layers) LayerTags.addItemLayer(stack, layer);
+        if (cacheLayers) LayerTags.addItemLayerCacheTag(stack);
+        if (cacheTexture) LayerTags.addItemTextureCacheTag(stack);
+        return stack;
     }
 
     @Override
