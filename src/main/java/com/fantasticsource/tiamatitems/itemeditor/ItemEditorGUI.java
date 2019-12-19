@@ -10,11 +10,11 @@ import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
-import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.CategoryTags;
 import com.fantasticsource.tiamatitems.nbt.LayerTags;
@@ -27,6 +27,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
+import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class ItemEditorGUI extends GUIScreen
 {
@@ -87,30 +88,38 @@ public class ItemEditorGUI extends GUIScreen
             {
                 return new GUIElement[]
                         {
-                                new GUIItemLayer(screen, 16, 16, null)
+                                new GUIItemLayer(screen, 16, 16, TextureCache.textures.keySet().toArray(new String[0])[0])
                         };
             }
         };
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
         tabView.tabViews.get(1).addAll(layerArrayElement, scrollbar);
 
-        //Add existing layers
-        for (String layerString : LayerTags.getItemLayers(stack))
-        {
-            String[] tokens = Tools.fixedSplit(layerString, ":");
-            if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
-
-            layerArrayElement.addLine();
-            GUIAutocroppedView line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
-            ((GUIItemLayer) line.get(3)).setLayer(layerString);
-        }
-
-        //Remove and replace with explanation if item is not compatible with texture layers
+        //Remove and replace with explanation if item is not compatible with texture layers, or if no texture files exist
         if (stack.getItem() != TiamatItems.tiamatItem)
         {
             layerArrayElement.clear();
             tabView.tabViews.get(1).remove(1);
             tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "This feature only works when right clicking the block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName()));
+        }
+        else if (TextureCache.textures.size() == 0)
+        {
+            layerArrayElement.clear();
+            tabView.tabViews.get(1).remove(1);
+            tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "No texture files were found! You can add them to...\n" + TextFormatting.RED + MCTools.getConfigDir().replaceAll("\\\\", "/") + MODID));
+        }
+        else
+        {
+            //Add existing layers if no errors occurred
+            for (String layerString : LayerTags.getItemLayers(stack))
+            {
+                String[] tokens = Tools.fixedSplit(layerString, ":");
+                if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
+
+                layerArrayElement.addLine();
+                GUIList.Line line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
+                ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
+            }
         }
 
 
@@ -165,15 +174,8 @@ public class ItemEditorGUI extends GUIScreen
             {
                 for (int i = 0; i < layers.length; i++)
                 {
-                    GUIAutocroppedView line = layerArrayElement.get(i);
-
-                    GUILabeledTextInput texture = (GUILabeledTextInput) line.get(3);
-                    GUILabeledTextInput subimage = (GUILabeledTextInput) line.get(4);
-                    if (!texture.valid() || !subimage.valid()) return;
-
-                    GUIColor color = (GUIColor) line.get(5);
-
-                    layers[i] = texture.getText().trim() + ':' + subimage.getText().trim() + ':' + color.getText();
+                    GUIList.Line line = layerArrayElement.get(i);
+                    layers[i] = ((GUIItemLayer) line.getLineElement(0)).getLayer();
                 }
             }
 
@@ -206,10 +208,10 @@ public class ItemEditorGUI extends GUIScreen
         for (String category : CategoryTags.getItemCategories(stack))
         {
             categories.addLine();
-            GUIAutocroppedView line = categories.get(categories.lineCount() - 1);
-            GUITextInput categoryInput = (GUITextInput) line.get(3);
+            GUIList.Line line = categories.get(categories.lineCount() - 1);
+            GUITextInput categoryInput = (GUITextInput) line.getLineElement(0);
             categoryInput.setText(FilterNotEmpty.INSTANCE.parse(category));
-            line.get(2).addClickActions(() -> CategoryTags.removeItemCategory(stack, categoryInput.getText()));
+            line.get(3).addClickActions(() -> CategoryTags.removeItemCategory(stack, categoryInput.getText()));
         }
     }
 }
