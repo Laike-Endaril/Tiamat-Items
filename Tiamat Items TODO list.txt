@@ -7,8 +7,10 @@ Re-add layer editing
 Use arraylist for texture selection, with existing white-layer textures in alphabetical:index order
 
 Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)
-Add attributes to GUI
-Add affixes to GUI
+Add attributes
+Add affixes
+
+Add rarity (pulls from TiamatRPG config)
 
 
 
