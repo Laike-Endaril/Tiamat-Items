@@ -8,6 +8,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
@@ -18,6 +19,7 @@ import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.CategoryTags;
 import com.fantasticsource.tiamatitems.nbt.LayerTags;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -61,6 +63,15 @@ public class ItemEditorGUI extends GUIScreen
         //Name
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
 
+        //Level
+        GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
+
+        //Level requirement
+        GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
+
+        //Value
+        GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
+
         //Lore
         ArrayList<String> loreLines = MCTools.getLore(stack);
         StringBuilder loreString = new StringBuilder();
@@ -70,9 +81,17 @@ public class ItemEditorGUI extends GUIScreen
             for (int i = 1; i < loreLines.size(); i++) loreString.append("\n").append(loreLines.get(i));
         }
         GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 0.5, new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
+
         tabView.tabViews.get(0).addAll
                 (
                         name,
+                        new GUITextSpacer(gui),
+                        level,
+                        new GUITextSpacer(gui),
+                        levelReq,
+                        new GUITextSpacer(gui),
+                        value,
+                        new GUITextSpacer(gui),
                         new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
                         lore,
                         new GUIVerticalScrollbar(gui, 0.02, 0.5, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore)
@@ -165,8 +184,19 @@ public class ItemEditorGUI extends GUIScreen
         save.addClickActions(() ->
         {
             //Validation
+
             //General
-            if (!name.valid()) return;
+            if (!name.valid() || !level.valid() || !levelReq.valid() || !value.valid()) return;
+
+
+            //Set stack params
+
+            //General
+            stack.setStackDisplayName(name.getText());
+            MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
+            MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
+            MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
+            MCTools.setLore(stack, lore.getText());
 
             //Layers
             String[] layers = new String[layerArrayElement.lineCount()];
@@ -179,13 +209,6 @@ public class ItemEditorGUI extends GUIScreen
                 }
             }
 
-
-            //Set stack params
-            //General
-            stack.setStackDisplayName(name.getText());
-            MCTools.setLore(stack, lore.getText());
-
-            //Layers
             LayerTags.clearItemLayers(stack);
             for (String layer : layers) LayerTags.addItemLayer(stack, layer);
 
