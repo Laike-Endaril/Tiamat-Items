@@ -16,4 +16,11 @@ Add rarity (pulls from TiamatRPG config)
 
 * RENDER
 
-Improve render via back-to-front voxel ordering?  Not sure how to determine which direction to move in for in-world renders...
+Improve render via back-to-front voxel ordering...
+...get current center-of-screen and use distances?
+
+
+
+* CONFIG
+
+Add default caching options (what values they have each time you edit a new item)
