@@ -2,10 +2,12 @@ package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -49,5 +51,14 @@ public class TiamatItem extends Item
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
         //TODO
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
+    {
+        if (this.isInCreativeTab(tab))
+        {
+            items.add(get(false, true));
+        }
     }
 }
