@@ -3,7 +3,7 @@ package com.fantasticsource.tiamatitems.itemeditor;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
 import com.fantasticsource.tiamatitems.TiamatItem;
-import com.fantasticsource.tiamatitems.nbt.LayerTags;
+import com.fantasticsource.tiamatitems.nbt.TextureTags;
 
 public class GUIItemLayer extends GUIItemStack
 {
@@ -24,6 +24,6 @@ public class GUIItemLayer extends GUIItemStack
 
     public String getLayer()
     {
-        return LayerTags.getItemLayers(getItemStack()).get(0);
+        return TextureTags.getItemLayers(getItemStack()).get(0);
     }
 }

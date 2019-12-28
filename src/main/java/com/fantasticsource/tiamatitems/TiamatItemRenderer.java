@@ -2,7 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
-import com.fantasticsource.tiamatitems.nbt.LayerTags;
+import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -92,13 +92,13 @@ public class TiamatItemRenderer implements IItemRenderer
     @Override
     public void render(ItemStack stack, IBakedModel model, ItemCameraTransforms.TransformType transformType, float v)
     {
-        if (!LayerTags.itemHasMainLayerTag(stack))
+        if (!TextureTags.itemHasMainLayerTag(stack))
         {
             IItemRendererHandler.renderItemStack(stack, model);
             return;
         }
 
-        ArrayList<String> layerKeys = LayerTags.getItemLayers(stack);
+        ArrayList<String> layerKeys = TextureTags.getItemLayers(stack);
         if (layerKeys.size() == 0) return;
 
 
@@ -146,7 +146,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
                     //Cache
-                    if (LayerTags.itemHasLayerCacheTag(stack))
+                    if (TextureTags.itemHasLayerCacheTag(stack))
                     {
                         TextureCache.textures.put(key, layer);
                     }
@@ -198,7 +198,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
 
             //Cache
-            if (LayerTags.itemHasTextureCacheTag(stack))
+            if (TextureTags.itemHasTextureCacheTag(stack))
             {
                 TextureCache.textures.put(combinedReference.toString(), texture);
             }

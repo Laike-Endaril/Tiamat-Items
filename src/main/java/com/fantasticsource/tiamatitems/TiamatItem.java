@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
-import com.fantasticsource.tiamatitems.nbt.LayerTags;
+import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -30,10 +30,10 @@ public class TiamatItem extends Item
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
         for (String layer : layers)
         {
-            if (layer != null) LayerTags.addItemLayer(stack, layer);
+            if (layer != null) TextureTags.addItemLayer(stack, layer);
         }
-        if (cacheLayers) LayerTags.addItemLayerCacheTag(stack);
-        if (cacheTexture) LayerTags.addItemTextureCacheTag(stack);
+        if (cacheLayers) TextureTags.addItemLayerCacheTag(stack);
+        if (cacheTexture) TextureTags.addItemTextureCacheTag(stack);
         return stack;
     }
 

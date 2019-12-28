@@ -5,12 +5,10 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
+import com.fantasticsource.mctools.gui.element.text.filter.*;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
@@ -18,8 +16,8 @@ import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.CategoryTags;
-import com.fantasticsource.tiamatitems.nbt.LayerTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -99,8 +97,15 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Texture tab
+
+        //Caching options
+        GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, "Cache Layers: ", TextureTags.itemHasLayerCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
+        GUILabeledTextInput cacheTexture = new GUILabeledTextInput(gui, "Cache Texture: ", TextureTags.itemHasTextureCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
+        GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.GRAY, Color.BLANK);
+        tabView.tabViews.get(1).addAll(cacheLayers, new GUITextSpacer(gui), cacheTexture, new GUITextSpacer(gui), separator);
+
         //Layer list
-        GUIList layerArrayElement = new GUIList(gui, 0.98, 1)
+        GUIList layerArrayElement = new GUIList(gui, 0.98, 1 - (separator.y + separator.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -111,26 +116,26 @@ public class ItemEditorGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
         tabView.tabViews.get(1).addAll(layerArrayElement, scrollbar);
 
         //Remove and replace with explanation if item is not compatible with texture layers, or if no texture files exist
         if (stack.getItem() != TiamatItems.tiamatItem)
         {
             layerArrayElement.clear();
-            tabView.tabViews.get(1).remove(1);
+            tabView.tabViews.get(1).clear();
             tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "This feature only works when right clicking the block with a " + new ItemStack(TiamatItems.tiamatItem).getDisplayName()));
         }
         else if (TextureCache.textures.size() == 0)
         {
             layerArrayElement.clear();
-            tabView.tabViews.get(1).remove(1);
+            tabView.tabViews.get(1).clear();
             tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "No texture files were found! You can add them to...\n" + TextFormatting.RED + MCTools.getConfigDir().replaceAll("\\\\", "/") + MODID));
         }
         else
         {
             //Add existing layers if no errors occurred
-            for (String layerString : LayerTags.getItemLayers(stack))
+            for (String layerString : TextureTags.getItemLayers(stack))
             {
                 String[] tokens = Tools.fixedSplit(layerString, ":");
                 if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
@@ -140,6 +145,13 @@ public class ItemEditorGUI extends GUIScreen
                 ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
             }
         }
+
+        //Add recalc actions
+        separator.addRecalcActions(() ->
+        {
+            layerArrayElement.height = 1 - (separator.y + separator.height);
+            scrollbar.height = 1 - (separator.y + separator.height);
+        });
 
 
         //Category tags tab
@@ -171,8 +183,8 @@ public class ItemEditorGUI extends GUIScreen
                 return new GUIElement[]{tagsButton, categoryInput};
             }
         };
-        scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
-        tabView.tabViews.get(2).addAll(gui.categories, scrollbar);
+        GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
+        tabView.tabViews.get(2).addAll(gui.categories, scrollbar2);
 
         //Add existing categories
         gui.addCategories(stack);
@@ -188,6 +200,9 @@ public class ItemEditorGUI extends GUIScreen
             //General
             if (!name.valid() || !level.valid() || !levelReq.valid() || !value.valid()) return;
 
+            //Texture
+            if (!cacheLayers.valid() || !cacheTexture.valid()) return;
+
 
             //Set stack params
 
@@ -198,7 +213,12 @@ public class ItemEditorGUI extends GUIScreen
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
             MCTools.setLore(stack, lore.getText());
 
-            //Layers
+            //Texture
+            if (FilterBoolean.INSTANCE.parse(cacheLayers.getText())) TextureTags.addItemLayerCacheTag(stack);
+            else TextureTags.removeItemLayerCacheTag(stack);
+            if (FilterBoolean.INSTANCE.parse(cacheTexture.getText())) TextureTags.addItemTextureCacheTag(stack);
+            else TextureTags.removeItemTextureCacheTag(stack);
+
             String[] layers = new String[layerArrayElement.lineCount()];
             if (stack.getItem() == TiamatItems.tiamatItem)
             {
@@ -209,8 +229,8 @@ public class ItemEditorGUI extends GUIScreen
                 }
             }
 
-            LayerTags.clearItemLayers(stack);
-            for (String layer : layers) LayerTags.addItemLayer(stack, layer);
+            TextureTags.clearItemLayers(stack);
+            for (String layer : layers) TextureTags.addItemLayer(stack, layer);
 
             //Category tags are already stored in the stack via GUI logic
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
-public class LayerTags
+public class TextureTags
 {
     public static ArrayList<String> getItemLayers(ItemStack stack)
     {
