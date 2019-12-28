@@ -58,17 +58,11 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //General tab
-        //Name
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
-
-        //Level
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
-
-        //Level requirement
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
-
-        //Value
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
+        GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Lore
         ArrayList<String> loreLines = MCTools.getLore(stack);
@@ -78,7 +72,8 @@ public class ItemEditorGUI extends GUIScreen
             loreString.append(loreLines.get(0));
             for (int i = 1; i < loreLines.size(); i++) loreString.append("\n").append(loreLines.get(i));
         }
-        GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 0.5, new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
+        GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 1 - (separator.y + separator.height), new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore);
 
         tabView.tabViews.get(0).addAll
                 (
@@ -91,9 +86,17 @@ public class ItemEditorGUI extends GUIScreen
                         value,
                         new GUITextSpacer(gui),
                         new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
+                        separator,
                         lore,
-                        new GUIVerticalScrollbar(gui, 0.02, 0.5, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore)
+                        scrollbar
                 );
+
+        //Add actions
+        scrollbar.addRecalcActions(() ->
+        {
+            lore.height = 1 - (separator.y + separator.height);
+            scrollbar.height = 1 - (separator.y + separator.height);
+        });
 
 
         //Texture tab
@@ -101,11 +104,10 @@ public class ItemEditorGUI extends GUIScreen
         //Caching options
         GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, "Cache Layers: ", TextureTags.itemHasLayerCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
         GUILabeledTextInput cacheTexture = new GUILabeledTextInput(gui, "Cache Texture: ", TextureTags.itemHasTextureCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
-        GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.GRAY, Color.BLANK);
-        tabView.tabViews.get(1).addAll(cacheLayers, new GUITextSpacer(gui), cacheTexture, new GUITextSpacer(gui), separator);
+        GUIGradientBorder separator2 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Layer list
-        GUIList layerArrayElement = new GUIList(gui, 0.98, 1 - (separator.y + separator.height))
+        GUIList layerArrayElement = new GUIList(gui, 0.98, 1 - (separator2.y + separator2.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -116,8 +118,18 @@ public class ItemEditorGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
-        tabView.tabViews.get(1).addAll(layerArrayElement, scrollbar);
+        GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator2.y + separator2.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, layerArrayElement);
+
+        tabView.tabViews.get(1).addAll
+                (
+                        cacheLayers,
+                        new GUITextSpacer(gui),
+                        cacheTexture,
+                        new GUITextSpacer(gui),
+                        separator2,
+                        layerArrayElement,
+                        scrollbar2
+                );
 
         //Remove and replace with explanation if item is not compatible with texture layers, or if no texture files exist
         if (stack.getItem() != TiamatItems.tiamatItem)
@@ -134,7 +146,9 @@ public class ItemEditorGUI extends GUIScreen
         }
         else
         {
-            //Add existing layers if no errors occurred
+            //If no errors occurred...
+
+            //Add existing layers
             for (String layerString : TextureTags.getItemLayers(stack))
             {
                 String[] tokens = Tools.fixedSplit(layerString, ":");
@@ -144,14 +158,14 @@ public class ItemEditorGUI extends GUIScreen
                 GUIList.Line line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
                 ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
             }
-        }
 
-        //Add recalc actions
-        separator.addRecalcActions(() ->
-        {
-            layerArrayElement.height = 1 - (separator.y + separator.height);
-            scrollbar.height = 1 - (separator.y + separator.height);
-        });
+            //Add recalc actions
+            separator2.addRecalcActions(() ->
+            {
+                layerArrayElement.height = 1 - (separator2.y + separator2.height);
+                scrollbar2.height = 1 - (separator2.y + separator2.height);
+            });
+        }
 
 
         //Category tags tab
@@ -183,8 +197,8 @@ public class ItemEditorGUI extends GUIScreen
                 return new GUIElement[]{tagsButton, categoryInput};
             }
         };
-        GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
-        tabView.tabViews.get(2).addAll(gui.categories, scrollbar2);
+        GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
+        tabView.tabViews.get(2).addAll(gui.categories, scrollbar3);
 
         //Add existing categories
         gui.addCategories(stack);
