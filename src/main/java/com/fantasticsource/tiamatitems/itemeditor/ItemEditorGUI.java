@@ -262,7 +262,10 @@ public class ItemEditorGUI extends GUIScreen
             if (!name.valid() || !level.valid() || !levelReq.valid() || !value.valid()) return;
 
             //Texture
-            if (!cacheLayers.valid() || !cacheTexture.valid()) return;
+            if (stack.getItem() == TiamatItems.tiamatItem && TextureCache.textures.size() > 0)
+            {
+                if (!cacheLayers.valid() || !cacheTexture.valid()) return;
+            }
 
 
             //Set stack params
@@ -275,23 +278,23 @@ public class ItemEditorGUI extends GUIScreen
             MCTools.setLore(stack, lore.getText());
 
             //Texture
-            if (FilterBoolean.INSTANCE.parse(cacheLayers.getText())) TextureTags.addItemLayerCacheTag(stack);
-            else TextureTags.removeItemLayerCacheTag(stack);
-            if (FilterBoolean.INSTANCE.parse(cacheTexture.getText())) TextureTags.addItemTextureCacheTag(stack);
-            else TextureTags.removeItemTextureCacheTag(stack);
-
-            String[] layers = new String[layerArrayElement.lineCount()];
-            if (stack.getItem() == TiamatItems.tiamatItem)
+            if (stack.getItem() == TiamatItems.tiamatItem && TextureCache.textures.size() > 0)
             {
+                if (FilterBoolean.INSTANCE.parse(cacheLayers.getText())) TextureTags.addItemLayerCacheTag(stack);
+                else TextureTags.removeItemLayerCacheTag(stack);
+                if (FilterBoolean.INSTANCE.parse(cacheTexture.getText())) TextureTags.addItemTextureCacheTag(stack);
+                else TextureTags.removeItemTextureCacheTag(stack);
+
+                String[] layers = new String[layerArrayElement.lineCount()];
                 for (int i = 0; i < layers.length; i++)
                 {
                     GUIList.Line line = layerArrayElement.get(i);
                     layers[i] = ((GUIItemLayer) line.getLineElement(0)).getLayer();
                 }
-            }
 
-            TextureTags.clearItemLayers(stack);
-            for (String layer : layers) TextureTags.addItemLayer(stack, layer);
+                TextureTags.clearItemLayers(stack);
+                for (String layer : layers) TextureTags.addItemLayer(stack, layer);
+            }
 
             //Category tags are already stored in the stack via GUI logic
 
