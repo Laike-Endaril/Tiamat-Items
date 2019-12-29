@@ -17,13 +17,13 @@ public class GUIItemLayer extends GUIItemStack
         super(screen, x, y, unscaledWidth, unscaledHeight, TiamatItem.get(false, false, layer));
     }
 
-    public void setLayer(String layer)
-    {
-        setItemStack(TiamatItem.get(false, false, layer));
-    }
-
     public String getLayer()
     {
         return TextureTags.getItemLayers(getItemStack()).get(0);
+    }
+
+    public void setLayer(String layer)
+    {
+        setItemStack(TiamatItem.get(false, false, layer));
     }
 }

@@ -127,7 +127,7 @@ public class ItemEditorGUI extends GUIScreen
                     view.height = layer.height;
                 });
                 String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
-                GUILabeledTextInput texture = new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterNotEmpty.INSTANCE);
+                GUILabeledTextInput texture = new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterTexture.INSTANCE);
                 GUIColor color = new GUIColor(screen);
                 view.addAll
                         (
@@ -139,7 +139,7 @@ public class ItemEditorGUI extends GUIScreen
                 texture.addRecalcActions(() ->
                 {
                     String text = texture.getText() + ":" + color.getText();
-                    if (texture.valid() && TextureCache.textures.get(texture.getText() + ":ffffffff") != null && !layer.getLayer().equals(text))
+                    if (texture.valid() && !layer.getLayer().equals(text))
                     {
                         layer.setLayer(text);
                     }
@@ -147,7 +147,7 @@ public class ItemEditorGUI extends GUIScreen
                 color.addRecalcActions(() ->
                 {
                     String text = texture.getText() + ":" + color.getText();
-                    if (texture.valid() && TextureCache.textures.get(texture.getText() + ":ffffffff") != null && !layer.getLayer().equals(text))
+                    if (texture.valid() && !layer.getLayer().equals(text))
                     {
                         layer.setLayer(text);
                     }
