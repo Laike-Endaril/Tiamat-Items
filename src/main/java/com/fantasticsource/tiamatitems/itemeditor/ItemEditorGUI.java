@@ -78,6 +78,7 @@ public class ItemEditorGUI extends GUIScreen
 
         tabView.tabViews.get(0).addAll
                 (
+                        new GUITextSpacer(gui),
                         name,
                         new GUITextSpacer(gui),
                         level,
@@ -162,6 +163,7 @@ public class ItemEditorGUI extends GUIScreen
 
         tabView.tabViews.get(1).addAll
                 (
+                        new GUITextSpacer(gui),
                         cacheLayers,
                         new GUITextSpacer(gui),
                         cacheTexture,
@@ -297,6 +299,11 @@ public class ItemEditorGUI extends GUIScreen
             Network.WRAPPER.sendToServer(new Network.EditItemPacket(stack));
             gui.close();
         });
+
+
+        //Recalc all twice to fix lore scrollbar...
+        gui.root.recalc(0);
+        gui.root.recalc(0);
     }
 
     @Override
