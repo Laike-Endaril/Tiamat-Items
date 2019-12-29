@@ -132,7 +132,7 @@ public class ItemEditorGUI extends GUIScreen
                         (
                                 texture,
                                 new GUIElement(screen, 1, 0),
-                                new GUIText(screen, "Color: "),
+                                new GUIText(screen, "Color: ").addClickActions(color::click),
                                 color
                         );
                 texture.addRecalcActions(() ->
