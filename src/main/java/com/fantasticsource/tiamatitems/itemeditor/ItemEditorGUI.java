@@ -126,12 +126,31 @@ public class ItemEditorGUI extends GUIScreen
                     view.height = layer.height;
                 });
                 String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
+                GUILabeledTextInput texture = new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterNotEmpty.INSTANCE);
+                GUIColor color = new GUIColor(screen);
                 view.addAll
                         (
-                                new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterNotEmpty.INSTANCE),
+                                texture,
                                 new GUIElement(screen, 1, 0),
-                                new GUIColor(screen)
+                                new GUIText(screen, "Color: "),
+                                color
                         );
+                texture.addRecalcActions(() ->
+                {
+                    String text = texture.getText() + ":" + color.getText();
+                    if (texture.valid() && TextureCache.textures.get(texture.getText() + ":ffffffff") != null && !layer.getLayer().equals(text))
+                    {
+                        layer.setLayer(text);
+                    }
+                });
+                color.addRecalcActions(() ->
+                {
+                    String text = texture.getText() + ":" + color.getText();
+                    if (texture.valid() && TextureCache.textures.get(texture.getText() + ":ffffffff") != null && !layer.getLayer().equals(text))
+                    {
+                        layer.setLayer(text);
+                    }
+                });
                 return new GUIElement[]
                         {
                                 layer,
@@ -181,7 +200,7 @@ public class ItemEditorGUI extends GUIScreen
                 GUIView view = (GUIView) line.getLineElement(1);
                 GUILabeledTextInput texture = (GUILabeledTextInput) view.get(0);
                 texture.setText(tokens[0] + ":" + tokens[1]);
-                GUIColor color = (GUIColor) view.get(2);
+                GUIColor color = (GUIColor) view.get(3);
                 color.setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
             }
 
