@@ -1,6 +1,5 @@
 package com.fantasticsource.tiamatitems;
 
-import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
@@ -27,7 +26,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.031,);required-after:iitemrenderer@[1.0,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.031,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -65,6 +64,12 @@ public class TiamatItems
     {
         Network.init();
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
+
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            //Physical client
+            MinecraftForge.EVENT_BUS.register(ClientInit.class);
+        }
     }
 
     @Mod.EventHandler
@@ -107,7 +112,6 @@ public class TiamatItems
         ModelLoader.setCustomModelResourceLocation(itemItemEditor, 0, new ModelResourceLocation(MODID + ":itemeditor", "inventory"));
 
         ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
-        IItemRendererHandler.register(tiamatItem, new TiamatItemRenderer());
     }
 
 

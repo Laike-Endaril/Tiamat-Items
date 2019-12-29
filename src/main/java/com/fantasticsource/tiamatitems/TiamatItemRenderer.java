@@ -13,18 +13,19 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
+@SideOnly(Side.CLIENT)
 public class TiamatItemRenderer implements IItemRenderer
 {
     public static final VertexFormat VOXEL = new VertexFormat();
     private static final double Z1 = -0.5d / 16, Z2 = 0.5d / 16;
     private static double voxelSizeX, voxelSizeY;
-    private static LinkedHashMap<String, LinkedHashMap<Integer, String>> readyTextures = new LinkedHashMap<>();
 
     static
     {
