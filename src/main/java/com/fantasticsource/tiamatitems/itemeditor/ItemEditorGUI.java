@@ -125,9 +125,10 @@ public class ItemEditorGUI extends GUIScreen
                     view.width = 1 - (layer.x + layer.width);
                     view.height = layer.height;
                 });
+                String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
                 view.addAll
                         (
-                                new GUILabeledTextInput(screen, "Texture: ", layer.getLayer(), FilterNotEmpty.INSTANCE),
+                                new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterNotEmpty.INSTANCE),
                                 new GUIElement(screen, 1, 0),
                                 new GUIColor(screen)
                         );
@@ -177,6 +178,11 @@ public class ItemEditorGUI extends GUIScreen
                 layerArrayElement.addLine();
                 GUIList.Line line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
                 ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
+                GUIView view = (GUIView) line.getLineElement(1);
+                GUILabeledTextInput texture = (GUILabeledTextInput) view.get(0);
+                texture.setText(tokens[0] + ":" + tokens[1]);
+                GUIColor color = (GUIColor) view.get(2);
+                color.setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
             }
 
             //Add recalc actions
