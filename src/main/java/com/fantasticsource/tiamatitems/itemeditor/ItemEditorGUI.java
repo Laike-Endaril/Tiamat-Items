@@ -12,6 +12,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.*;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
+import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
@@ -112,9 +113,28 @@ public class ItemEditorGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
+                GUIItemLayer layer = new GUIItemLayer(screen, 16, 16, TextureCache.textures.keySet().toArray(new String[0])[0]);
+                GUIView view = new GUIView(screen, 1 - (layer.x + layer.width), 1);
+                layer.addRecalcActions(() ->
+                {
+                    view.width = 1 - (layer.x + layer.width);
+                    view.height = layer.height;
+                });
+                view.addRecalcActions(() ->
+                {
+                    view.width = 1 - (layer.x + layer.width);
+                    view.height = layer.height;
+                });
+                view.addAll
+                        (
+                                new GUILabeledTextInput(screen, "Texture: ", layer.getLayer(), FilterNotEmpty.INSTANCE),
+                                new GUIElement(screen, 1, 0),
+                                new GUIColor(screen)
+                        );
                 return new GUIElement[]
                         {
-                                new GUIItemLayer(screen, 16, 16, TextureCache.textures.keySet().toArray(new String[0])[0])
+                                layer,
+                                view
                         };
             }
         };
