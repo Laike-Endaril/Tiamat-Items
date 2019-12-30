@@ -163,7 +163,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
             //Generate final texture
             texture = new Texture(width, height);
-            int r, g, b, a;
+            double r, g, b, t, lr, lg, lb, la, lt;
             for (Texture layer : layers)
             {
                 layer.xScale = width / layer.width;
@@ -177,23 +177,29 @@ public class TiamatItemRenderer implements IItemRenderer
                     r = 0;
                     b = 0;
                     g = 0;
-                    a = 0;
+                    t = 1;
 
                     for (Texture layer : layers)
                     {
-                        int layerA = layer.colors[x * layer.xScale][y * layer.yScale][3];
+                        lr = layer.colors[x * layer.xScale][y * layer.yScale][0] / 255d;
+                        lg = layer.colors[x * layer.xScale][y * layer.yScale][1] / 255d;
+                        lb = layer.colors[x * layer.xScale][y * layer.yScale][2] / 255d;
+                        la = layer.colors[x * layer.xScale][y * layer.yScale][3] / 255d;
 
-                        r = (int) Tools.min(255, r + layer.colors[x * layer.xScale][y * layer.yScale][0] * layerA / 255d);
-                        g = (int) Tools.min(255, g + layer.colors[x * layer.xScale][y * layer.yScale][1] * layerA / 255d);
-                        b = (int) Tools.min(255, b + layer.colors[x * layer.xScale][y * layer.yScale][2] * layerA / 255d);
+                        if (la == 0) continue;
 
-                        a = Tools.min(255, a + layerA);
+                        lt = 1 - la;
+
+                        r = r * lt + lr * la;
+                        g = g * lt + lg * la;
+                        b = b * lt + lb * la;
+                        t *= lt;
                     }
 
-                    texture.colors[x][y][0] = r;
-                    texture.colors[x][y][1] = g;
-                    texture.colors[x][y][2] = b;
-                    texture.colors[x][y][3] = a;
+                    texture.colors[x][y][0] = (int) (Tools.min(Tools.max(r, 0), 1) * 255);
+                    texture.colors[x][y][1] = (int) (Tools.min(Tools.max(g, 0), 1) * 255);
+                    texture.colors[x][y][2] = (int) (Tools.min(Tools.max(b, 0), 1) * 255);
+                    texture.colors[x][y][3] = (int) (Tools.min(Tools.max(1 - t, 0), 1) * 255);
                 }
             }
 
