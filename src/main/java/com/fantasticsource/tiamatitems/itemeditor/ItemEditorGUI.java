@@ -321,7 +321,7 @@ public class ItemEditorGUI extends GUIScreen
         {
             categories.addLine();
             GUIList.Line line = categories.get(categories.lineCount() - 1);
-            GUITextInput categoryInput = (GUITextInput) line.getLineElement(0);
+            GUITextInput categoryInput = (GUITextInput) line.getLineElement(1);
             categoryInput.setText(FilterNotEmpty.INSTANCE.parse(category));
             line.get(3).addClickActions(() -> CategoryTags.removeItemCategory(stack, categoryInput.getText()));
         }
