@@ -109,7 +109,7 @@ public class ItemEditorGUI extends GUIScreen
         GUIGradientBorder separator2 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Layer list
-        GUIList layerArrayElement = new GUIList(gui, 0.98, 1 - (separator2.y + separator2.height))
+        GUIList layerArrayElement = new GUIList(gui, true, 0.98, 1 - (separator2.y + separator2.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -216,7 +216,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Category tags tab
-        gui.categories = new GUIList(gui, 0.98, 1)
+        gui.categories = new GUIList(gui, true, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
