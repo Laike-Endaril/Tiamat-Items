@@ -84,4 +84,14 @@ public class TextureCache
 
         System.out.println("Cached " + loaded + " raw texture" + (loaded == 1 ? "" : "s"));
     }
+
+    public static String[] getUncoloredTextureNames()
+    {
+        String[] result = rawTextures.toArray(new String[0]);
+        for (int i = 0; i < result.length; i++)
+        {
+            result[i] = result[i].substring(0, result[i].lastIndexOf(':'));
+        }
+        return result;
+    }
 }

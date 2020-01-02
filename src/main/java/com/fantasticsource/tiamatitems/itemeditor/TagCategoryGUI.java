@@ -45,7 +45,7 @@ public class TagCategoryGUI extends GUIScreen
 
 
         //Header
-        GUINavbar navbar = new GUINavbar(this, Color.AQUA);
+        GUINavbar navbar = new GUINavbar(this);
         GUITextButton save = new GUITextButton(this, "Save", Color.GREEN);
         GUITextButton cancel = new GUITextButton(this, "Cancel", Color.RED);
         root.addAll(navbar, save, cancel);

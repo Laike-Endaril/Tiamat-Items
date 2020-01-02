@@ -13,6 +13,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
+import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
@@ -48,7 +49,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Header
-        GUINavbar navbar = new GUINavbar(gui, Color.AQUA);
+        GUINavbar navbar = new GUINavbar(gui);
         GUITextButton save = new GUITextButton(gui, "Save", Color.GREEN);
         GUITextButton cancel = new GUITextButton(gui, "Cancel", Color.RED);
         gui.root.addAll(navbar, save, cancel);
@@ -109,6 +110,8 @@ public class ItemEditorGUI extends GUIScreen
         GUIGradientBorder separator2 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Layer list
+        String[] uncoloredTextures = Tools.sort(TextureCache.getUncoloredTextureNames());
+        for (String s : uncoloredTextures) System.out.println(s);
         GUIList layerArrayElement = new GUIList(gui, true, 0.98, 1 - (separator2.y + separator2.height))
         {
             @Override
@@ -127,11 +130,12 @@ public class ItemEditorGUI extends GUIScreen
                     view.height = layer.height;
                 });
                 String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
-                GUILabeledTextInput texture = new GUILabeledTextInput(screen, "Texture: ", tokens[0] + ":" + tokens[1], FilterTexture.INSTANCE);
+                GUIText texture = new GUIText(screen, tokens[0] + ":" + tokens[1]);
                 GUIColor color = new GUIColor(screen);
                 view.addAll
                         (
-                                texture,
+                                new GUIText(screen, "Texture: "),
+                                texture.addClickActions(() -> new TextSelectionGUI(texture, "Texture", uncoloredTextures)),
                                 new GUIElement(screen, 1, 0),
                                 new GUIText(screen, "Color: ").addClickActions(color::click),
                                 color
@@ -139,7 +143,7 @@ public class ItemEditorGUI extends GUIScreen
                 texture.addRecalcActions(() ->
                 {
                     String text = texture.getText() + ":" + color.getText();
-                    if (texture.valid() && !layer.getLayer().equals(text))
+                    if (!layer.getLayer().equals(text))
                     {
                         layer.setLayer(text);
                     }
@@ -147,7 +151,7 @@ public class ItemEditorGUI extends GUIScreen
                 color.addRecalcActions(() ->
                 {
                     String text = texture.getText() + ":" + color.getText();
-                    if (texture.valid() && !layer.getLayer().equals(text))
+                    if (!layer.getLayer().equals(text))
                     {
                         layer.setLayer(text);
                     }
@@ -200,9 +204,9 @@ public class ItemEditorGUI extends GUIScreen
                 GUIList.Line line = layerArrayElement.get(layerArrayElement.lineCount() - 1);
                 ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
                 GUIView view = (GUIView) line.getLineElement(1);
-                GUILabeledTextInput texture = (GUILabeledTextInput) view.get(0);
+                GUIText texture = (GUIText) view.get(1);
                 texture.setText(tokens[0] + ":" + tokens[1]);
-                GUIColor color = (GUIColor) view.get(3);
+                GUIColor color = (GUIColor) view.get(4);
                 color.setValue(new Color(FilterColor.INSTANCE.parse(tokens[2])));
             }
 
