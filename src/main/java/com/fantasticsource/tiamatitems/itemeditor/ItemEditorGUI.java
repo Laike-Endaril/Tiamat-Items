@@ -20,7 +20,7 @@ import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.CategoryTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.nbt.SlotTags;
+import com.fantasticsource.tiamatitems.nbt.SlottingTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -270,7 +270,7 @@ public class ItemEditorGUI extends GUIScreen
         tabView.tabViews.get(3).addAll(slottings, scrollbar4);
 
         //Add existing slottings
-        for (String slotname : SlotTags.getItemSlots(stack))
+        for (String slotname : SlottingTags.getItemSlottings(stack))
         {
             slottings.addLine();
             GUIList.Line line = slottings.get(slottings.lineCount() - 1);
@@ -327,10 +327,10 @@ public class ItemEditorGUI extends GUIScreen
             //Category tags are already stored in the stack via GUI logic
 
             //Slottings
-            SlotTags.clearItemSlots(stack);
+            SlottingTags.clearItemSlottings(stack);
             for (GUIList.Line line : slottings.getLines())
             {
-                SlotTags.addItemSlot(stack, ((GUIText) line.getLineElement(0)).getText());
+                SlottingTags.addItemSlotting(stack, ((GUIText) line.getLineElement(0)).getText());
             }
 
             //Send to server

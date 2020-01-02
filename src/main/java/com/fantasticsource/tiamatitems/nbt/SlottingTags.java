@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
-public class SlotTags
+public class SlottingTags
 {
-    public static ArrayList<String> getItemSlots(ItemStack stack)
+    public static ArrayList<String> getItemSlottings(ItemStack stack)
     {
         ArrayList<String> result = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class SlotTags
         return result;
     }
 
-    public static void clearItemSlots(ItemStack stack)
+    public static void clearItemSlottings(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -44,7 +44,7 @@ public class SlotTags
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
-    public static void removeItemSlot(ItemStack stack, String slot)
+    public static void removeItemSlotting(ItemStack stack, String slot)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -70,9 +70,9 @@ public class SlotTags
         }
     }
 
-    public static void addItemSlot(ItemStack stack, String slot)
+    public static void addItemSlotting(ItemStack stack, String slot)
     {
-        if (itemFitsSlot(stack, slot)) return;
+        if (itemHasSlotting(stack, slot)) return;
 
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -86,7 +86,7 @@ public class SlotTags
         list.appendTag(new NBTTagString(slot));
     }
 
-    public static boolean itemFitsSlot(ItemStack stack, String slot)
+    public static boolean itemHasSlotting(ItemStack stack, String slot)
     {
         if (!stack.hasTagCompound()) return false;
 

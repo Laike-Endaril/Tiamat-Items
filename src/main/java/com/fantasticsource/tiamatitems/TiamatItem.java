@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
-import com.fantasticsource.tiamatitems.nbt.SlotTags;
+import com.fantasticsource.tiamatitems.nbt.SlottingTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -42,7 +42,7 @@ public class TiamatItem extends Item
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
-        ArrayList<String> slottings = SlotTags.getItemSlots(stack);
+        ArrayList<String> slottings = SlottingTags.getItemSlottings(stack);
         if (slottings.contains("Any")) return true;
 
         switch (armorType)
