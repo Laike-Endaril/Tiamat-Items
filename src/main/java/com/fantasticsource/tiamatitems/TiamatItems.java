@@ -17,7 +17,6 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -82,9 +81,6 @@ public class TiamatItems
 
             TextureCache.addRawTextureLayers();
         }
-
-        Compat.baubles = Loader.isModLoaded("baubles");
-        Compat.tiamatrpg = Loader.isModLoaded("tiamatrpg");
     }
 
     @SubscribeEvent
