@@ -1,9 +1,12 @@
 * GUI
 
+Make slottings allow item to be put into those slots
+
+Add attributes
+Apply attributes when item is in one of its slots
+
 Add texture previews to texture selection GUI
 
-Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)
-Add attributes
 Add affixes
 
 Add rarity (pulls from TiamatRPG config)

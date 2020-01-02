@@ -15,10 +15,12 @@ import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.Slots;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.CategoryTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.nbt.SlotTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -55,7 +57,7 @@ public class ItemEditorGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings");
         gui.root.add(tabView);
 
 
@@ -254,7 +256,30 @@ public class ItemEditorGUI extends GUIScreen
         gui.addCategories(stack);
 
 
-        //Add actions
+        //Slottings tab
+        GUIList slottings = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                GUIText text = new GUIText(screen, "Hand").setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
+                return new GUIElement[]{text.addClickActions(() -> new TextSelectionGUI(text, "Slot", Slots.availableSlottings()))};
+            }
+        };
+        GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, slottings);
+        tabView.tabViews.get(3).addAll(slottings, scrollbar4);
+
+        //Add existing slottings
+        for (String slotname : SlotTags.getItemSlots(stack))
+        {
+            slottings.addLine();
+            GUIList.Line line = slottings.get(slottings.lineCount() - 1);
+            ((GUIText) line.getLineElement(0)).setText(slotname);
+        }
+        //TODO detect existing slots from sources other than tiamat tags
+
+
+        //Add main header actions
         cancel.addRecalcActions(() -> tabView.height = 1 - (cancel.y + cancel.height));
         cancel.addClickActions(gui::close);
         save.addClickActions(() ->
@@ -300,6 +325,13 @@ public class ItemEditorGUI extends GUIScreen
             }
 
             //Category tags are already stored in the stack via GUI logic
+
+            //Slottings
+            SlotTags.clearItemSlots(stack);
+            for (GUIList.Line line : slottings.getLines())
+            {
+                SlotTags.addItemSlot(stack, ((GUIText) line.getLineElement(0)).getText());
+            }
 
             //Send to server
             Network.WRAPPER.sendToServer(new Network.EditItemPacket(stack));
