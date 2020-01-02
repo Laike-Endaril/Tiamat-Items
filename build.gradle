@@ -23,6 +23,7 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2768"
     mappings = "snapshot_20171003"
+    useDepAts = true
 }
 
 processResources {
@@ -32,14 +33,22 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+
+    rename '(tiamatitems_at.cfg)', 'META-INF/$1'
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'tiamatitems_at.cfg'
     }
 }
 

@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.itemeditor;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.mctools.Slots;
+import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
@@ -263,7 +263,7 @@ public class ItemEditorGUI extends GUIScreen
             public GUIElement[] newLineDefaultElements()
             {
                 GUIText text = new GUIText(screen, "Hand").setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
-                return new GUIElement[]{text.addClickActions(() -> new TextSelectionGUI(text, "Slot", Slots.availableSlottings()))};
+                return new GUIElement[]{text.addClickActions(() -> new TextSelectionGUI(text, "Slot", Slottings.availableSlottings()))};
             }
         };
         GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, slottings);
