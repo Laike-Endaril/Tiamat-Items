@@ -111,7 +111,6 @@ public class ItemEditorGUI extends GUIScreen
 
         //Layer list
         String[] uncoloredTextures = Tools.sort(TextureCache.getUncoloredTextureNames());
-        for (String s : uncoloredTextures) System.out.println(s);
         GUIList layerArrayElement = new GUIList(gui, true, 0.98, 1 - (separator2.y + separator2.height))
         {
             @Override
@@ -130,7 +129,7 @@ public class ItemEditorGUI extends GUIScreen
                     view.height = layer.height;
                 });
                 String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
-                GUIText texture = new GUIText(screen, tokens[0] + ":" + tokens[1]);
+                GUIText texture = new GUIText(screen, tokens[0] + ":" + tokens[1]).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 GUIColor color = new GUIColor(screen);
                 view.addAll
                         (
