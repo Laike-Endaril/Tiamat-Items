@@ -1,5 +1,7 @@
 * GUI
 
+Add texture previews to texture selection GUI
+
 Add weapon/armor slot tags to GUI (from tiamatrpg; see TiamatItem class)
 Add attributes
 Add affixes
