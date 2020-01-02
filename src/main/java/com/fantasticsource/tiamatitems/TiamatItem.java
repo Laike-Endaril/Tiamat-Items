@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
+import com.fantasticsource.tiamatitems.nbt.SlotTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -11,6 +12,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -40,11 +42,27 @@ public class TiamatItem extends Item
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
-        //Vanilla equipment slot support
-        //Tiamat equipment slot support
-        //Baubles equipment slot support?
-        //TODO
-        return true;
+        ArrayList<String> slottings = SlotTags.getItemSlots(stack);
+        if (slottings.contains("Any")) return true;
+
+        switch (armorType)
+        {
+            case HEAD:
+                return slottings.contains("Head") || slottings.contains("Armor");
+            case CHEST:
+                return slottings.contains("Chest") || slottings.contains("Armor");
+            case LEGS:
+                return slottings.contains("Legs") || slottings.contains("Armor");
+            case FEET:
+                return slottings.contains("Feet") || slottings.contains("Armor");
+
+            case MAINHAND:
+                return slottings.contains("Mainhand") || slottings.contains("Hand") || slottings.contains("Hotbar");
+            case OFFHAND:
+                return slottings.contains("Offhand") || slottings.contains("Hand");
+        }
+
+        return false;
     }
 
     @Override

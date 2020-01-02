@@ -1,6 +1,8 @@
 * GUI
 
-Make slottings allow item to be put into those slots
+Make slottings allow item to be put into those slots for...
+...tiamat slots
+...baubles slots, if possible
 
 Add attributes
 Apply attributes when item is in one of its slots
