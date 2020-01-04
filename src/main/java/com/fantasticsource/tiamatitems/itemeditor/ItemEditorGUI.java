@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.itemeditor;
 
+import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
@@ -259,7 +260,7 @@ public class ItemEditorGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIText text = new GUIText(screen, "Hand").setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
+                GUIText text = new GUIText(screen, Compat.tiamatrpg ? "Hand" : "Mainhand").setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 return new GUIElement[]{text.addClickActions(() -> new TextSelectionGUI(text, "Slot", Slottings.availableSlottings()))};
             }
         };
