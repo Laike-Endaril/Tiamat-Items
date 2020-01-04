@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.032,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.032a,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -64,6 +64,7 @@ public class TiamatItems
     {
         Network.init();
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
+        MinecraftForge.EVENT_BUS.register(Attributes.class);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {

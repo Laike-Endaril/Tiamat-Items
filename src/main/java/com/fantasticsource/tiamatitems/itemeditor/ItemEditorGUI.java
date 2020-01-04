@@ -18,10 +18,7 @@ import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
-import com.fantasticsource.tiamatitems.nbt.CategoryTags;
-import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.nbt.SlottingTags;
-import com.fantasticsource.tiamatitems.nbt.TextureTags;
+import com.fantasticsource.tiamatitems.nbt.*;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -57,7 +54,7 @@ public class ItemEditorGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings", "Attributes");
         gui.root.add(tabView);
 
 
@@ -276,7 +273,39 @@ public class ItemEditorGUI extends GUIScreen
             GUIList.Line line = slottings.get(slottings.lineCount() - 1);
             ((GUIText) line.getLineElement(0)).setText(slotname);
         }
-        //TODO detect existing slots from sources other than tiamat tags
+
+
+        //Attributes tab
+        GUIList attributeList = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                return new GUIElement[]
+                        {
+                                new GUILabeledTextInput(screen, "Attribute: ", "", FilterNotEmpty.INSTANCE, 1),
+                                new GUIElement(screen, 1, 0),
+                                new GUILabeledTextInput(screen, "Amount: ", "0", FilterFloat.INSTANCE, 1),
+                                new GUIElement(screen, 1, 0),
+                                new GUILabeledTextInput(screen, "Operation: ", "0", FilterRangedInt.get(0, 2), 1)
+                        };
+            }
+        };
+        GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, attributeList);
+        tabView.tabViews.get(4).addAll(attributeList, scrollbar5);
+
+        //Add existing attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting)
+        for (String modString : AttributeTags.getItemAttributeMods(stack))
+        {
+            String[] tokens = Tools.fixedSplit(modString, ";");
+            if (tokens.length != 3) continue;
+
+            attributeList.addLine();
+            GUIList.Line line = attributeList.getLastFilledLine();
+            ((GUILabeledTextInput) line.getLineElement(0)).setText(tokens[0]);
+            ((GUILabeledTextInput) line.getLineElement(2)).setText(tokens[1]);
+            ((GUILabeledTextInput) line.getLineElement(4)).setText(tokens[2]);
+        }
 
 
         //Add main header actions
@@ -293,6 +322,12 @@ public class ItemEditorGUI extends GUIScreen
             if (stack.getItem() == TiamatItems.tiamatItem && TextureCache.textures.size() > 0)
             {
                 if (!cacheLayers.valid() || !cacheTexture.valid()) return;
+            }
+
+            //Attribute Modifiers
+            for (GUIList.Line line : attributeList.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(0)).valid() || !((GUILabeledTextInput) line.getLineElement(2)).valid() || !((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
             }
 
 
@@ -331,6 +366,13 @@ public class ItemEditorGUI extends GUIScreen
             for (GUIList.Line line : slottings.getLines())
             {
                 SlottingTags.addItemSlotting(stack, ((GUIText) line.getLineElement(0)).getText());
+            }
+
+            //Attribute modifiers
+            AttributeTags.clearItemAttributeMods(stack);
+            for (GUIList.Line line : attributeList.getLines())
+            {
+                AttributeTags.addItemAttributeMod(stack, ((GUILabeledTextInput) line.getLineElement(0)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(2)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(4)).getText());
             }
 
             //Send to server
