@@ -81,7 +81,7 @@ public class Attributes
                         if (pair == null)
                         {
                             System.err.println("WARNING: Quite possibly corrupted item; bad attribute modifier string: " + modString);
-                            System.err.println("Player: " + player.getName() + ", Itemname: " + stack.getDisplayName() + ", Vanilla Slot: " + slot);
+                            System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", Vanilla slot: " + slot);
                             continue;
                         }
 
@@ -126,7 +126,7 @@ public class Attributes
                             if (pair == null)
                             {
                                 System.err.println("WARNING: Quite possibly corrupted item; bad attribute modifier string: " + modString);
-                                System.err.println("Player: " + player.getName() + ", Itemname: " + stack.getDisplayName() + ", Tiamat Slot: " + slot);
+                                System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", Tiamat slot: " + slot);
                                 continue;
                             }
 
