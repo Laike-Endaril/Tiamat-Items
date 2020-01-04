@@ -1,11 +1,6 @@
 * GUI
 
-Make slottings allow item to be put into those slots for...
-...tiamat slots
-...baubles slots, if possible
-
-Add attributes
-Apply attributes when item is in one of its slots
+Fix issue with reach distance and dual-weilding
 
 Add texture previews to texture selection GUI
 
