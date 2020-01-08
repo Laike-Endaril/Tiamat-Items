@@ -378,7 +378,11 @@ public class ItemEditorGUI extends GUIScreen
             //Attribute Modifiers
             for (GUIList.Line line : passiveAttributeList.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(0)).valid() || !((GUILabeledTextInput) line.getLineElement(2)).valid() || !((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
+            }
+            for (GUIList.Line line : activeAttributeList.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
             }
 
 
@@ -424,6 +428,11 @@ public class ItemEditorGUI extends GUIScreen
             for (GUIList.Line line : passiveAttributeList.getLines())
             {
                 PassiveAttributeModTags.addPassiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
+            }
+            ActiveAttributeModTags.clearActiveMods(stack);
+            for (GUIList.Line line : activeAttributeList.getLines())
+            {
+                ActiveAttributeModTags.addActiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
             }
 
             //Send to server
