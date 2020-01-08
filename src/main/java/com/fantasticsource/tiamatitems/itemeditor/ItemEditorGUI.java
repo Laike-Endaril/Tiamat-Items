@@ -294,10 +294,46 @@ public class ItemEditorGUI extends GUIScreen
             }
         };
         GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, passiveAttributeList);
-        tabView.tabViews.get(4).addAll(passiveAttributeList, scrollbar5);
+        GUIList activeAttributeList = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                return new GUIElement[]
+                        {
+                                new GUIElement(screen, 1, 0),
+                                new GUILabeledTextInput(screen, "Attribute: ", "", FilterNotEmpty.INSTANCE, 1),
+                                new GUIElement(screen, 1, 0),
+                                new GUILabeledTextInput(screen, "Amount: ", "0", FilterFloat.INSTANCE, 1),
+                                new GUIElement(screen, 1, 0),
+                                new GUILabeledTextInput(screen, "Operation: ", "0", FilterRangedInt.get(0, 2), 1)
+                        };
+            }
+        };
+        GUIVerticalScrollbar scrollbar6 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, activeAttributeList);
+        GUIElement passiveLabel = new GUIText(gui, "PASSIVE ATTRIBUTE MODIFIERS...", Color.ORANGE).setTooltip("Attribute modifiers which are ALWAYS applied, so long as the equip is in a valid slot");
+        GUIGradientBorder separator3 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
+        passiveLabel.addRecalcActions(() ->
+        {
+            double halfRemainingHeight = 0.5 - passiveLabel.height - separator3.height / 2;
+            passiveAttributeList.height = halfRemainingHeight;
+            scrollbar5.height = halfRemainingHeight;
+            activeAttributeList.height = halfRemainingHeight;
+            scrollbar6.height = halfRemainingHeight;
+        });
+        tabView.tabViews.get(4).addAll
+                (
+                        passiveLabel,
+                        passiveAttributeList,
+                        scrollbar5,
+                        separator3,
+                        new GUIText(gui, "ACTIVE ATTRIBUTE MODIFIERS...", Color.ORANGE).setTooltip("Attribute modifiers which only apply for the item being used.  Eg. weapon stats would normally go here; power, reach, and speed of the weapon"),
+                        activeAttributeList,
+                        scrollbar6
+                );
 
         //Add existing attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting)
-        for (String modString : AttributeTags.getItemAttributeMods(stack))
+        for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
         {
             String[] tokens = Tools.fixedSplit(modString, ";");
             if (tokens.length != 3) continue;
@@ -371,10 +407,10 @@ public class ItemEditorGUI extends GUIScreen
             }
 
             //Attribute modifiers
-            AttributeTags.clearItemAttributeMods(stack);
+            PassiveAttributeModTags.clearPassiveMods(stack);
             for (GUIList.Line line : passiveAttributeList.getLines())
             {
-                AttributeTags.addItemAttributeMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
+                PassiveAttributeModTags.addPassiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
             }
 
             //Send to server

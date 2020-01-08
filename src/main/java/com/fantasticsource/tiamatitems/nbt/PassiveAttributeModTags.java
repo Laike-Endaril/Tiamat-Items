@@ -10,11 +10,11 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
-public class AttributeTags
+public class PassiveAttributeModTags
 {
     //ALSO SEE ATTRIBUTES CLASS
 
-    public static ArrayList<String> getItemAttributeMods(ItemStack stack)
+    public static ArrayList<String> getPassiveMods(ItemStack stack)
     {
         ArrayList<String> result = new ArrayList<>();
 
@@ -24,15 +24,15 @@ public class AttributeTags
         if (!compound.hasKey(DOMAIN)) return result;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("attributeMods")) return result;
+        if (!compound.hasKey("passiveMods")) return result;
 
-        NBTTagList list = compound.getTagList("attributeMods", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList("passiveMods", Constants.NBT.TAG_STRING);
         for (int i = 0; i < list.tagCount(); i++) result.add(list.getStringTagAt(i));
 
         return result;
     }
 
-    public static void clearItemAttributeMods(ItemStack stack)
+    public static void clearPassiveMods(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -40,13 +40,13 @@ public class AttributeTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("attributeMods")) return;
+        if (!compound.hasKey("passiveMods")) return;
 
-        compound.removeTag("attributeMods");
+        compound.removeTag("passiveMods");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
-    public static void removeItemAttributeMod(ItemStack stack, String attributeMod)
+    public static void removePassiveMod(ItemStack stack, String attributeMod)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -54,9 +54,9 @@ public class AttributeTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("attributeMods")) return;
+        if (!compound.hasKey("passiveMods")) return;
 
-        NBTTagList list = compound.getTagList("attributeMods", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList("passiveMods", Constants.NBT.TAG_STRING);
         for (int i = 0; i < list.tagCount(); i++)
         {
             if (list.getStringTagAt(i).equals(attributeMod))
@@ -64,7 +64,7 @@ public class AttributeTags
                 list.removeTag(i);
                 if (list.tagCount() == 0)
                 {
-                    compound.removeTag("attributeMods");
+                    compound.removeTag("passiveMods");
                     if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
                 }
                 break;
@@ -72,9 +72,9 @@ public class AttributeTags
         }
     }
 
-    public static void addItemAttributeMod(ItemStack stack, String attributeMod)
+    public static void addPassiveMod(ItemStack stack, String attributeMod)
     {
-        if (itemHasAttributeMod(stack, attributeMod)) return;
+        if (itemHasPassiveMod(stack, attributeMod)) return;
 
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -82,13 +82,13 @@ public class AttributeTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("attributeMods")) compound.setTag("attributeMods", new NBTTagList());
-        NBTTagList list = compound.getTagList("attributeMods", Constants.NBT.TAG_STRING);
+        if (!compound.hasKey("passiveMods")) compound.setTag("passiveMods", new NBTTagList());
+        NBTTagList list = compound.getTagList("passiveMods", Constants.NBT.TAG_STRING);
 
         list.appendTag(new NBTTagString(attributeMod));
     }
 
-    public static boolean itemHasAttributeMod(ItemStack stack, String attributeMod)
+    public static boolean itemHasPassiveMod(ItemStack stack, String attributeMod)
     {
         if (!stack.hasTagCompound()) return false;
 
@@ -96,9 +96,9 @@ public class AttributeTags
         if (!compound.hasKey(DOMAIN)) return false;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("attributeMods")) return false;
+        if (!compound.hasKey("passiveMods")) return false;
 
-        NBTTagList list = compound.getTagList("attributeMods", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList("passiveMods", Constants.NBT.TAG_STRING);
         for (int i = list.tagCount() - 1; i >= 0; i--) if (list.getStringTagAt(i).equals(attributeMod)) return true;
         return false;
     }

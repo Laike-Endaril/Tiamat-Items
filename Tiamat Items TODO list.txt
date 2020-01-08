@@ -15,6 +15,12 @@ Improve render via back-to-front voxel ordering...
 
 
 
+* Attributes
+
+Apply active attributes during weapon attacks
+
+
+
 * CONFIG
 
 Add default caching options (what values they have each time you edit a new item)

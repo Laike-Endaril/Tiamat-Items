@@ -2,7 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.Slottings;
-import com.fantasticsource.tiamatitems.nbt.AttributeTags;
+import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.SlottingTags;
 import com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory;
 import com.fantasticsource.tools.Tools;
@@ -42,7 +42,7 @@ public class Attributes
 
 
     @SubscribeEvent
-    public static void handleTiamatTagAttributeMods(TickEvent.ServerTickEvent event)
+    public static void handlePassiveAttributeMods(TickEvent.ServerTickEvent event)
     {
         if (event.phase != TickEvent.Phase.START) return;
 
@@ -75,7 +75,7 @@ public class Attributes
                 }
                 if (valid)
                 {
-                    for (String modString : AttributeTags.getItemAttributeMods(stack))
+                    for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
                     {
                         Pair<String, AttributeModifier> pair = getTiamatModifierForSlot(slot, modString);
                         if (pair == null)
@@ -120,7 +120,7 @@ public class Attributes
                     }
                     if (valid)
                     {
-                        for (String modString : AttributeTags.getItemAttributeMods(stack))
+                        for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
                         {
                             Pair<String, AttributeModifier> pair = getTiamatModifierForSlot(slot + Slottings.TIAMAT_OFFSET, modString);
                             if (pair == null)
