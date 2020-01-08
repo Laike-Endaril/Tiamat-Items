@@ -277,13 +277,14 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Attributes tab
-        GUIList attributeList = new GUIList(gui, true, 0.98, 1)
+        GUIList passiveAttributeList = new GUIList(gui, true, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
             {
                 return new GUIElement[]
                         {
+                                new GUIElement(screen, 1, 0),
                                 new GUILabeledTextInput(screen, "Attribute: ", "", FilterNotEmpty.INSTANCE, 1),
                                 new GUIElement(screen, 1, 0),
                                 new GUILabeledTextInput(screen, "Amount: ", "0", FilterFloat.INSTANCE, 1),
@@ -292,8 +293,8 @@ public class ItemEditorGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, attributeList);
-        tabView.tabViews.get(4).addAll(attributeList, scrollbar5);
+        GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, passiveAttributeList);
+        tabView.tabViews.get(4).addAll(passiveAttributeList, scrollbar5);
 
         //Add existing attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting)
         for (String modString : AttributeTags.getItemAttributeMods(stack))
@@ -301,11 +302,11 @@ public class ItemEditorGUI extends GUIScreen
             String[] tokens = Tools.fixedSplit(modString, ";");
             if (tokens.length != 3) continue;
 
-            attributeList.addLine();
-            GUIList.Line line = attributeList.getLastFilledLine();
-            ((GUILabeledTextInput) line.getLineElement(0)).setText(tokens[0]);
-            ((GUILabeledTextInput) line.getLineElement(2)).setText(tokens[1]);
-            ((GUILabeledTextInput) line.getLineElement(4)).setText(tokens[2]);
+            passiveAttributeList.addLine();
+            GUIList.Line line = passiveAttributeList.getLastFilledLine();
+            ((GUILabeledTextInput) line.getLineElement(1)).setText(tokens[0]);
+            ((GUILabeledTextInput) line.getLineElement(3)).setText(tokens[1]);
+            ((GUILabeledTextInput) line.getLineElement(5)).setText(tokens[2]);
         }
 
 
@@ -326,7 +327,7 @@ public class ItemEditorGUI extends GUIScreen
             }
 
             //Attribute Modifiers
-            for (GUIList.Line line : attributeList.getLines())
+            for (GUIList.Line line : passiveAttributeList.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(0)).valid() || !((GUILabeledTextInput) line.getLineElement(2)).valid() || !((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
             }
@@ -371,9 +372,9 @@ public class ItemEditorGUI extends GUIScreen
 
             //Attribute modifiers
             AttributeTags.clearItemAttributeMods(stack);
-            for (GUIList.Line line : attributeList.getLines())
+            for (GUIList.Line line : passiveAttributeList.getLines())
             {
-                AttributeTags.addItemAttributeMod(stack, ((GUILabeledTextInput) line.getLineElement(0)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(2)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(4)).getText());
+                AttributeTags.addItemAttributeMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
             }
 
             //Send to server

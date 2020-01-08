@@ -1,7 +1,5 @@
 * GUI
 
-Fix issue with reach distance and dual-weilding
-
 Add texture previews to texture selection GUI
 
 Add affixes
