@@ -332,7 +332,7 @@ public class ItemEditorGUI extends GUIScreen
                         scrollbar6
                 );
 
-        //Add existing attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting)
+        //Add existing passive attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting)
         for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
         {
             String[] tokens = Tools.fixedSplit(modString, ";");
@@ -340,6 +340,19 @@ public class ItemEditorGUI extends GUIScreen
 
             passiveAttributeList.addLine();
             GUIList.Line line = passiveAttributeList.getLastFilledLine();
+            ((GUILabeledTextInput) line.getLineElement(1)).setText(tokens[0]);
+            ((GUILabeledTextInput) line.getLineElement(3)).setText(tokens[1]);
+            ((GUILabeledTextInput) line.getLineElement(5)).setText(tokens[2]);
+        }
+
+        //Add existing active attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting *AND* is currently being used; eg. attacking with a weapon)
+        for (String modString : ActiveAttributeModTags.getActiveMods(stack))
+        {
+            String[] tokens = Tools.fixedSplit(modString, ";");
+            if (tokens.length != 3) continue;
+
+            activeAttributeList.addLine();
+            GUIList.Line line = activeAttributeList.getLastFilledLine();
             ((GUILabeledTextInput) line.getLineElement(1)).setText(tokens[0]);
             ((GUILabeledTextInput) line.getLineElement(3)).setText(tokens[1]);
             ((GUILabeledTextInput) line.getLineElement(5)).setText(tokens[2]);
