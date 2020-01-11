@@ -11,10 +11,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.*;
-import com.fantasticsource.mctools.gui.element.view.GUIList;
-import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
-import com.fantasticsource.mctools.gui.element.view.GUITabView;
-import com.fantasticsource.mctools.gui.element.view.GUIView;
+import com.fantasticsource.mctools.gui.element.view.*;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
@@ -294,7 +291,9 @@ public class ItemEditorGUI extends GUIScreen
             }
         };
         GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, passiveAttributeList);
-        GUIList activeAttributeList = new GUIList(gui, true, 0.98, 1)
+        GUIScrollView activeAttributeList;
+        if (stack.getItem() != TiamatItems.tiamatItem) activeAttributeList = new GUIScrollView(gui, 0.98, 1, new GUIText(gui, "ACTIVE ATTRIBUTE MODIFIERS ONLY AVAILABLE FOR TIAMAT ITEMS", Color.RED));
+        else activeAttributeList = new GUIList(gui, true, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -327,7 +326,7 @@ public class ItemEditorGUI extends GUIScreen
                         passiveAttributeList,
                         scrollbar5,
                         separator3,
-                        new GUIText(gui, "ACTIVE ATTRIBUTE MODIFIERS...", Color.ORANGE).setTooltip("Attribute modifiers which only apply for the item being used.  Eg. weapon stats would normally go here; power, reach, and speed of the weapon"),
+                        new GUIText(gui, "ACTIVE ATTRIBUTE MODIFIERS...", Color.ORANGE).setTooltip("Attribute modifiers which only apply for the item being used.  Eg. Tiamat weapon stats would normally go here; power, reach, and speed of the weapon, to make sure they're not applied for a weapon in one hand while attacking with the other.\n\nFor non-Tiamat weapons, use passive attributes with slotting set to 'mainhand'"),
                         activeAttributeList,
                         scrollbar6
                 );
@@ -346,16 +345,19 @@ public class ItemEditorGUI extends GUIScreen
         }
 
         //Add existing active attribute modifiers (these ones should only get applied when the item is in a tiamat tag slotting *AND* is currently being used; eg. attacking with a weapon)
-        for (String modString : ActiveAttributeModTags.getActiveMods(stack))
+        if (stack.getItem() == TiamatItems.tiamatItem)
         {
-            String[] tokens = Tools.fixedSplit(modString, ";");
-            if (tokens.length != 3) continue;
+            for (String modString : ActiveAttributeModTags.getActiveMods(stack))
+            {
+                String[] tokens = Tools.fixedSplit(modString, ";");
+                if (tokens.length != 3) continue;
 
-            activeAttributeList.addLine();
-            GUIList.Line line = activeAttributeList.getLastFilledLine();
-            ((GUILabeledTextInput) line.getLineElement(1)).setText(tokens[0]);
-            ((GUILabeledTextInput) line.getLineElement(3)).setText(tokens[1]);
-            ((GUILabeledTextInput) line.getLineElement(5)).setText(tokens[2]);
+                ((GUIList) activeAttributeList).addLine();
+                GUIList.Line line = ((GUIList) activeAttributeList).getLastFilledLine();
+                ((GUILabeledTextInput) line.getLineElement(1)).setText(tokens[0]);
+                ((GUILabeledTextInput) line.getLineElement(3)).setText(tokens[1]);
+                ((GUILabeledTextInput) line.getLineElement(5)).setText(tokens[2]);
+            }
         }
 
 
@@ -380,9 +382,12 @@ public class ItemEditorGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
             }
-            for (GUIList.Line line : activeAttributeList.getLines())
+            if (stack.getItem() == TiamatItems.tiamatItem)
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
+                for (GUIList.Line line : ((GUIList) activeAttributeList).getLines())
+                {
+                    if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
+                }
             }
 
 
@@ -430,9 +435,12 @@ public class ItemEditorGUI extends GUIScreen
                 PassiveAttributeModTags.addPassiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
             }
             ActiveAttributeModTags.clearActiveMods(stack);
-            for (GUIList.Line line : activeAttributeList.getLines())
+            if (stack.getItem() == TiamatItems.tiamatItem)
             {
-                ActiveAttributeModTags.addActiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
+                for (GUIList.Line line : ((GUIList) activeAttributeList).getLines())
+                {
+                    ActiveAttributeModTags.addActiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
+                }
             }
 
             //Send to server
