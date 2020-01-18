@@ -10,6 +10,10 @@ Add rarity (pulls from TiamatRPG config)
 
 * RENDER
 
+Rarity border render
+
+Lock symbol for soulbound
+
 Improve render via back-to-front voxel ordering...
 ...get current center-of-screen and use distances?
 
