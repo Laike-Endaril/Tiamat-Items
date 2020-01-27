@@ -1,5 +1,7 @@
 * GUI
 
+Add actions (2 slots)
+
 Add texture previews to texture selection GUI
 
 Add affixes

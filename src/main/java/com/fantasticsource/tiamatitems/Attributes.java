@@ -1,5 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
@@ -91,10 +93,44 @@ public class Attributes
                 }
             }
 
-            //TODO Baubles slots
+            //Baubles slots
             if (Compat.baubles)
             {
+                IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
+                for (int slot = 0; slot < inventory.getSlots(); slot++)
+                {
+                    for (IAttributeInstance attributeInstance : attributeMap.getAllAttributes().toArray(new IAttributeInstance[0]))
+                    {
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.BAUBLES_OFFSET));
+                    }
 
+                    ItemStack stack = inventory.getStackInSlot(slot);
+                    boolean valid = false;
+                    for (String slotting : SlottingTags.getItemSlottings(stack))
+                    {
+                        if (Slottings.slotValidForSlotting(slotting, slot + Slottings.BAUBLES_OFFSET, player))
+                        {
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (valid)
+                    {
+                        for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
+                        {
+                            Pair<String, AttributeModifier> pair = getTiamatModifierForSlot(slot + Slottings.BAUBLES_OFFSET, modString);
+                            if (pair == null)
+                            {
+                                System.err.println("WARNING: Quite possibly corrupted item; bad attribute modifier string: " + modString);
+                                System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", Baubles slot: " + slot);
+                                continue;
+                            }
+
+                            IAttributeInstance attributeInstance = attributeMap.getAttributeInstanceByName(pair.getKey());
+                            if (attributeInstance != null) attributeInstance.applyModifier(pair.getValue());
+                        }
+                    }
+                }
             }
 
             //Tiamat slots
