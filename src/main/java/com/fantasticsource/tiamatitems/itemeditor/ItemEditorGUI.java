@@ -1,6 +1,5 @@
 package com.fantasticsource.tiamatitems.itemeditor;
 
-import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
@@ -16,6 +15,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.tiamatitems.Compat;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
