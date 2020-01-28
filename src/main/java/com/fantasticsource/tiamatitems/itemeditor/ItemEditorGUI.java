@@ -33,15 +33,19 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class ItemEditorGUI extends GUIScreen
 {
-    private GUIList categories;
+    protected static GUIList categories;
+    protected static String[] actionList;
 
-    public static void show()
+    public static void show(String[] actionList)
     {
         ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand().copy();
 
 
         ItemEditorGUI gui = new ItemEditorGUI();
         Minecraft.getMinecraft().displayGuiScreen(gui);
+
+
+        ItemEditorGUI.actionList = actionList;
 
 
         //Background
@@ -219,7 +223,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Category tags tab
-        gui.categories = new GUIList(gui, true, 0.98, 1)
+        categories = new GUIList(gui, true, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -238,7 +242,7 @@ public class ItemEditorGUI extends GUIScreen
                         TagCategoryGUI categoryGUI = new TagCategoryGUI(stack, categoryInput.getText());
                         categoryGUI.addOnClosedActions(() ->
                         {
-                            while (gui.categories.lineCount() > 0) gui.categories.remove(0);
+                            while (categories.lineCount() > 0) categories.remove(0);
                             gui.addCategories(stack);
                         });
                     }
@@ -247,8 +251,8 @@ public class ItemEditorGUI extends GUIScreen
                 return new GUIElement[]{tagsButton, categoryInput};
             }
         };
-        GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, gui.categories);
-        tabView.tabViews.get(2).addAll(gui.categories, scrollbar3);
+        GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, categories);
+        tabView.tabViews.get(2).addAll(categories, scrollbar3);
 
         //Add existing categories
         gui.addCategories(stack);
