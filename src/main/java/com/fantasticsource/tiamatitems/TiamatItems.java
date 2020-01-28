@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
+import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import net.minecraft.block.Block;

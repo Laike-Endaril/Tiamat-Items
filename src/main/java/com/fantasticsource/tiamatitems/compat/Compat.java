@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems;
+package com.fantasticsource.tiamatitems.compat;
 
 public class Compat
 {

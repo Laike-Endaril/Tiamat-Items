@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.mctools.Slottings;
+import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.SlottingTags;
 import com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory;

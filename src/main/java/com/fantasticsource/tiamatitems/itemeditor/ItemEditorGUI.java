@@ -15,11 +15,11 @@ import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
-import com.fantasticsource.tiamatactions.gui.GUIAction;
-import com.fantasticsource.tiamatitems.Compat;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tiamatitems.compat.Compat;
+import com.fantasticsource.tiamatitems.compat.CompatTiamatActions;
 import com.fantasticsource.tiamatitems.nbt.*;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -69,8 +69,8 @@ public class ItemEditorGUI extends GUIScreen
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
-        GUIAction action1 = new GUIAction(gui, ActionTags.getItemAction1(stack));
-        GUIAction action2 = new GUIAction(gui, ActionTags.getItemAction2(stack));
+        GUIText action1 = Compat.tiamatactions ? CompatTiamatActions.getGUIAction(gui, ActionTags.getItemAction1(stack)) : null;
+        GUIText action2 = Compat.tiamatactions ? CompatTiamatActions.getGUIAction(gui, ActionTags.getItemAction2(stack)) : null;
         GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Lore

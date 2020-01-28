@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
+import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
