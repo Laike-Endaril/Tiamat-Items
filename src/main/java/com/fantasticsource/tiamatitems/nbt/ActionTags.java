@@ -26,13 +26,13 @@ public class ActionTags
 
     public static String getItemAction1(ItemStack stack)
     {
-        if (!stack.hasTagCompound()) return "";
+        if (!stack.hasTagCompound()) return "None";
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(DOMAIN)) return "";
+        if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action1")) return "";
+        if (!compound.hasKey("action1")) return "None";
 
         return compound.getString("action1");
     }
@@ -71,13 +71,13 @@ public class ActionTags
 
     public static String getItemAction2(ItemStack stack)
     {
-        if (!stack.hasTagCompound()) return "";
+        if (!stack.hasTagCompound()) return "None";
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(DOMAIN)) return "";
+        if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action2")) return "";
+        if (!compound.hasKey("action2")) return "None";
 
         return compound.getString("action2");
     }

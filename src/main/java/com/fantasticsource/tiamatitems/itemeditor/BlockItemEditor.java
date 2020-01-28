@@ -37,7 +37,7 @@ public class BlockItemEditor extends Block
     {
         if (worldIn.isRemote) return true;
 
-        Network.WRAPPER.sendTo(new Network.OpenItemEditorPacket(), (EntityPlayerMP) player);
+        if (player.isCreative()) Network.WRAPPER.sendTo(new Network.OpenItemEditorPacket(), (EntityPlayerMP) player);
         return true;
     }
 }

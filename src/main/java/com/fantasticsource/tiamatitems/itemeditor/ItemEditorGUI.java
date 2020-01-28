@@ -15,6 +15,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.tiamatactions.gui.GUIAction;
 import com.fantasticsource.tiamatitems.Compat;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
@@ -68,6 +69,8 @@ public class ItemEditorGUI extends GUIScreen
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
+        GUIAction action1 = new GUIAction(gui, ActionTags.getItemAction1(stack));
+        GUIAction action2 = new GUIAction(gui, ActionTags.getItemAction2(stack));
         GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Lore
@@ -81,22 +84,48 @@ public class ItemEditorGUI extends GUIScreen
         GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 1 - (separator.y + separator.height), new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore);
 
-        tabView.tabViews.get(0).addAll
-                (
-                        new GUITextSpacer(gui),
-                        name,
-                        new GUITextSpacer(gui),
-                        level,
-                        new GUITextSpacer(gui),
-                        levelReq,
-                        new GUITextSpacer(gui),
-                        value,
-                        new GUITextSpacer(gui),
-                        new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
-                        separator,
-                        lore,
-                        scrollbar
-                );
+        if (Compat.tiamatactions)
+        {
+            tabView.tabViews.get(0).addAll
+                    (
+                            new GUITextSpacer(gui),
+                            name,
+                            new GUITextSpacer(gui),
+                            level,
+                            new GUIElement(gui, 1, 0),
+                            levelReq,
+                            new GUITextSpacer(gui),
+                            value,
+                            new GUITextSpacer(gui),
+                            action1,
+                            new GUIElement(gui, 1, 0),
+                            action2,
+                            new GUITextSpacer(gui),
+                            new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
+                            separator,
+                            lore,
+                            scrollbar
+                    );
+        }
+        else
+        {
+            tabView.tabViews.get(0).addAll
+                    (
+                            new GUITextSpacer(gui),
+                            name,
+                            new GUITextSpacer(gui),
+                            level,
+                            new GUIElement(gui, 1, 0),
+                            levelReq,
+                            new GUITextSpacer(gui),
+                            value,
+                            new GUITextSpacer(gui),
+                            new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
+                            separator,
+                            lore,
+                            scrollbar
+                    );
+        }
 
         //Add actions
         scrollbar.addRecalcActions(() ->
@@ -397,6 +426,11 @@ public class ItemEditorGUI extends GUIScreen
             MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
             MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
+            if (Compat.tiamatactions)
+            {
+                ActionTags.setItemAction1(stack, action1.getText());
+                ActionTags.setItemAction2(stack, action2.getText());
+            }
             MCTools.setLore(stack, lore.getText());
 
             //Texture
