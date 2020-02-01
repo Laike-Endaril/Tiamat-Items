@@ -428,7 +428,7 @@ public class ItemEditorGUI extends GUIScreen
             public GUIElement[] newLineDefaultElements()
             {
                 GUILabeledTextInput partSlot = new GUILabeledTextInput(screen, "Slot: ", "Part", partSlotFilter);
-                GUIItemStackText part = new GUIItemStackText(screen, ItemStack.EMPTY);
+                GUIItemStackText part = (GUIItemStackText) new GUIItemStackText(screen, ItemStack.EMPTY).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 part.addClickActions(() ->
                 {
                     ItemSelectionGUI itemSelectionGUI = new ItemSelectionGUI(part);
@@ -480,6 +480,12 @@ public class ItemEditorGUI extends GUIScreen
             for (GUIList.Line line : activeAttributeList.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
+            }
+
+            //Parts
+            for (GUIList.Line line : parts.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
             }
 
 
@@ -536,6 +542,16 @@ public class ItemEditorGUI extends GUIScreen
             {
                 ActiveAttributeModTags.addActiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
             }
+
+            //Parts
+            PartTags.clearPartSlots(stack);
+            for (GUIList.Line line : parts.getLines())
+            {
+                String partSlot = ((GUILabeledTextInput) line.getLineElement(1)).getText();
+                PartTags.addPartSlot(stack, partSlot);
+                PartTags.setPart(stack, partSlot, ((GUIItemStackText) line.getLineElement(3)).getStack());
+            }
+
 
             //Send to server
             Network.WRAPPER.sendToServer(new Network.EditItemPacket(stack));
