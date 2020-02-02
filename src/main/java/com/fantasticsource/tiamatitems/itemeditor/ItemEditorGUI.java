@@ -14,7 +14,6 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
-import com.fantasticsource.mctools.gui.screen.ItemSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
@@ -396,66 +395,7 @@ public class ItemEditorGUI extends GUIScreen
 
 
         //Parts tab
-        GUIList parts = new GUIList(gui, true, 0.98, 1)
-        {
-            TextFilter<String> partSlotFilter = new TextFilter<String>()
-            {
-                @Override
-                public String transformInput(String s)
-                {
-                    return s.trim();
-                }
-
-                @Override
-                public boolean acceptable(String s)
-                {
-                    if (!FilterNotEmpty.INSTANCE.acceptable(s)) return false;
-
-                    int count = 0;
-                    for (GUIList.Line line : getLines())
-                    {
-                        if (((GUILabeledTextInput) line.getLineElement(1)).getText().equals(s) && ++count > 1) return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                public String parse(String s)
-                {
-                    return !acceptable(s) ? null : s;
-                }
-            };
-
-            @Override
-            public GUIElement[] newLineDefaultElements()
-            {
-                GUILabeledTextInput partSlot = new GUILabeledTextInput(screen, "Acceptable Item Types: ", "Part", partSlotFilter);
-                GUIItemStackText part = (GUIItemStackText) new GUIItemStackText(screen, ItemStack.EMPTY).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
-                part.addClickActions(() ->
-                {
-                    ItemSelectionGUI itemSelectionGUI = new ItemSelectionGUI(part);
-                    itemSelectionGUI.addOnClosedActions(() -> part.setStack(itemSelectionGUI.selection));
-                });
-                return new GUIElement[]
-                        {
-                                new GUIElement(screen, 1, 0),
-                                partSlot,
-                                new GUIElement(screen, 1, 0),
-                                part
-                        };
-            }
-        };
-        GUIVerticalScrollbar scrollbar7 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, parts);
-        tabView.tabViews.get(5).addAll(parts, scrollbar7);
-
-        //Add existing part slots and parts
-        for (String partSlot : PartTags.getPartSlots(stack))
-        {
-            parts.addLine();
-            GUIList.Line line = parts.getLastFilledLine();
-            ((GUILabeledTextInput) line.getLineElement(1)).setText(partSlot);
-            ((GUIItemStackText) line.getLineElement(3)).setStack(PartTags.getPart(stack, partSlot));
-        }
+        //TODO or remove
 
 
         //Add main header actions
@@ -482,12 +422,6 @@ public class ItemEditorGUI extends GUIScreen
             for (GUIList.Line line : activeAttributeList.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(1)).valid() || !((GUILabeledTextInput) line.getLineElement(3)).valid() || !((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
-            }
-
-            //Parts
-            for (GUIList.Line line : parts.getLines())
-            {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
             }
 
 
@@ -543,15 +477,6 @@ public class ItemEditorGUI extends GUIScreen
             for (GUIList.Line line : activeAttributeList.getLines())
             {
                 ActiveAttributeModTags.addActiveMod(stack, ((GUILabeledTextInput) line.getLineElement(1)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(3)).getText() + ";" + ((GUILabeledTextInput) line.getLineElement(5)).getText());
-            }
-
-            //Parts
-            PartTags.clearPartSlots(stack);
-            for (GUIList.Line line : parts.getLines())
-            {
-                String partSlot = ((GUILabeledTextInput) line.getLineElement(1)).getText();
-                PartTags.addPartSlot(stack, partSlot);
-                PartTags.setPart(stack, partSlot, ((GUIItemStackText) line.getLineElement(3)).getStack());
             }
 
 
