@@ -258,7 +258,7 @@ public class ItemEditorGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUITextInput categoryInput = new GUITextInput(gui, "Type", FilterNotEmpty.INSTANCE);
+                GUITextInput categoryInput = new GUITextInput(gui, "Category", FilterNotEmpty.INSTANCE);
                 categoryInput.addRecalcActions(() ->
                 {
                     if (categoryInput.valid()) CategoryTags.renameItemCategory(stack, categoryInput.oldText, categoryInput.getText());
@@ -427,7 +427,7 @@ public class ItemEditorGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput partSlot = new GUILabeledTextInput(screen, "Slot: ", "Part", partSlotFilter);
+                GUILabeledTextInput partSlot = new GUILabeledTextInput(screen, "Acceptable Item Types: ", "Part", partSlotFilter);
                 GUIItemStackText part = (GUIItemStackText) new GUIItemStackText(screen, ItemStack.EMPTY).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 part.addClickActions(() ->
                 {

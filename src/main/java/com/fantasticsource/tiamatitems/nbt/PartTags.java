@@ -2,6 +2,9 @@ package com.fantasticsource.tiamatitems.nbt;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
@@ -86,6 +89,39 @@ public class PartTags
     }
 
 
+    public static NBTTagCompound getPartSlotTag(ItemStack stack, String partSlot)
+    {
+        return getPartSlotTag(stack, partSlot, false);
+    }
+
+    public static NBTTagCompound getPartSlotTag(ItemStack stack, String partSlot, boolean generateIfMissing)
+    {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!generateIfMissing)
+        {
+            if (!compound.hasKey(DOMAIN)) return null;
+
+            compound = compound.getCompoundTag(DOMAIN);
+            if (!compound.hasKey("parts")) return null;
+
+            compound = compound.getCompoundTag("parts");
+            if (!compound.hasKey(partSlot)) return null;
+        }
+        else
+        {
+            if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+            compound = compound.getCompoundTag(DOMAIN);
+            if (!compound.hasKey("parts")) compound.setTag("parts", new NBTTagCompound());
+
+            compound = compound.getCompoundTag("parts");
+            if (!compound.hasKey(partSlot)) compound.setTag(partSlot, new NBTTagCompound());
+        }
+
+        return compound.getCompoundTag(partSlot);
+    }
+
+
     public static NBTTagCompound getPartTag(ItemStack stack, String partSlot)
     {
         NBTTagCompound compound = stack.getTagCompound();
@@ -97,23 +133,18 @@ public class PartTags
         compound = compound.getCompoundTag("parts");
         if (!compound.hasKey(partSlot)) return null;
 
-        return compound.getCompoundTag(partSlot);
+        compound = compound.getCompoundTag(partSlot);
+        if (!compound.hasKey("part")) return null;
+
+        return compound.getCompoundTag("part");
     }
 
     public static void setPartTag(ItemStack stack, String partSlot, NBTTagCompound partTag)
     {
         if (!itemHasPartSlot(stack, partSlot)) return;
 
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = stack.getTagCompound();
-
-        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
-        compound = compound.getCompoundTag(DOMAIN);
-
-        if (!compound.hasKey("parts")) compound.setTag("parts", new NBTTagCompound());
-        compound = compound.getCompoundTag("parts");
-
-        compound.setTag(partSlot, partTag);
+        NBTTagCompound compound = stack.getTagCompound().getCompoundTag(DOMAIN).getCompoundTag("parts").getCompoundTag(partSlot);
+        compound.setTag("part", partTag);
     }
 
 
@@ -122,7 +153,6 @@ public class PartTags
         NBTTagCompound compound = getPartTag(stack, partSlot);
         if (compound == null) return null;
         if (compound.hasNoTags()) return ItemStack.EMPTY;
-
 
         return new ItemStack(compound);
     }
@@ -145,6 +175,142 @@ public class PartTags
     public static boolean itemHasPartInSlot(ItemStack stack, String partSlot)
     {
         ItemStack part = getPart(stack, partSlot);
-        return part != null && part != ItemStack.EMPTY;
+        return part != null && !part.isEmpty();
+    }
+
+
+    public static boolean isPartRequired(ItemStack stack, String partSlot)
+    {
+        NBTTagCompound compound = getPartSlotTag(stack, partSlot);
+        return compound != null && compound.getBoolean("required");
+    }
+
+    public static void setPartRequired(ItemStack stack, String partSlot, boolean required)
+    {
+        NBTTagCompound compound = getPartSlotTag(stack, partSlot);
+        if (compound != null)
+        {
+            if (required) compound.setBoolean("required", true);
+            else compound.removeTag("required");
+        }
+    }
+
+
+    public static String getItemType(ItemStack stack)
+    {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null || !compound.hasKey(DOMAIN)) return "Any";
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("type")) return "Any";
+
+        return compound.getString("type");
+    }
+
+    public static void setItemType(ItemStack stack, String type)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+        compound = compound.getCompoundTag(DOMAIN);
+        compound.setString("type", type);
+    }
+
+
+    public static ArrayList<String> getValidPartTypesForSlot(ItemStack stack, String partSlot)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
+        NBTTagCompound compound = getPartSlotTag(stack, partSlot);
+        if (compound == null || !compound.hasKey("types")) return result;
+
+        NBTTagList list = compound.getTagList("types", Constants.NBT.TAG_STRING);
+        for (int i = 0; i < list.tagCount(); i++)
+        {
+            result.add(list.getStringTagAt(i));
+        }
+        return result;
+    }
+
+    public static void setValidPartTypesForSlot(ItemStack stack, String partSlot, String... validPartTypes)
+    {
+        NBTTagCompound compound = getPartSlotTag(stack, partSlot, true);
+        compound.setTag("types", new NBTTagList());
+
+        NBTTagList list = compound.getTagList("types", Constants.NBT.TAG_STRING);
+        for (String type : validPartTypes) list.appendTag(new NBTTagString(type));
+    }
+
+    public static void clearValidPartTypesForSlot(ItemStack stack, String partSlot)
+    {
+        setValidPartTypesForSlot(stack, partSlot);
+    }
+
+    public static void addValidPartTypesForSlot(ItemStack stack, String partSlot, String... validPartTypes)
+    {
+        NBTTagCompound compound = getPartSlotTag(stack, partSlot, true);
+        if (!compound.hasKey("types")) compound.setTag("types", new NBTTagList());
+
+        NBTTagList list = compound.getTagList("types", Constants.NBT.TAG_STRING);
+        for (String type : validPartTypes) list.appendTag(new NBTTagString(type));
+    }
+
+    public static boolean partIsValidForSlot(ItemStack stack, String partSlot, ItemStack part)
+    {
+        return getValidPartTypesForSlot(stack, partSlot).contains(getItemType(part));
+    }
+
+
+    public static boolean orderedCombinationIsValid(ItemStack stack, ItemStack... parts)
+    {
+        ArrayList<String> partSlots = getPartSlots(stack);
+        if (partSlots.size() != parts.length) return false;
+
+        for (int i = 0; i < partSlots.size(); i++)
+        {
+            String partSlot = partSlots.get(i);
+            ItemStack part = parts[i];
+            if (itemHasPartInSlot(stack, partSlot))
+            {
+                if (part != null && !part.isEmpty()) return false;
+            }
+            else
+            {
+                if (isPartRequired(stack, partSlot))
+                {
+                    if (part == null || part.isEmpty() || !getValidPartTypesForSlot(stack, partSlot).contains(getItemType(part))) return false;
+                }
+                else
+                {
+                    if (part != null && !part.isEmpty() && !getValidPartTypesForSlot(stack, partSlot).contains(getItemType(part))) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean combineOrdered(ItemStack stack, ItemStack... parts)
+    {
+        return combineOrdered(stack, true, parts);
+    }
+
+    public static boolean combineOrdered(ItemStack stack, boolean absorbParts, ItemStack... parts)
+    {
+        if (!orderedCombinationIsValid(stack, parts)) return false;
+
+        ArrayList<String> partSlots = getPartSlots(stack);
+        for (int i = 0; i < partSlots.size(); i++)
+        {
+            String partSlot = partSlots.get(i);
+            ItemStack part = parts[i];
+            if (itemHasPartInSlot(stack, partSlot)) continue;
+
+            setPart(stack, partSlot, part);
+            if (absorbParts) part.setCount(0);
+        }
+
+        return true;
     }
 }

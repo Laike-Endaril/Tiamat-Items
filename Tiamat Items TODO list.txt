@@ -1,6 +1,11 @@
-* GUI
+Add part type tag
 
-Add actions (2 slots)
+Make part slots require any one of a set of part types
+Make part slots have a boolean for whether they're required
+
+
+
+* GUI
 
 Add texture previews to texture selection GUI
 
