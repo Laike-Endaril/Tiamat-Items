@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -300,6 +301,16 @@ public class PartTags
     {
         if (!orderedCombinationIsValid(stack, parts)) return false;
 
+        int value = MiscTags.getItemValue(stack);
+        int level = MiscTags.getItemLevel(stack);
+        int levelReq = MiscTags.getItemLevelReq(stack);
+        //TODO combine rarity (max)
+        //TODO combine name / affixes (first of each found)
+        //TODO combine actions (first of each found)
+        //TODO combine passive attribute modifiers (complex)
+        //TODO combine active attribute modifiers (complex)
+        //TODO handle item graphic so blueprints don't have to look like finished items (alters base item?)
+
         ArrayList<String> partSlots = getPartSlots(stack);
         for (int i = 0; i < partSlots.size(); i++)
         {
@@ -308,8 +319,19 @@ public class PartTags
             if (itemHasPartInSlot(stack, partSlot)) continue;
 
             setPart(stack, partSlot, part);
+
+            value += MiscTags.getItemValue(part);
+            level = Tools.max(level, MiscTags.getItemLevel(part));
+            levelReq = Tools.max(levelReq, MiscTags.getItemLevelReq(part));
+
             if (absorbParts) part.setCount(0);
         }
+
+        //TODO preserve individual data for original blueprint before combining
+
+        MiscTags.setItemValue(stack, value);
+        MiscTags.setItemLevel(stack, level);
+        MiscTags.setItemLevelReq(stack, levelReq);
 
         return true;
     }
