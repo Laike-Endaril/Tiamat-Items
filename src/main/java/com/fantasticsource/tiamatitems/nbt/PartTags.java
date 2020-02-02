@@ -392,8 +392,6 @@ public class PartTags
         //TODO combine rarity (max)
         //TODO combine name / affixes (rarity priority)
         //TODO combine actions (rarity priority)
-        //TODO combine passive attribute modifiers (complex)
-        //TODO combine active attribute modifiers (complex)
 
 
         ArrayList<String> partSlots = getPartSlots(blueprint);
