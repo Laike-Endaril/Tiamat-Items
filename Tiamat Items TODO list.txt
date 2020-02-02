@@ -1,11 +1,14 @@
-Add part type tag
+* Item Gen Editor
+
+
+
+* Item Editor GUI
+
+Add item type tag
 
 Make part slots require any one of a set of part types
 Make part slots have a boolean for whether they're required
 
-
-
-* GUI
 
 Add texture previews to texture selection GUI
 
@@ -23,12 +26,6 @@ Lock symbol for soulbound
 
 Improve render via back-to-front voxel ordering...
 ...get current center-of-screen and use distances?
-
-
-
-* Attributes
-
-Apply active attributes during weapon attacks
 
 
 

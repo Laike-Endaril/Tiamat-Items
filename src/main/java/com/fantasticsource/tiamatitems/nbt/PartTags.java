@@ -390,8 +390,8 @@ public class PartTags
         int level = MiscTags.getItemLevel(blueprint);
         int levelReq = MiscTags.getItemLevelReq(blueprint);
         //TODO combine rarity (max)
-        //TODO combine name / affixes (first of each found)
-        //TODO combine actions (first of each found)
+        //TODO combine name / affixes (rarity priority)
+        //TODO combine actions (rarity priority)
         //TODO combine passive attribute modifiers (complex)
         //TODO combine active attribute modifiers (complex)
 
