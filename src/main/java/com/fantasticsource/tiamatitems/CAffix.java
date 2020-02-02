@@ -10,11 +10,14 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class CAffix extends Component
 {
+    public static LinkedHashMap<String, CAffix> allAffixes = new LinkedHashMap<>();
+
+
     public String name = "";
-    public int affixPosition = -1;
     public ArrayList<CAffixMod> mods = new ArrayList<>();
 
 
@@ -22,7 +25,6 @@ public class CAffix extends Component
     public CAffix write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
-        buf.writeInt(affixPosition);
         buf.writeInt(mods.size());
         for (CAffixMod mod : mods) mod.write(buf);
 
@@ -33,7 +35,6 @@ public class CAffix extends Component
     public CAffix read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
-        affixPosition = buf.readInt();
 
         mods.clear();
         for (int i = buf.readInt(); i > 0; i--) mods.add(new CAffixMod().read(buf));
@@ -45,7 +46,7 @@ public class CAffix extends Component
     public CAffix save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream);
-        new CInt().set(affixPosition).save(stream).set(mods.size()).save(stream);
+        new CInt().set(mods.size()).save(stream);
         for (CAffixMod mod : mods) mod.save(stream);
 
         return this;
@@ -56,11 +57,8 @@ public class CAffix extends Component
     {
         name = new CStringUTF8().load(stream).value;
 
-        CInt ci = new CInt();
-        affixPosition = ci.load(stream).value;
-
         mods.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) mods.add(new CAffixMod().load(stream));
+        for (int i = new CInt().load(stream).value; i > 0; i--) mods.add(new CAffixMod().load(stream));
 
         return this;
     }
