@@ -57,6 +57,7 @@ public class PartTags
 
         compound = compound.getCompoundTag("parts");
         compound.removeTag(partSlot);
+        if (compound.getSize() == 0) clearPartSlots(stack);
     }
 
     public static void addPartSlot(ItemStack stack, String partSlot)
@@ -264,75 +265,163 @@ public class PartTags
     }
 
 
-    public static boolean orderedCombinationIsValid(ItemStack stack, ItemStack... parts)
+    public static void setAssembly(ItemStack stack, ItemStack assembly)
     {
-        ArrayList<String> partSlots = getPartSlots(stack);
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+        compound = compound.getCompoundTag(DOMAIN);
+        compound.setTag("assembly", assembly.serializeNBT());
+    }
+
+    public static ItemStack getAssembly(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return null;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("assembly")) return null;
+
+        return new ItemStack(compound.getCompoundTag("assembly"));
+    }
+
+    public static void clearAssembly(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("assembly")) return;
+
+        compound.removeTag("assembly");
+        if (compound.getSize() == 0) mainTag.removeTag(DOMAIN);
+    }
+
+    public static boolean itemIsBlueprint(ItemStack stack)
+    {
+        ItemStack assembly = getAssembly(stack);
+        return assembly != null && !assembly.isEmpty();
+    }
+
+
+    public static void setBlueprint(ItemStack stack, ItemStack blueprint)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+        compound = compound.getCompoundTag(DOMAIN);
+        compound.setTag("blueprint", blueprint.serializeNBT());
+    }
+
+    public static ItemStack getBlueprint(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return null;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("blueprint")) return null;
+
+        return new ItemStack(compound.getCompoundTag("blueprint"));
+    }
+
+    public static void clearBlueprint(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("blueprint")) return;
+
+        compound.removeTag("blueprint");
+        if (compound.getSize() == 0) mainTag.removeTag(DOMAIN);
+    }
+
+    public static boolean itemIsAssembly(ItemStack stack)
+    {
+        ItemStack blueprint = getBlueprint(stack);
+        return blueprint != null && !blueprint.isEmpty();
+    }
+
+
+    public static boolean simpleOrderedCombinationIsValid(ItemStack blueprint, ItemStack... parts)
+    {
+        if (!itemIsBlueprint(blueprint)) return false;
+
+        ArrayList<String> partSlots = getPartSlots(blueprint);
         if (partSlots.size() != parts.length) return false;
 
         for (int i = 0; i < partSlots.size(); i++)
         {
             String partSlot = partSlots.get(i);
             ItemStack part = parts[i];
-            if (itemHasPartInSlot(stack, partSlot))
+
+            if (itemHasPartInSlot(blueprint, partSlot)) return false;
+
+            if (isPartRequired(blueprint, partSlot))
             {
-                if (part != null && !part.isEmpty()) return false;
+                if (part == null || part.isEmpty() || !getValidPartTypesForSlot(blueprint, partSlot).contains(getItemType(part))) return false;
             }
             else
             {
-                if (isPartRequired(stack, partSlot))
-                {
-                    if (part == null || part.isEmpty() || !getValidPartTypesForSlot(stack, partSlot).contains(getItemType(part))) return false;
-                }
-                else
-                {
-                    if (part != null && !part.isEmpty() && !getValidPartTypesForSlot(stack, partSlot).contains(getItemType(part))) return false;
-                }
+                if (part != null && !part.isEmpty() && !getValidPartTypesForSlot(blueprint, partSlot).contains(getItemType(part))) return false;
             }
         }
         return true;
     }
 
-    public static boolean combineOrdered(ItemStack stack, ItemStack... parts)
+    public static ItemStack combineSimpleOrdered(ItemStack blueprint, ItemStack... parts)
     {
-        return combineOrdered(stack, true, parts);
-    }
+        if (!simpleOrderedCombinationIsValid(blueprint, parts)) return ItemStack.EMPTY;
 
-    public static boolean combineOrdered(ItemStack stack, boolean absorbParts, ItemStack... parts)
-    {
-        if (!orderedCombinationIsValid(stack, parts)) return false;
 
-        int value = MiscTags.getItemValue(stack);
-        int level = MiscTags.getItemLevel(stack);
-        int levelReq = MiscTags.getItemLevelReq(stack);
+        int value = MiscTags.getItemValue(blueprint);
+        int level = MiscTags.getItemLevel(blueprint);
+        int levelReq = MiscTags.getItemLevelReq(blueprint);
         //TODO combine rarity (max)
         //TODO combine name / affixes (first of each found)
         //TODO combine actions (first of each found)
         //TODO combine passive attribute modifiers (complex)
         //TODO combine active attribute modifiers (complex)
-        //TODO handle item graphic so blueprints don't have to look like finished items (alters base item?)
 
-        ArrayList<String> partSlots = getPartSlots(stack);
+
+        ArrayList<String> partSlots = getPartSlots(blueprint);
         for (int i = 0; i < partSlots.size(); i++)
         {
-            String partSlot = partSlots.get(i);
             ItemStack part = parts[i];
-            if (itemHasPartInSlot(stack, partSlot)) continue;
 
-            setPart(stack, partSlot, part);
+            setPart(blueprint, partSlots.get(i), part);
 
             value += MiscTags.getItemValue(part);
             level = Tools.max(level, MiscTags.getItemLevel(part));
             levelReq = Tools.max(levelReq, MiscTags.getItemLevelReq(part));
 
-            if (absorbParts) part.setCount(0);
+            part.setCount(0);
         }
 
-        //TODO preserve individual data for original blueprint before combining
 
-        MiscTags.setItemValue(stack, value);
-        MiscTags.setItemLevel(stack, level);
-        MiscTags.setItemLevelReq(stack, levelReq);
+        //Preserve individual data for original blueprint before combining
+        ItemStack result = getAssembly(blueprint);
+        setBlueprint(result, blueprint);
 
-        return true;
+
+        //Set assembled item parameters
+        MiscTags.setItemValue(result, value);
+        MiscTags.setItemLevel(result, level);
+        MiscTags.setItemLevelReq(result, levelReq);
+
+
+        return result;
     }
 }
