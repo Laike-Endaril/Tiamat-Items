@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.compat.Compat;
+import com.fantasticsource.tiamatitems.globaleditor.GlobalEditorGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ public class Network
     {
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(OpenGlobalEditorPacketHandler.class, OpenGlobalEditorPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -123,6 +125,36 @@ public class Network
                     inv.setInventorySlotContents(inv.currentItem, packet.stack.value);
                 }
             });
+            return null;
+        }
+    }
+
+
+    public static class OpenGlobalEditorPacket implements IMessage
+    {
+        public OpenGlobalEditorPacket()
+        {
+            //Required
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+        }
+    }
+
+    public static class OpenGlobalEditorPacketHandler implements IMessageHandler<OpenGlobalEditorPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(OpenGlobalEditorPacket packet, MessageContext ctx)
+        {
+            Minecraft.getMinecraft().addScheduledTask(GlobalEditorGUI::show);
             return null;
         }
     }
