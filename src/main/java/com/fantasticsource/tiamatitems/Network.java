@@ -4,7 +4,7 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.compat.Compat;
-import com.fantasticsource.tiamatitems.globaleditor.GlobalEditorGUI;
+import com.fantasticsource.tiamatitems.globalsettings.GlobalSettingsGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -32,7 +32,7 @@ public class Network
     {
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
-        WRAPPER.registerMessage(OpenGlobalEditorPacketHandler.class, OpenGlobalEditorPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(OpenGlobalSettingsPacketHandler.class, OpenGlobalSettingsPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -130,9 +130,9 @@ public class Network
     }
 
 
-    public static class OpenGlobalEditorPacket implements IMessage
+    public static class OpenGlobalSettingsPacket implements IMessage
     {
-        public OpenGlobalEditorPacket()
+        public OpenGlobalSettingsPacket()
         {
             //Required
         }
@@ -148,13 +148,13 @@ public class Network
         }
     }
 
-    public static class OpenGlobalEditorPacketHandler implements IMessageHandler<OpenGlobalEditorPacket, IMessage>
+    public static class OpenGlobalSettingsPacketHandler implements IMessageHandler<OpenGlobalSettingsPacket, IMessage>
     {
         @Override
         @SideOnly(Side.CLIENT)
-        public IMessage onMessage(OpenGlobalEditorPacket packet, MessageContext ctx)
+        public IMessage onMessage(OpenGlobalSettingsPacket packet, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(GlobalEditorGUI::show);
+            Minecraft.getMinecraft().addScheduledTask(GlobalSettingsGUI::show);
             return null;
         }
     }

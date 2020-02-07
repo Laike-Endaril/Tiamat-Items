@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.globaleditor;
+package com.fantasticsource.tiamatitems.globalsettings;
 
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
@@ -15,9 +15,9 @@ import net.minecraft.world.World;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class BlockGlobalEditor extends Block
+public class BlockGlobalSettings extends Block
 {
-    public BlockGlobalEditor()
+    public BlockGlobalSettings()
     {
         super(Material.ROCK);
         setSoundType(SoundType.STONE);
@@ -27,8 +27,8 @@ public class BlockGlobalEditor extends Block
 
         setCreativeTab(TiamatItems.creativeTab);
 
-        setUnlocalizedName(MODID + ":globaleditor");
-        setRegistryName("globaleditor");
+        setUnlocalizedName(MODID + ":globalsettings");
+        setRegistryName("globalsettings");
     }
 
 
@@ -37,7 +37,7 @@ public class BlockGlobalEditor extends Block
     {
         if (worldIn.isRemote) return true;
 
-        if (player.isCreative()) Network.WRAPPER.sendTo(new Network.OpenGlobalEditorPacket(), (EntityPlayerMP) player);
+        if (player.isCreative()) Network.WRAPPER.sendTo(new Network.OpenGlobalSettingsPacket(), (EntityPlayerMP) player);
         return true;
     }
 }

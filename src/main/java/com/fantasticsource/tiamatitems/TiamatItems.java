@@ -2,8 +2,8 @@ package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.compat.Compat;
-import com.fantasticsource.tiamatitems.globaleditor.BlockGlobalEditor;
-import com.fantasticsource.tiamatitems.globaleditor.ItemGlobalEditor;
+import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
+import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import net.minecraft.block.Block;
@@ -45,10 +45,10 @@ public class TiamatItems
     public static BlockItemEditor blockItemEditor;
     @GameRegistry.ObjectHolder(MODID + ":itemeditor")
     public static ItemItemEditor itemItemEditor;
-    @GameRegistry.ObjectHolder(MODID + ":globaleditor")
-    public static BlockGlobalEditor blockGlobalEditor;
-    @GameRegistry.ObjectHolder(MODID + ":globaleditor")
-    public static ItemGlobalEditor itemGlobalEditor;
+    @GameRegistry.ObjectHolder(MODID + ":globalsettings")
+    public static BlockGlobalSettings blockGlobalSettings;
+    @GameRegistry.ObjectHolder(MODID + ":globalsettings")
+    public static ItemGlobalSettings itemGlobalSettings;
 
     @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
     public static TiamatItem tiamatItem;
@@ -109,7 +109,7 @@ public class TiamatItems
     {
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.register(new BlockItemEditor());
-        registry.register(new BlockGlobalEditor());
+        registry.register(new BlockGlobalSettings());
     }
 
     @SubscribeEvent
@@ -117,7 +117,7 @@ public class TiamatItems
     {
         IForgeRegistry<Item> registry = event.getRegistry();
         registry.register(new ItemItemEditor());
-        registry.register(new ItemGlobalEditor());
+        registry.register(new ItemGlobalSettings());
 
         registry.register(new TiamatItem());
     }
@@ -126,7 +126,7 @@ public class TiamatItems
     public static void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoader.setCustomModelResourceLocation(itemItemEditor, 0, new ModelResourceLocation(MODID + ":itemeditor", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(itemGlobalEditor, 0, new ModelResourceLocation(MODID + ":globaleditor", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(itemGlobalSettings, 0, new ModelResourceLocation(MODID + ":globalsettings", "inventory"));
 
         ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
     }
