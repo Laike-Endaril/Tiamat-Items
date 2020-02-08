@@ -30,8 +30,22 @@ public class GlobalSettingsGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "Affixes", "Rarities");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Attribute Multipliers", "Affixes", "Rarities", "Item Types");
         gui.root.add(tabView);
+
+
+        //General tab
+        //TODO
+        tabView.tabViews.get(0).addAll
+                (
+                );
+
+
+        //Attribute Multipliers tab
+        //TODO
+        tabView.tabViews.get(1).addAll
+                (
+                );
 
 
         //Affixes tab
@@ -44,7 +58,7 @@ public class GlobalSettingsGUI extends GUIScreen
             }
         };
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, affixes);
-        tabView.tabViews.get(0).addAll
+        tabView.tabViews.get(2).addAll
                 (
                         affixes,
                         scrollbar
@@ -61,11 +75,21 @@ public class GlobalSettingsGUI extends GUIScreen
             }
         };
         GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, rarities);
-        tabView.tabViews.get(1).addAll
+        tabView.tabViews.get(3).addAll
                 (
                         rarities,
                         scrollbar2
                 );
+
+
+        //Item Types tab
+        //TODO
+        tabView.tabViews.get(4).addAll
+                (
+                );
+
+
+        //...
 
 
         //Add main header actions

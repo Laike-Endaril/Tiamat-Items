@@ -4,12 +4,14 @@ General
 .Base item component power (base power of each item type and affix)
 .Item component power per level (power bonus per level for each item type and affix)
 
-Affixes
+Attribute Multipliers (list)
+.empty by default; list of attributes with decimal power multipliers; new entries default to 1
+
+Affixes (list)
 .Name
 .Weighted attribute distribution
 
-Rarities
-.Tier (exclusive int value per rarity)
+Rarities (list)
 .Name
 .Color
 .Item level bonus (decimal)
@@ -36,8 +38,6 @@ Make part slots have a boolean for whether they're required
 Add texture previews to texture selection GUI
 
 Add affixes
-
-Add rarity (pulls from TiamatRPG config)
 
 
 
