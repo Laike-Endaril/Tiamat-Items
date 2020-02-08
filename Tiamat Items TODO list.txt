@@ -1,4 +1,27 @@
-* Item Gen Editor
+* Global settings
+
+General
+.Base item component power (base power of each item type and affix)
+.Item component power per level (power bonus per level for each item type and affix)
+
+Affixes
+.Name
+.Weighted attribute distribution
+
+Rarities
+.Tier (exclusive int value per rarity)
+.Name
+.Color
+.Item level bonus (decimal)
+.Affix pools
+..Affix position (integer)
+..Weighted list of affixes
+
+Item Types
+.Type name
+.Slotting
+.Affix IDs to generate
+.Weighted attribute distribution
 
 
 
