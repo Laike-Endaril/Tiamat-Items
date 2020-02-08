@@ -1,32 +1,3 @@
-* Global settings
-
-General
-.Base item component power (base power of each item type and affix)
-.Item component power per level (power bonus per level for each item type and affix)
-
-Attribute Multipliers (list)
-.empty by default; list of attributes with decimal power multipliers; new entries default to 1
-
-Affixes (list)
-.Name
-.Weighted attribute distribution
-
-Rarities (list)
-.Name
-.Color
-.Item level bonus (decimal)
-.Affix pools
-..Affix position (integer)
-..Weighted list of affixes
-
-Item Types
-.Type name
-.Slotting
-.Affix IDs to generate
-.Weighted attribute distribution
-
-
-
 * Item Editor GUI
 
 Add item type tag

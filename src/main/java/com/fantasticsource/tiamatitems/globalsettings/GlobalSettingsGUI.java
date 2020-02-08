@@ -35,14 +35,17 @@ public class GlobalSettingsGUI extends GUIScreen
 
 
         //General tab
-        //TODO
+        //TODO Base item component power (base power of each item type and affix)
+        //TODO Item component power per level (power bonus per level for each item type and affix)
         tabView.tabViews.get(0).addAll
                 (
                 );
 
 
         //Attribute Multipliers tab
-        //TODO
+        //TODO list
+        //TODO .Attribute
+        //TODO .Attribute multiplier
         tabView.tabViews.get(1).addAll
                 (
                 );
@@ -54,6 +57,8 @@ public class GlobalSettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
+                //TODO Name
+                //TODO Weighted attribute distribution
                 return new GUIElement[0];
             }
         };
@@ -71,6 +76,12 @@ public class GlobalSettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
+                //TODO Name
+                //TODO Color
+                //TODO Item level bonus (decimal)
+                //TODO Affix pools
+                //TODO .Affix position (integer)
+                //TODO .Weighted list of affixes
                 return new GUIElement[0];
             }
         };
@@ -83,7 +94,11 @@ public class GlobalSettingsGUI extends GUIScreen
 
 
         //Item Types tab
-        //TODO
+        //TODO list
+        //TODO Type name
+        //TODO .Slotting
+        //TODO .Affix IDs to generate
+        //TODO .Weighted attribute distribution
         tabView.tabViews.get(4).addAll
                 (
                 );
