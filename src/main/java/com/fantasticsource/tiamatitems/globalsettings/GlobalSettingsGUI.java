@@ -8,12 +8,13 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
+import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
 public class GlobalSettingsGUI extends GUIScreen
 {
-    public static void show()
+    public static void show(Network.OpenGlobalSettingsPacket packet)
     {
         GlobalSettingsGUI gui = new GlobalSettingsGUI();
         Minecraft.getMinecraft().displayGuiScreen(gui);
@@ -35,8 +36,9 @@ public class GlobalSettingsGUI extends GUIScreen
 
 
         //General tab
-        //TODO Base item component power (base power of each item type and affix)
+        //TODO Base item component power (base power of any item type or affix)
         //TODO Item component power per level (power bonus per level for each item type and affix)
+        //TODO Item power variance
         tabView.tabViews.get(0).addAll
                 (
                 );
@@ -95,10 +97,11 @@ public class GlobalSettingsGUI extends GUIScreen
 
         //Item Types tab
         //TODO list
-        //TODO Type name
+        //TODO .Type name
         //TODO .Slotting
-        //TODO .Affix IDs to generate
+        //TODO .Component power multiplier
         //TODO .Weighted attribute distribution
+        //TODO .Affix IDs to generate
         tabView.tabViews.get(4).addAll
                 (
                 );

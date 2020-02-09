@@ -25,7 +25,7 @@ import java.util.UUID;
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class Attributes
+public class AttributeHandler
 {
     //ALSO SEE ATTRIBUTETAGS CLASS
 
@@ -46,12 +46,22 @@ public class Attributes
     @SubscribeEvent
     public static void handlePassiveAttributeMods(TickEvent.ServerTickEvent event)
     {
+        //TODO attribute bonus =
+        //TODO (base component power + (item (part) level + item (part) rarity level mod) * component power per level)
+        //TODO * item type balance multiplier * attribute balance multiplier
+        //TODO * (relative item power * item power variance)
+        //TODO * (attribute weight / attribute pool volume)
+
+        //TODO Relative item power ranges from 0 to 1 and is generated on item generation, and stored in the item permanently
+        //Item power variance is a global setting defining how much effect this randomization has
+
+        //TODO attribute weights are randomized within specified ranges per-affix on generation, and stored in the item permanently
         if (event.phase != TickEvent.Phase.START) return;
 
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-        server.profiler.startSection(MODID + " - generic slot attribute modifiers");
+        server.profiler.startSection(MODID + " - slot attribute modifiers");
 
         for (EntityPlayerMP player : server.getPlayerList().getPlayers())
         {

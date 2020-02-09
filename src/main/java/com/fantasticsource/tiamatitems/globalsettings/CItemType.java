@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems;
+package com.fantasticsource.tiamatitems.globalsettings;
 
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
@@ -10,19 +10,15 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
-public class CAffix extends Component
+public class CItemType extends Component
 {
-    public static LinkedHashMap<String, CAffix> allAffixes = new LinkedHashMap<>();
-
-
     public String name = "";
     public ArrayList<CAffixMod> mods = new ArrayList<>();
 
 
     @Override
-    public CAffix write(ByteBuf buf)
+    public CItemType write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeInt(mods.size());
@@ -32,7 +28,7 @@ public class CAffix extends Component
     }
 
     @Override
-    public CAffix read(ByteBuf buf)
+    public CItemType read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
 
@@ -43,7 +39,7 @@ public class CAffix extends Component
     }
 
     @Override
-    public CAffix save(OutputStream stream)
+    public CItemType save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream);
         new CInt().set(mods.size()).save(stream);
@@ -53,7 +49,7 @@ public class CAffix extends Component
     }
 
     @Override
-    public CAffix load(InputStream stream)
+    public CItemType load(InputStream stream)
     {
         name = new CStringUTF8().load(stream).value;
 

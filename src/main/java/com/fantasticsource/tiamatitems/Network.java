@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.compat.Compat;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.GlobalSettingsGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
@@ -132,6 +133,8 @@ public class Network
 
     public static class OpenGlobalSettingsPacket implements IMessage
     {
+        public double baseItemComponentPower, itemComponentPowerPerLevel, itemPowerVariance;
+
         public OpenGlobalSettingsPacket()
         {
             //Required
@@ -140,11 +143,17 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
+            buf.writeDouble(CGlobalSettings.baseItemComponentPower);
+            buf.writeDouble(CGlobalSettings.itemComponentPowerPerLevel);
+            buf.writeDouble(CGlobalSettings.itemPowerVariance);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
+            baseItemComponentPower = buf.readDouble();
+            itemComponentPowerPerLevel = buf.readDouble();
+            itemPowerVariance = buf.readDouble();
         }
     }
 
@@ -154,7 +163,7 @@ public class Network
         @SideOnly(Side.CLIENT)
         public IMessage onMessage(OpenGlobalSettingsPacket packet, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(GlobalSettingsGUI::show);
+            Minecraft.getMinecraft().addScheduledTask(() -> GlobalSettingsGUI.show(packet));
             return null;
         }
     }
