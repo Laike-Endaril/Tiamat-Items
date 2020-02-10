@@ -17,7 +17,7 @@ public class CRarity extends Component
     public String name = "";
     public Color color = Color.WHITE;
     public TextFormatting textColor = TextFormatting.WHITE;
-    public CAttributePool attributePool = new CAttributePool();
+    public CAttributePool randomAttributePool = new CAttributePool();
     public ArrayList<String> randomAttributeGenBlacklist = new ArrayList<>();
 
 
@@ -27,7 +27,7 @@ public class CRarity extends Component
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeInt(color.color());
         buf.writeInt(textColor.getColorIndex());
-        attributePool.write(buf);
+        randomAttributePool.write(buf);
 
         buf.writeInt(randomAttributeGenBlacklist.size());
         for (String s : randomAttributeGenBlacklist) ByteBufUtils.writeUTF8String(buf, s);
@@ -41,7 +41,7 @@ public class CRarity extends Component
         name = ByteBufUtils.readUTF8String(buf);
         color.setColor(buf.readInt());
         textColor = TextFormatting.fromColorIndex(buf.readInt());
-        attributePool.read(buf);
+        randomAttributePool.read(buf);
 
         randomAttributeGenBlacklist.clear();
         for (int i = buf.readInt(); i > 0; i--) randomAttributeGenBlacklist.add(ByteBufUtils.readUTF8String(buf));
@@ -53,7 +53,10 @@ public class CRarity extends Component
     public CRarity save(OutputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8().set(name).save(stream);
-        new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream).set(randomAttributeGenBlacklist.size()).save(stream);
+        CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
+        randomAttributePool.save(stream);
+
+        ci.set(randomAttributeGenBlacklist.size()).save(stream);
         for (String s : randomAttributeGenBlacklist) cs.set(s).save(stream);
 
         return this;
@@ -64,11 +67,10 @@ public class CRarity extends Component
     {
         CStringUTF8 cs = new CStringUTF8();
         name = cs.load(stream).value;
-
         CInt ci = new CInt();
         color.setColor(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
-        attributePool.load(stream);
+        randomAttributePool.load(stream);
 
         randomAttributeGenBlacklist.clear();
         for (int i = ci.load(stream).value; i > 0; i--) randomAttributeGenBlacklist.add(cs.load(stream).value);
