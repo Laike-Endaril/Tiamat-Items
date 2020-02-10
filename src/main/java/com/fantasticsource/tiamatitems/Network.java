@@ -143,8 +143,8 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeDouble(CGlobalSettings.baseItemComponentPower);
-            buf.writeDouble(CGlobalSettings.itemComponentPowerPerLevel);
+            buf.writeDouble(CGlobalSettings.baseAttributeMultiplier);
+            buf.writeDouble(CGlobalSettings.attributeMultiplierPerLevel);
         }
 
         @Override

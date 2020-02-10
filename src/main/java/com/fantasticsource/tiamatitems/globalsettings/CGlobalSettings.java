@@ -11,8 +11,8 @@ import java.util.LinkedHashMap;
 public class CGlobalSettings extends Component
 {
     public static double
-            baseItemComponentPower = 0,
-            itemComponentPowerPerLevel = 10;
+            baseAttributeMultiplier = 1,
+            attributeMultiplierPerLevel = 1;
 
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
 
@@ -24,8 +24,8 @@ public class CGlobalSettings extends Component
     @Override
     public CGlobalSettings write(ByteBuf buf)
     {
-        buf.writeDouble(baseItemComponentPower);
-        buf.writeDouble(itemComponentPowerPerLevel);
+        buf.writeDouble(baseAttributeMultiplier);
+        buf.writeDouble(attributeMultiplierPerLevel);
 
         return this;
     }
@@ -33,8 +33,8 @@ public class CGlobalSettings extends Component
     @Override
     public CGlobalSettings read(ByteBuf buf)
     {
-        baseItemComponentPower = buf.readDouble();
-        itemComponentPowerPerLevel = buf.readDouble();
+        baseAttributeMultiplier = buf.readDouble();
+        attributeMultiplierPerLevel = buf.readDouble();
 
         return this;
     }
@@ -42,7 +42,7 @@ public class CGlobalSettings extends Component
     @Override
     public CGlobalSettings save(OutputStream stream)
     {
-        new CDouble().set(baseItemComponentPower).save(stream).set(itemComponentPowerPerLevel).save(stream);
+        new CDouble().set(baseAttributeMultiplier).save(stream).set(attributeMultiplierPerLevel).save(stream);
 
         return this;
     }
@@ -51,8 +51,8 @@ public class CGlobalSettings extends Component
     public CGlobalSettings load(InputStream stream)
     {
         CDouble cd = new CDouble();
-        baseItemComponentPower = cd.load(stream).value;
-        itemComponentPowerPerLevel = cd.load(stream).value;
+        baseAttributeMultiplier = cd.load(stream).value;
+        attributeMultiplierPerLevel = cd.load(stream).value;
 
         return this;
     }
