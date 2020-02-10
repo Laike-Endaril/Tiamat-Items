@@ -12,10 +12,13 @@ public class CGlobalSettings extends Component
 {
     public static double
             baseItemComponentPower = 0,
-            itemComponentPowerPerLevel = 10,
-            itemPowerVariance = 0.25;
+            itemComponentPowerPerLevel = 10;
 
-    public static LinkedHashMap<String, CAffix> allAffixes = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
+
+    //TODO rarities
+
+    //TODO item types
 
 
     @Override
@@ -23,7 +26,6 @@ public class CGlobalSettings extends Component
     {
         buf.writeDouble(baseItemComponentPower);
         buf.writeDouble(itemComponentPowerPerLevel);
-        buf.writeDouble(itemPowerVariance);
 
         return this;
     }
@@ -33,7 +35,6 @@ public class CGlobalSettings extends Component
     {
         baseItemComponentPower = buf.readDouble();
         itemComponentPowerPerLevel = buf.readDouble();
-        itemPowerVariance = buf.readDouble();
 
         return this;
     }
@@ -41,7 +42,7 @@ public class CGlobalSettings extends Component
     @Override
     public CGlobalSettings save(OutputStream stream)
     {
-        new CDouble().set(baseItemComponentPower).save(stream).set(itemComponentPowerPerLevel).save(stream).set(itemPowerVariance).save(stream);
+        new CDouble().set(baseItemComponentPower).save(stream).set(itemComponentPowerPerLevel).save(stream);
 
         return this;
     }
@@ -52,7 +53,6 @@ public class CGlobalSettings extends Component
         CDouble cd = new CDouble();
         baseItemComponentPower = cd.load(stream).value;
         itemComponentPowerPerLevel = cd.load(stream).value;
-        itemPowerVariance = cd.load(stream).value;
 
         return this;
     }

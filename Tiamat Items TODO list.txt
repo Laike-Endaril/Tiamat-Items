@@ -1,3 +1,39 @@
+Item type...
+...has a defined set of always-generated attributes, with ranges for each
+...has a defined pool of random attributes, with weighted chance of generating each attribute, and ranges for each of those attributes if generated (the same attribute should not be generated twice on the same item)
+
+Level...
+...acts as a multiplier for stats on the item
+
+Rarity...
+...determines the number of random stats to roll from the item type's random attribute pool
+
+Affixes...
+...are determined by the 2 highest total attribute bonuses on the item upon generation or assembly (see below for exact determination)
+...are not necessariy passed on from a part to an assembled item; they're rerolled upon assembly
+
+
+
+Each item stores the global setting version number it used to generate, and recalcs stats when a new global setting version number is detected, on these triggers...
+...login
+...tooltip
+
+
+
+When generating an item, for each stat rolled, store the stat name, the *percentage* rolled, and the value rolled (for quick reference)
+
+When rebalancing, first see if the stat can still be rolled on that item type
+If so, recalculate the same stat with the new range and the old percentage
+If not, remove that stat and add a new random stat, using the old percentage
+
+
+
+No way to limit access to certain attributes based on rarity or level
+
+
+
+
+
 * Item Editor GUI
 
 Add item type tag

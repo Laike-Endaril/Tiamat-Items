@@ -133,7 +133,7 @@ public class Network
 
     public static class OpenGlobalSettingsPacket implements IMessage
     {
-        public double baseItemComponentPower, itemComponentPowerPerLevel, itemPowerVariance;
+        public double baseItemComponentPower, itemComponentPowerPerLevel;
 
         public OpenGlobalSettingsPacket()
         {
@@ -145,7 +145,6 @@ public class Network
         {
             buf.writeDouble(CGlobalSettings.baseItemComponentPower);
             buf.writeDouble(CGlobalSettings.itemComponentPowerPerLevel);
-            buf.writeDouble(CGlobalSettings.itemPowerVariance);
         }
 
         @Override
@@ -153,7 +152,6 @@ public class Network
         {
             baseItemComponentPower = buf.readDouble();
             itemComponentPowerPerLevel = buf.readDouble();
-            itemPowerVariance = buf.readDouble();
         }
     }
 
