@@ -29,9 +29,9 @@ public class AttributeHandler
 {
     //ALSO SEE ATTRIBUTETAGS CLASS
 
-    public static UUID getTiamatModIDForSlot(int slot)
+    public static UUID getTiamatModIDForSlot(int slot, int operation)
     {
-        return new UUID(619375061579634L, slot);
+        return new UUID(619375061579634L, (((long) slot) << 32) + operation);
     }
 
     public static Pair<String, AttributeModifier> getTiamatModifierForSlot(int slot, String modString)
@@ -39,7 +39,8 @@ public class AttributeHandler
         String[] tokens = Tools.fixedSplit(modString, ";");
         if (tokens.length != 3) return null;
 
-        return new Pair<>(tokens[0], new AttributeModifier(getTiamatModIDForSlot(slot), DOMAIN + slot, Double.parseDouble(tokens[1]), Integer.parseInt(tokens[2])));
+        int operation = Integer.parseInt(tokens[2]);
+        return new Pair<>(tokens[0], new AttributeModifier(getTiamatModIDForSlot(slot, operation), DOMAIN + slot + ":" + operation, Double.parseDouble(tokens[1]), operation));
     }
 
 
@@ -62,7 +63,9 @@ public class AttributeHandler
             {
                 for (IAttributeInstance attributeInstance : attributeMap.getAllAttributes().toArray(new IAttributeInstance[0]))
                 {
-                    attributeInstance.removeModifier(getTiamatModIDForSlot(slot));
+                    attributeInstance.removeModifier(getTiamatModIDForSlot(slot, 0));
+                    attributeInstance.removeModifier(getTiamatModIDForSlot(slot, 1));
+                    attributeInstance.removeModifier(getTiamatModIDForSlot(slot, 2));
                 }
 
                 ItemStack stack = player.inventory.getStackInSlot(slot);
@@ -101,7 +104,9 @@ public class AttributeHandler
                 {
                     for (IAttributeInstance attributeInstance : attributeMap.getAllAttributes().toArray(new IAttributeInstance[0]))
                     {
-                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.BAUBLES_OFFSET));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.BAUBLES_OFFSET, 0));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.BAUBLES_OFFSET, 1));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.BAUBLES_OFFSET, 2));
                     }
 
                     ItemStack stack = inventory.getStackInSlot(slot);
@@ -141,7 +146,9 @@ public class AttributeHandler
                 {
                     for (IAttributeInstance attributeInstance : attributeMap.getAllAttributes().toArray(new IAttributeInstance[0]))
                     {
-                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.TIAMAT_OFFSET));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.TIAMAT_OFFSET, 0));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.TIAMAT_OFFSET, 1));
+                        attributeInstance.removeModifier(getTiamatModIDForSlot(slot + Slottings.TIAMAT_OFFSET, 2));
                     }
 
                     ItemStack stack = inventory.getStackInSlot(slot);
