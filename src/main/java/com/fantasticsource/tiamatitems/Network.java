@@ -3,7 +3,6 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
-import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.GlobalSettingsGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
@@ -49,26 +48,18 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeBoolean(Compat.tiamatactions);
-
-            if (Compat.tiamatactions)
-            {
-                list = CAction.allActions.keySet().toArray(new String[0]);
-                buf.writeInt(list.length);
-                for (String s : list) ByteBufUtils.writeUTF8String(buf, s);
-            }
+            list = CAction.allActions.keySet().toArray(new String[0]);
+            buf.writeInt(list.length);
+            for (String s : list) ByteBufUtils.writeUTF8String(buf, s);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            if (buf.readBoolean())
-            {
-                int size = buf.readInt();
-                list = new String[size];
+            int size = buf.readInt();
+            list = new String[size];
 
-                for (int i = 0; i < size; i++) list[i] = ByteBufUtils.readUTF8String(buf);
-            }
+            for (int i = 0; i < size; i++) list[i] = ByteBufUtils.readUTF8String(buf);
         }
     }
 

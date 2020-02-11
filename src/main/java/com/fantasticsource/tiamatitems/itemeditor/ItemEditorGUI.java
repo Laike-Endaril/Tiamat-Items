@@ -15,11 +15,11 @@ import com.fantasticsource.mctools.gui.element.view.GUIMultilineTextInputView;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.tiamatactions.gui.GUIAction;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.compat.Compat;
-import com.fantasticsource.tiamatitems.compat.CompatTiamatActions;
 import com.fantasticsource.tiamatitems.nbt.*;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -69,8 +69,7 @@ public class ItemEditorGUI extends GUIScreen
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
-        GUIText action1 = Compat.tiamatactions ? CompatTiamatActions.getGUIAction(gui, ActionTags.getItemAction1(stack)) : null;
-        GUIText action2 = Compat.tiamatactions ? CompatTiamatActions.getGUIAction(gui, ActionTags.getItemAction2(stack)) : null;
+        GUIAction action1 = new GUIAction(gui, ActionTags.getItemAction1(stack)), action2 = new GUIAction(gui, ActionTags.getItemAction2(stack));
         GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Lore
@@ -84,50 +83,28 @@ public class ItemEditorGUI extends GUIScreen
         GUIMultilineTextInputView lore = new GUIMultilineTextInputView(gui, 0.98, 1 - (separator.y + separator.height), new GUIMultilineTextInput(gui, loreString.toString(), FilterNone.INSTANCE));
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, lore);
 
-        if (Compat.tiamatactions)
-        {
-            tabView.tabViews.get(0).addAll
-                    (
-                            new GUITextSpacer(gui),
-                            name,
-                            new GUITextSpacer(gui),
-                            level,
-                            new GUIElement(gui, 1, 0),
-                            levelReq,
-                            new GUITextSpacer(gui),
-                            value,
-                            new GUITextSpacer(gui),
-                            new GUIText(gui, "Action 1: "),
-                            action1,
-                            new GUIElement(gui, 1, 0),
-                            new GUIText(gui, "Action 2: "),
-                            action2,
-                            new GUITextSpacer(gui),
-                            new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
-                            separator,
-                            lore,
-                            scrollbar
-                    );
-        }
-        else
-        {
-            tabView.tabViews.get(0).addAll
-                    (
-                            new GUITextSpacer(gui),
-                            name,
-                            new GUITextSpacer(gui),
-                            level,
-                            new GUIElement(gui, 1, 0),
-                            levelReq,
-                            new GUITextSpacer(gui),
-                            value,
-                            new GUITextSpacer(gui),
-                            new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
-                            separator,
-                            lore,
-                            scrollbar
-                    );
-        }
+        tabView.tabViews.get(0).addAll
+                (
+                        new GUITextSpacer(gui),
+                        name,
+                        new GUITextSpacer(gui),
+                        level,
+                        new GUIElement(gui, 1, 0),
+                        levelReq,
+                        new GUITextSpacer(gui),
+                        value,
+                        new GUITextSpacer(gui),
+                        new GUIText(gui, "Action 1: "),
+                        action1,
+                        new GUIElement(gui, 1, 0),
+                        new GUIText(gui, "Action 2: "),
+                        action2,
+                        new GUITextSpacer(gui),
+                        new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
+                        separator,
+                        lore,
+                        scrollbar
+                );
 
         //Add GUI actions
         scrollbar.addRecalcActions(() ->
@@ -432,11 +409,8 @@ public class ItemEditorGUI extends GUIScreen
             MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
             MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
-            if (Compat.tiamatactions)
-            {
-                ActionTags.setItemAction1(stack, action1.getText());
-                ActionTags.setItemAction2(stack, action2.getText());
-            }
+            ActionTags.setItemAction1(stack, action1.getText());
+            ActionTags.setItemAction2(stack, action2.getText());
             MCTools.setLore(stack, lore.getText());
 
             //Texture
