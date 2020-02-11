@@ -1,18 +1,18 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
-import com.fantasticsource.tools.component.CStringUTF8;
+import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class CTraitGen extends Component
 {
-    String name = "";
+    double minimum = 0, maximum = 0;
 
+    public abstract String getName();
 
     public abstract void applyToItem(ItemStack stack);
 
@@ -20,7 +20,8 @@ public abstract class CTraitGen extends Component
     @Override
     public CTraitGen write(ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeDouble(minimum);
+        buf.writeDouble(maximum);
 
         return this;
     }
@@ -28,7 +29,8 @@ public abstract class CTraitGen extends Component
     @Override
     public CTraitGen read(ByteBuf buf)
     {
-        name = ByteBufUtils.readUTF8String(buf);
+        minimum = buf.readDouble();
+        maximum = buf.readDouble();
 
         return this;
     }
@@ -36,7 +38,7 @@ public abstract class CTraitGen extends Component
     @Override
     public CTraitGen save(OutputStream stream)
     {
-        new CStringUTF8().set(name).save(stream);
+        new CDouble().set(minimum).save(stream).set(maximum).save(stream);
 
         return this;
     }
@@ -44,7 +46,9 @@ public abstract class CTraitGen extends Component
     @Override
     public CTraitGen load(InputStream stream)
     {
-        name = new CStringUTF8().load(stream).value;
+        CDouble cd = new CDouble();
+        minimum = cd.load(stream).value;
+        maximum = cd.load(stream).value;
 
         return this;
     }

@@ -16,8 +16,33 @@ import java.util.Map;
 
 public class CTraitGenPool extends Component
 {
+    public static LinkedHashMap<String, CTraitGenPool> globalTraitGenPools = new LinkedHashMap<>(); //TODO
+
+
     public String name;
     public LinkedHashMap<CTraitGen, Integer> traitGenWeights = new LinkedHashMap<>();
+
+
+    public CTraitGenPool getCombinedPool(CTraitGenPool... pools)
+    {
+        return getCombinedPool("Unnamed Combined Pool", pools);
+    }
+
+    public CTraitGenPool getCombinedPool(String name, CTraitGenPool... pools)
+    {
+        CTraitGenPool result = new CTraitGenPool();
+        result.name = name;
+
+        for (CTraitGenPool other : pools)
+        {
+            for (Map.Entry<CTraitGen, Integer> entry : other.traitGenWeights.entrySet())
+            {
+                traitGenWeights.put(entry.getKey(), traitGenWeights.getOrDefault(entry.getKey(), 0) + entry.getValue());
+            }
+        }
+
+        return result;
+    }
 
 
     public void applyToItem(ItemStack stack, int rollCount)
@@ -42,11 +67,11 @@ public class CTraitGenPool extends Component
             {
                 if (traitGenPool.size() == 0) return;
 
-                CTraitGen traitGen = traitGenPool.get(Tools.random(traitGenPool.size()));
+                CTraitGen traitGen = Tools.choose(traitGenPool);
                 traitGen.applyToItem(stack);
                 while (traitGenPool.remove(traitGen))
                 {
-                    //Removes all entries
+                    //Removes all duplicate entries from current generation pool
                 }
             }
         }
