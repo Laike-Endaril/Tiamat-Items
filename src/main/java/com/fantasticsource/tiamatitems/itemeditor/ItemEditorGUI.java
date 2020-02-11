@@ -60,7 +60,7 @@ public class ItemEditorGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings", "AttributeHandler", "Parts");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings", "Attributes", "Parts");
         gui.root.add(tabView);
 
 
