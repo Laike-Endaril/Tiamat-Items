@@ -73,7 +73,7 @@ public class TiamatItems
     {
         Network.init();
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
-        MinecraftForge.EVENT_BUS.register(TransientModEvent.class);
+        MinecraftForge.EVENT_BUS.register(TransientAttributeModEvent.class);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {

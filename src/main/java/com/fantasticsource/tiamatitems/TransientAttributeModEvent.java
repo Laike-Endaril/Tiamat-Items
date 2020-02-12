@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class TransientModEvent extends PlayerEvent
+public class TransientAttributeModEvent extends PlayerEvent
 {
     //ALSO SEE ATTRIBUTETAGS CLASS
 
@@ -37,9 +37,9 @@ public class TransientModEvent extends PlayerEvent
      * @param player The player this event correlates to
      *               <p>
      *               This event is strictly meant for timing purposes, for the correct timing to apply/reapply transient attribute modifiers, and should therefore never be fired from anywhere except within this class
-     *               Call this event's applyTransientModifier() method to apply an attribute modifier which will last from now until the next TransientModEvent (once per server tick)
+     *               Call this event's applyTransientModifier() method to apply an attribute modifier which will last from now until the next TransientAttributeModEvent (once per server tick)
      */
-    public TransientModEvent(EntityPlayer player)
+    public TransientAttributeModEvent(EntityPlayer player)
     {
         super(player);
     }
@@ -115,7 +115,7 @@ public class TransientModEvent extends PlayerEvent
 
 
             //Fire event
-            MinecraftForge.EVENT_BUS.post(new TransientModEvent(player));
+            MinecraftForge.EVENT_BUS.post(new TransientAttributeModEvent(player));
         }
 
 
@@ -171,7 +171,7 @@ public class TransientModEvent extends PlayerEvent
                 }
 
 
-                applyTransientModifier(player, "genericItemMod", tokens[0], operation, amount);
+                applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
             }
         }
     }
