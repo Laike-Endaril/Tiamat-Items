@@ -1,19 +1,8 @@
-Item type...
-...has a set of always-generated attributes, with ranges for each
-...has a pool of random attributes, with weighted chance of generating each attribute, and ranges for each of those attributes if generated (the same attribute should not be generated twice on the same item)
-...has a blacklist of attributes it cannot generate (to prevent certain attributes from the rarity's random pool)
-
-Level...
-...acts as a multiplier for stats on the item
-
-Rarity...
-...has a pool of random attributes, with weighted chance of generating each attribute, and ranges for each of those attributes if generated (the same attribute should not be generated twice on the same item)
-...determines the number of random stats to roll from the combination of the item type's random attribute pool and the rarity's random attribute pool
-...has a blacklist of attributes it cannot generate (to prevent certain attributes from the item's random pool)
+Some way to limit certain traits based on rarity and/or level
 
 Affixes...
 ...are determined by the 2 highest total attribute bonuses on the item upon generation or assembly (see below for exact determination)
-...are not necessariy passed on from a part to an assembled item; they're rerolled upon assembly
+...are not necessarily passed on from a part to an assembled item; they're rerolled upon assembly
 
 
 

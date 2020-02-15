@@ -19,10 +19,10 @@ public class CTraitGen extends Component
     public LinkedHashMap<Double, String> prefixes = new LinkedHashMap<>(), suffixes = new LinkedHashMap<>(); //% of possible roll -> prefix/suffix text
 
 
-    public void applyToItem(ItemStack stack)
+    public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, double level)
     {
-        double percentage = Math.random();
-        for (CTraitGenElement element : elements) element.applyToItem(stack, percentage);
+        double percentage = Math.random() * itemTypeGen.percentageMultiplier;
+        for (CTraitGenElement element : elements) element.applyToItem(stack, level, percentage);
     }
 
 

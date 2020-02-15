@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.globalsettings;
 
+import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
@@ -19,6 +20,8 @@ public class CRarity extends Component
     public String name = "";
     public Color color = Color.WHITE;
     public TextFormatting textColor = TextFormatting.WHITE;
+
+    public double itemLevelModifier;
     public int traitCount;
 
 
@@ -28,6 +31,8 @@ public class CRarity extends Component
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeInt(color.color());
         buf.writeInt(textColor.getColorIndex());
+
+        buf.writeDouble(itemLevelModifier);
         buf.writeInt(traitCount);
 
         return this;
@@ -39,6 +44,8 @@ public class CRarity extends Component
         name = ByteBufUtils.readUTF8String(buf);
         color.setColor(buf.readInt());
         textColor = TextFormatting.fromColorIndex(buf.readInt());
+
+        itemLevelModifier = buf.readDouble();
         traitCount = buf.readInt();
 
         return this;
@@ -48,7 +55,10 @@ public class CRarity extends Component
     public CRarity save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream);
-        new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream).set(traitCount).save(stream);
+        CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
+
+        new CDouble().set(itemLevelModifier).save(stream);
+        ci.set(traitCount).save(stream);
 
         return this;
     }
@@ -61,6 +71,8 @@ public class CRarity extends Component
         CInt ci = new CInt();
         color.setColor(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
+
+        itemLevelModifier = new CDouble().load(stream).value;
         traitCount = ci.load(stream).value;
 
         return this;

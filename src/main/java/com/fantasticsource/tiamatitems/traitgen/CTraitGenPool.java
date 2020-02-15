@@ -45,14 +45,14 @@ public class CTraitGenPool extends Component
     }
 
 
-    public void applyToItem(ItemStack stack, int rollCount)
+    public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, int rollCount, double level)
     {
         if (rollCount <= 0 || traitGenWeights.size() <= 0) return;
 
 
         if (rollCount >= traitGenWeights.size())
         {
-            for (CTraitGen traitGen : traitGenWeights.keySet()) traitGen.applyToItem(stack);
+            for (CTraitGen traitGen : traitGenWeights.keySet()) traitGen.applyToItem(stack, itemTypeGen, level);
         }
         else
         {
@@ -68,7 +68,7 @@ public class CTraitGenPool extends Component
                 if (traitGenPool.size() == 0) return;
 
                 CTraitGen traitGen = Tools.choose(traitGenPool);
-                traitGen.applyToItem(stack);
+                traitGen.applyToItem(stack, itemTypeGen, level);
                 while (traitGenPool.remove(traitGen))
                 {
                     //Removes all duplicate entries from current generation pool

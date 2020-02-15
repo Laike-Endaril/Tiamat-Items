@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
@@ -59,22 +60,17 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     }
 
     @Override
-    public void applyToItem(ItemStack stack, double percentage)
+    public void applyToItem(ItemStack stack, double level, double percentage)
     {
         double amount = minimum + (maximum - minimum) * percentage;
+        if (amount == 0) return;
 
-        if (operation == 2)
-        {
-            if (amount == 1) return;
+        amount *= (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)) * CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
+        if (amount == 0) return;
 
-            PassiveAttributeModTags.addPassiveMod(stack, attributeName + ";" + (amount - 1) + ";" + operation);
-        }
-        else
-        {
-            if (amount == 0) return;
-
-            PassiveAttributeModTags.addPassiveMod(stack, attributeName + ";" + amount + ";" + operation);
-        }
+        if (operation == 2) amount -= 1; //For internal calcs (above) and editing (minimum, maximum), treat operation 2 as a direct multiplier (2 means 2x as opposed to 3x)
+        //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
+        PassiveAttributeModTags.addPassiveMod(stack, attributeName + ";" + amount + ";" + operation);
     }
 
 

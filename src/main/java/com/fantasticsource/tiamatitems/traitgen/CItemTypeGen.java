@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems.traitgen;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
@@ -16,11 +17,14 @@ import java.util.LinkedHashMap;
 
 public class CItemTypeGen extends Component
 {
-    public static int itemGenVersion = 0;
+    //TODO change version on item gen definition change, including globals
+    //TODO config for
+    public static int itemGenVersion = 0; //TODO handle data retention
     public static LinkedHashMap<String, CItemTypeGen> itemGenerators = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name, slotting;
+    public int percentageMultiplier = 1;
     public ArrayList<CTraitGen> staticTraits = new ArrayList<>();
     public ArrayList<CTraitGenPool> randomTraitPools = new ArrayList<>();
 
@@ -46,9 +50,10 @@ public class CItemTypeGen extends Component
 
         MiscTags.setItemSlotting(stack, slotting);
 
-        for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack);
+        double genLevel = rarity.itemLevelModifier + level;
+        for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel);
         CTraitGenPool combinedPool = CTraitGenPool.getCombinedPool(randomTraitPools.toArray(new CTraitGenPool[0]));
-        combinedPool.applyToItem(stack, rarity.traitCount);
+        combinedPool.applyToItem(stack, this, rarity.traitCount, genLevel);
 
         return stack;
     }
@@ -58,6 +63,14 @@ public class CItemTypeGen extends Component
     public CItemTypeGen write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
+        ByteBufUtils.writeUTF8String(buf, slotting);
+        buf.writeInt(percentageMultiplier);
+
+        buf.writeInt(staticTraits.size());
+        for (CTraitGen gen : staticTraits) gen.write(buf);
+
+        buf.writeInt(randomTraitPools.size());
+        for (CTraitGenPool pool : randomTraitPools) pool.write(buf);
 
         return this;
     }
@@ -66,6 +79,14 @@ public class CItemTypeGen extends Component
     public CItemTypeGen read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
+        slotting = ByteBufUtils.readUTF8String(buf);
+        percentageMultiplier = buf.readInt();
+
+        staticTraits.clear();
+        for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTraitGen().read(buf));
+
+        randomTraitPools.clear();
+        for (int i = buf.readInt(); i > 0; i--) randomTraitPools.add(new CTraitGenPool().read(buf));
 
         return this;
     }
@@ -73,7 +94,13 @@ public class CItemTypeGen extends Component
     @Override
     public CItemTypeGen save(OutputStream stream)
     {
-        CStringUTF8 cs = new CStringUTF8().set(name).save(stream);
+        new CStringUTF8().set(name).save(stream).set(slotting).save(stream);
+
+        CInt ci = new CInt().set(percentageMultiplier).save(stream).set(staticTraits.size()).save(stream);
+        for (CTraitGen gen : staticTraits) gen.save(stream);
+
+        ci.set(randomTraitPools.size()).save(stream);
+        for (CTraitGenPool pool : randomTraitPools) pool.save(stream);
 
         return this;
     }
@@ -83,6 +110,16 @@ public class CItemTypeGen extends Component
     {
         CStringUTF8 cs = new CStringUTF8();
         name = cs.load(stream).value;
+        slotting = cs.load(stream).value;
+
+        CInt ci = new CInt();
+        percentageMultiplier = ci.load(stream).value;
+
+        staticTraits.clear();
+        for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTraitGen().load(stream));
+
+        randomTraitPools.clear();
+        for (int i = ci.load(stream).value; i > 0; i--) randomTraitPools.add(new CTraitGenPool().load(stream));
 
         return this;
     }
