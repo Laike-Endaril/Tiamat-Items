@@ -10,14 +10,16 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class CRarity extends Component
 {
+    public static LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>(); //TODO handle data retention
+
     public String name = "";
     public Color color = Color.WHITE;
     public TextFormatting textColor = TextFormatting.WHITE;
-    public ArrayList<String> randomAttributeGenBlacklist = new ArrayList<>();
+    public int traitCount;
 
 
     @Override
@@ -26,9 +28,7 @@ public class CRarity extends Component
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeInt(color.color());
         buf.writeInt(textColor.getColorIndex());
-
-        buf.writeInt(randomAttributeGenBlacklist.size());
-        for (String s : randomAttributeGenBlacklist) ByteBufUtils.writeUTF8String(buf, s);
+        buf.writeInt(traitCount);
 
         return this;
     }
@@ -39,9 +39,7 @@ public class CRarity extends Component
         name = ByteBufUtils.readUTF8String(buf);
         color.setColor(buf.readInt());
         textColor = TextFormatting.fromColorIndex(buf.readInt());
-
-        randomAttributeGenBlacklist.clear();
-        for (int i = buf.readInt(); i > 0; i--) randomAttributeGenBlacklist.add(ByteBufUtils.readUTF8String(buf));
+        traitCount = buf.readInt();
 
         return this;
     }
@@ -49,11 +47,8 @@ public class CRarity extends Component
     @Override
     public CRarity save(OutputStream stream)
     {
-        CStringUTF8 cs = new CStringUTF8().set(name).save(stream);
-        CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
-
-        ci.set(randomAttributeGenBlacklist.size()).save(stream);
-        for (String s : randomAttributeGenBlacklist) cs.set(s).save(stream);
+        new CStringUTF8().set(name).save(stream);
+        new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream).set(traitCount).save(stream);
 
         return this;
     }
@@ -66,9 +61,7 @@ public class CRarity extends Component
         CInt ci = new CInt();
         color.setColor(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
-
-        randomAttributeGenBlacklist.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) randomAttributeGenBlacklist.add(cs.load(stream).value);
+        traitCount = ci.load(stream).value;
 
         return this;
     }

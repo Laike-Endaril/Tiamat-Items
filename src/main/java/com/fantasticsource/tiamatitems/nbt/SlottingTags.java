@@ -70,7 +70,7 @@ public class SlottingTags
         }
     }
 
-    public static void addItemSlotting(ItemStack stack, String slot)
+    public static void addItemSlotting(ItemStack stack, String slot) //TODO refactor and make single slotting only
     {
         if (itemHasSlotting(stack, slot)) return;
 

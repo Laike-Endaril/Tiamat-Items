@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -93,6 +94,54 @@ public class MiscTags
         if (!compound.hasKey("levelReq")) return;
 
         compound.removeTag("levelReq");
+        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+    }
+
+
+    public static void setItemRarity(ItemStack stack, CRarity rarity)
+    {
+        if (rarity == null)
+        {
+            clearItemRarity(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setString("rarity", rarity.name);
+    }
+
+    public static CRarity getItemRarity(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return null;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("rarity")) return null;
+
+        CRarity rarity = CRarity.rarities.get(compound.getString("rarity"));
+        if (rarity == null) clearItemRarity(stack);
+
+        return rarity;
+    }
+
+    public static void clearItemRarity(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("rarity")) return;
+
+        compound.removeTag("rarity");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 

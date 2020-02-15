@@ -16,28 +16,28 @@ import java.util.Map;
 
 public class CTraitGenPool extends Component
 {
-    public static LinkedHashMap<String, CTraitGenPool> globalTraitGenPools = new LinkedHashMap<>(); //TODO
+    public static LinkedHashMap<String, CTraitGenPool> globalTraitGenPools = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name;
     public LinkedHashMap<CTraitGen, Integer> traitGenWeights = new LinkedHashMap<>();
 
 
-    public CTraitGenPool getCombinedPool(CTraitGenPool... pools)
+    public static CTraitGenPool getCombinedPool(CTraitGenPool... pools)
     {
         return getCombinedPool("Unnamed Combined Pool", pools);
     }
 
-    public CTraitGenPool getCombinedPool(String name, CTraitGenPool... pools)
+    public static CTraitGenPool getCombinedPool(String name, CTraitGenPool... pools)
     {
         CTraitGenPool result = new CTraitGenPool();
         result.name = name;
 
-        for (CTraitGenPool other : pools)
+        for (CTraitGenPool pool : pools)
         {
-            for (Map.Entry<CTraitGen, Integer> entry : other.traitGenWeights.entrySet())
+            for (Map.Entry<CTraitGen, Integer> entry : pool.traitGenWeights.entrySet())
             {
-                traitGenWeights.put(entry.getKey(), traitGenWeights.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                result.traitGenWeights.put(entry.getKey(), result.traitGenWeights.getOrDefault(entry.getKey(), 0) + entry.getValue());
             }
         }
 
