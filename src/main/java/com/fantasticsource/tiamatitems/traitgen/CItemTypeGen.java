@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 
 public class CItemTypeGen extends Component
 {
+    public static int itemGenVersion = 0;
     public static LinkedHashMap<String, CItemTypeGen> itemGenerators = new LinkedHashMap<>(); //TODO handle data retention
 
 
@@ -37,7 +38,7 @@ public class CItemTypeGen extends Component
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
 
-        //TODO set item gen version
+        MiscTags.setItemGenVersion(stack, itemGenVersion);
 
         MiscTags.setItemLevel(stack, level);
         MiscTags.setItemLevelReq(stack, level);

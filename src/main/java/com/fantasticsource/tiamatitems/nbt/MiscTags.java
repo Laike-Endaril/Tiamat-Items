@@ -234,4 +234,43 @@ public class MiscTags
         compound.removeTag("slotting");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
+
+
+    public static void setItemGenVersion(ItemStack stack, int version)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setInteger("itemGenVersion", version);
+    }
+
+    public static int getItemGenVersion(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return -1;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return -1;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("itemGenVersion")) return -1;
+
+        return compound.getInteger("itemGenVersion");
+    }
+
+    public static void clearItemGenVersion(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("itemGenVersion")) return;
+
+        compound.removeTag("itemGenVersion");
+        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+    }
 }
