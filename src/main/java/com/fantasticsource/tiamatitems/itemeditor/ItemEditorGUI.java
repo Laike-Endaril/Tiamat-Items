@@ -19,7 +19,6 @@ import com.fantasticsource.tiamatactions.gui.GUIAction;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
-import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.nbt.*;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -60,12 +59,13 @@ public class ItemEditorGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Slottings", "Attributes", "Parts");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Texture", "Category Tags", "Attributes", "Part Slots");
         gui.root.add(tabView);
 
 
         //General tab
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
+        GUIText slotting = new GUIText(gui, MiscTags.getItemSlotting(stack)).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
@@ -87,6 +87,9 @@ public class ItemEditorGUI extends GUIScreen
                 (
                         new GUITextSpacer(gui),
                         name,
+                        new GUITextSpacer(gui),
+                        new GUIText(gui, "Slotting: "),
+                        slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting", Slottings.availableSlottings())),
                         new GUITextSpacer(gui),
                         level,
                         new GUIElement(gui, 1, 0),
@@ -266,28 +269,6 @@ public class ItemEditorGUI extends GUIScreen
         gui.addCategories(stack);
 
 
-        //Slottings tab
-        GUIList slottings = new GUIList(gui, true, 0.98, 1)
-        {
-            @Override
-            public GUIElement[] newLineDefaultElements()
-            {
-                GUIText text = new GUIText(screen, Compat.tiamatrpg ? "Hand" : "Mainhand").setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
-                return new GUIElement[]{text.addClickActions(() -> new TextSelectionGUI(text, "Slot", Slottings.availableSlottings()))};
-            }
-        };
-        GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, slottings);
-        tabView.tabViews.get(3).addAll(slottings, scrollbar4);
-
-        //Add existing slottings
-        for (String slotname : SlottingTags.getItemSlottings(stack))
-        {
-            slottings.addLine();
-            GUIList.Line line = slottings.get(slottings.lineCount() - 1);
-            ((GUIText) line.getLineElement(0)).setText(slotname);
-        }
-
-
         //Attributes tab
         GUIList passiveAttributeList = new GUIList(gui, true, 0.98, 1)
         {
@@ -333,7 +314,7 @@ public class ItemEditorGUI extends GUIScreen
             activeAttributeList.height = halfRemainingHeight;
             scrollbar6.height = halfRemainingHeight;
         });
-        tabView.tabViews.get(4).addAll
+        tabView.tabViews.get(3).addAll
                 (
                         passiveLabel,
                         passiveAttributeList,
@@ -371,7 +352,7 @@ public class ItemEditorGUI extends GUIScreen
         }
 
 
-        //Parts tab
+        //Part Slots tab
         //TODO or remove
 
 
@@ -406,6 +387,7 @@ public class ItemEditorGUI extends GUIScreen
 
             //General
             stack.setStackDisplayName(name.getText());
+            MiscTags.setItemSlotting(stack, slotting.getText());
             MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
             MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
@@ -433,13 +415,6 @@ public class ItemEditorGUI extends GUIScreen
             }
 
             //Category tags are already stored in the stack via GUI logic
-
-            //Slottings
-            SlottingTags.clearItemSlottings(stack);
-            for (GUIList.Line line : slottings.getLines())
-            {
-                SlottingTags.addItemSlotting(stack, ((GUIText) line.getLineElement(0)).getText());
-            }
 
             //Attribute modifiers
             PassiveAttributeModTags.clearPassiveMods(stack);

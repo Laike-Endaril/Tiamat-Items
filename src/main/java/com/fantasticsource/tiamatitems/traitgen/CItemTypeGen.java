@@ -3,7 +3,6 @@ package com.fantasticsource.tiamatitems.traitgen;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.nbt.SlottingTags;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
@@ -38,11 +37,13 @@ public class CItemTypeGen extends Component
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
 
+        //TODO set item gen version
+
         MiscTags.setItemLevel(stack, level);
         MiscTags.setItemLevelReq(stack, level);
         MiscTags.setItemRarity(stack, rarity);
 
-        SlottingTags.addItemSlotting(stack, slotting);
+        MiscTags.setItemSlotting(stack, slotting);
 
         for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack);
         CTraitGenPool combinedPool = CTraitGenPool.getCombinedPool(randomTraitPools.toArray(new CTraitGenPool[0]));

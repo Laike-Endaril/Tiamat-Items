@@ -189,4 +189,49 @@ public class MiscTags
         compound.removeTag("value");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
+
+
+    public static void setItemSlotting(ItemStack stack, String slotting)
+    {
+        if (slotting == null || slotting.equals("") || slotting.equals("None"))
+        {
+            clearItemSlotting(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setString("slotting", slotting);
+    }
+
+    public static String getItemSlotting(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return "None";
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return "None";
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("slotting")) return "None";
+
+        return compound.getString("slotting");
+    }
+
+    public static void clearItemSlotting(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("slotting")) return;
+
+        compound.removeTag("slotting");
+        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+    }
 }

@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
-import com.fantasticsource.tiamatitems.nbt.SlottingTags;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,7 +12,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -42,24 +41,24 @@ public class TiamatItem extends Item
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
-        ArrayList<String> slottings = SlottingTags.getItemSlottings(stack);
-        if (slottings.contains("Any")) return true;
+        String slotting = MiscTags.getItemSlotting(stack);
+        if (slotting.equals("Any")) return true;
 
         switch (armorType)
         {
             case HEAD:
-                return slottings.contains("Head") || slottings.contains("Armor");
+                return slotting.equals("Head") || slotting.equals("Armor");
             case CHEST:
-                return slottings.contains("Chest") || slottings.contains("Armor");
+                return slotting.equals("Chest") || slotting.equals("Armor");
             case LEGS:
-                return slottings.contains("Legs") || slottings.contains("Armor");
+                return slotting.equals("Legs") || slotting.equals("Armor");
             case FEET:
-                return slottings.contains("Feet") || slottings.contains("Armor");
+                return slotting.equals("Feet") || slotting.equals("Armor");
 
             case MAINHAND:
-                return slottings.contains("Mainhand") || slottings.contains("Hand") || slottings.contains("Hotbar");
+                return slotting.equals("Mainhand") || slotting.equals("Hand") || slotting.equals("Hotbar");
             case OFFHAND:
-                return slottings.contains("Offhand") || slottings.contains("Hand");
+                return slotting.equals("Offhand") || slotting.equals("Hand");
         }
 
         return false;
