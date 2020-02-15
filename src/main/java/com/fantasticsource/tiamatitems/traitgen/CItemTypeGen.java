@@ -51,9 +51,11 @@ public class CItemTypeGen extends Component
         MiscTags.setItemSlotting(stack, slotting);
 
         double genLevel = rarity.itemLevelModifier + level;
-        for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel);
+        for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel, null);
         CTraitGenPool combinedPool = CTraitGenPool.getCombinedPool(randomTraitPools.toArray(new CTraitGenPool[0]));
         combinedPool.applyToItem(stack, this, rarity.traitCount, genLevel);
+
+        //TODO Generate name
 
         return stack;
     }

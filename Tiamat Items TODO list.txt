@@ -1,4 +1,10 @@
+Storage of traits and percentages, and what pools they came from
+
 Some way to limit certain traits based on rarity and/or level
+
+Recalc system
+
+
 
 Affixes...
 ...are determined by the 2 highest total attribute bonuses on the item upon generation or assembly (see below for exact determination)
