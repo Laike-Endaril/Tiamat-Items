@@ -60,9 +60,9 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     }
 
     @Override
-    public void applyToItem(ItemStack stack, double level, double percentage)
+    public void applyToItem(ItemStack stack, double level, int wholeNumberPercentage)
     {
-        double amount = minimum + (maximum - minimum) * percentage;
+        double amount = minimum + (maximum - minimum) * wholeNumberPercentage / 100;
         if (amount == 0) return;
 
         amount *= (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)) * CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);

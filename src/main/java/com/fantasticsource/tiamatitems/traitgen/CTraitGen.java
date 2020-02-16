@@ -22,10 +22,10 @@ public class CTraitGen extends Component
 
     public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, double level, CTraitGenPool pool)
     {
-        double percentage = Math.random() * itemTypeGen.percentageMultiplier;
-        for (CTraitGenElement element : elements) element.applyToItem(stack, level, percentage);
+        int wholeNumberPercentage = (int) (Math.random() * 101 * itemTypeGen.percentageMultiplier);
+        for (CTraitGenElement element : elements) element.applyToItem(stack, level, wholeNumberPercentage);
 
-        TraitTags.setItemTraitData(stack, pool, this, percentage);
+        TraitTags.setItemTraitData(stack, pool, this, wholeNumberPercentage);
     }
 
 

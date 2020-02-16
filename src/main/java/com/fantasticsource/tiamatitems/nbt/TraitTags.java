@@ -4,13 +4,13 @@ import com.fantasticsource.tiamatitems.traitgen.CTraitGen;
 import com.fantasticsource.tiamatitems.traitgen.CTraitGenPool;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagInt;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TraitTags
 {
-    public static void setItemTraitData(ItemStack stack, CTraitGenPool pool, CTraitGen traitGen, double percentage)
+    public static void setItemTraitData(ItemStack stack, CTraitGenPool pool, CTraitGen traitGen, int wholeNumberPercentage)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -25,7 +25,7 @@ public class TraitTags
         if (!compound.hasKey(key)) compound.setTag(key, new NBTTagCompound());
         compound = compound.getCompoundTag(key);
 
-        compound.setTag(traitGen.name, new NBTTagDouble(percentage));
+        compound.setTag(traitGen.name, new NBTTagInt(wholeNumberPercentage));
     }
 
     //TODO getItemTraitData

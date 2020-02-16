@@ -12,7 +12,7 @@ public abstract class CTraitGenElement extends Component
 {
     public double minimum = 0, maximum = 0;
 
-    public abstract void applyToItem(ItemStack stack, double level, double percentage);
+    public abstract void applyToItem(ItemStack stack, double level, int wholeNumberPercentage);
 
     public abstract String getDescription();
 

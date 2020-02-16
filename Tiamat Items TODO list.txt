@@ -1,29 +1,8 @@
-Storage of traits and percentages, and what pools they came from
-
 Some way to limit certain traits based on rarity and/or level
 
-Recalc system
 
 
-
-Affixes...
-...are determined by the 2 highest total attribute bonuses on the item upon generation or assembly (see below for exact determination)
-...are not necessarily passed on from a part to an assembled item; they're rerolled upon assembly
-
-
-
-Each item stores the global setting version number it used to generate, and recalcs stats when a new global setting version number is detected, on these triggers...
-...login
-...tooltip
-
-
-
-When generating an item, for each stat rolled, store the stat name, the *percentage* rolled, and the value rolled (for quick reference)
-
-When rebalancing, first see if the stat can still be rolled on that item type and rarity
-If not, remove that stat and add a new random stat, using the old percentage
-If so, recalculate the same stat with the new range and the old percentage
-
+Name generation...
 When calculating a name due to assembly, generation, or recalculation of stats, use 2 highest attributes on item to determine name, using this comparison method:
 head : always 5-10  roll 8
 Handle: weighted 10-50  roll 30
@@ -31,6 +10,10 @@ Handle: weighted 10-50  roll 30
 range = 55
 roll minus min = 33
 33 / 55 = 60%
+
+Recalc items on these triggers...
+...login
+...tooltip
 
 
 
