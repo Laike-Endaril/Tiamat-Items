@@ -3,15 +3,22 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
+import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
+import com.fantasticsource.tiamatitems.traitgen.CItemTypeGen;
+import com.fantasticsource.tiamatitems.traitgen.CTraitGen;
+import com.fantasticsource.tiamatitems.traitgen.CTraitGenElement_PassiveAttributeMod;
+import com.fantasticsource.tiamatitems.traitgen.CTraitGenPool;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,6 +31,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -135,5 +143,46 @@ public class TiamatItems
     public static void clientDisconnectFromServer(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
         TextureCache.clear(event);
+    }
+
+
+    @Mod.EventHandler
+    public static void serverStarting(FMLServerStartingEvent event)
+    {
+        event.registerServerCommand(new Commands());
+
+
+        //TODO test code start
+        CTraitGenElement_PassiveAttributeMod element = new CTraitGenElement_PassiveAttributeMod();
+        element.attributeName = "generic.maxHealth";
+        element.minimum = 1;
+        element.maximum = 20;
+
+        CTraitGen gen = new CTraitGen();
+        gen.name = "TestTrait";
+        gen.elements.add(element);
+
+        CTraitGenPool pool = new CTraitGenPool();
+        pool.name = "TestPool";
+        pool.traitGenWeights.put(gen, 1);
+
+        CTraitGenPool.globalTraitGenPools.put(pool.name, pool);
+
+        CItemTypeGen itemType = new CItemTypeGen();
+        itemType.name = "TestType";
+        itemType.slotting = "Head";
+        itemType.randomTraitPools.add(pool);
+
+        CItemTypeGen.itemGenerators.put(itemType.name, itemType);
+
+        CRarity rarity = new CRarity();
+        rarity.name = "TestRarity";
+        rarity.textColor = TextFormatting.GOLD;
+        rarity.color = Color.ORANGE;
+        rarity.itemLevelModifier = 0.5;
+        rarity.traitCount = 1;
+
+        CRarity.rarities.put(rarity.name, rarity);
+        //TODO test code end
     }
 }

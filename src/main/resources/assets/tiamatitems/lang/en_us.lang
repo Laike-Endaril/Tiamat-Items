@@ -4,3 +4,9 @@ item.tiamatitems:tiamatitem.name=Tiamat Item
 
 tile.tiamatitems:itemeditor.name=Item Editor
 tile.tiamatitems:globalsettings.name=Global Settings
+
+
+
+tiamatitems.cmd.generate.comment=Generate an item, given of the given item type, level, and rarity (item type and rarity definitions must first be created if none exist)
+
+tiamatitems.error.notPlayer=§cOnly players can do this!

@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
+import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tools.component.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -19,12 +20,12 @@ public class CTraitGen extends Component
     public LinkedHashMap<Double, String> prefixes = new LinkedHashMap<>(), suffixes = new LinkedHashMap<>(); //% of possible roll -> prefix/suffix text
 
 
-    public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, double level, String poolName)
+    public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, double level, CTraitGenPool pool)
     {
         double percentage = Math.random() * itemTypeGen.percentageMultiplier;
         for (CTraitGenElement element : elements) element.applyToItem(stack, level, percentage);
 
-        //TODO store in NBT under pool name
+        TraitTags.setItemTraitData(stack, pool, this, percentage);
     }
 
 

@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems.traitgen;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CItemTypeGen extends Component
 {
@@ -52,8 +54,42 @@ public class CItemTypeGen extends Component
 
         double genLevel = rarity.itemLevelModifier + level;
         for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel, null);
-        CTraitGenPool combinedPool = CTraitGenPool.getCombinedPool(randomTraitPools.toArray(new CTraitGenPool[0]));
-        combinedPool.applyToItem(stack, this, rarity.traitCount, genLevel);
+
+
+        ArrayList<CTraitGenPool> genPools = new ArrayList<>();
+        LinkedHashMap<CTraitGenPool, ArrayList<CTraitGen>> traitPools = new LinkedHashMap<>();
+        for (CTraitGenPool pool : randomTraitPools)
+        {
+            ArrayList<CTraitGen> traits = new ArrayList<>();
+
+            for (Map.Entry<CTraitGen, Integer> entry : pool.traitGenWeights.entrySet())
+            {
+                for (int i = entry.getValue(); i > 0; i--)
+                {
+                    traits.add(entry.getKey());
+                    genPools.add(pool);
+                }
+            }
+
+            traitPools.put(pool, traits);
+        }
+
+        for (int i = rarity.traitCount; i > 0; i--)
+        {
+            if (genPools.size() == 0) break;
+
+            CTraitGenPool pool = Tools.choose(genPools);
+            ArrayList<CTraitGen> list = traitPools.get(pool);
+            CTraitGen trait = Tools.choose(list);
+
+            trait.applyToItem(stack, this, genLevel, pool);
+
+            while (list.remove(trait))
+            {
+                genPools.remove(pool);
+            }
+        }
+
 
         //TODO Generate name
 

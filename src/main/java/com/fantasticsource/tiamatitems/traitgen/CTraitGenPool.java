@@ -1,16 +1,13 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
-import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,63 +16,8 @@ public class CTraitGenPool extends Component
     public static LinkedHashMap<String, CTraitGenPool> globalTraitGenPools = new LinkedHashMap<>(); //TODO handle data retention
 
 
-    public String name;
+    public String name; //TODO disallow setting to the name "null" (see TraitTags class)
     public LinkedHashMap<CTraitGen, Integer> traitGenWeights = new LinkedHashMap<>();
-
-
-    public static CTraitGenPool getCombinedPool(CTraitGenPool... pools)
-    {
-        return getCombinedPool("Unnamed Combined Pool", pools);
-    }
-
-    public static CTraitGenPool getCombinedPool(String name, CTraitGenPool... pools)
-    {
-        CTraitGenPool result = new CTraitGenPool();
-        result.name = name;
-
-        for (CTraitGenPool pool : pools)
-        {
-            for (Map.Entry<CTraitGen, Integer> entry : pool.traitGenWeights.entrySet())
-            {
-                result.traitGenWeights.put(entry.getKey(), result.traitGenWeights.getOrDefault(entry.getKey(), 0) + entry.getValue());
-            }
-        }
-
-        return result;
-    }
-
-
-    public void applyToItem(ItemStack stack, CItemTypeGen itemTypeGen, int rollCount, double level)
-    {
-        if (rollCount <= 0 || traitGenWeights.size() <= 0) return;
-
-
-        if (rollCount >= traitGenWeights.size())
-        {
-            for (CTraitGen traitGen : traitGenWeights.keySet()) traitGen.applyToItem(stack, itemTypeGen, level, name);
-        }
-        else
-        {
-            ArrayList<CTraitGen> traitGenPool = new ArrayList<>();
-            for (Map.Entry<CTraitGen, Integer> entry : traitGenWeights.entrySet())
-            {
-                for (int i = entry.getValue(); i > 0; i--) traitGenPool.add(entry.getKey());
-            }
-
-
-            for (int i = rollCount; i > 0; i--)
-            {
-                if (traitGenPool.size() == 0) return;
-
-                CTraitGen traitGen = Tools.choose(traitGenPool);
-                traitGen.applyToItem(stack, itemTypeGen, level, name);
-                while (traitGenPool.remove(traitGen))
-                {
-                    //Removes all duplicate entries from current generation pool
-                }
-            }
-        }
-    }
 
 
     @Override
