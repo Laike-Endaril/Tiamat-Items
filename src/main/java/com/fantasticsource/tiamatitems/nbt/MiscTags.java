@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -233,6 +234,47 @@ public class MiscTags
 
         compound.removeTag("slotting");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+    }
+
+    public static boolean stackFitsSlot(ItemStack stack, String slotting)
+    {
+        String itemSlotting = getItemSlotting(stack);
+        if (itemSlotting.equals("Any") || itemSlotting.equals(slotting)) return true;
+
+        switch (slotting)
+        {
+            case "Head":
+            case "Chest":
+            case "Legs":
+            case "Feet":
+            case "Tiamat Shoulders":
+            case "Tiamat Cape":
+            case "Armor":
+                return itemSlotting.equals("Armor");
+
+            case "Mainhand":
+            case "Offhand":
+            case "Hand":
+                return itemSlotting.equals("Hand") || itemSlotting.equals("Tiamat 2H");
+
+            case "Baubles Amulet":
+            case "Baubles Ring":
+            case "Baubles Belt":
+            case "Baubles Head":
+            case "Baubles Body":
+            case "Baubles Charm":
+                return itemSlotting.equals("Baubles Trinket");
+
+            case "Tiamat Skill":
+                return itemSlotting.equals("Tiamat Active Skill");
+        }
+
+        return false;
+    }
+
+    public static boolean isTwoHanded(ItemStack stack)
+    {
+        return stack.getItem() == Items.BOW || getItemSlotting(stack).equals("Tiamat 2H");
     }
 
 
