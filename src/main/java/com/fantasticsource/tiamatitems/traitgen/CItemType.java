@@ -5,6 +5,7 @@ import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
@@ -26,7 +27,7 @@ public class CItemType extends Component
 
 
     public String name, slotting;
-    public int percentageMultiplier = 1;
+    public double percentageMultiplier = 1, value;
     public ArrayList<CTrait> staticTraits = new ArrayList<>();
     public ArrayList<CTraitGenPool> randomTraitPools = new ArrayList<>();
     public LinkedHashMap<CAction, Integer> mainActionPool = new LinkedHashMap<>(), subActionPool = new LinkedHashMap<>();
@@ -45,7 +46,11 @@ public class CItemType extends Component
         MiscTags.setItemSlotting(stack, slotting);
 
         double genLevel = rarity.itemLevelModifier + level;
-        for (CTrait traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel, null);
+        double totalValue = value;
+        for (CTrait trait : staticTraits)
+        {
+            totalValue += trait.applyToItem(stack, this, genLevel, null);
+        }
 
 
         ArrayList<CTraitGenPool> genPools = new ArrayList<>();
@@ -66,6 +71,7 @@ public class CItemType extends Component
             traitPools.put(pool, traits);
         }
 
+
         for (int i = rarity.traitCount; i > 0; i--)
         {
             if (genPools.size() == 0) break;
@@ -74,7 +80,7 @@ public class CItemType extends Component
             ArrayList<CTrait> list = traitPools.get(pool);
             CTrait trait = Tools.choose(list);
 
-            trait.applyToItem(stack, this, genLevel, pool);
+            totalValue += trait.applyToItem(stack, this, genLevel, pool);
 
             while (list.remove(trait))
             {
@@ -84,6 +90,9 @@ public class CItemType extends Component
 
 
         //TODO Generate actions
+        //TODO Add value of generated actions to totalValue
+
+        //TODO Set value using totalValue
 
         //TODO Generate name
 
@@ -96,7 +105,8 @@ public class CItemType extends Component
     {
         ByteBufUtils.writeUTF8String(buf, name);
         ByteBufUtils.writeUTF8String(buf, slotting);
-        buf.writeInt(percentageMultiplier);
+        buf.writeDouble(percentageMultiplier);
+        buf.writeDouble(value);
 
         buf.writeInt(staticTraits.size());
         for (CTrait gen : staticTraits) gen.write(buf);
@@ -126,7 +136,8 @@ public class CItemType extends Component
     {
         name = ByteBufUtils.readUTF8String(buf);
         slotting = ByteBufUtils.readUTF8String(buf);
-        percentageMultiplier = buf.readInt();
+        percentageMultiplier = buf.readDouble();
+        value = buf.readDouble();
 
         staticTraits.clear();
         for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTrait().read(buf));
@@ -153,8 +164,9 @@ public class CItemType extends Component
     public CItemType save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream).set(slotting).save(stream);
+        new CDouble().set(percentageMultiplier).save(stream).set(value).save(stream);
 
-        CInt ci = new CInt().set(percentageMultiplier).save(stream).set(staticTraits.size()).save(stream);
+        CInt ci = new CInt().set(staticTraits.size()).save(stream);
         for (CTrait gen : staticTraits) gen.save(stream);
 
         ci.set(randomTraitPools.size()).save(stream);
@@ -181,12 +193,13 @@ public class CItemType extends Component
     public CItemType load(InputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8();
+        CDouble cd = new CDouble();
         name = cs.load(stream).value;
         slotting = cs.load(stream).value;
+        percentageMultiplier = cd.load(stream).value;
+        value = cd.load(stream).value;
 
         CInt ci = new CInt();
-        percentageMultiplier = ci.load(stream).value;
-
         staticTraits.clear();
         for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTrait().load(stream));
 
