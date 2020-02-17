@@ -13,11 +13,11 @@ import java.util.Map;
 
 public class CTraitGenPool extends Component
 {
-    public static LinkedHashMap<String, CTraitGenPool> globalTraitGenPools = new LinkedHashMap<>(); //TODO handle data retention
+    public static LinkedHashMap<String, CTraitGenPool> traitGenPools = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name; //TODO disallow setting to the name "null" (see TraitTags class)
-    public LinkedHashMap<CTraitGen, Integer> traitGenWeights = new LinkedHashMap<>();
+    public LinkedHashMap<CTrait, Integer> traitGenWeights = new LinkedHashMap<>();
 
 
     @Override
@@ -26,7 +26,7 @@ public class CTraitGenPool extends Component
         ByteBufUtils.writeUTF8String(buf, name);
 
         buf.writeInt(traitGenWeights.size());
-        for (Map.Entry<CTraitGen, Integer> entry : traitGenWeights.entrySet())
+        for (Map.Entry<CTrait, Integer> entry : traitGenWeights.entrySet())
         {
             writeMarked(buf, entry.getKey());
             buf.writeInt(entry.getValue());
@@ -41,7 +41,7 @@ public class CTraitGenPool extends Component
         name = ByteBufUtils.readUTF8String(buf);
 
         traitGenWeights.clear();
-        for (int i = buf.readInt(); i > 0; i--) traitGenWeights.put((CTraitGen) readMarked(buf), buf.readInt());
+        for (int i = buf.readInt(); i > 0; i--) traitGenWeights.put((CTrait) readMarked(buf), buf.readInt());
 
         return this;
     }
@@ -52,7 +52,7 @@ public class CTraitGenPool extends Component
         new CStringUTF8().set(name).save(stream);
 
         CInt ci = new CInt().set(traitGenWeights.size()).save(stream);
-        for (Map.Entry<CTraitGen, Integer> entry : traitGenWeights.entrySet())
+        for (Map.Entry<CTrait, Integer> entry : traitGenWeights.entrySet())
         {
             saveMarked(stream, entry.getKey());
             ci.set(entry.getValue()).save(stream);
@@ -68,7 +68,7 @@ public class CTraitGenPool extends Component
 
         CInt ci = new CInt();
         traitGenWeights.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) traitGenWeights.put((CTraitGen) loadMarked(stream), ci.load(stream).value);
+        for (int i = ci.load(stream).value; i > 0; i--) traitGenWeights.put((CTrait) loadMarked(stream), ci.load(stream).value);
 
         return this;
     }

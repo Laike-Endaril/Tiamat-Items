@@ -18,16 +18,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CItemTypeGen extends Component
+public class CItemType extends Component
 {
     //TODO change version on item gen definition change, including globals
     public static int itemGenVersion = 0; //TODO handle data retention
-    public static LinkedHashMap<String, CItemTypeGen> itemGenerators = new LinkedHashMap<>(); //TODO handle data retention
+    public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name, slotting;
     public int percentageMultiplier = 1;
-    public ArrayList<CTraitGen> staticTraits = new ArrayList<>();
+    public ArrayList<CTrait> staticTraits = new ArrayList<>();
     public ArrayList<CTraitGenPool> randomTraitPools = new ArrayList<>();
     public LinkedHashMap<CAction, Integer> mainActionPool = new LinkedHashMap<>(), subActionPool = new LinkedHashMap<>();
 
@@ -45,16 +45,16 @@ public class CItemTypeGen extends Component
         MiscTags.setItemSlotting(stack, slotting);
 
         double genLevel = rarity.itemLevelModifier + level;
-        for (CTraitGen traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel, null);
+        for (CTrait traitGen : staticTraits) traitGen.applyToItem(stack, this, genLevel, null);
 
 
         ArrayList<CTraitGenPool> genPools = new ArrayList<>();
-        LinkedHashMap<CTraitGenPool, ArrayList<CTraitGen>> traitPools = new LinkedHashMap<>();
+        LinkedHashMap<CTraitGenPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
         for (CTraitGenPool pool : randomTraitPools)
         {
-            ArrayList<CTraitGen> traits = new ArrayList<>();
+            ArrayList<CTrait> traits = new ArrayList<>();
 
-            for (Map.Entry<CTraitGen, Integer> entry : pool.traitGenWeights.entrySet())
+            for (Map.Entry<CTrait, Integer> entry : pool.traitGenWeights.entrySet())
             {
                 for (int i = entry.getValue(); i > 0; i--)
                 {
@@ -71,8 +71,8 @@ public class CItemTypeGen extends Component
             if (genPools.size() == 0) break;
 
             CTraitGenPool pool = Tools.choose(genPools);
-            ArrayList<CTraitGen> list = traitPools.get(pool);
-            CTraitGen trait = Tools.choose(list);
+            ArrayList<CTrait> list = traitPools.get(pool);
+            CTrait trait = Tools.choose(list);
 
             trait.applyToItem(stack, this, genLevel, pool);
 
@@ -92,14 +92,14 @@ public class CItemTypeGen extends Component
 
 
     @Override
-    public CItemTypeGen write(ByteBuf buf)
+    public CItemType write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         ByteBufUtils.writeUTF8String(buf, slotting);
         buf.writeInt(percentageMultiplier);
 
         buf.writeInt(staticTraits.size());
-        for (CTraitGen gen : staticTraits) gen.write(buf);
+        for (CTrait gen : staticTraits) gen.write(buf);
 
         buf.writeInt(randomTraitPools.size());
         for (CTraitGenPool pool : randomTraitPools) pool.write(buf);
@@ -122,14 +122,14 @@ public class CItemTypeGen extends Component
     }
 
     @Override
-    public CItemTypeGen read(ByteBuf buf)
+    public CItemType read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
         slotting = ByteBufUtils.readUTF8String(buf);
         percentageMultiplier = buf.readInt();
 
         staticTraits.clear();
-        for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTraitGen().read(buf));
+        for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTrait().read(buf));
 
         randomTraitPools.clear();
         for (int i = buf.readInt(); i > 0; i--) randomTraitPools.add(new CTraitGenPool().read(buf));
@@ -150,12 +150,12 @@ public class CItemTypeGen extends Component
     }
 
     @Override
-    public CItemTypeGen save(OutputStream stream)
+    public CItemType save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream).set(slotting).save(stream);
 
         CInt ci = new CInt().set(percentageMultiplier).save(stream).set(staticTraits.size()).save(stream);
-        for (CTraitGen gen : staticTraits) gen.save(stream);
+        for (CTrait gen : staticTraits) gen.save(stream);
 
         ci.set(randomTraitPools.size()).save(stream);
         for (CTraitGenPool pool : randomTraitPools) pool.save(stream);
@@ -178,7 +178,7 @@ public class CItemTypeGen extends Component
     }
 
     @Override
-    public CItemTypeGen load(InputStream stream)
+    public CItemType load(InputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8();
         name = cs.load(stream).value;
@@ -188,7 +188,7 @@ public class CItemTypeGen extends Component
         percentageMultiplier = ci.load(stream).value;
 
         staticTraits.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTraitGen().load(stream));
+        for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTrait().load(stream));
 
         randomTraitPools.clear();
         for (int i = ci.load(stream).value; i > 0; i--) randomTraitPools.add(new CTraitGenPool().load(stream));

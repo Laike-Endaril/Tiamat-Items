@@ -7,9 +7,9 @@ import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
-import com.fantasticsource.tiamatitems.traitgen.CItemTypeGen;
-import com.fantasticsource.tiamatitems.traitgen.CTraitGen;
-import com.fantasticsource.tiamatitems.traitgen.CTraitGenElement_PassiveAttributeMod;
+import com.fantasticsource.tiamatitems.traitgen.CItemType;
+import com.fantasticsource.tiamatitems.traitgen.CTrait;
+import com.fantasticsource.tiamatitems.traitgen.CTraitElement_PassiveAttributeMod;
 import com.fantasticsource.tiamatitems.traitgen.CTraitGenPool;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.block.Block;
@@ -153,12 +153,12 @@ public class TiamatItems
 
 
         //TODO test code start
-        CTraitGenElement_PassiveAttributeMod element = new CTraitGenElement_PassiveAttributeMod();
+        CTraitElement_PassiveAttributeMod element = new CTraitElement_PassiveAttributeMod();
         element.attributeName = "generic.maxHealth";
         element.minimum = 1;
         element.maximum = 20;
 
-        CTraitGen gen = new CTraitGen();
+        CTrait gen = new CTrait();
         gen.name = "TestTrait";
         gen.elements.add(element);
 
@@ -166,14 +166,14 @@ public class TiamatItems
         pool.name = "TestPool";
         pool.traitGenWeights.put(gen, 1);
 
-        CTraitGenPool.globalTraitGenPools.put(pool.name, pool);
+        CTraitGenPool.traitGenPools.put(pool.name, pool);
 
-        CItemTypeGen itemType = new CItemTypeGen();
+        CItemType itemType = new CItemType();
         itemType.name = "TestType";
         itemType.slotting = "Head";
         itemType.randomTraitPools.add(pool);
 
-        CItemTypeGen.itemGenerators.put(itemType.name, itemType);
+        CItemType.itemTypes.put(itemType.name, itemType);
 
         CRarity rarity = new CRarity();
         rarity.name = "TestRarity";

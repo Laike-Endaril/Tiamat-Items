@@ -2,7 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
-import com.fantasticsource.tiamatitems.traitgen.CItemTypeGen;
+import com.fantasticsource.tiamatitems.traitgen.CItemType;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -84,7 +84,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    result.addAll(CItemTypeGen.itemGenerators.keySet());
+                    result.addAll(CItemType.itemTypes.keySet());
                     break;
             }
         }
@@ -134,7 +134,7 @@ public class Commands extends CommandBase
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
-                CItemTypeGen gen = CItemTypeGen.itemGenerators.get(args[1]);
+                CItemType gen = CItemType.itemTypes.get(args[1]);
                 CRarity rarity = CRarity.rarities.get(args[3]);
                 if (gen == null || rarity == null)
                 {

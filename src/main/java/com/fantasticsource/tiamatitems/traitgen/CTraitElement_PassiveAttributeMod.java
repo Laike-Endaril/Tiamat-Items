@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
+public class CTraitElement_PassiveAttributeMod extends CTraitElement
 {
     public String attributeName = "";
     public boolean isGood = true; //Whether it's a good thing to have more of this attribute
@@ -77,15 +77,15 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof CTraitGenElement_PassiveAttributeMod)) return false;
+        if (!(obj instanceof CTraitElement_PassiveAttributeMod)) return false;
 
-        CTraitGenElement_PassiveAttributeMod other = (CTraitGenElement_PassiveAttributeMod) obj;
+        CTraitElement_PassiveAttributeMod other = (CTraitElement_PassiveAttributeMod) obj;
         return other.operation == operation && other.attributeName.equals(attributeName);
     }
 
 
     @Override
-    public CTraitGenElement_PassiveAttributeMod write(ByteBuf buf)
+    public CTraitElement_PassiveAttributeMod write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -97,7 +97,7 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     }
 
     @Override
-    public CTraitGenElement_PassiveAttributeMod read(ByteBuf buf)
+    public CTraitElement_PassiveAttributeMod read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -109,7 +109,7 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     }
 
     @Override
-    public CTraitGenElement_PassiveAttributeMod save(OutputStream stream)
+    public CTraitElement_PassiveAttributeMod save(OutputStream stream)
     {
         super.save(stream);
 
@@ -121,7 +121,7 @@ public class CTraitGenElement_PassiveAttributeMod extends CTraitGenElement
     }
 
     @Override
-    public CTraitGenElement_PassiveAttributeMod load(InputStream stream)
+    public CTraitElement_PassiveAttributeMod load(InputStream stream)
     {
         super.load(stream);
 
