@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
+import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -20,7 +21,6 @@ import java.util.Map;
 public class CItemTypeGen extends Component
 {
     //TODO change version on item gen definition change, including globals
-    //TODO config for
     public static int itemGenVersion = 0; //TODO handle data retention
     public static LinkedHashMap<String, CItemTypeGen> itemGenerators = new LinkedHashMap<>(); //TODO handle data retention
 
@@ -29,15 +29,7 @@ public class CItemTypeGen extends Component
     public int percentageMultiplier = 1;
     public ArrayList<CTraitGen> staticTraits = new ArrayList<>();
     public ArrayList<CTraitGenPool> randomTraitPools = new ArrayList<>();
-
-
-    public static ItemStack generateItem(String itemType, int level, String rarity) //TODO call this from a command
-    {
-        CItemTypeGen gen = itemGenerators.get(itemType);
-        CRarity cRarity = CRarity.rarities.get(rarity);
-        if (gen == null || cRarity == null) return ItemStack.EMPTY;
-        return gen.generateItem(level, cRarity);
-    }
+    public LinkedHashMap<CAction, Integer> mainActionPool = new LinkedHashMap<>(), subActionPool = new LinkedHashMap<>();
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -91,6 +83,8 @@ public class CItemTypeGen extends Component
         }
 
 
+        //TODO Generate actions
+
         //TODO Generate name
 
         return stack;
@@ -110,6 +104,20 @@ public class CItemTypeGen extends Component
         buf.writeInt(randomTraitPools.size());
         for (CTraitGenPool pool : randomTraitPools) pool.write(buf);
 
+        buf.writeInt(mainActionPool.size());
+        for (Map.Entry<CAction, Integer> entry : mainActionPool.entrySet())
+        {
+            entry.getKey().write(buf);
+            buf.writeInt(entry.getValue());
+        }
+
+        buf.writeInt(subActionPool.size());
+        for (Map.Entry<CAction, Integer> entry : subActionPool.entrySet())
+        {
+            entry.getKey().write(buf);
+            buf.writeInt(entry.getValue());
+        }
+
         return this;
     }
 
@@ -126,6 +134,18 @@ public class CItemTypeGen extends Component
         randomTraitPools.clear();
         for (int i = buf.readInt(); i > 0; i--) randomTraitPools.add(new CTraitGenPool().read(buf));
 
+        mainActionPool.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            mainActionPool.put(new CAction().read(buf), buf.readInt());
+        }
+
+        subActionPool.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            subActionPool.put(new CAction().read(buf), buf.readInt());
+        }
+
         return this;
     }
 
@@ -139,6 +159,20 @@ public class CItemTypeGen extends Component
 
         ci.set(randomTraitPools.size()).save(stream);
         for (CTraitGenPool pool : randomTraitPools) pool.save(stream);
+
+        ci.set(mainActionPool.size()).save(stream);
+        for (Map.Entry<CAction, Integer> entry : mainActionPool.entrySet())
+        {
+            entry.getKey().save(stream);
+            ci.set(entry.getValue()).save(stream);
+        }
+
+        ci.set(subActionPool.size()).save(stream);
+        for (Map.Entry<CAction, Integer> entry : subActionPool.entrySet())
+        {
+            entry.getKey().save(stream);
+            ci.set(entry.getValue()).save(stream);
+        }
 
         return this;
     }
@@ -158,6 +192,18 @@ public class CItemTypeGen extends Component
 
         randomTraitPools.clear();
         for (int i = ci.load(stream).value; i > 0; i--) randomTraitPools.add(new CTraitGenPool().load(stream));
+
+        mainActionPool.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            mainActionPool.put(new CAction().load(stream), ci.load(stream).value);
+        }
+
+        subActionPool.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            subActionPool.put(new CAction().load(stream), ci.load(stream).value);
+        }
 
         return this;
     }
