@@ -1,6 +1,5 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
-import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -29,8 +28,7 @@ public class CItemType extends Component
     public String name, slotting;
     public double percentageMultiplier = 1, value;
     public ArrayList<CTrait> staticTraits = new ArrayList<>();
-    public ArrayList<CTraitGenPool> randomTraitPools = new ArrayList<>();
-    public LinkedHashMap<CAction, Integer> mainActionPool = new LinkedHashMap<>(), subActionPool = new LinkedHashMap<>();
+    public ArrayList<ArrayList<CTraitGenPool>> randomTraitPoolSets = new ArrayList<>();
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -53,44 +51,47 @@ public class CItemType extends Component
         }
 
 
-        ArrayList<CTraitGenPool> genPools = new ArrayList<>();
-        LinkedHashMap<CTraitGenPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
-        for (CTraitGenPool pool : randomTraitPools)
+        int highestPoolID = Tools.min(randomTraitPoolSets.size(), rarity.traitCounts.size());
+        for (int poolID = 0; poolID < highestPoolID; poolID++)
         {
-            ArrayList<CTrait> traits = new ArrayList<>();
+            ArrayList<CTraitGenPool> randomTraitPools = randomTraitPoolSets.get(poolID);
 
-            for (Map.Entry<CTrait, Integer> entry : pool.traitGenWeights.entrySet())
+            ArrayList<CTraitGenPool> genPools = new ArrayList<>();
+            LinkedHashMap<CTraitGenPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
+            for (CTraitGenPool pool : randomTraitPools)
             {
-                for (int i = entry.getValue(); i > 0; i--)
+                ArrayList<CTrait> traits = new ArrayList<>();
+
+                for (Map.Entry<CTrait, Integer> entry : pool.traitGenWeights.entrySet())
                 {
-                    traits.add(entry.getKey());
-                    genPools.add(pool);
+                    for (int i = entry.getValue(); i > 0; i--)
+                    {
+                        traits.add(entry.getKey());
+                        genPools.add(pool);
+                    }
+                }
+
+                traitPools.put(pool, traits);
+            }
+
+
+            for (int i = rarity.traitCounts.get(poolID); i > 0; i--)
+            {
+                if (genPools.size() == 0) break;
+
+                CTraitGenPool pool = Tools.choose(genPools);
+                ArrayList<CTrait> list = traitPools.get(pool);
+                CTrait trait = Tools.choose(list);
+
+                totalValue += trait.applyToItem(stack, this, genLevel, pool);
+
+                while (list.remove(trait))
+                {
+                    genPools.remove(pool);
                 }
             }
-
-            traitPools.put(pool, traits);
         }
 
-
-        for (int i = rarity.traitCount; i > 0; i--)
-        {
-            if (genPools.size() == 0) break;
-
-            CTraitGenPool pool = Tools.choose(genPools);
-            ArrayList<CTrait> list = traitPools.get(pool);
-            CTrait trait = Tools.choose(list);
-
-            totalValue += trait.applyToItem(stack, this, genLevel, pool);
-
-            while (list.remove(trait))
-            {
-                genPools.remove(pool);
-            }
-        }
-
-
-        //TODO Generate actions
-        //TODO Add value of generated actions to totalValue
 
         //TODO Set value using totalValue
 
@@ -111,21 +112,11 @@ public class CItemType extends Component
         buf.writeInt(staticTraits.size());
         for (CTrait gen : staticTraits) gen.write(buf);
 
-        buf.writeInt(randomTraitPools.size());
-        for (CTraitGenPool pool : randomTraitPools) pool.write(buf);
-
-        buf.writeInt(mainActionPool.size());
-        for (Map.Entry<CAction, Integer> entry : mainActionPool.entrySet())
+        buf.writeInt(randomTraitPoolSets.size());
+        for (ArrayList<CTraitGenPool> poolSet : randomTraitPoolSets)
         {
-            entry.getKey().write(buf);
-            buf.writeInt(entry.getValue());
-        }
-
-        buf.writeInt(subActionPool.size());
-        for (Map.Entry<CAction, Integer> entry : subActionPool.entrySet())
-        {
-            entry.getKey().write(buf);
-            buf.writeInt(entry.getValue());
+            buf.writeInt(poolSet.size());
+            for (CTraitGenPool pool : poolSet) pool.write(buf);
         }
 
         return this;
@@ -142,19 +133,16 @@ public class CItemType extends Component
         staticTraits.clear();
         for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTrait().read(buf));
 
-        randomTraitPools.clear();
-        for (int i = buf.readInt(); i > 0; i--) randomTraitPools.add(new CTraitGenPool().read(buf));
-
-        mainActionPool.clear();
+        randomTraitPoolSets.clear();
         for (int i = buf.readInt(); i > 0; i--)
         {
-            mainActionPool.put(new CAction().read(buf), buf.readInt());
-        }
+            ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
+            randomTraitPoolSets.add(poolSet);
 
-        subActionPool.clear();
-        for (int i = buf.readInt(); i > 0; i--)
-        {
-            subActionPool.put(new CAction().read(buf), buf.readInt());
+            for (int i2 = buf.readInt(); i2 > 0; i2--)
+            {
+                poolSet.add(new CTraitGenPool().read(buf));
+            }
         }
 
         return this;
@@ -169,21 +157,11 @@ public class CItemType extends Component
         CInt ci = new CInt().set(staticTraits.size()).save(stream);
         for (CTrait gen : staticTraits) gen.save(stream);
 
-        ci.set(randomTraitPools.size()).save(stream);
-        for (CTraitGenPool pool : randomTraitPools) pool.save(stream);
-
-        ci.set(mainActionPool.size()).save(stream);
-        for (Map.Entry<CAction, Integer> entry : mainActionPool.entrySet())
+        ci.set(randomTraitPoolSets.size()).save(stream);
+        for (ArrayList<CTraitGenPool> poolSet : randomTraitPoolSets)
         {
-            entry.getKey().save(stream);
-            ci.set(entry.getValue()).save(stream);
-        }
-
-        ci.set(subActionPool.size()).save(stream);
-        for (Map.Entry<CAction, Integer> entry : subActionPool.entrySet())
-        {
-            entry.getKey().save(stream);
-            ci.set(entry.getValue()).save(stream);
+            ci.set(poolSet.size()).save(stream);
+            for (CTraitGenPool pool : poolSet) pool.save(stream);
         }
 
         return this;
@@ -203,19 +181,16 @@ public class CItemType extends Component
         staticTraits.clear();
         for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTrait().load(stream));
 
-        randomTraitPools.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) randomTraitPools.add(new CTraitGenPool().load(stream));
-
-        mainActionPool.clear();
+        randomTraitPoolSets.clear();
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            mainActionPool.put(new CAction().load(stream), ci.load(stream).value);
-        }
+            ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
+            randomTraitPoolSets.add(poolSet);
 
-        subActionPool.clear();
-        for (int i = ci.load(stream).value; i > 0; i--)
-        {
-            subActionPool.put(new CAction().load(stream), ci.load(stream).value);
+            for (int i2 = ci.load(stream).value; i2 > 0; i2--)
+            {
+                poolSet.add(new CTraitGenPool().load(stream));
+            }
         }
 
         return this;

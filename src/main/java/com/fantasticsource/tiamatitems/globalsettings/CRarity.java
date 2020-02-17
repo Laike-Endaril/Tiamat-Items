@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class CRarity extends Component
@@ -22,7 +23,8 @@ public class CRarity extends Component
     public TextFormatting textColor = TextFormatting.WHITE;
 
     public double itemLevelModifier;
-    public int traitCount;
+
+    public ArrayList<Integer> traitCounts = new ArrayList<>();
 
 
     @Override
@@ -33,7 +35,9 @@ public class CRarity extends Component
         buf.writeInt(textColor.getColorIndex());
 
         buf.writeDouble(itemLevelModifier);
-        buf.writeInt(traitCount);
+
+        buf.writeInt(traitCounts.size());
+        for (int count : traitCounts) buf.writeInt(count);
 
         return this;
     }
@@ -46,7 +50,9 @@ public class CRarity extends Component
         textColor = TextFormatting.fromColorIndex(buf.readInt());
 
         itemLevelModifier = buf.readDouble();
-        traitCount = buf.readInt();
+
+        traitCounts.clear();
+        for (int i = buf.readInt(); i > 0; i--) traitCounts.add(buf.readInt());
 
         return this;
     }
@@ -58,7 +64,9 @@ public class CRarity extends Component
         CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
 
         new CDouble().set(itemLevelModifier).save(stream);
-        ci.set(traitCount).save(stream);
+
+        ci.set(traitCounts.size()).save(stream);
+        for (int count : traitCounts) ci.set(count).save(stream);
 
         return this;
     }
@@ -73,7 +81,9 @@ public class CRarity extends Component
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
 
         itemLevelModifier = new CDouble().load(stream).value;
-        traitCount = ci.load(stream).value;
+
+        traitCounts.clear();
+        for (int i = ci.load(stream).value; i > 0; i--) traitCounts.add(ci.load(stream).value);
 
         return this;
     }

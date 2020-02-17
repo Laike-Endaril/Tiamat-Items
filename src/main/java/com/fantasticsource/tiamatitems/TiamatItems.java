@@ -38,6 +38,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.ArrayList;
+
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.033b,);required-after:tiamatactions@[1.12.2.000,)")
 public class TiamatItems
 {
@@ -171,7 +173,9 @@ public class TiamatItems
         CItemType itemType = new CItemType();
         itemType.name = "TestType";
         itemType.slotting = "Head";
-        itemType.randomTraitPools.add(pool);
+        ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
+        poolSet.add(pool);
+        itemType.randomTraitPoolSets.add(poolSet);
 
         CItemType.itemTypes.put(itemType.name, itemType);
 
@@ -180,7 +184,7 @@ public class TiamatItems
         rarity.textColor = TextFormatting.GOLD;
         rarity.color = Color.ORANGE;
         rarity.itemLevelModifier = 0.5;
-        rarity.traitCount = 1;
+        rarity.traitCounts.add(1);
 
         CRarity.rarities.put(rarity.name, rarity);
         //TODO test code end
