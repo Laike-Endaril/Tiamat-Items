@@ -94,7 +94,7 @@ public class Commands extends CommandBase
             {
                 case "generate":
                     ArrayList<String> ints = new ArrayList<>();
-                    for (int i = 1; i <= 10; i++) ints.add("" + i);
+                    for (int i = 1; i < 10; i++) ints.add("" + i);
                     result.addAll(ints);
                     break;
             }
