@@ -158,11 +158,13 @@ public class TiamatItems
         CTraitElement_PassiveAttributeMod element = new CTraitElement_PassiveAttributeMod();
         element.attributeName = "generic.maxHealth";
         element.minimum = 1;
-        element.maximum = 20;
+        element.maximum = 3;
 
         CTrait gen = new CTrait();
         gen.name = "TestTrait";
         gen.elements.add(element);
+        gen.minValue = 1;
+        gen.maxValue = 3;
 
         CTraitGenPool pool = new CTraitGenPool();
         pool.name = "TestPool";

@@ -35,14 +35,17 @@ public class CItemType extends Component
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
 
+
         MiscTags.setItemGenVersion(stack, itemGenVersion);
+
 
         MiscTags.setItemLevel(stack, level);
         MiscTags.setItemLevelReq(stack, level);
         MiscTags.setItemRarity(stack, rarity);
-
         MiscTags.setItemSlotting(stack, slotting);
 
+
+        //Static traits
         double genLevel = rarity.itemLevelModifier + level;
         double totalValue = value;
         for (CTrait trait : staticTraits)
@@ -51,6 +54,7 @@ public class CItemType extends Component
         }
 
 
+        //Trait pools
         int highestPoolID = Tools.min(randomTraitPoolSets.size(), rarity.traitCounts.size());
         for (int poolID = 0; poolID < highestPoolID; poolID++)
         {
@@ -93,9 +97,13 @@ public class CItemType extends Component
         }
 
 
-        //TODO Set value using totalValue
+        //Value
+        MiscTags.setItemValue(stack, (int) totalValue);
 
+
+        //Name
         //TODO Generate name
+
 
         return stack;
     }

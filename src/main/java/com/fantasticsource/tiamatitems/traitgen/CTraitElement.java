@@ -15,7 +15,7 @@ public abstract class CTraitElement extends Component
     public double minimum = 0, maximum = 0;
     public String affixSetName = "";
 
-    public abstract void applyToItem(ItemStack stack, double level, int wholeNumberPercentage);
+    public abstract void applyToItem(ItemStack stack, int wholeNumberPercentage);
 
     public abstract String getDescription();
 

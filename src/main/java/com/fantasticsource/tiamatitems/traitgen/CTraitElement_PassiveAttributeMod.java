@@ -60,12 +60,12 @@ public class CTraitElement_PassiveAttributeMod extends CTraitElement
     }
 
     @Override
-    public void applyToItem(ItemStack stack, double level, int wholeNumberPercentage)
+    public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
         double amount = minimum + (maximum - minimum) * wholeNumberPercentage / 100;
         if (amount == 0) return;
 
-        amount *= (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)) * CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
+        amount *= CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
         if (amount == 0) return;
 
         if (operation == 2) amount -= 1; //For internal calcs (above) and editing (minimum, maximum), treat operation 2 as a direct multiplier (2 means 2x as opposed to 3x)

@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.traitgen;
 
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tools.component.*;
 import io.netty.buffer.ByteBuf;
@@ -20,8 +21,8 @@ public class CTrait extends Component
 
     public double applyToItem(ItemStack stack, CItemType itemTypeGen, double level, CTraitGenPool pool)
     {
-        int wholeNumberPercentage = (int) (Math.random() * 101 * itemTypeGen.percentageMultiplier);
-        for (CTraitElement element : elements) element.applyToItem(stack, level, wholeNumberPercentage);
+        int wholeNumberPercentage = (int) (Math.random() * 101 * itemTypeGen.percentageMultiplier * (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)));
+        for (CTraitElement element : elements) element.applyToItem(stack, wholeNumberPercentage);
 
         TraitTags.setItemTraitData(stack, pool, this, wholeNumberPercentage);
 
