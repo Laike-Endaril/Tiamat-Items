@@ -1,3 +1,8 @@
+"Assembled" layers/texture (tiamat items only)
+"Disassembled" layers/texture (tiamat items only)
+
+Method of getting all traits on an item (including parts on it)
+
 Skin trait element
 
 Name generation...
