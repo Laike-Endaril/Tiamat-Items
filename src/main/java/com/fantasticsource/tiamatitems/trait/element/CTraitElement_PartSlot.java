@@ -4,6 +4,7 @@ import com.fantasticsource.tiamatitems.nbt.PartTags;
 import com.fantasticsource.tiamatitems.trait.CTraitElement;
 import com.fantasticsource.tiamatitems.trait.IUnmultipliedRangeTrait;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -15,23 +16,24 @@ import java.io.OutputStream;
 public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipliedRangeTrait
 {
     public String partSlotType = "";
+    public boolean required = false;
 
     @Override
     public String getDescription()
     {
-        return "Add " + Tools.max(0, (int) minimum) + " to " + Tools.max(0, (int) maximum) + " " + partSlotType + " slots";
+        return "Add " + Tools.max(0, (int) minimum) + " to " + Tools.max(0, (int) maximum) + (required ? " required " : " optional ") + partSlotType + " slots";
     }
 
     @Override
     public String getDescription(int wholeNumberPercentage)
     {
-        return "Add " + getIntAmount(wholeNumberPercentage) + " " + partSlotType + " slots";
+        return "Add " + getIntAmount(wholeNumberPercentage) + (required ? " required " : " optional ") + partSlotType + " slots";
     }
 
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        for (int i = getIntAmount(wholeNumberPercentage); i > 0; i--) PartTags.addPartSlot(stack, partSlotType);
+        for (int i = getIntAmount(wholeNumberPercentage); i > 0; i--) PartTags.addPartSlot(stack, partSlotType, required);
     }
 
 
@@ -41,7 +43,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
         if (!(obj instanceof CTraitElement_PartSlot)) return false;
 
         CTraitElement_PartSlot other = (CTraitElement_PartSlot) obj;
-        return other.partSlotType.equals(partSlotType);
+        return other.partSlotType.equals(partSlotType) && other.required == required;
     }
 
 
@@ -51,6 +53,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
         super.write(buf);
 
         ByteBufUtils.writeUTF8String(buf, partSlotType);
+        buf.writeBoolean(required);
 
         return this;
     }
@@ -61,6 +64,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
         super.read(buf);
 
         partSlotType = ByteBufUtils.readUTF8String(buf);
+        required = buf.readBoolean();
 
         return this;
     }
@@ -71,6 +75,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
         super.save(stream);
 
         new CStringUTF8().set(partSlotType).save(stream);
+        new CBoolean().set(required).save(stream);
 
         return this;
     }
@@ -81,6 +86,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
         super.load(stream);
 
         partSlotType = new CStringUTF8().load(stream).value;
+        required = new CBoolean().load(stream).value;
 
         return this;
     }

@@ -84,7 +84,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    result.addAll(CItemType.itemTypes.keySet());
+                    for (String itemType : CItemType.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
                     break;
             }
         }
@@ -134,7 +134,7 @@ public class Commands extends CommandBase
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
-                CItemType gen = CItemType.itemTypes.get(args[1]);
+                CItemType gen = CItemType.itemTypes.get(args[1].replaceAll("_", " "));
                 CRarity rarity = CRarity.rarities.get(args[3]);
                 if (gen == null || rarity == null)
                 {

@@ -1,5 +1,3 @@
-Active attribute trait element
-
 Skin trait element
 
 Name generation...

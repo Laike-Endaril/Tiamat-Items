@@ -11,10 +11,7 @@ import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
-import com.fantasticsource.tiamatitems.trait.element.CTraitElement_Action1;
-import com.fantasticsource.tiamatitems.trait.element.CTraitElement_Action2;
-import com.fantasticsource.tiamatitems.trait.element.CTraitElement_PartSlot;
-import com.fantasticsource.tiamatitems.trait.element.CTraitElement_PassiveAttributeMod;
+import com.fantasticsource.tiamatitems.trait.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -161,62 +158,62 @@ public class TiamatItems
 
         //TODO test code start
         //Main action traits
+        ArrayList<CTraitGenPool> action1PoolSet = new ArrayList<>();
+
+        CTraitGenPool pool = new CTraitGenPool();
+        pool.name = "Action1Pool";
+        CTraitGenPool.traitGenPools.put(pool.name, pool);
+        action1PoolSet.add(pool);
+
         CTraitElement_Action1 action1 = new CTraitElement_Action1();
         action1.actionName = "Test";
 
-        CTrait gen = new CTrait();
-        gen.name = "TestActionTrait";
-        gen.elements.add(action1);
-        gen.minValue = 3;
-        gen.maxValue = 3;
-
-        CTraitGenPool pool = new CTraitGenPool();
-        pool.name = "TestAction1Pool";
-        pool.traitGenWeights.put(gen, 1);
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-
-        ArrayList<CTraitGenPool> action1PoolSet = new ArrayList<>();
-        action1PoolSet.add(pool);
+        CTrait trait = new CTrait();
+        trait.name = "Action1Trait";
+        trait.elements.add(action1);
+        trait.minValue = 3;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
 
 
         //Sub action traits
+        ArrayList<CTraitGenPool> action2PoolSet = new ArrayList<>();
+
+        pool = new CTraitGenPool();
+        pool.name = "Action2Pool";
+        CTraitGenPool.traitGenPools.put(pool.name, pool);
+        action2PoolSet.add(pool);
+
         CTraitElement_Action2 action2 = new CTraitElement_Action2();
         action2.actionName = "Test";
 
-        gen = new CTrait();
-        gen.name = "TestActionTrait";
-        gen.elements.add(action2);
-        gen.minValue = 3;
-        gen.maxValue = 3;
-
-        pool = new CTraitGenPool();
-        pool.name = "TestAction2Pool";
-        pool.traitGenWeights.put(gen, 1);
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-
-        ArrayList<CTraitGenPool> action2PoolSet = new ArrayList<>();
-        action2PoolSet.add(pool);
+        trait = new CTrait();
+        trait.name = "Action2Trait";
+        trait.elements.add(action2);
+        trait.minValue = 3;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
 
 
         //General traits
+        ArrayList<CTraitGenPool> generalPoolSet = new ArrayList<>();
+
+        pool = new CTraitGenPool();
+        pool.name = "GeneralPool";
+        CTraitGenPool.traitGenPools.put(pool.name, pool);
+        generalPoolSet.add(pool);
+
         CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
         passiveAttributeMod.attributeName = "generic.maxHealth";
         passiveAttributeMod.minimum = 1;
         passiveAttributeMod.maximum = 3;
 
-        gen = new CTrait();
-        gen.name = "TestAttributeTrait";
-        gen.elements.add(passiveAttributeMod);
-        gen.minValue = 1;
-        gen.maxValue = 3;
-
-        pool = new CTraitGenPool();
-        pool.name = "TestGeneralPool";
-        pool.traitGenWeights.put(gen, 1);
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-
-        ArrayList<CTraitGenPool> generalPoolSet = new ArrayList<>();
-        generalPoolSet.add(pool);
+        trait = new CTrait();
+        trait.name = "MaxHPTrait";
+        trait.elements.add(passiveAttributeMod);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
 
 
         //Part slot traits
@@ -225,37 +222,90 @@ public class TiamatItems
         validItemTypes.add("Rune");
         PartSlot.validItemTypes.put("Socket", validItemTypes);
 
+        ArrayList<CTraitGenPool> partSlotPoolSet = new ArrayList<>();
+        pool = new CTraitGenPool();
+        pool.name = "SocketPool";
+        CTraitGenPool.traitGenPools.put(pool.name, pool);
+        partSlotPoolSet.add(pool);
+
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
         partSlot.minimum = 0;
         partSlot.maximum = 1;
 
-        gen = new CTrait();
-        gen.name = "TestPartSlotTrait";
-        gen.elements.add(partSlot);
-        gen.minValue = 0;
-        gen.maxValue = 3;
-
-        pool = new CTraitGenPool();
-        pool.name = "TestPartSlotPool";
-        for (int i = 10; i > 0; i--) pool.traitGenWeights.put(gen, 1);
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-
-        ArrayList<CTraitGenPool> partSlotPoolSet = new ArrayList<>();
-        partSlotPoolSet.add(pool);
+        trait = new CTrait();
+        trait.name = "SocketTrait";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 3;
+        for (int i = 10; i > 0; i--) pool.traitGenWeights.put(trait, 1);
 
 
         //Item type
         CItemType itemType = new CItemType();
-        itemType.name = "Test2HType";
+        itemType.name = "2H Axe";
         itemType.slotting = "Tiamat 2H";
         itemType.percentageMultiplier = 2;
+
+        CTraitElement_ActiveAttributeMod activeAttributeMod = new CTraitElement_ActiveAttributeMod();
+        activeAttributeMod.attributeName = "generic.attackDamage";
+        activeAttributeMod.minimum = 1;
+        activeAttributeMod.maximum = 3;
+
+        trait = new CTrait();
+        trait.name = "DamageTrait";
+        trait.elements.add(activeAttributeMod);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        itemType.staticTraits.add(trait);
+
+        partSlot = new CTraitElement_PartSlot();
+        partSlot.partSlotType = "2H Axehead";
+        partSlot.required = true;
+        partSlot.minimum = 1;
+        partSlot.maximum = 1;
+
+        trait = new CTrait();
+        trait.name = "2HAxeHeadTrait";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticTraits.add(trait);
+
+        partSlot = new CTraitElement_PartSlot();
+        partSlot.partSlotType = "2H Axe Handle";
+        partSlot.required = true;
+        partSlot.minimum = 1;
+        partSlot.maximum = 1;
+
+        trait = new CTrait();
+        trait.name = "2HAxeHandleTrait";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticTraits.add(trait);
+
+        partSlot = new CTraitElement_PartSlot();
+        partSlot.partSlotType = "2H Axe Skin";
+        partSlot.required = true;
+        partSlot.minimum = 1;
+        partSlot.maximum = 1;
+
+        trait = new CTrait();
+        trait.name = "2HAxeSkinTrait";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticTraits.add(trait);
+
         itemType.randomTraitPoolSets.add(action1PoolSet);
         itemType.randomTraitPoolSets.add(action2PoolSet);
         itemType.randomTraitPoolSets.add(generalPoolSet);
         itemType.randomTraitPoolSets.add(partSlotPoolSet);
 
+
         CItemType.itemTypes.put(itemType.name, itemType);
+
 
         CRarity rarity = new CRarity();
         rarity.name = "TestRarity";

@@ -4,7 +4,6 @@ import com.fantasticsource.tiamatitems.globalsettings.PartSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -14,6 +13,11 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 public class PartTags
 {
     public static void addPartSlot(ItemStack stack, String slotType)
+    {
+        addPartSlot(stack, slotType, false);
+    }
+
+    public static void addPartSlot(ItemStack stack, String slotType, boolean required)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -27,7 +31,8 @@ public class PartTags
         compound = new NBTTagCompound();
         list.appendTag(compound);
 
-        compound.setTag("type", new NBTTagString(slotType));
+        compound.setString("type", slotType);
+        if (required) compound.setBoolean("required", true);
     }
 
     public static void clearPartSlots(ItemStack stack)
@@ -119,7 +124,7 @@ public class PartTags
         for (PartSlot partSlot : partSlots)
         {
             NBTTagCompound partCompound = new NBTTagCompound();
-            partCompound.setTag("type", new NBTTagString(partSlot.slotType));
+            partCompound.setString("type", partSlot.slotType);
             if (partSlot.required) partCompound.setBoolean("required", true);
             if (!partSlot.part.isEmpty()) partCompound.setTag("part", partSlot.part.serializeNBT());
 
