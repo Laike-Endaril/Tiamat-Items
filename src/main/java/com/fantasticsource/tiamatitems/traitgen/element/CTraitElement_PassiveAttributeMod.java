@@ -1,7 +1,8 @@
-package com.fantasticsource.tiamatitems.traitgen;
+package com.fantasticsource.tiamatitems.traitgen.element;
 
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
+import com.fantasticsource.tiamatitems.traitgen.CTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -20,7 +21,7 @@ public class CTraitElement_PassiveAttributeMod extends CTraitElement
     public boolean isGood = true; //Whether it's a good thing to have more of this attribute
     public int operation = 0;
 
-    protected String getSignAndColor(double amount, int operation)
+    protected String getColorAndSign(double amount, int operation)
     {
         String sign;
         TextFormatting color;
@@ -42,9 +43,9 @@ public class CTraitElement_PassiveAttributeMod extends CTraitElement
     @Override
     public String getDescription()
     {
-        if (operation == 0) return (getSignAndColor(minimum, operation) + Math.abs(minimum) + TextFormatting.RESET + " to " + getSignAndColor(maximum, operation) + Math.abs(maximum) + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 1) return (getSignAndColor(minimum, operation) + (Math.abs(minimum) * 100) + "%" + TextFormatting.RESET + " to " + getSignAndColor(maximum, operation) + (Math.abs(maximum) * 100) + "%" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 2) return (getSignAndColor(minimum, operation) + Math.abs(minimum) + "x" + TextFormatting.RESET + " to " + getSignAndColor(maximum, operation) + Math.abs(maximum) + "x" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 0) return (getColorAndSign(minimum, operation) + Math.abs(minimum) + TextFormatting.RESET + " to " + getColorAndSign(maximum, operation) + Math.abs(maximum) + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(minimum, operation) + (Math.abs(minimum) * 100) + "%" + TextFormatting.RESET + " to " + getColorAndSign(maximum, operation) + (Math.abs(maximum) * 100) + "%" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(minimum, operation) + Math.abs(minimum) + "x" + TextFormatting.RESET + " to " + getColorAndSign(maximum, operation) + Math.abs(maximum) + "x" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
 
         throw new IllegalArgumentException("Operation must be 0, 1, or 2, but is " + operation);
     }
@@ -52,9 +53,9 @@ public class CTraitElement_PassiveAttributeMod extends CTraitElement
     @Override
     public String getDescription(double percentage)
     {
-        if (operation == 0) return (getSignAndColor(percentage, operation) + Math.abs(percentage) + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 1) return (getSignAndColor(percentage, operation) + (Math.abs(percentage) * 100) + "%" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 2) return (getSignAndColor(percentage, operation) + Math.abs(percentage) + "x" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 0) return (getColorAndSign(percentage, operation) + Math.abs(percentage) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(percentage, operation) + (Math.abs(percentage) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(percentage, operation) + Math.abs(percentage) + "x" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
 
         throw new IllegalArgumentException("Operation must be 0, 1, or 2, but is " + operation);
     }

@@ -9,8 +9,9 @@ import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.traitgen.CItemType;
 import com.fantasticsource.tiamatitems.traitgen.CTrait;
-import com.fantasticsource.tiamatitems.traitgen.CTraitElement_PassiveAttributeMod;
 import com.fantasticsource.tiamatitems.traitgen.CTraitGenPool;
+import com.fantasticsource.tiamatitems.traitgen.element.CTraitElement_Action1;
+import com.fantasticsource.tiamatitems.traitgen.element.CTraitElement_PassiveAttributeMod;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -155,29 +156,49 @@ public class TiamatItems
 
 
         //TODO test code start
-        CTraitElement_PassiveAttributeMod element = new CTraitElement_PassiveAttributeMod();
-        element.attributeName = "generic.maxHealth";
-        element.minimum = 1;
-        element.maximum = 3;
+        CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
+        passiveAttributeMod.attributeName = "generic.maxHealth";
+        passiveAttributeMod.minimum = 1;
+        passiveAttributeMod.maximum = 3;
 
         CTrait gen = new CTrait();
-        gen.name = "TestTrait";
-        gen.elements.add(element);
+        gen.name = "TestAttributeTrait";
+        gen.elements.add(passiveAttributeMod);
         gen.minValue = 1;
         gen.maxValue = 3;
 
-        CTraitGenPool pool = new CTraitGenPool();
-        pool.name = "TestPool";
-        pool.traitGenWeights.put(gen, 1);
+        CTraitGenPool generalPool = new CTraitGenPool();
+        generalPool.name = "TestGeneralPool";
+        generalPool.traitGenWeights.put(gen, 1);
+        CTraitGenPool.traitGenPools.put(generalPool.name, generalPool);
 
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
+        ArrayList<CTraitGenPool> generalPoolSet = new ArrayList<>();
+        generalPoolSet.add(generalPool);
+
+
+        CTraitElement_Action1 action1 = new CTraitElement_Action1();
+        action1.actionName = "Test";
+
+        gen = new CTrait();
+        gen.name = "TestActionTrait";
+        gen.elements.add(action1);
+        gen.minValue = 1;
+        gen.maxValue = 3;
+
+        CTraitGenPool actionPool = new CTraitGenPool();
+        actionPool.name = "TestActionPool";
+        actionPool.traitGenWeights.put(gen, 1);
+        CTraitGenPool.traitGenPools.put(actionPool.name, actionPool);
+
+        ArrayList<CTraitGenPool> actionPoolSet = new ArrayList<>();
+        actionPoolSet.add(actionPool);
+
 
         CItemType itemType = new CItemType();
         itemType.name = "TestType";
         itemType.slotting = "Head";
-        ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
-        poolSet.add(pool);
-        itemType.randomTraitPoolSets.add(poolSet);
+        itemType.randomTraitPoolSets.add(actionPoolSet);
+        itemType.randomTraitPoolSets.add(generalPoolSet);
 
         CItemType.itemTypes.put(itemType.name, itemType);
 
@@ -186,7 +207,8 @@ public class TiamatItems
         rarity.textColor = TextFormatting.GOLD;
         rarity.color = Color.ORANGE;
         rarity.itemLevelModifier = 0.5;
-        rarity.traitCounts.add(1);
+        rarity.traitCounts.add(1); //1 action trait
+        rarity.traitCounts.add(1); //1 general trait
 
         CRarity.rarities.put(rarity.name, rarity);
         //TODO test code end

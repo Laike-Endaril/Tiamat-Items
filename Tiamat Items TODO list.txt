@@ -11,11 +11,9 @@ range = 55
 roll minus min = 33
 33 / 55 = 60%
 
-Slot generation (trait)
+Slot trait element
 
-Skin generation (trait)
-
-Value generation (based on traits)
+Skin trait element
 
 Recalc items on these triggers...
 ...login
