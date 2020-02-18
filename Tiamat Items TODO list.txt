@@ -1,4 +1,4 @@
-Change pool IDs from ints to strings
+Reduce NBT footprint
 
 Assemblies should transform the core item, storing the empty version of it internally
 

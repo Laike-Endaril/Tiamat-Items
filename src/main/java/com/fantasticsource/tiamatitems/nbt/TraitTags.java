@@ -11,7 +11,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TraitTags
 {
-    public static void addItemTrait(ItemStack stack, int poolSetID, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
+    public static void addItemTrait(ItemStack stack, String poolSetName, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -22,8 +22,8 @@ public class TraitTags
         if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagCompound());
         compound = compound.getCompoundTag("traits");
 
-        if (!compound.hasKey("" + poolSetID)) compound.setTag("" + poolSetID, new NBTTagCompound());
-        compound = compound.getCompoundTag("" + poolSetID);
+        if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagCompound());
+        compound = compound.getCompoundTag(poolSetName);
 
         String poolKey = pool == null ? "null" : pool.name;
         if (!compound.hasKey(poolKey)) compound.setTag(poolKey, new NBTTagList());

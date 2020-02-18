@@ -19,7 +19,7 @@ public class CTrait extends Component
     public HashSet<CTraitElement> elements = new HashSet<>();
 
 
-    public double applyToItem(ItemStack stack, CItemType itemTypeGen, double level, CTraitGenPool pool)
+    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitGenPool pool)
     {
         int baseWholeNumberPercentage = (int) (Math.random() * 101);
         int wholeNumberPercentage = (int) (baseWholeNumberPercentage * itemTypeGen.percentageMultiplier * (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)));
@@ -29,7 +29,7 @@ public class CTrait extends Component
             else element.applyToItem(stack, wholeNumberPercentage);
         }
 
-        TraitTags.addItemTrait(stack, pool, this, baseWholeNumberPercentage);
+        TraitTags.addItemTrait(stack, poolSetName, pool, this, baseWholeNumberPercentage);
 
         return minValue + (maxValue - minValue) * wholeNumberPercentage / 100;
     }

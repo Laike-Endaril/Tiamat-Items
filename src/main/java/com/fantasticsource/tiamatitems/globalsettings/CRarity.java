@@ -11,8 +11,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CRarity extends Component
 {
@@ -24,7 +24,7 @@ public class CRarity extends Component
 
     public double itemLevelModifier;
 
-    public ArrayList<Integer> traitCounts = new ArrayList<>();
+    public LinkedHashMap<String, Integer> traitCounts = new LinkedHashMap<>();
 
 
     @Override
@@ -37,7 +37,11 @@ public class CRarity extends Component
         buf.writeDouble(itemLevelModifier);
 
         buf.writeInt(traitCounts.size());
-        for (int count : traitCounts) buf.writeInt(count);
+        for (Map.Entry<String, Integer> entry : traitCounts.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            buf.writeInt(entry.getValue());
+        }
 
         return this;
     }
@@ -52,7 +56,7 @@ public class CRarity extends Component
         itemLevelModifier = buf.readDouble();
 
         traitCounts.clear();
-        for (int i = buf.readInt(); i > 0; i--) traitCounts.add(buf.readInt());
+        for (int i = buf.readInt(); i > 0; i--) traitCounts.put(ByteBufUtils.readUTF8String(buf), buf.readInt());
 
         return this;
     }
@@ -60,13 +64,17 @@ public class CRarity extends Component
     @Override
     public CRarity save(OutputStream stream)
     {
-        new CStringUTF8().set(name).save(stream);
+        CStringUTF8 cs = new CStringUTF8().set(name).save(stream);
         CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
 
         new CDouble().set(itemLevelModifier).save(stream);
 
         ci.set(traitCounts.size()).save(stream);
-        for (int count : traitCounts) ci.set(count).save(stream);
+        for (Map.Entry<String, Integer> entry : traitCounts.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            ci.set(entry.getValue()).save(stream);
+        }
 
         return this;
     }
@@ -75,15 +83,16 @@ public class CRarity extends Component
     public CRarity load(InputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8();
-        name = cs.load(stream).value;
         CInt ci = new CInt();
+
+        name = cs.load(stream).value;
         color.setColor(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
 
         itemLevelModifier = new CDouble().load(stream).value;
 
         traitCounts.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) traitCounts.add(ci.load(stream).value);
+        for (int i = ci.load(stream).value; i > 0; i--) traitCounts.put(cs.load(stream).value, ci.load(stream).value);
 
         return this;
     }
