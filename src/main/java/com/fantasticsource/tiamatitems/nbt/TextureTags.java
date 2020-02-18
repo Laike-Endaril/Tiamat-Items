@@ -41,7 +41,11 @@ public class TextureTags
         if (!compound.hasKey("layers")) return;
 
         compound.removeTag("layers");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static void removeItemLayer(ItemStack stack, String layer)
@@ -63,7 +67,11 @@ public class TextureTags
                 if (list.tagCount() == 0)
                 {
                     compound.removeTag("layers");
-                    if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+                    if (compound.hasNoTags())
+                    {
+                        mainTag.removeTag(DOMAIN);
+                        if (mainTag.hasNoTags()) stack.setTagCompound(null);
+                    }
                 }
                 break;
             }

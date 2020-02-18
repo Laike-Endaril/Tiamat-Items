@@ -73,7 +73,11 @@ public class MiscTags
         if (!compound.hasKey("level")) return;
 
         compound.removeTag("level");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
 
@@ -118,7 +122,11 @@ public class MiscTags
         if (!compound.hasKey("levelReq")) return;
 
         compound.removeTag("levelReq");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
 
@@ -166,7 +174,11 @@ public class MiscTags
         if (!compound.hasKey("rarity")) return;
 
         compound.removeTag("rarity");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
 
@@ -211,7 +223,11 @@ public class MiscTags
         if (!compound.hasKey("value")) return;
 
         compound.removeTag("value");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
 
@@ -256,7 +272,11 @@ public class MiscTags
         if (!compound.hasKey("slotting")) return;
 
         compound.removeTag("slotting");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static boolean stackFitsSlot(ItemStack stack, String slotting)
@@ -336,6 +356,10 @@ public class MiscTags
         if (!compound.hasKey("version")) return;
 
         compound.removeTag("version");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 }

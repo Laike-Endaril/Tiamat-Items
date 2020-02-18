@@ -125,7 +125,11 @@ public class CategoryTags
         if (!compound.hasKey("categories")) return;
 
         compound.removeTag("categories");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static void removeItemCategory(ItemStack stack, String category)
@@ -146,7 +150,11 @@ public class CategoryTags
         if (categories.getKeySet().size() == 0)
         {
             compound.removeTag("categories");
-            if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+            if (compound.hasNoTags())
+            {
+                mainTag.removeTag(DOMAIN);
+                if (mainTag.hasNoTags()) stack.setTagCompound(null);
+            }
         }
     }
 

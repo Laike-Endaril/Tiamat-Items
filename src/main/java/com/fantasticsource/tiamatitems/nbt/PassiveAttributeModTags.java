@@ -43,7 +43,11 @@ public class PassiveAttributeModTags
         if (!compound.hasKey("passiveMods")) return;
 
         compound.removeTag("passiveMods");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static void removePassiveMod(ItemStack stack, String attributeMod)
@@ -65,7 +69,11 @@ public class PassiveAttributeModTags
                 if (list.tagCount() == 0)
                 {
                     compound.removeTag("passiveMods");
-                    if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+                    if (compound.hasNoTags())
+                    {
+                        mainTag.removeTag(DOMAIN);
+                        if (mainTag.hasNoTags()) stack.setTagCompound(null);
+                    }
                 }
                 break;
             }

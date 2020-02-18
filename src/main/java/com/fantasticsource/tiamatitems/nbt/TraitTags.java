@@ -8,11 +8,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
+
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TraitTags
 {
-    public static void addItemTrait(ItemStack stack, String poolSetName, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
+    public static void addTraitTag(ItemStack stack, String poolSetName, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -20,27 +22,13 @@ public class TraitTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagCompound());
-        compound = compound.getCompoundTag("traits");
+        if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagList());
+        NBTTagList traitList = compound.getTagList("traits", Constants.NBT.TAG_STRING);
 
-        NBTTagList traitList;
-        if (poolSetName.equals("Static"))
-        {
-            if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagList());
-            traitList = compound.getTagList(poolSetName, Constants.NBT.TAG_STRING);
-        }
-        else
-        {
-            if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagCompound());
-            compound = compound.getCompoundTag(poolSetName);
-
-            if (!compound.hasKey(pool.name)) compound.setTag(pool.name, new NBTTagList());
-            traitList = compound.getTagList(pool.name, Constants.NBT.TAG_STRING);
-        }
-        traitList.appendTag(new NBTTagString(traitGen.name + ":" + wholeNumberPercentage));
+        traitList.appendTag(new NBTTagString(poolSetName + ":" + (pool == null ? "" : pool.name + ":") + traitGen.name + ":" + wholeNumberPercentage));
     }
 
-    public static void clearItemTraits(ItemStack stack)
+    public static void clearTraitTags(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -51,6 +39,45 @@ public class TraitTags
         if (!compound.hasKey("traits")) return;
 
         compound.removeTag("traits");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
+    public static ArrayList<String> getTraitStrings(ItemStack stack)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
+        if (!stack.hasTagCompound()) return result;
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) return result;
+        compound = compound.getCompoundTag(DOMAIN);
+
+        if (!compound.hasKey("traits")) return result;
+        NBTTagList traitList = compound.getTagList("traits", Constants.NBT.TAG_STRING);
+
+        for (int i = 0; i < traitList.tagCount(); i++)
+        {
+            result.add(traitList.getStringTagAt(i));
+        }
+
+        return result;
+    }
+
+    public static void setTraitTags(ItemStack stack, ArrayList<String> traitStrings)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        NBTTagList traitList = new NBTTagList();
+        compound.setTag("traits", traitList);
+
+        for (String traitString : traitStrings) traitList.appendTag(new NBTTagString(traitString));
     }
 }

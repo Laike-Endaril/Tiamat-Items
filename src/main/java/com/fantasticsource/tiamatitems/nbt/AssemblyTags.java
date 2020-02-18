@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
-public class PartSlotTags
+public class AssemblyTags
 {
     public static void addPartSlot(ItemStack stack, String slotType)
     {
@@ -46,7 +46,11 @@ public class PartSlotTags
         if (!compound.hasKey("partSlots")) return;
 
         compound.removeTag("partSlots");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static void removePartSlot(ItemStack stack, String slotType)
@@ -69,10 +73,32 @@ public class PartSlotTags
                 if (list.tagCount() == 0)
                 {
                     compound.removeTag("partSlots");
-                    if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+                    if (compound.hasNoTags())
+                    {
+                        mainTag.removeTag(DOMAIN);
+                        if (mainTag.hasNoTags()) stack.setTagCompound(null);
+                    }
                 }
                 return;
             }
+        }
+    }
+
+
+    public static void clearPartTags(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("partSlots")) return;
+
+        NBTTagList list = compound.getTagList("partSlots", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.tagCount(); i++)
+        {
+            list.getCompoundTagAt(i).removeTag("part");
         }
     }
 
@@ -145,5 +171,56 @@ public class PartSlotTags
         }
 
         return true;
+    }
+
+
+    public static void saveInternalCore(ItemStack core)
+    {
+        saveInternalCore(core, core);
+    }
+
+    public static void saveInternalCore(ItemStack assembly, ItemStack core)
+    {
+        if (core.isEmpty())
+        {
+            removeInternalCore(assembly);
+            return;
+        }
+
+
+        if (!assembly.hasTagCompound()) assembly.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = assembly.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setTag("core", core.serializeNBT());
+    }
+
+    public static ItemStack getInternalCore(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return ItemStack.EMPTY;
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) return ItemStack.EMPTY;
+        compound = compound.getCompoundTag(DOMAIN);
+
+        return new ItemStack(compound.getCompoundTag("core"));
+    }
+
+    public static void removeInternalCore(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound mainTag = stack.getTagCompound();
+
+        if (!mainTag.hasKey(DOMAIN)) return;
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+
+        compound.removeTag("core");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 }

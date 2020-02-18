@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems.trait.element;
 
-import com.fantasticsource.tiamatitems.nbt.PartSlotTags;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.CTraitElement;
 import com.fantasticsource.tiamatitems.trait.IUnmultipliedRangeTrait;
 import com.fantasticsource.tools.Tools;
@@ -33,7 +33,7 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        for (int i = getIntAmount(wholeNumberPercentage); i > 0; i--) PartSlotTags.addPartSlot(stack, partSlotType, required);
+        for (int i = getIntAmount(wholeNumberPercentage); i > 0; i--) AssemblyTags.addPartSlot(stack, partSlotType, required);
     }
 
 

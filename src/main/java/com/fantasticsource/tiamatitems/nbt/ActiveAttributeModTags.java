@@ -43,7 +43,11 @@ public class ActiveAttributeModTags
         if (!compound.hasKey("activeMods")) return;
 
         compound.removeTag("activeMods");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
     public static void removeActiveMod(ItemStack stack, String attributeMod)
@@ -65,7 +69,11 @@ public class ActiveAttributeModTags
                 if (list.tagCount() == 0)
                 {
                     compound.removeTag("activeMods");
-                    if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+                    if (compound.hasNoTags())
+                    {
+                        mainTag.removeTag(DOMAIN);
+                        if (mainTag.hasNoTags()) stack.setTagCompound(null);
+                    }
                 }
                 break;
             }

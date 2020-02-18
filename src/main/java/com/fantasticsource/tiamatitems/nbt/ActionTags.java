@@ -48,7 +48,11 @@ public class ActionTags
         if (!compound.hasKey("actionLC")) return;
 
         compound.removeTag("actionLC");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 
 
@@ -93,6 +97,10 @@ public class ActionTags
         if (!compound.hasKey("actionRC")) return;
 
         compound.removeTag("actionRC");
-        if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
     }
 }
