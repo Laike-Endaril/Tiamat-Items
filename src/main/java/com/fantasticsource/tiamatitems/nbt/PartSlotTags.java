@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
-import com.fantasticsource.tiamatitems.globalsettings.PartSlot;
+import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
-public class PartTags
+public class PartSlotTags
 {
     public static void addPartSlot(ItemStack stack, String slotType)
     {
@@ -132,5 +132,18 @@ public class PartTags
         }
 
         compound.setTag("partSlots", list);
+    }
+
+
+    public static boolean isUsable(ItemStack stack)
+    {
+        for (PartSlot partSlot : getPartSlots(stack))
+        {
+            if (!partSlot.required) continue;
+
+            if (partSlot.part.isEmpty() || !isUsable(partSlot.part)) return false;
+        }
+
+        return true;
     }
 }

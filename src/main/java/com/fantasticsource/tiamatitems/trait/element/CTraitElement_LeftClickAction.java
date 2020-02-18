@@ -10,14 +10,14 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CTraitElement_Action1 extends CTraitElement
+public class CTraitElement_LeftClickAction extends CTraitElement
 {
     public String actionName = "";
 
     @Override
     public String getDescription()
     {
-        return "Set item action 1 to " + actionName;
+        return "Left Click: " + actionName;
     }
 
     @Override
@@ -29,22 +29,22 @@ public class CTraitElement_Action1 extends CTraitElement
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        ActionTags.setItemAction1(stack, actionName);
+        ActionTags.setLeftClickAction(stack, actionName);
     }
 
 
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof CTraitElement_Action1)) return false;
+        if (!(obj instanceof CTraitElement_LeftClickAction)) return false;
 
-        CTraitElement_Action1 other = (CTraitElement_Action1) obj;
+        CTraitElement_LeftClickAction other = (CTraitElement_LeftClickAction) obj;
         return other.actionName.equals(actionName);
     }
 
 
     @Override
-    public CTraitElement_Action1 write(ByteBuf buf)
+    public CTraitElement_LeftClickAction write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -54,7 +54,7 @@ public class CTraitElement_Action1 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action1 read(ByteBuf buf)
+    public CTraitElement_LeftClickAction read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -64,7 +64,7 @@ public class CTraitElement_Action1 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action1 save(OutputStream stream)
+    public CTraitElement_LeftClickAction save(OutputStream stream)
     {
         super.save(stream);
 
@@ -74,7 +74,7 @@ public class CTraitElement_Action1 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action1 load(InputStream stream)
+    public CTraitElement_LeftClickAction load(InputStream stream)
     {
         super.load(stream);
 

@@ -1,7 +1,10 @@
-"Assembled" layers/texture (tiamat items only)
-"Disassembled" layers/texture (tiamat items only)
+Change pool IDs from ints to strings
 
-Method of getting all traits on an item (including parts on it)
+Assemblies should transform the core item, storing the empty version of it internally
+
+"Empty" layers/texture (tiamat items only)
+"Partial" layers/texture (tiamat items only)
+"Full" layers/texture (tiamat items only)
 
 Skin trait element
 
@@ -23,15 +26,9 @@ Recalc items on these triggers...
 
 * Item Editor GUI
 
-Add item type tag
-
-Make part slots require any one of a set of part types
-Make part slots have a boolean for whether they're required
-
+Completely rework
 
 Add texture previews to texture selection GUI
-
-Add affixes
 
 
 

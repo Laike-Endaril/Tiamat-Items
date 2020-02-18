@@ -4,13 +4,14 @@ import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TraitTags
 {
-    public static void setItemTraitData(ItemStack stack, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
+    public static void addItemTrait(ItemStack stack, int poolSetID, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -18,17 +19,22 @@ public class TraitTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("trait")) compound.setTag("trait", new NBTTagCompound());
-        compound = compound.getCompoundTag("trait");
+        if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagCompound());
+        compound = compound.getCompoundTag("traits");
 
-        String key = pool == null ? "null" : pool.name;
-        if (!compound.hasKey(key)) compound.setTag(key, new NBTTagCompound());
-        compound = compound.getCompoundTag(key);
+        if (!compound.hasKey("" + poolSetID)) compound.setTag("" + poolSetID, new NBTTagCompound());
+        compound = compound.getCompoundTag("" + poolSetID);
 
-        compound.setTag(traitGen.name, new NBTTagInt(wholeNumberPercentage));
+        String poolKey = pool == null ? "null" : pool.name;
+        if (!compound.hasKey(poolKey)) compound.setTag(poolKey, new NBTTagList());
+        NBTTagList traitList = compound.getTagList(poolKey, Constants.NBT.TAG_COMPOUND);
+
+        compound = new NBTTagCompound();
+        compound.setString("name", traitGen.name);
+        compound.setInteger("percent", wholeNumberPercentage);
+
+        traitList.appendTag(compound);
     }
-
-    //TODO getItemTraitData
 
     public static void clearItemTraits(ItemStack stack)
     {
@@ -38,9 +44,9 @@ public class TraitTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("trait")) return;
+        if (!compound.hasKey("traits")) return;
 
-        compound.removeTag("trait");
+        compound.removeTag("traits");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 }

@@ -5,7 +5,7 @@ import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.PartSlot;
+import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.trait.CItemType;
@@ -158,38 +158,38 @@ public class TiamatItems
 
         //TODO test code start
         //Main action traits
-        ArrayList<CTraitGenPool> action1PoolSet = new ArrayList<>();
+        ArrayList<CTraitGenPool> leftClickActionPoolSet = new ArrayList<>();
 
         CTraitGenPool pool = new CTraitGenPool();
-        pool.name = "Action1Pool";
+        pool.name = "LeftClickActionPool";
         CTraitGenPool.traitGenPools.put(pool.name, pool);
-        action1PoolSet.add(pool);
+        leftClickActionPoolSet.add(pool);
 
-        CTraitElement_Action1 action1 = new CTraitElement_Action1();
-        action1.actionName = "Test";
+        CTraitElement_LeftClickAction leftClickAction = new CTraitElement_LeftClickAction();
+        leftClickAction.actionName = "Test";
 
         CTrait trait = new CTrait();
-        trait.name = "Action1Trait";
-        trait.elements.add(action1);
+        trait.name = "LeftClickActionTrait";
+        trait.elements.add(leftClickAction);
         trait.minValue = 3;
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);
 
 
         //Sub action traits
-        ArrayList<CTraitGenPool> action2PoolSet = new ArrayList<>();
+        ArrayList<CTraitGenPool> rightClickActionPoolSet = new ArrayList<>();
 
         pool = new CTraitGenPool();
-        pool.name = "Action2Pool";
+        pool.name = "RightClickActionPool";
         CTraitGenPool.traitGenPools.put(pool.name, pool);
-        action2PoolSet.add(pool);
+        rightClickActionPoolSet.add(pool);
 
-        CTraitElement_Action2 action2 = new CTraitElement_Action2();
-        action2.actionName = "Test";
+        CTraitElement_RightClickAction rightClickAction = new CTraitElement_RightClickAction();
+        rightClickAction.actionName = "Test";
 
         trait = new CTrait();
-        trait.name = "Action2Trait";
-        trait.elements.add(action2);
+        trait.name = "RightClickActionTrait";
+        trait.elements.add(rightClickAction);
         trait.minValue = 3;
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);
@@ -298,8 +298,8 @@ public class TiamatItems
         trait.maxValue = 0;
         itemType.staticTraits.add(trait);
 
-        itemType.randomTraitPoolSets.add(action1PoolSet);
-        itemType.randomTraitPoolSets.add(action2PoolSet);
+        itemType.randomTraitPoolSets.add(leftClickActionPoolSet);
+        itemType.randomTraitPoolSets.add(rightClickActionPoolSet);
         itemType.randomTraitPoolSets.add(generalPoolSet);
         itemType.randomTraitPoolSets.add(partSlotPoolSet);
 

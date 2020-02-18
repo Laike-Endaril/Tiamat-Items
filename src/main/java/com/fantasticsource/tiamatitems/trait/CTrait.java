@@ -29,7 +29,7 @@ public class CTrait extends Component
             else element.applyToItem(stack, wholeNumberPercentage);
         }
 
-        TraitTags.setItemTraitData(stack, pool, this, baseWholeNumberPercentage);
+        TraitTags.addItemTrait(stack, pool, this, baseWholeNumberPercentage);
 
         return minValue + (maxValue - minValue) * wholeNumberPercentage / 100;
     }

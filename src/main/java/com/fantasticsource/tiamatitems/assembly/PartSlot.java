@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.globalsettings;
+package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import net.minecraft.item.ItemStack;

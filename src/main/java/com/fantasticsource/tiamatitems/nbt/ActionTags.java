@@ -7,11 +7,11 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class ActionTags
 {
-    public static void setItemAction1(ItemStack stack, String actionName)
+    public static void setLeftClickAction(ItemStack stack, String actionName)
     {
-        if (actionName.equals("") || actionName.equals("New Action"))
+        if (actionName.equals("") || actionName.equals("None"))
         {
-            clearItemAction1(stack);
+            clearLeftClickAction(stack);
             return;
         }
 
@@ -21,10 +21,10 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setString("action1", actionName);
+        compound.setString("leftClick", actionName);
     }
 
-    public static String getItemAction1(ItemStack stack)
+    public static String getLeftClickAction(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return "None";
 
@@ -32,12 +32,12 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action1")) return "None";
+        if (!compound.hasKey("leftClick")) return "None";
 
-        return compound.getString("action1");
+        return compound.getString("leftClick");
     }
 
-    public static void clearItemAction1(ItemStack stack)
+    public static void clearLeftClickAction(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -45,18 +45,18 @@ public class ActionTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action1")) return;
+        if (!compound.hasKey("leftClick")) return;
 
-        compound.removeTag("action1");
+        compound.removeTag("leftClick");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
 
-    public static void setItemAction2(ItemStack stack, String actionName)
+    public static void setRightClickAction(ItemStack stack, String actionName)
     {
-        if (actionName.equals("") || actionName.equals("New Action"))
+        if (actionName.equals("") || actionName.equals("None"))
         {
-            clearItemAction1(stack);
+            clearLeftClickAction(stack);
             return;
         }
 
@@ -66,10 +66,10 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setString("action2", actionName);
+        compound.setString("rightClick", actionName);
     }
 
-    public static String getItemAction2(ItemStack stack)
+    public static String getRightClickAction(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return "None";
 
@@ -77,12 +77,12 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action2")) return "None";
+        if (!compound.hasKey("rightClick")) return "None";
 
-        return compound.getString("action2");
+        return compound.getString("rightClick");
     }
 
-    public static void clearItemAction2(ItemStack stack)
+    public static void clearRightClickAction(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -90,9 +90,9 @@ public class ActionTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("action2")) return;
+        if (!compound.hasKey("rightClick")) return;
 
-        compound.removeTag("action2");
+        compound.removeTag("rightClick");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 }

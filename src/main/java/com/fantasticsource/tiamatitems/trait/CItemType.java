@@ -21,7 +21,8 @@ import java.util.Map;
 public class CItemType extends Component
 {
     //TODO change version on item gen definition change, including globals
-    public static int itemGenVersion = 0; //TODO handle data retention
+    public static final int ITEM_GEN_CODE_VERSION = 0;
+    public static int itemGenConfigVersion = 0; //TODO handle data retention
     public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
 
 
@@ -36,7 +37,7 @@ public class CItemType extends Component
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
 
 
-        MiscTags.setItemGenVersion(stack, itemGenVersion);
+        MiscTags.setItemGenVersion(stack, (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion);
 
 
         MiscTags.setItemType(stack, name);

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CTraitElement_Action2 extends CTraitElement
+public class CTraitElement_RightClickAction extends CTraitElement
 {
     public String actionName = "";
 
@@ -29,22 +29,22 @@ public class CTraitElement_Action2 extends CTraitElement
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        ActionTags.setItemAction2(stack, actionName);
+        ActionTags.setRightClickAction(stack, actionName);
     }
 
 
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof CTraitElement_Action2)) return false;
+        if (!(obj instanceof CTraitElement_RightClickAction)) return false;
 
-        CTraitElement_Action2 other = (CTraitElement_Action2) obj;
+        CTraitElement_RightClickAction other = (CTraitElement_RightClickAction) obj;
         return other.actionName.equals(actionName);
     }
 
 
     @Override
-    public CTraitElement_Action2 write(ByteBuf buf)
+    public CTraitElement_RightClickAction write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -54,7 +54,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 read(ByteBuf buf)
+    public CTraitElement_RightClickAction read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -64,7 +64,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 save(OutputStream stream)
+    public CTraitElement_RightClickAction save(OutputStream stream)
     {
         super.save(stream);
 
@@ -74,7 +74,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 load(InputStream stream)
+    public CTraitElement_RightClickAction load(InputStream stream)
     {
         super.load(stream);
 

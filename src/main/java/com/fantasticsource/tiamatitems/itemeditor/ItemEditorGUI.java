@@ -69,7 +69,7 @@ public class ItemEditorGUI extends GUIScreen
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
-        GUIAction action1 = new GUIAction(gui, ActionTags.getItemAction1(stack)), action2 = new GUIAction(gui, ActionTags.getItemAction2(stack));
+        GUIAction leftClickAction = new GUIAction(gui, ActionTags.getLeftClickAction(stack)), rightClickAction = new GUIAction(gui, ActionTags.getRightClickAction(stack));
         GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
 
         //Lore
@@ -98,10 +98,10 @@ public class ItemEditorGUI extends GUIScreen
                         value,
                         new GUITextSpacer(gui),
                         new GUIText(gui, "Action 1: "),
-                        action1,
+                        leftClickAction,
                         new GUIElement(gui, 1, 0),
                         new GUIText(gui, "Action 2: "),
-                        action2,
+                        rightClickAction,
                         new GUITextSpacer(gui),
                         new GUIText(gui, "Lore...\n").addClickActions(() -> lore.multilineTextInput.setActive(true)),
                         separator,
@@ -391,8 +391,8 @@ public class ItemEditorGUI extends GUIScreen
             MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
             MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));
-            ActionTags.setItemAction1(stack, action1.getText());
-            ActionTags.setItemAction2(stack, action2.getText());
+            ActionTags.setLeftClickAction(stack, leftClickAction.getText());
+            ActionTags.setRightClickAction(stack, rightClickAction.getText());
             MCTools.setLore(stack, lore.getText());
 
             //Texture
