@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.traitgen;
+package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -15,11 +15,21 @@ public abstract class CTraitElement extends Component
     public double minimum = 0, maximum = 0;
     public String affixSetName = "";
 
+    public final double getDoubleAmount(int wholeNumberPercentage)
+    {
+        return minimum + (maximum - minimum) * wholeNumberPercentage / 100;
+    }
+
+    public final int getIntAmount(int wholeNumberPercentage)
+    {
+        return (int) Math.round(getDoubleAmount(wholeNumberPercentage));
+    }
+
     public abstract void applyToItem(ItemStack stack, int wholeNumberPercentage);
 
     public abstract String getDescription();
 
-    public abstract String getDescription(double percentage);
+    public abstract String getDescription(int wholeNumberPercentage);
 
     @Override
     public CTraitElement write(ByteBuf buf)

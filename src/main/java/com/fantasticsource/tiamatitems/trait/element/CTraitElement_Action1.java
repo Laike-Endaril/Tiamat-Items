@@ -1,7 +1,7 @@
-package com.fantasticsource.tiamatitems.traitgen.element;
+package com.fantasticsource.tiamatitems.trait.element;
 
 import com.fantasticsource.tiamatitems.nbt.ActionTags;
-import com.fantasticsource.tiamatitems.traitgen.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.CTraitElement;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -10,18 +10,18 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CTraitElement_Action2 extends CTraitElement
+public class CTraitElement_Action1 extends CTraitElement
 {
     public String actionName = "";
 
     @Override
     public String getDescription()
     {
-        return "Set item action 2 to " + actionName;
+        return "Set item action 1 to " + actionName;
     }
 
     @Override
-    public String getDescription(double percentage)
+    public String getDescription(int wholeNumberPercentage)
     {
         return getDescription();
     }
@@ -29,22 +29,22 @@ public class CTraitElement_Action2 extends CTraitElement
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        ActionTags.setItemAction2(stack, actionName);
+        ActionTags.setItemAction1(stack, actionName);
     }
 
 
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof CTraitElement_Action2)) return false;
+        if (!(obj instanceof CTraitElement_Action1)) return false;
 
-        CTraitElement_Action2 other = (CTraitElement_Action2) obj;
+        CTraitElement_Action1 other = (CTraitElement_Action1) obj;
         return other.actionName.equals(actionName);
     }
 
 
     @Override
-    public CTraitElement_Action2 write(ByteBuf buf)
+    public CTraitElement_Action1 write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -54,7 +54,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 read(ByteBuf buf)
+    public CTraitElement_Action1 read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -64,7 +64,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 save(OutputStream stream)
+    public CTraitElement_Action1 save(OutputStream stream)
     {
         super.save(stream);
 
@@ -74,7 +74,7 @@ public class CTraitElement_Action2 extends CTraitElement
     }
 
     @Override
-    public CTraitElement_Action2 load(InputStream stream)
+    public CTraitElement_Action1 load(InputStream stream)
     {
         super.load(stream);
 

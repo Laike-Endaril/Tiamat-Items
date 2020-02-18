@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
-import com.fantasticsource.tiamatitems.traitgen.CTrait;
-import com.fantasticsource.tiamatitems.traitgen.CTraitGenPool;
+import com.fantasticsource.tiamatitems.trait.CTrait;
+import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -18,8 +18,8 @@ public class TraitTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagCompound());
-        compound = compound.getCompoundTag("traits");
+        if (!compound.hasKey("trait")) compound.setTag("trait", new NBTTagCompound());
+        compound = compound.getCompoundTag("trait");
 
         String key = pool == null ? "null" : pool.name;
         if (!compound.hasKey(key)) compound.setTag(key, new NBTTagCompound());
@@ -38,9 +38,9 @@ public class TraitTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("traits")) return;
+        if (!compound.hasKey("trait")) return;
 
-        compound.removeTag("traits");
+        compound.removeTag("trait");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 }

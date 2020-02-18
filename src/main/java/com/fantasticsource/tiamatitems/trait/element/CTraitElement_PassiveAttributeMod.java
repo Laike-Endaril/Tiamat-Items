@@ -1,8 +1,8 @@
-package com.fantasticsource.tiamatitems.traitgen.element;
+package com.fantasticsource.tiamatitems.trait.element;
 
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
-import com.fantasticsource.tiamatitems.traitgen.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.CTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -51,11 +51,12 @@ public class CTraitElement_PassiveAttributeMod extends CTraitElement
     }
 
     @Override
-    public String getDescription(double percentage)
+    public String getDescription(int wholeNumberPercentage)
     {
-        if (operation == 0) return (getColorAndSign(percentage, operation) + Math.abs(percentage) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 1) return (getColorAndSign(percentage, operation) + (Math.abs(percentage) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 2) return (getColorAndSign(percentage, operation) + Math.abs(percentage) + "x" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        double amount = getDoubleAmount(wholeNumberPercentage);
+        if (operation == 0) return (getColorAndSign(amount, operation) + Math.abs(amount) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(amount, operation) + (Math.abs(amount) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(amount, operation) + Math.abs(amount) + "x" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
 
         throw new IllegalArgumentException("Operation must be 0, 1, or 2, but is " + operation);
     }

@@ -1,6 +1,6 @@
-Some way to limit certain traits based on rarity and/or level
+Active attribute trait element
 
-
+Skin trait element
 
 Name generation...
 When calculating a name due to assembly, generation, or recalculation of stats, use 2 highest attributes on item to determine name, using this comparison method:
@@ -10,10 +10,6 @@ Handle: weighted 10-50  roll 30
 range = 55
 roll minus min = 33
 33 / 55 = 60%
-
-Slot trait element
-
-Skin trait element
 
 Recalc items on these triggers...
 ...login

@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.traitgen;
+package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;

@@ -9,6 +9,29 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class MiscTags
 {
+    public static void setItemType(ItemStack stack, String type)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+        compound = compound.getCompoundTag(DOMAIN);
+        compound.setString("type", type);
+    }
+
+    public static String getItemType(ItemStack stack)
+    {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null || !compound.hasKey(DOMAIN)) return "";
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("type")) return "";
+
+        return compound.getString("type");
+    }
+
+
     public static void setItemLevel(ItemStack stack, int level)
     {
         if (level == 0)

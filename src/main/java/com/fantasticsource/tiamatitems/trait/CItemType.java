@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.traitgen;
+package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
@@ -39,6 +39,7 @@ public class CItemType extends Component
         MiscTags.setItemGenVersion(stack, itemGenVersion);
 
 
+        MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);
         MiscTags.setItemLevelReq(stack, level);
         MiscTags.setItemRarity(stack, rarity);
