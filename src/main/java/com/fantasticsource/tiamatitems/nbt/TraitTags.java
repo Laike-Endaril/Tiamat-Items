@@ -5,6 +5,7 @@ import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
@@ -22,18 +23,21 @@ public class TraitTags
         if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagCompound());
         compound = compound.getCompoundTag("traits");
 
-        if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagCompound());
-        compound = compound.getCompoundTag(poolSetName);
+        NBTTagList traitList;
+        if (poolSetName.equals("Static"))
+        {
+            if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagList());
+            traitList = compound.getTagList(poolSetName, Constants.NBT.TAG_STRING);
+        }
+        else
+        {
+            if (!compound.hasKey(poolSetName)) compound.setTag(poolSetName, new NBTTagCompound());
+            compound = compound.getCompoundTag(poolSetName);
 
-        String poolKey = pool == null ? "null" : pool.name;
-        if (!compound.hasKey(poolKey)) compound.setTag(poolKey, new NBTTagList());
-        NBTTagList traitList = compound.getTagList(poolKey, Constants.NBT.TAG_COMPOUND);
-
-        compound = new NBTTagCompound();
-        compound.setString("name", traitGen.name);
-        compound.setInteger("percent", wholeNumberPercentage);
-
-        traitList.appendTag(compound);
+            if (!compound.hasKey(pool.name)) compound.setTag(pool.name, new NBTTagList());
+            traitList = compound.getTagList(pool.name, Constants.NBT.TAG_STRING);
+        }
+        traitList.appendTag(new NBTTagString(traitGen.name + ":" + wholeNumberPercentage));
     }
 
     public static void clearItemTraits(ItemStack stack)

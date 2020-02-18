@@ -309,7 +309,7 @@ public class MiscTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setLong("itemGenConfigVersion", version);
+        compound.setLong("version", version);
     }
 
     public static long getItemGenVersion(ItemStack stack)
@@ -320,9 +320,9 @@ public class MiscTags
         if (!compound.hasKey(DOMAIN)) return -1;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("itemGenConfigVersion")) return -1;
+        if (!compound.hasKey("version")) return -1;
 
-        return compound.getLong("itemGenConfigVersion");
+        return compound.getLong("version");
     }
 
     public static void clearItemGenVersion(ItemStack stack)
@@ -333,9 +333,9 @@ public class MiscTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("itemGenConfigVersion")) return;
+        if (!compound.hasKey("version")) return;
 
-        compound.removeTag("itemGenConfigVersion");
+        compound.removeTag("version");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 }

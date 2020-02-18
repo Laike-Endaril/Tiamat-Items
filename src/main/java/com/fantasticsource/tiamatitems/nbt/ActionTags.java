@@ -21,7 +21,7 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setString("leftClick", actionName);
+        compound.setString("actionLC", actionName);
     }
 
     public static String getLeftClickAction(ItemStack stack)
@@ -32,9 +32,9 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("leftClick")) return "None";
+        if (!compound.hasKey("actionLC")) return "None";
 
-        return compound.getString("leftClick");
+        return compound.getString("actionLC");
     }
 
     public static void clearLeftClickAction(ItemStack stack)
@@ -45,9 +45,9 @@ public class ActionTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("leftClick")) return;
+        if (!compound.hasKey("actionLC")) return;
 
-        compound.removeTag("leftClick");
+        compound.removeTag("actionLC");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 
@@ -66,7 +66,7 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setString("rightClick", actionName);
+        compound.setString("actionRC", actionName);
     }
 
     public static String getRightClickAction(ItemStack stack)
@@ -77,9 +77,9 @@ public class ActionTags
         if (!compound.hasKey(DOMAIN)) return "None";
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("rightClick")) return "None";
+        if (!compound.hasKey("actionRC")) return "None";
 
-        return compound.getString("rightClick");
+        return compound.getString("actionRC");
     }
 
     public static void clearRightClickAction(ItemStack stack)
@@ -90,9 +90,9 @@ public class ActionTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("rightClick")) return;
+        if (!compound.hasKey("actionRC")) return;
 
-        compound.removeTag("rightClick");
+        compound.removeTag("actionRC");
         if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
     }
 }

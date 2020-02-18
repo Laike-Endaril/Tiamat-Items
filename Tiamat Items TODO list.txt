@@ -1,5 +1,3 @@
-Reduce NBT footprint
-
 Assemblies should transform the core item, storing the empty version of it internally
 
 "Empty" layers/texture (tiamat items only)
