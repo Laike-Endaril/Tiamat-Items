@@ -26,7 +26,7 @@ public class CItemType extends Component
     public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
 
 
-    public String name, slotting;
+    public String name = "", slotting = "None";
     public double percentageMultiplier = 1, value;
     public LinkedHashMap<String, CTrait> staticTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
@@ -186,7 +186,8 @@ public class CItemType extends Component
 
 
         //Name
-        //TODO Generate name
+        stack.setStackDisplayName(rarity.textColor + name);
+        //TODO Generate affixes
 
 
         return stack;

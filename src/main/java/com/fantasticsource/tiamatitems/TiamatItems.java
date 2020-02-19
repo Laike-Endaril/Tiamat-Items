@@ -157,58 +157,17 @@ public class TiamatItems
 
 
         //TODO test code start
-        //Main action traits
-        LinkedHashMap<String, CTraitPool> leftClickActionPoolSet = new LinkedHashMap<>();
-
-        CTraitPool pool = new CTraitPool();
-        pool.name = "2HAxeActLC";
-        CTraitPool.traitGenPools.put(pool.name, pool);
-        leftClickActionPoolSet.put(pool.name, pool);
-
-        CTraitElement_LeftClickAction leftClickAction = new CTraitElement_LeftClickAction();
-        leftClickAction.actionName = "2HAxeAttack1";
-
-        CTrait trait = new CTrait();
-        trait.name = "2HAxeAttack1";
-        trait.elements.add(leftClickAction);
-        trait.minValue = 3;
-        trait.maxValue = 3;
-        pool.traitGenWeights.put(trait, 1);
-
-
-        //Sub action traits
-        LinkedHashMap<String, CTraitPool> rightClickActionPoolSet = new LinkedHashMap<>();
-
-        pool = new CTraitPool();
-        pool.name = "2HAxeActRC";
-        CTraitPool.traitGenPools.put(pool.name, pool);
-        rightClickActionPoolSet.put(pool.name, pool);
-
-        CTraitElement_RightClickAction rightClickAction = new CTraitElement_RightClickAction();
-        rightClickAction.actionName = "2HAxeAttack2";
-
-        trait = new CTrait();
-        trait.name = "2HAxeAttack2";
-        trait.elements.add(rightClickAction);
-        trait.minValue = 3;
-        trait.maxValue = 3;
-        pool.traitGenWeights.put(trait, 1);
-
-
         //General traits
-        LinkedHashMap<String, CTraitPool> generalPoolSet = new LinkedHashMap<>();
-
-        pool = new CTraitPool();
-        pool.name = "2HAxeGen";
+        CTraitPool pool = new CTraitPool();
+        pool.name = "General";
         CTraitPool.traitGenPools.put(pool.name, pool);
-        generalPoolSet.put(pool.name, pool);
 
         CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
         passiveAttributeMod.attributeName = "generic.maxHealth";
         passiveAttributeMod.minimum = 1;
         passiveAttributeMod.maximum = 3;
 
-        trait = new CTrait();
+        CTrait trait = new CTrait();
         trait.name = "MaxHP";
         trait.elements.add(passiveAttributeMod);
         trait.minValue = 1;
@@ -216,17 +175,15 @@ public class TiamatItems
         pool.traitGenWeights.put(trait, 1);
 
 
-        //Part slot traits
+        //Socket part slot traits
         HashSet<String> validItemTypes = new HashSet<>();
         validItemTypes.add("Gem");
         validItemTypes.add("Rune");
         PartSlot.validItemTypes.put("Socket", validItemTypes);
 
-        LinkedHashMap<String, CTraitPool> partSlotPoolSet = new LinkedHashMap<>();
         pool = new CTraitPool();
         pool.name = "Sockets";
         CTraitPool.traitGenPools.put(pool.name, pool);
-        partSlotPoolSet.put(pool.name, pool);
 
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
@@ -244,25 +201,71 @@ public class TiamatItems
         }
 
 
+        //Rarities
+        CRarity rarity = new CRarity();
+        rarity.name = "TestRarity";
+        rarity.textColor = TextFormatting.GOLD;
+        rarity.color = Color.ORANGE;
+        rarity.itemLevelModifier = 0.5;
+        rarity.traitCounts.put("ActLC", 1); //1x action 1 trait
+        rarity.traitCounts.put("ActRC", 1); //1x action 2 trait
+        rarity.traitCounts.put("Gen", 1); //1x general trait
+        rarity.traitCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
+
+        CRarity.rarities.put(rarity.name, rarity);
+
+
+        //Item types
+        gen2HAxeItemType();
+        gen2HAxeheadItemType();
+        //TODO test code end
+    }
+
+
+    private static void gen2HAxeItemType()
+    {
+        //Main action traits
+        CTraitPool pool = new CTraitPool();
+        pool.name = "2HAxeActLC";
+        CTraitPool.traitGenPools.put(pool.name, pool);
+
+
+        CTraitElement_LeftClickAction leftClickAction = new CTraitElement_LeftClickAction();
+        leftClickAction.actionName = "2HAxeAttack1";
+
+        CTrait trait = new CTrait();
+        trait.name = "2HAxeAttack1";
+        trait.elements.add(leftClickAction);
+        trait.minValue = 3;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
+
+
+        //Sub action traits
+        pool = new CTraitPool();
+        pool.name = "2HAxeActRC";
+        CTraitPool.traitGenPools.put(pool.name, pool);
+
+
+        CTraitElement_RightClickAction rightClickAction = new CTraitElement_RightClickAction();
+        rightClickAction.actionName = "2HAxeAttack2";
+
+        trait = new CTrait();
+        trait.name = "2HAxeAttack2";
+        trait.elements.add(rightClickAction);
+        trait.minValue = 3;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
+
+
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "2H Axe";
         itemType.slotting = "Tiamat 2H";
         itemType.percentageMultiplier = 2;
 
-        CTraitElement_ActiveAttributeMod activeAttributeMod = new CTraitElement_ActiveAttributeMod();
-        activeAttributeMod.attributeName = "generic.attackDamage";
-        activeAttributeMod.minimum = 1;
-        activeAttributeMod.maximum = 3;
 
-        trait = new CTrait();
-        trait.name = "Damage";
-        trait.elements.add(activeAttributeMod);
-        trait.minValue = 1;
-        trait.maxValue = 3;
-        itemType.staticTraits.put(trait.name, trait);
-
-        partSlot = new CTraitElement_PartSlot();
+        CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
         partSlot.required = true;
         partSlot.minimum = 1;
@@ -274,6 +277,7 @@ public class TiamatItems
         trait.minValue = 0;
         trait.maxValue = 0;
         itemType.staticTraits.put(trait.name, trait);
+
 
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
@@ -288,6 +292,7 @@ public class TiamatItems
         trait.maxValue = 0;
         itemType.staticTraits.put(trait.name, trait);
 
+
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
         partSlot.required = true;
@@ -301,26 +306,54 @@ public class TiamatItems
         trait.maxValue = 0;
         itemType.staticTraits.put(trait.name, trait);
 
-        itemType.randomTraitPoolSets.put("ActLC", leftClickActionPoolSet);
-        itemType.randomTraitPoolSets.put("ActRC", rightClickActionPoolSet);
-        itemType.randomTraitPoolSets.put("Gen", generalPoolSet);
-        itemType.randomTraitPoolSets.put("Socket", partSlotPoolSet);
+
+        LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("2HAxeActLC", CTraitPool.traitGenPools.get("2HAxeActLC"));
+        itemType.randomTraitPoolSets.put("ActLC", poolSet);
+
+        poolSet = new LinkedHashMap<>();
+        poolSet.put("2HAxeActRC", CTraitPool.traitGenPools.get("2HAxeActRC"));
+        itemType.randomTraitPoolSets.put("ActRC", poolSet);
+
+        poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CTraitPool.traitGenPools.get("General"));
+        itemType.randomTraitPoolSets.put("Gen", poolSet);
+
+        poolSet = new LinkedHashMap<>();
+        poolSet.put("Sockets", CTraitPool.traitGenPools.get("Sockets"));
+        itemType.randomTraitPoolSets.put("Socket", poolSet);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);
+    }
 
 
-        CRarity rarity = new CRarity();
-        rarity.name = "TestRarity";
-        rarity.textColor = TextFormatting.GOLD;
-        rarity.color = Color.ORANGE;
-        rarity.itemLevelModifier = 0.5;
-        rarity.traitCounts.put("ActLC", 1); //1x action 1 trait
-        rarity.traitCounts.put("ActRC", 1); //1x action 2 trait
-        rarity.traitCounts.put("Gen", 1); //1x general trait
-        rarity.traitCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
+    private static void gen2HAxeheadItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "2H Axehead";
+        itemType.percentageMultiplier = 2;
 
-        CRarity.rarities.put(rarity.name, rarity);
-        //TODO test code end
+
+        CTraitElement_ActiveAttributeMod activeAttributeMod = new CTraitElement_ActiveAttributeMod();
+        activeAttributeMod.attributeName = "generic.attackDamage";
+        activeAttributeMod.minimum = 1;
+        activeAttributeMod.maximum = 3;
+
+        CTrait trait = new CTrait();
+        trait.name = "Damage";
+        trait.elements.add(activeAttributeMod);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        itemType.staticTraits.put(trait.name, trait);
+
+
+        LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CTraitPool.traitGenPools.get("General"));
+        itemType.randomTraitPoolSets.put("Gen", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
     }
 }
