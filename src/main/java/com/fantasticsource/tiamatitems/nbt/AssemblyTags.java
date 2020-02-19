@@ -2,6 +2,8 @@ package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -179,12 +181,12 @@ public class AssemblyTags
         saveInternalCore(core, core);
     }
 
-    public static void saveInternalCore(ItemStack assembly, ItemStack core)
+    public static boolean saveInternalCore(ItemStack assembly, ItemStack core)
     {
         if (core.isEmpty())
         {
             removeInternalCore(assembly);
-            return;
+            return true;
         }
 
 
@@ -194,7 +196,15 @@ public class AssemblyTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setTag("core", core.serializeNBT());
+        try
+        {
+            compound.setTag("core", JsonToNBT.getTagFromJson(core.serializeNBT().toString()));
+            return true;
+        }
+        catch (NBTException e)
+        {
+            return false;
+        }
     }
 
     public static ItemStack getInternalCore(ItemStack stack)
