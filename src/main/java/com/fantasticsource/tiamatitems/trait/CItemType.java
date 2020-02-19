@@ -32,12 +32,23 @@ public class CItemType extends Component
     public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
 
 
+    public static long getVersion()
+    {
+        return (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion;
+    }
+
+
     public ItemStack generateItem(int level, CRarity rarity)
+    {
+        return generateItem(level, rarity, new ArrayList<>());
+    }
+
+    public ItemStack generateItem(int level, CRarity rarity, ArrayList<String> traitStrings)
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
 
 
-        MiscTags.setItemGenVersion(stack, (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion);
+        MiscTags.setItemGenVersion(stack, getVersion());
 
 
         MiscTags.setItemType(stack, name);
@@ -52,23 +63,37 @@ public class CItemType extends Component
         double totalValue = value;
         for (CTrait trait : staticTraits.values())
         {
-            totalValue += trait.applyToItem(stack, "Static", this, genLevel, null);
+            boolean done = false;
+            for (String traitString : traitStrings.toArray(new String[0]))
+            {
+                String[] tokens = Tools.fixedSplit(traitString, ":");
+                if (tokens.length != 3) continue;
+
+                if (tokens[1].equals(trait.name))
+                {
+                    totalValue += trait.applyToItem(stack, "Static", this, genLevel, null, Integer.parseInt(tokens[2]));
+                    traitStrings.remove(traitString);
+                    done = true;
+                    break;
+                }
+            }
+            if (!done) totalValue += trait.applyToItem(stack, "Static", this, genLevel, null);
         }
 
 
         //Trait pools
-        for (Map.Entry<String, Integer> poolSet : rarity.traitCounts.entrySet())
+        for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
         {
-            int rollCount = poolSet.getValue();
+            int rollCount = poolSetRollCountEntry.getValue();
             if (rollCount <= 0) continue;
 
 
-            String poolSetName = poolSet.getKey();
+            String poolSetName = poolSetRollCountEntry.getKey();
             LinkedHashMap<String, CTraitPool> randomTraitPools = randomTraitPoolSets.get(poolSetName);
             if (randomTraitPools == null) continue;
 
 
-            ArrayList<CTraitPool> genPools = new ArrayList<>();
+            ArrayList<CTraitPool> weightedPools = new ArrayList<>();
             LinkedHashMap<CTraitPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
             for (CTraitPool pool : randomTraitPools.values())
             {
@@ -79,7 +104,7 @@ public class CItemType extends Component
                     for (int i = entry.getValue(); i > 0; i--)
                     {
                         traits.add(entry.getKey());
-                        genPools.add(pool);
+                        weightedPools.add(pool);
                     }
                 }
 
@@ -89,17 +114,68 @@ public class CItemType extends Component
 
             for (int i = rollCount; i > 0; i--)
             {
-                if (genPools.size() == 0) break;
+                if (weightedPools.size() == 0) break;
 
-                CTraitPool pool = Tools.choose(genPools);
-                ArrayList<CTrait> list = traitPools.get(pool);
-                CTrait trait = Tools.choose(list);
-
-                totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool);
-
-                while (list.remove(trait))
+                boolean done = false;
+                for (String traitString : traitStrings.toArray(new String[0]))
                 {
-                    genPools.remove(pool);
+                    String[] tokens = Tools.fixedSplit(traitString, ":");
+                    if (tokens.length != 4)
+                    {
+                        traitStrings.remove(traitString);
+                        continue;
+                    }
+
+                    String poolSetName2 = tokens[0];
+                    if (!poolSetName2.equals(poolSetName)) continue;
+
+                    CTraitPool pool = randomTraitPools.get(tokens[1]);
+                    if (pool == null || !weightedPools.contains(pool))
+                    {
+                        traitStrings.remove(traitString);
+                        continue;
+                    }
+
+                    ArrayList<CTrait> list = traitPools.get(pool);
+                    CTrait trait = null;
+                    for (CTrait trait2 : pool.traitGenWeights.keySet())
+                    {
+                        if (trait2.name.equals(tokens[2]))
+                        {
+                            trait = trait2;
+                            break;
+                        }
+                    }
+                    if (trait == null || !list.contains(trait))
+                    {
+                        traitStrings.remove(traitString);
+                        continue;
+                    }
+
+
+                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool);
+
+                    while (list.remove(trait))
+                    {
+                        weightedPools.remove(pool);
+                    }
+
+                    done = true;
+                    break;
+                }
+
+                if (!done)
+                {
+                    CTraitPool pool = Tools.choose(weightedPools);
+                    ArrayList<CTrait> list = traitPools.get(pool);
+                    CTrait trait = Tools.choose(list);
+
+                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool);
+
+                    while (list.remove(trait))
+                    {
+                        weightedPools.remove(pool);
+                    }
                 }
             }
         }

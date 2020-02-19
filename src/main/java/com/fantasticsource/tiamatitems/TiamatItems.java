@@ -233,12 +233,15 @@ public class TiamatItems
         partSlot.minimum = 0;
         partSlot.maximum = 1;
 
-        trait = new CTrait();
-        trait.name = "Socket";
-        trait.elements.add(partSlot);
-        trait.minValue = 0;
-        trait.maxValue = 3;
-        for (int i = 10; i > 0; i--) pool.traitGenWeights.put(trait, 1);
+        for (int i = 0; i < 10; i--)
+        {
+            trait = new CTrait();
+            trait.name = "Socket" + i;
+            trait.elements.add(partSlot);
+            trait.minValue = 0;
+            trait.maxValue = 3;
+            pool.traitGenWeights.put(trait, 1);
+        }
 
 
         //Item type

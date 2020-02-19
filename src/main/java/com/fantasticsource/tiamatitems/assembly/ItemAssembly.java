@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.assembly;
 
+import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
@@ -15,83 +16,102 @@ import java.util.LinkedHashMap;
 public class ItemAssembly
 {
     /**
-     * @return ItemStack of removed part, if any, or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ItemStack putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged)
     {
         return putPartInSlot(core, slot, part, recalcIfChanged, Integer.MAX_VALUE);
     }
 
     /**
-     * @return ItemStack of removed part, if any, or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ItemStack putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
     {
         if (part.isEmpty()) return removePart(core, slot, recalcIfChanged, level);
 
 
+        ArrayList<ItemStack> result = new ArrayList<>();
+
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
-        if (slot > partSlots.size()) return part;
+        if (slot > partSlots.size())
+        {
+            result.add(part);
+            return result;
+        }
 
         PartSlot partSlot = partSlots.get(slot);
-        if (!partSlot.partIsValidForSlot(part)) return part;
+        if (!partSlot.partIsValidForSlot(part))
+        {
+            result.add(part);
+            return result;
+        }
 
         ItemStack oldPart = partSlot.part;
         int coreLevel = MiscTags.getItemLevelReq(core);
-        if (level < coreLevel + Tools.max(MiscTags.getItemLevelReq(part), MiscTags.getItemLevelReq(oldPart))) return part;
+        if (level < coreLevel + Tools.max(MiscTags.getItemLevelReq(part), MiscTags.getItemLevelReq(oldPart)))
+        {
+            result.add(part);
+            return result;
+        }
 
 
-        int empty = true;
-        for (PartSlot partSlot2 : partSlots)
-        {
-            if (!partSlot2.part.isEmpty())
-            {
-                empty = false;
-                break;
-            }
-        }
-        if (empty)
-        {
-            //TODO Store the empty version of the core internally
-        }
-        //TODO Apply part to slot in NBT
-        //TODO transform the core item
+        partSlot.part = part;
+        result.add(oldPart);
+
+
+        if (recalcIfChanged) result.addAll(recalc(core));
+
+        return result;
     }
 
 
     /**
-     * @return ItemStack of removed part
+     * @return All removed parts, if any
      */
-    public static ItemStack removePart(ItemStack core, int slot, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> removePart(ItemStack core, int slot, boolean recalcIfChanged)
     {
         return removePart(core, slot, recalcIfChanged, Integer.MAX_VALUE);
     }
 
     /**
-     * @return ItemStack of removed part
+     * @return All removed parts, if any
      */
-    public static ItemStack removePart(ItemStack core, int slot, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> removePart(ItemStack core, int slot, boolean recalcIfChanged, int level)
     {
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
-        if (slot > partSlots.size()) return ItemStack.EMPTY;
+        if (slot > partSlots.size()) return new ArrayList<>();
 
         PartSlot partSlot = partSlots.get(slot);
         ItemStack part = partSlot.part;
-        if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part)) return ItemStack.EMPTY;
+        if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part)) return new ArrayList<>();
 
 
         partSlot.part = ItemStack.EMPTY;
-        if (recalcIfChanged) validateAndRecalc(core);
-        return part;
+        ArrayList<ItemStack> result = recalcIfChanged ? recalc(core) : new ArrayList<>();
+        result.add(part);
+        return result;
+    }
+
+
+    /**
+     * Checks the item's itemgen version against the current itemgen version, and recalculates the item if it doesn't match
+     *
+     * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
+     */
+    public static ArrayList<ItemStack> validateVersion(ItemStack stack) //TODO call this one from login/tooltip events
+    {
+        if (MiscTags.getItemGenVersion(stack) == CItemType.getVersion()) return new ArrayList<>();
+        return recalc(stack);
     }
 
 
     /**
      * Completely recalculates an item (recursively)
      *
-     * @return Any parts that can no longer be on the item due to part slot changes
+     * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
      */
-    public static ArrayList<ItemStack> validateAndRecalc(ItemStack stack)
+    public static ArrayList<ItemStack> recalc(ItemStack stack)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
@@ -118,7 +138,7 @@ public class ItemAssembly
 
 
         //Validate native traits on clean core and recalculate them if necessary
-        if (!validateAndRecalcEmptyPart(core))
+        if (!recalcEmptyPartTraits(core))
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
@@ -148,7 +168,7 @@ public class ItemAssembly
         for (PartSlot oldPartSlot : oldPartSlots.toArray(new PartSlot[0]))
         {
             ItemStack part = oldPartSlot.part;
-            result.addAll(validateAndRecalc(part));
+            result.addAll(recalc(part));
 
             for (PartSlot newPartSlot : partSlots)
             {
@@ -225,12 +245,25 @@ public class ItemAssembly
 
 
     /**
-     * Validates the traits of an *empty part* and recalculates them if necessary
+     * Validates and recalculates the traits of an *empty part*
      * Returns false if the part itself should be deleted (eg. if its item type no longer exists)
      */
-    private static boolean validateAndRecalcEmptyPart(ItemStack stack)
+    private static boolean recalcEmptyPartTraits(ItemStack stack)
     {
-        //TODO
+        //Validate itemtype/rarity
+        CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemType(stack));
+        if (itemType == null) return false;
+
+        CRarity rarity = MiscTags.getItemRarity(stack);
+        if (rarity == null) return false;
+
+
+        //Recalc
+        ItemStack newItem = itemType.generateItem(MiscTags.getItemLevel(stack), rarity, TraitTags.getTraitStrings(stack));
+
+        //Set this stack's tag and return
+        stack.setTagCompound(newItem.getTagCompound());
+        return true;
     }
 
 
@@ -274,5 +307,6 @@ public class ItemAssembly
                 }
             }
         }
+        MiscTags.setItemValue(core, value);
     }
 }
