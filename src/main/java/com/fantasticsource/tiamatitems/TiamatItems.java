@@ -10,7 +10,7 @@ import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.CTrait;
-import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
+import com.fantasticsource.tiamatitems.trait.CTraitPool;
 import com.fantasticsource.tiamatitems.trait.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.block.Block;
@@ -39,8 +39,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.033b,);required-after:tiamatactions@[1.12.2.000,)")
 public class TiamatItems
@@ -158,12 +158,12 @@ public class TiamatItems
 
         //TODO test code start
         //Main action traits
-        ArrayList<CTraitGenPool> leftClickActionPoolSet = new ArrayList<>();
+        LinkedHashMap<String, CTraitPool> leftClickActionPoolSet = new LinkedHashMap<>();
 
-        CTraitGenPool pool = new CTraitGenPool();
+        CTraitPool pool = new CTraitPool();
         pool.name = "2HAxeActLC";
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-        leftClickActionPoolSet.add(pool);
+        CTraitPool.traitGenPools.put(pool.name, pool);
+        leftClickActionPoolSet.put(pool.name, pool);
 
         CTraitElement_LeftClickAction leftClickAction = new CTraitElement_LeftClickAction();
         leftClickAction.actionName = "2HAxeAttack1";
@@ -177,12 +177,12 @@ public class TiamatItems
 
 
         //Sub action traits
-        ArrayList<CTraitGenPool> rightClickActionPoolSet = new ArrayList<>();
+        LinkedHashMap<String, CTraitPool> rightClickActionPoolSet = new LinkedHashMap<>();
 
-        pool = new CTraitGenPool();
+        pool = new CTraitPool();
         pool.name = "2HAxeActRC";
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-        rightClickActionPoolSet.add(pool);
+        CTraitPool.traitGenPools.put(pool.name, pool);
+        rightClickActionPoolSet.put(pool.name, pool);
 
         CTraitElement_RightClickAction rightClickAction = new CTraitElement_RightClickAction();
         rightClickAction.actionName = "2HAxeAttack2";
@@ -196,12 +196,12 @@ public class TiamatItems
 
 
         //General traits
-        ArrayList<CTraitGenPool> generalPoolSet = new ArrayList<>();
+        LinkedHashMap<String, CTraitPool> generalPoolSet = new LinkedHashMap<>();
 
-        pool = new CTraitGenPool();
+        pool = new CTraitPool();
         pool.name = "2HAxeGen";
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-        generalPoolSet.add(pool);
+        CTraitPool.traitGenPools.put(pool.name, pool);
+        generalPoolSet.put(pool.name, pool);
 
         CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
         passiveAttributeMod.attributeName = "generic.maxHealth";
@@ -222,11 +222,11 @@ public class TiamatItems
         validItemTypes.add("Rune");
         PartSlot.validItemTypes.put("Socket", validItemTypes);
 
-        ArrayList<CTraitGenPool> partSlotPoolSet = new ArrayList<>();
-        pool = new CTraitGenPool();
+        LinkedHashMap<String, CTraitPool> partSlotPoolSet = new LinkedHashMap<>();
+        pool = new CTraitPool();
         pool.name = "Sockets";
-        CTraitGenPool.traitGenPools.put(pool.name, pool);
-        partSlotPoolSet.add(pool);
+        CTraitPool.traitGenPools.put(pool.name, pool);
+        partSlotPoolSet.put(pool.name, pool);
 
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
@@ -257,7 +257,7 @@ public class TiamatItems
         trait.elements.add(activeAttributeMod);
         trait.minValue = 1;
         trait.maxValue = 3;
-        itemType.staticTraits.add(trait);
+        itemType.staticTraits.put(trait.name, trait);
 
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
@@ -270,7 +270,7 @@ public class TiamatItems
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.add(trait);
+        itemType.staticTraits.put(trait.name, trait);
 
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
@@ -283,7 +283,7 @@ public class TiamatItems
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.add(trait);
+        itemType.staticTraits.put(trait.name, trait);
 
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
@@ -296,7 +296,7 @@ public class TiamatItems
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.add(trait);
+        itemType.staticTraits.put(trait.name, trait);
 
         itemType.randomTraitPoolSets.put("ActLC", leftClickActionPoolSet);
         itemType.randomTraitPoolSets.put("ActRC", rightClickActionPoolSet);

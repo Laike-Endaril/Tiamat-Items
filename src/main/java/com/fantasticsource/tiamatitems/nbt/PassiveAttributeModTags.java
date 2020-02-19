@@ -12,7 +12,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class PassiveAttributeModTags
 {
-    //attribute;amount;operation
+    //<attributeName>;<amount>;<operation>
 
     public static ArrayList<String> getPassiveMods(ItemStack stack)
     {

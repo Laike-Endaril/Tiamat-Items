@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.trait.CTrait;
-import com.fantasticsource.tiamatitems.trait.CTraitGenPool;
+import com.fantasticsource.tiamatitems.trait.CTraitPool;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +14,11 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TraitTags
 {
-    public static void addTraitTag(ItemStack stack, String poolSetName, CTraitGenPool pool, CTrait traitGen, int wholeNumberPercentage)
+    //Static:<traitName>:<wholeNumberPercentage>
+    //OR
+    //<poolSetName>:<poolName>:<traitName>:<wholeNumberPercentage>
+
+    public static void addTraitTag(ItemStack stack, String poolSetName, CTraitPool pool, CTrait traitGen, int wholeNumberPercentage)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();

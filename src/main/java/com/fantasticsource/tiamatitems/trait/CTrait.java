@@ -19,9 +19,20 @@ public class CTrait extends Component
     public HashSet<CTraitElement> elements = new HashSet<>();
 
 
-    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitGenPool pool)
+    /**
+     * @return The monetary value of the resulting trait
+     */
+    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitPool pool)
     {
         int baseWholeNumberPercentage = (int) (Math.random() * 101);
+        return applyToItem(stack, poolSetName, itemTypeGen, level, pool, baseWholeNumberPercentage);
+    }
+
+    /**
+     * @return The monetary value of the resulting trait
+     */
+    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitPool pool, int baseWholeNumberPercentage)
+    {
         int wholeNumberPercentage = (int) (baseWholeNumberPercentage * itemTypeGen.percentageMultiplier * (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)));
         for (CTraitElement element : elements)
         {

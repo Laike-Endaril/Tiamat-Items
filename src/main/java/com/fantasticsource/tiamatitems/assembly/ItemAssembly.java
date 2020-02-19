@@ -2,10 +2,15 @@ package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.nbt.TraitTags;
+import com.fantasticsource.tiamatitems.trait.CItemType;
+import com.fantasticsource.tiamatitems.trait.CTrait;
+import com.fantasticsource.tiamatitems.trait.CTraitPool;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class ItemAssembly
 {
@@ -76,7 +81,7 @@ public class ItemAssembly
 
 
         partSlot.part = ItemStack.EMPTY;
-        if (recalcIfChanged) recalc(core);
+        if (recalcIfChanged) validateAndRecalc(core);
         return part;
     }
 
@@ -86,7 +91,7 @@ public class ItemAssembly
      *
      * @return Any parts that can no longer be on the item due to part slot changes
      */
-    public static ArrayList<ItemStack> recalc(ItemStack stack)
+    public static ArrayList<ItemStack> validateAndRecalc(ItemStack stack)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
@@ -113,7 +118,15 @@ public class ItemAssembly
 
 
         //Validate native traits on clean core and recalculate them if necessary
-        recalcEmptyPartTraits(core);
+        if (!validateAndRecalcEmptyPart(core))
+        {
+            //If the core itself is invalid, empty the stack and return all old parts that were on it
+            stack.setTagCompound(null);
+            stack.setCount(0);
+
+            for (PartSlot partSlot : oldPartSlots) result.add(partSlot.part);
+            return result;
+        }
 
 
         //If there were no parts on the given stack, just construct a clean core with no internal core and return
@@ -135,7 +148,7 @@ public class ItemAssembly
         for (PartSlot oldPartSlot : oldPartSlots.toArray(new PartSlot[0]))
         {
             ItemStack part = oldPartSlot.part;
-            result.addAll(recalc(part));
+            result.addAll(validateAndRecalc(part));
 
             for (PartSlot newPartSlot : partSlots)
             {
@@ -213,15 +226,53 @@ public class ItemAssembly
 
     /**
      * Validates the traits of an *empty part* and recalculates them if necessary
+     * Returns false if the part itself should be deleted (eg. if its item type no longer exists)
      */
-    private static void recalcEmptyPartTraits(ItemStack stack)
+    private static boolean validateAndRecalcEmptyPart(ItemStack stack)
     {
         //TODO
     }
 
 
+    /**
+     * Applies traits from a part to a core
+     * Should only be used for validated cores and parts
+     */
     private static void applyTraits(ItemStack core, ItemStack... parts)
     {
-        //TODO
+        int value = MiscTags.getItemValue(core);
+        for (ItemStack part : parts)
+        {
+            CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemType(part));
+
+            for (String traitString : TraitTags.getTraitStrings(part))
+            {
+                String[] tokens = Tools.fixedSplit(traitString, ":");
+
+                if (tokens.length == 3)
+                {
+                    //Static trait
+                    CTrait trait = itemType.staticTraits.get(tokens[1]);
+                    value += trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, Integer.parseInt(tokens[2]));
+                }
+                else
+                {
+                    //Weighted trait
+                    String poolSetName = tokens[0];
+                    LinkedHashMap<String, CTraitPool> poolSet = itemType.randomTraitPoolSets.get(poolSetName);
+                    CTraitPool pool = poolSet.get(tokens[1]);
+                    CTrait trait = null;
+                    for (CTrait trait2 : pool.traitGenWeights.keySet())
+                    {
+                        if (trait2.name.equals(tokens[2]))
+                        {
+                            trait = trait2;
+                            break;
+                        }
+                    }
+                    value += trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, Integer.parseInt(tokens[3]));
+                }
+            }
+        }
     }
 }

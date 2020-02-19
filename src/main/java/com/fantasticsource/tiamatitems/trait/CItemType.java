@@ -28,8 +28,8 @@ public class CItemType extends Component
 
     public String name, slotting;
     public double percentageMultiplier = 1, value;
-    public ArrayList<CTrait> staticTraits = new ArrayList<>();
-    public LinkedHashMap<String, ArrayList<CTraitGenPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
+    public LinkedHashMap<String, CTrait> staticTraits = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -50,7 +50,7 @@ public class CItemType extends Component
         //Static traits
         double genLevel = rarity.itemLevelModifier + level;
         double totalValue = value;
-        for (CTrait trait : staticTraits)
+        for (CTrait trait : staticTraits.values())
         {
             totalValue += trait.applyToItem(stack, "Static", this, genLevel, null);
         }
@@ -64,13 +64,13 @@ public class CItemType extends Component
 
 
             String poolSetName = poolSet.getKey();
-            ArrayList<CTraitGenPool> randomTraitPools = randomTraitPoolSets.get(poolSetName);
+            LinkedHashMap<String, CTraitPool> randomTraitPools = randomTraitPoolSets.get(poolSetName);
             if (randomTraitPools == null) continue;
 
 
-            ArrayList<CTraitGenPool> genPools = new ArrayList<>();
-            LinkedHashMap<CTraitGenPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
-            for (CTraitGenPool pool : randomTraitPools)
+            ArrayList<CTraitPool> genPools = new ArrayList<>();
+            LinkedHashMap<CTraitPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
+            for (CTraitPool pool : randomTraitPools.values())
             {
                 ArrayList<CTrait> traits = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class CItemType extends Component
             {
                 if (genPools.size() == 0) break;
 
-                CTraitGenPool pool = Tools.choose(genPools);
+                CTraitPool pool = Tools.choose(genPools);
                 ArrayList<CTrait> list = traitPools.get(pool);
                 CTrait trait = Tools.choose(list);
 
@@ -126,16 +126,16 @@ public class CItemType extends Component
         buf.writeDouble(value);
 
         buf.writeInt(staticTraits.size());
-        for (CTrait gen : staticTraits) gen.write(buf);
+        for (CTrait gen : staticTraits.values()) gen.write(buf);
 
         buf.writeInt(randomTraitPoolSets.size());
-        for (Map.Entry<String, ArrayList<CTraitGenPool>> entry : randomTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashMap<String, CTraitPool>> entry : randomTraitPoolSets.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
 
-            ArrayList<CTraitGenPool> poolSet = entry.getValue();
+            LinkedHashMap<String, CTraitPool> poolSet = entry.getValue();
             buf.writeInt(poolSet.size());
-            for (CTraitGenPool pool : poolSet) pool.write(buf);
+            for (CTraitPool pool : poolSet.values()) pool.write(buf);
         }
 
         return this;
@@ -150,17 +150,24 @@ public class CItemType extends Component
         value = buf.readDouble();
 
         staticTraits.clear();
-        for (int i = buf.readInt(); i > 0; i--) staticTraits.add(new CTrait().read(buf));
-
-        randomTraitPoolSets.clear();
+        CTrait trait;
         for (int i = buf.readInt(); i > 0; i--)
         {
-            ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
+            trait = new CTrait().read(buf);
+            staticTraits.put(trait.name, trait);
+        }
+
+        randomTraitPoolSets.clear();
+        CTraitPool pool;
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
             randomTraitPoolSets.put(ByteBufUtils.readUTF8String(buf), poolSet);
 
             for (int i2 = buf.readInt(); i2 > 0; i2--)
             {
-                poolSet.add(new CTraitGenPool().read(buf));
+                pool = new CTraitPool().read(buf);
+                poolSet.put(pool.name, pool);
             }
         }
 
@@ -174,16 +181,16 @@ public class CItemType extends Component
         new CDouble().set(percentageMultiplier).save(stream).set(value).save(stream);
 
         CInt ci = new CInt().set(staticTraits.size()).save(stream);
-        for (CTrait gen : staticTraits) gen.save(stream);
+        for (CTrait gen : staticTraits.values()) gen.save(stream);
 
         ci.set(randomTraitPoolSets.size()).save(stream);
-        for (Map.Entry<String, ArrayList<CTraitGenPool>> entry : randomTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashMap<String, CTraitPool>> entry : randomTraitPoolSets.entrySet())
         {
             cs.set(entry.getKey()).save(stream);
 
-            ArrayList<CTraitGenPool> poolSet = entry.getValue();
+            LinkedHashMap<String, CTraitPool> poolSet = entry.getValue();
             ci.set(poolSet.size()).save(stream);
-            for (CTraitGenPool pool : poolSet) pool.save(stream);
+            for (CTraitPool pool : poolSet.values()) pool.save(stream);
         }
 
         return this;
@@ -201,17 +208,24 @@ public class CItemType extends Component
 
         CInt ci = new CInt();
         staticTraits.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) staticTraits.add(new CTrait().load(stream));
-
-        randomTraitPoolSets.clear();
+        CTrait trait;
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            ArrayList<CTraitGenPool> poolSet = new ArrayList<>();
+            trait = new CTrait().load(stream);
+            staticTraits.put(trait.name, trait);
+        }
+
+        randomTraitPoolSets.clear();
+        CTraitPool pool;
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
             randomTraitPoolSets.put(cs.load(stream).value, poolSet);
 
             for (int i2 = ci.load(stream).value; i2 > 0; i2--)
             {
-                poolSet.add(new CTraitGenPool().load(stream));
+                pool = new CTraitPool().load(stream);
+                poolSet.put(pool.name, pool);
             }
         }
 

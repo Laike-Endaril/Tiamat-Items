@@ -11,9 +11,9 @@ import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CTraitGenPool extends Component
+public class CTraitPool extends Component
 {
-    public static LinkedHashMap<String, CTraitGenPool> traitGenPools = new LinkedHashMap<>(); //TODO handle data retention
+    public static LinkedHashMap<String, CTraitPool> traitGenPools = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name; //TODO disallow setting to the name "null" (see TraitTags class)
@@ -21,7 +21,7 @@ public class CTraitGenPool extends Component
 
 
     @Override
-    public CTraitGenPool write(ByteBuf buf)
+    public CTraitPool write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
 
@@ -36,7 +36,7 @@ public class CTraitGenPool extends Component
     }
 
     @Override
-    public CTraitGenPool read(ByteBuf buf)
+    public CTraitPool read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
 
@@ -47,7 +47,7 @@ public class CTraitGenPool extends Component
     }
 
     @Override
-    public CTraitGenPool save(OutputStream stream)
+    public CTraitPool save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream);
 
@@ -62,7 +62,7 @@ public class CTraitGenPool extends Component
     }
 
     @Override
-    public CTraitGenPool load(InputStream stream)
+    public CTraitPool load(InputStream stream)
     {
         name = new CStringUTF8().load(stream).value;
 
