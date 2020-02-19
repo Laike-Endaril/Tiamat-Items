@@ -305,6 +305,7 @@ public class ItemAssembly
         int value = MiscTags.getItemValue(core);
         for (ItemStack part : parts)
         {
+            value += MiscTags.getItemValue(part);
             CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemType(part));
 
             for (String traitString : TraitTags.getTraitStrings(part))
@@ -315,7 +316,7 @@ public class ItemAssembly
                 {
                     //Static trait
                     CTrait trait = itemType.staticTraits.get(tokens[1]);
-                    value += trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, Integer.parseInt(tokens[2]));
+                    trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, Integer.parseInt(tokens[2]));
                 }
                 else
                 {
@@ -332,7 +333,7 @@ public class ItemAssembly
                             break;
                         }
                     }
-                    value += trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, Integer.parseInt(tokens[3]));
+                    trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, Integer.parseInt(tokens[3]));
                 }
             }
         }
