@@ -121,6 +121,10 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
+        HashSet<String> validItemTypes = new HashSet<>();
+        validItemTypes.add("2H Axehead");
+        PartSlot.validItemTypes.put("2H Axehead", validItemTypes);
+
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
         partSlot.required = true;
@@ -135,6 +139,10 @@ public class Test
         itemType.staticTraits.put(trait.name, trait);
 
 
+        validItemTypes = new HashSet<>();
+        validItemTypes.add("2H Axe Handle");
+        PartSlot.validItemTypes.put("2H Axe Handle", validItemTypes);
+
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
         partSlot.required = true;
@@ -148,6 +156,10 @@ public class Test
         trait.maxValue = 0;
         itemType.staticTraits.put(trait.name, trait);
 
+
+        validItemTypes = new HashSet<>();
+        validItemTypes.add("2H Axe Skin");
+        PartSlot.validItemTypes.put("2H Axe Skin", validItemTypes);
 
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
