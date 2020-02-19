@@ -3,12 +3,12 @@ Recalc items on these triggers...
 ...tooltip
 
 
+Skin trait element
+
+
 "Empty" layers/texture (tiamat items only)
 "Partial" layers/texture (tiamat items only)
 "Full" layers/texture (tiamat items only)
-
-
-Skin trait element
 
 
 Name generation...

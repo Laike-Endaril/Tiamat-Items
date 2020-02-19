@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.assembly;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -75,8 +76,15 @@ public class ItemAssembly
         }
 
 
+        //Put part into transient data, then save that data to tag
         partSlot.part = part;
         AssemblyTags.setPartSlots(core, partSlots);
+
+        //Disassociate the original part's tag from the original part stack, then delete the original part stack by setting its count to 0
+        part.setTagCompound(null);
+        part.setCount(0);
+
+
         if (!oldPart.isEmpty()) result.add(oldPart);
 
 
@@ -153,7 +161,7 @@ public class ItemAssembly
         ItemStack core = AssemblyTags.getInternalCore(stack); //Internal core should always be clean
         if (core.isEmpty()) //If no internal core, there should never be any part traits applied yet
         {
-            core = new ItemStack(stack.serializeNBT());
+            core = MCTools.cloneItemStack(stack);
             AssemblyTags.clearPartTags(core); //So just clear the part tags on a copy of this item to get a clean core
         }
 
