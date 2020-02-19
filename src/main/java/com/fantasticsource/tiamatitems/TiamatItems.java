@@ -164,12 +164,10 @@ public class TiamatItems
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
         //TODO remove this!
-        System.out.println(event.getSide());
         if (event.getSide() == Side.CLIENT) return;
 
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
         ItemStack core = player.getHeldItemMainhand(), part = player.getHeldItemOffhand();
-        System.out.println(player.getName() + ", " + core.getDisplayName() + ", " + part.getDisplayName());
         ItemAssembly.putPartInSlot(core, 0, part);
     }
 }

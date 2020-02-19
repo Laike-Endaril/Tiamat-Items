@@ -44,15 +44,12 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
     {
-        System.out.println(1);
         if (slot < 0 || core.isEmpty()) return new ArrayList<>();
 
 
-        System.out.println(2);
         if (part.isEmpty()) return removePart(core, slot, recalcIfChanged, level);
 
 
-        System.out.println(3);
         ArrayList<ItemStack> result = new ArrayList<>();
 
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
@@ -62,7 +59,6 @@ public class ItemAssembly
             return result;
         }
 
-        System.out.println(4);
         PartSlot partSlot = partSlots.get(slot);
         if (!partSlot.partIsValidForSlot(part))
         {
@@ -70,7 +66,6 @@ public class ItemAssembly
             return result;
         }
 
-        System.out.println(5);
         ItemStack oldPart = partSlot.part;
         int coreLevel = MiscTags.getItemLevelReq(core);
         if (level < coreLevel + Tools.max(MiscTags.getItemLevelReq(part), MiscTags.getItemLevelReq(oldPart)))
@@ -79,13 +74,13 @@ public class ItemAssembly
             return result;
         }
 
-        System.out.println(6);
-
         partSlot.part = part;
         result.add(oldPart);
 
 
         if (recalcIfChanged) result.addAll(recalc(core));
+
+        for (ItemStack leftover : result) System.out.println("Leftover: " + leftover.getDisplayName());
 
         return result;
     }
