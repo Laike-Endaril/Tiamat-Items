@@ -18,9 +18,25 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part)
+    {
+        return putPartInSlot(core, slot, part, true, Integer.MAX_VALUE);
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
     public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged)
     {
         return putPartInSlot(core, slot, part, recalcIfChanged, Integer.MAX_VALUE);
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, int level)
+    {
+        return putPartInSlot(core, slot, part, true, level);
     }
 
     /**
