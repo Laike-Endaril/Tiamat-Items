@@ -233,7 +233,7 @@ public class TiamatItems
         partSlot.minimum = 0;
         partSlot.maximum = 1;
 
-        for (int i = 0; i < 10; i--)
+        for (int i = 0; i < 10; i++)
         {
             trait = new CTrait();
             trait.name = "Socket" + i;
