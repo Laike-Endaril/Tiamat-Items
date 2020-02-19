@@ -74,13 +74,14 @@ public class ItemAssembly
             return result;
         }
 
+
         partSlot.part = part;
-        result.add(oldPart);
+        AssemblyTags.setPartSlots(core, partSlots);
+        if (!oldPart.isEmpty()) result.add(oldPart);
 
 
         if (recalcIfChanged) result.addAll(recalc(core));
 
-        for (ItemStack leftover : result) System.out.println("Leftover: " + leftover.getDisplayName());
 
         return result;
     }
