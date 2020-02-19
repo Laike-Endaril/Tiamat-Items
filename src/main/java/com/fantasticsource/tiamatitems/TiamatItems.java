@@ -169,6 +169,5 @@ public class TiamatItems
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
         ItemStack core = player.getHeldItemMainhand(), part = player.getHeldItemOffhand();
         ItemAssembly.putPartInSlot(core, 0, part);
-        FMLCommonHandler.instance().getMinecraftServerInstance().commandManager.executeCommand(player, "/omnipotence nbt hand");
     }
 }
