@@ -120,21 +120,13 @@ public class CItemType extends Component
                 for (String traitString : traitStrings.toArray(new String[0]))
                 {
                     String[] tokens = Tools.fixedSplit(traitString, ":");
-                    if (tokens.length != 4)
-                    {
-                        traitStrings.remove(traitString);
-                        continue;
-                    }
+                    if (tokens.length != 4) continue;
 
                     String poolSetName2 = tokens[0];
                     if (!poolSetName2.equals(poolSetName)) continue;
 
                     CTraitPool pool = randomTraitPools.get(tokens[1]);
-                    if (pool == null || !weightedPools.contains(pool))
-                    {
-                        traitStrings.remove(traitString);
-                        continue;
-                    }
+                    if (pool == null || !weightedPools.contains(pool)) continue;
 
                     ArrayList<CTrait> list = traitPools.get(pool);
                     CTrait trait = null;
@@ -146,20 +138,16 @@ public class CItemType extends Component
                             break;
                         }
                     }
-                    if (trait == null || !list.contains(trait))
-                    {
-                        traitStrings.remove(traitString);
-                        continue;
-                    }
+                    if (trait == null || !list.contains(trait)) continue;
 
-
-                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool);
 
                     while (list.remove(trait))
                     {
                         weightedPools.remove(pool);
                     }
 
+                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool, Integer.parseInt(tokens[3]));
+                    traitStrings.remove(traitString);
                     done = true;
                     break;
                 }

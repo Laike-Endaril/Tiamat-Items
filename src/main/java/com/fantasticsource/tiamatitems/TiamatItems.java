@@ -13,6 +13,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -164,7 +165,7 @@ public class TiamatItems
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
         //TODO remove this!
-        if (event.getSide() == Side.CLIENT) return;
+        if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
 
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
         ItemStack core = player.getHeldItemMainhand(), part = player.getHeldItemOffhand();
