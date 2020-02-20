@@ -46,6 +46,6 @@ public class PartSlot
 
     public boolean partIsValidForSlot(ItemStack part)
     {
-        return getValidItemTypes().contains(MiscTags.getItemType(part));
+        return getValidItemTypes().contains(MiscTags.getItemTypeName(part));
     }
 }

@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
@@ -7,6 +8,8 @@ import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,6 +23,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -160,6 +164,23 @@ public class TiamatItems
         Test.create2HAxeheadItemType();
         //TODO test code end
     }
+
+
+    @SubscribeEvent
+    public static void itemStackConstruction(AttachCapabilitiesEvent<ItemStack> event)
+    {
+        if (!MCTools.hosting()) return; //Logical server side only
+
+        ItemStack stack = event.getObject();
+        if (stack.isEmpty() || !stack.hasTagCompound()) return;
+
+        String itemTypeName = MiscTags.getItemTypeName(stack);
+        if (itemTypeName.equals("")) return;
+
+
+        if (MiscTags.getItemGenVersion(stack) != CItemType.getVersion()) ItemAssembly.recalc(stack);
+    }
+
 
     @SubscribeEvent
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)

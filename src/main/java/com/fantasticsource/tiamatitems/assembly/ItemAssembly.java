@@ -48,7 +48,7 @@ public class ItemAssembly
         if (slot < 0 || core.isEmpty()) return new ArrayList<>();
 
 
-        if (part.isEmpty()) return removePart(core, slot, recalcIfChanged, level);
+        if (part.isEmpty()) return removePartFromSlot(core, slot, recalcIfChanged, level);
 
 
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -98,15 +98,15 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any
      */
-    public static ArrayList<ItemStack> removePart(ItemStack core, int slot, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> removePartFromSlot(ItemStack core, int slot, boolean recalcIfChanged)
     {
-        return removePart(core, slot, recalcIfChanged, Integer.MAX_VALUE);
+        return removePartFromSlot(core, slot, recalcIfChanged, Integer.MAX_VALUE);
     }
 
     /**
      * @return All removed parts, if any
      */
-    public static ArrayList<ItemStack> removePart(ItemStack core, int slot, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> removePartFromSlot(ItemStack core, int slot, boolean recalcIfChanged, int level)
     {
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
         if (slot > partSlots.size()) return new ArrayList<>();
@@ -280,7 +280,7 @@ public class ItemAssembly
     private static boolean recalcEmptyPartTraits(ItemStack stack)
     {
         //Validate itemtype/rarity
-        CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemType(stack));
+        CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemTypeName(stack));
         if (itemType == null) return false;
 
         CRarity rarity = MiscTags.getItemRarity(stack);
@@ -306,7 +306,7 @@ public class ItemAssembly
         for (ItemStack part : parts)
         {
             value += MiscTags.getItemValue(part);
-            CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemType(part));
+            CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemTypeName(part));
 
             for (String traitString : TraitTags.getTraitStrings(part))
             {

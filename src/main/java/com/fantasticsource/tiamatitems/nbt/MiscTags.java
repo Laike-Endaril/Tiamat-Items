@@ -9,7 +9,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class MiscTags
 {
-    public static void setItemType(ItemStack stack, String type)
+    public static void setItemType(ItemStack stack, String typeName)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
 
@@ -17,10 +17,10 @@ public class MiscTags
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
 
         compound = compound.getCompoundTag(DOMAIN);
-        compound.setString("type", type);
+        compound.setString("type", typeName);
     }
 
-    public static String getItemType(ItemStack stack)
+    public static String getItemTypeName(ItemStack stack)
     {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound == null || !compound.hasKey(DOMAIN)) return "";

@@ -22,7 +22,7 @@ public class CItemType extends Component
 {
     //TODO change version on item gen definition change, including globals
     public static final int ITEM_GEN_CODE_VERSION = 0;
-    public static int itemGenConfigVersion = 0; //TODO handle data retention
+    private static int itemGenConfigVersion = 0; //TODO handle data retention
     public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
 
 
@@ -31,6 +31,12 @@ public class CItemType extends Component
     public LinkedHashMap<String, CTrait> staticTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
 
+
+    public void incrementVersion()
+    {
+        itemGenConfigVersion++;
+        //TODO sync to connected clients
+    }
 
     public static long getVersion()
     {
