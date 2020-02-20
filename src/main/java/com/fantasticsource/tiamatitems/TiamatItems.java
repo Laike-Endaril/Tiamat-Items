@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.List;
@@ -194,6 +195,7 @@ public class TiamatItems
         ItemAssembly.recalc(stack);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void tooltip(ItemTooltipEvent event)
     {
