@@ -36,6 +36,7 @@ public class Network
         WRAPPER.registerMessage(OpenGlobalSettingsPacketHandler.class, OpenGlobalSettingsPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RequestItemStackUpdatePacketHandler.class, RequestItemStackUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(ItemStackUpdatePacketHandler.class, ItemStackUpdatePacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -249,6 +250,45 @@ public class Network
             {
                 ClientData.badStackToGoodStack.put(ClientData.idToBadStack.get(packet.id), packet.stack.value);
             });
+            return null;
+        }
+    }
+
+
+    public static class ItemgenVersionPacket implements IMessage
+    {
+        public long version;
+
+        public ItemgenVersionPacket()
+        {
+            //Required
+        }
+
+        public ItemgenVersionPacket(long version)
+        {
+            this.version = version;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeLong(version);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            version = buf.readLong();
+        }
+    }
+
+    public static class ItemgenVersionPacketHandler implements IMessageHandler<ItemgenVersionPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(ItemgenVersionPacket packet, MessageContext ctx)
+        {
+            Minecraft.getMinecraft().addScheduledTask(() -> ClientData.serverItemGenConfigVersion = packet.version);
             return null;
         }
     }

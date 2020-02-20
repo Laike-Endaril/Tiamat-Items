@@ -5,7 +5,6 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
@@ -14,9 +13,9 @@ import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -27,7 +26,6 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -36,6 +34,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -151,6 +150,12 @@ public class TiamatItems
         ClientData.clear();
     }
 
+    @SubscribeEvent
+    public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CItemType.getVersion()), (EntityPlayerMP) event.player);
+    }
+
 
     @Mod.EventHandler
     public static void serverStarting(FMLServerStartingEvent event)
@@ -227,19 +232,6 @@ public class TiamatItems
                 ClientData.idToBadStack.entrySet().removeIf(entry -> entry.getValue() == stack);
                 ClientData.badStackToGoodStack.remove(stack);
             }
-        }
-    }
-
-
-    @SubscribeEvent
-    public static void test(PlayerInteractEvent.EntityInteractSpecific event)
-    {
-        //TODO remove this!
-        if (event.getSide() == Side.CLIENT && event.getHand() != EnumHand.OFF_HAND)
-        {
-            ItemStack stack = CItemType.itemTypes.get("2H Axe").generateItem(1, CRarity.rarities.get("TestRarity"));
-            MiscTags.setItemGenVersion(stack, 2);
-            event.getEntityPlayer().inventory.addItemStackToInventory(stack);
         }
     }
 }
