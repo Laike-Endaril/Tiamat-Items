@@ -16,10 +16,6 @@ public class CGlobalSettings extends Component
 
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
 
-    //TODO rarities
-
-    //TODO item types
-
 
     @Override
     public CGlobalSettings write(ByteBuf buf)

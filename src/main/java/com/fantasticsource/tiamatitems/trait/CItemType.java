@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class CItemType extends Component
 {
-    //TODO change version on item gen definition change, including globals
     public static final int ITEM_GEN_CODE_VERSION = 0;
     private static int itemGenConfigVersion = 0; //TODO handle data retention
     public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
@@ -32,6 +31,7 @@ public class CItemType extends Component
     public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
 
 
+    //TODO call this method on item gen definition change, including globals
     public void incrementVersion()
     {
         itemGenConfigVersion++;

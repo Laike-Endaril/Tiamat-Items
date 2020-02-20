@@ -124,18 +124,6 @@ public class ItemAssembly
 
 
     /**
-     * Checks the item's itemgen version against the current itemgen version, and recalculates the item if it doesn't match
-     *
-     * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
-     */
-    public static ArrayList<ItemStack> validateVersion(ItemStack stack) //TODO call this one from login/tooltip events
-    {
-        if (MiscTags.getItemGenVersion(stack) == CItemType.getVersion()) return new ArrayList<>();
-        return recalc(stack);
-    }
-
-
-    /**
      * Completely recalculates an item (recursively)
      *
      * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
@@ -159,10 +147,21 @@ public class ItemAssembly
 
         //Get clean core
         ItemStack core = AssemblyTags.getInternalCore(stack); //Internal core should always be clean
-        if (core.isEmpty()) //If no internal core, there should never be any part traits applied yet
+        if (core.isEmpty()) //If no internal core, create one
         {
+            //Tell automatic recalc event not to recalc the core, by marking it with a special version number
+            long version = MiscTags.getItemGenVersion(stack);
+            MiscTags.setItemGenVersion(stack, Long.MAX_VALUE);
+
+            //Copy the stack
             core = MCTools.cloneItemStack(stack);
-            AssemblyTags.clearPartTags(core); //So just clear the part tags on a copy of this item to get a clean core
+
+            //Reset version on original and new stack
+            MiscTags.setItemGenVersion(stack, version);
+            MiscTags.setItemGenVersion(core, version);
+
+            //Clear the part tags on the new core
+            AssemblyTags.clearPartTags(core);
         }
 
 

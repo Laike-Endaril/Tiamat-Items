@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
+import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.GlobalSettingsGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
@@ -33,6 +34,8 @@ public class Network
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(OpenGlobalSettingsPacketHandler.class, OpenGlobalSettingsPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(RequestItemStackUpdatePacketHandler.class, RequestItemStackUpdatePacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(ItemStackUpdatePacketHandler.class, ItemStackUpdatePacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -153,6 +156,99 @@ public class Network
         public IMessage onMessage(OpenGlobalSettingsPacket packet, MessageContext ctx)
         {
             Minecraft.getMinecraft().addScheduledTask(() -> GlobalSettingsGUI.show(packet));
+            return null;
+        }
+    }
+
+
+    public static class RequestItemStackUpdatePacket implements IMessage
+    {
+        public CItemStack stack = new CItemStack();
+        public int id;
+
+        public RequestItemStackUpdatePacket()
+        {
+            //Required
+        }
+
+        public RequestItemStackUpdatePacket(ItemStack stack, int id)
+        {
+            this.stack.set(stack);
+            this.id = id;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            stack.write(buf);
+            buf.writeInt(id);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            stack.read(buf);
+            id = buf.readInt();
+        }
+    }
+
+    public static class RequestItemStackUpdatePacketHandler implements IMessageHandler<RequestItemStackUpdatePacket, IMessage>
+    {
+        @Override
+        public IMessage onMessage(RequestItemStackUpdatePacket packet, MessageContext ctx)
+        {
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
+            {
+                ItemStack stack = packet.stack.value;
+                ItemAssembly.recalc(stack);
+                WRAPPER.sendTo(new ItemStackUpdatePacket(stack, packet.id), ctx.getServerHandler().player);
+            });
+            return null;
+        }
+    }
+
+
+    public static class ItemStackUpdatePacket implements IMessage
+    {
+        public CItemStack stack = new CItemStack();
+        public int id;
+
+        public ItemStackUpdatePacket()
+        {
+            //Required
+        }
+
+        public ItemStackUpdatePacket(ItemStack stack, int id)
+        {
+            this.stack.set(stack);
+            this.id = id;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            stack.write(buf);
+            buf.writeInt(id);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            stack.read(buf);
+            id = buf.readInt();
+        }
+    }
+
+    public static class ItemStackUpdatePacketHandler implements IMessageHandler<ItemStackUpdatePacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(ItemStackUpdatePacket packet, MessageContext ctx)
+        {
+            Minecraft.getMinecraft().addScheduledTask(() ->
+            {
+                ClientData.badStackToGoodStack.put(ClientData.idToBadStack.get(packet.id), packet.stack.value);
+            });
             return null;
         }
     }

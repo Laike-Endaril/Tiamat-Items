@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
+import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
@@ -13,7 +14,6 @@ import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -148,6 +148,7 @@ public class TiamatItems
     public static void clientDisconnectFromServer(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
         TextureCache.clear(event);
+        ClientData.clear();
     }
 
 
@@ -181,7 +182,8 @@ public class TiamatItems
         String itemTypeName = MiscTags.getItemTypeName(stack);
         if (itemTypeName.equals("")) return;
 
-        if (MiscTags.getItemGenVersion(stack) == CItemType.getVersion()) return;
+        long version = MiscTags.getItemGenVersion(stack);
+        if (version == Long.MAX_VALUE || version == CItemType.getVersion()) return;
 
 
         ItemAssembly.recalc(stack);
@@ -206,7 +208,26 @@ public class TiamatItems
         tooltip.add(TextFormatting.RED + "WARNING: This item's tooltip may not be accurate!  Requesting accurate data from server...");
         tooltip.add("");
 
-        //TODO request correct stack or tooltip from server
+
+        int id;
+        if (!ClientData.idToBadStack.containsValue(stack))
+        {
+            id = ClientData.nextID++;
+            ClientData.idToBadStack.put(id, stack);
+
+            Network.WRAPPER.sendToServer(new Network.RequestItemStackUpdatePacket(stack, id));
+        }
+        else
+        {
+            ItemStack goodStack = ClientData.badStackToGoodStack.get(stack);
+            if (goodStack != null)
+            {
+                stack.setTagCompound(goodStack.getTagCompound());
+
+                ClientData.idToBadStack.entrySet().removeIf(entry -> entry.getValue() == stack);
+                ClientData.badStackToGoodStack.remove(stack);
+            }
+        }
     }
 
 
@@ -214,10 +235,11 @@ public class TiamatItems
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
         //TODO remove this!
-        if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
-
-        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-        ItemStack core = player.getHeldItemMainhand(), part = player.getHeldItemOffhand();
-        ItemAssembly.putPartInSlot(core, 0, part);
+        if (event.getSide() == Side.CLIENT && event.getHand() != EnumHand.OFF_HAND)
+        {
+            ItemStack stack = CItemType.itemTypes.get("2H Axe").generateItem(1, CRarity.rarities.get("TestRarity"));
+            MiscTags.setItemGenVersion(stack, 2);
+            event.getEntityPlayer().inventory.addItemStackToInventory(stack);
+        }
     }
 }
