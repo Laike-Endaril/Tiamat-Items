@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,6 +26,7 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -38,6 +40,8 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import java.util.List;
 
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.033b,);required-after:tiamatactions@[1.12.2.000,)")
 public class TiamatItems
@@ -177,8 +181,32 @@ public class TiamatItems
         String itemTypeName = MiscTags.getItemTypeName(stack);
         if (itemTypeName.equals("")) return;
 
+        if (MiscTags.getItemGenVersion(stack) == CItemType.getVersion()) return;
 
-        if (MiscTags.getItemGenVersion(stack) != CItemType.getVersion()) ItemAssembly.recalc(stack);
+
+        ItemAssembly.recalc(stack);
+    }
+
+    @SubscribeEvent
+    public static void tooltip(ItemTooltipEvent event)
+    {
+        if (ClientData.serverItemGenConfigVersion == -1) return;
+
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty() || !stack.hasTagCompound()) return;
+
+        String itemTypeName = MiscTags.getItemTypeName(stack);
+        if (itemTypeName.equals("")) return;
+
+        if (MiscTags.getItemGenVersion(stack) == ClientData.serverItemGenConfigVersion) return;
+
+
+        List<String> tooltip = event.getToolTip();
+        tooltip.add("");
+        tooltip.add(TextFormatting.RED + "WARNING: This item's tooltip may not be accurate!  Requesting accurate data from server...");
+        tooltip.add("");
+
+        //TODO request correct stack or tooltip from server
     }
 
 
