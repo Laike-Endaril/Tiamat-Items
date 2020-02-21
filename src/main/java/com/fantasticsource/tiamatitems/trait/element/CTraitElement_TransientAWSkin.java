@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems.trait.element;
 
-import com.fantasticsource.mctools.TransientAWSkins;
+import com.fantasticsource.mctools.CustomAWSkinHandler;
 import com.fantasticsource.tiamatitems.trait.CTraitElement;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -34,7 +34,7 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
     @Override
     public void applyToItem(ItemStack stack, int wholeNumberPercentage)
     {
-        TransientAWSkins.addTransientAWSkin(stack, libraryFile, skinType, dyes.toArray(new Color[0]));
+        CustomAWSkinHandler.addTransientAWSkin(stack, libraryFile, skinType, dyes.toArray(new Color[0]));
     }
 
 
