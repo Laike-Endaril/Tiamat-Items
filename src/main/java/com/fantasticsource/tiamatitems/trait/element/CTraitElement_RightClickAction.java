@@ -17,7 +17,7 @@ public class CTraitElement_RightClickAction extends CTraitElement
     @Override
     public String getDescription()
     {
-        return "Set item action 2 to " + actionName;
+        return "Right click: " + actionName;
     }
 
     @Override

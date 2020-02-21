@@ -21,8 +21,8 @@ public class Test
         rarity.textColor = TextFormatting.GOLD;
         rarity.color = Color.ORANGE;
         rarity.itemLevelModifier = 0.5;
-        rarity.traitCounts.put("ActLC", 1); //1x action 1 trait
-        rarity.traitCounts.put("ActRC", 1); //1x action 2 trait
+        rarity.traitCounts.put("ActLC", 1); //1x left click action
+        rarity.traitCounts.put("ActRC", 1); //1x right click action
         rarity.traitCounts.put("Gen", 1); //1x general trait
         rarity.traitCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
 
@@ -203,14 +203,14 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_ActiveAttributeMod activeAttributeMod = new CTraitElement_ActiveAttributeMod();
-        activeAttributeMod.attributeName = "generic.attackDamage";
-        activeAttributeMod.minimum = 1;
-        activeAttributeMod.maximum = 3;
+        CTraitElement_ActiveAttributeMod element = new CTraitElement_ActiveAttributeMod();
+        element.attributeName = "generic.attackDamage";
+        element.minimum = 1;
+        element.maximum = 3;
 
         CTrait trait = new CTrait();
         trait.name = "Damage";
-        trait.elements.add(activeAttributeMod);
+        trait.elements.add(element);
         trait.minValue = 1;
         trait.maxValue = 3;
         itemType.staticTraits.put(trait.name, trait);
@@ -219,6 +219,32 @@ public class Test
         LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
         poolSet.put("General", CTraitPool.traitGenPools.get("General"));
         itemType.randomTraitPoolSets.put("Gen", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void create2HAxeSkinItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "2H Axe Skin";
+        itemType.percentageMultiplier = 2;
+
+
+        CTraitElement_TransientAWSkin element = new CTraitElement_TransientAWSkin();
+        element.libraryFile = "downloads/5080 - Storm Breaker";
+        element.skinType = "armourers:axe";
+        element.dyes.add(new Color(255, 0, 0, 255));
+        element.dyes.add(new Color(0, 255, 0, 255));
+        element.dyes.add(new Color(0, 0, 255, 255));
+
+        CTrait trait = new CTrait();
+        trait.name = "Storm Breaker";
+        trait.elements.add(element);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        itemType.staticTraits.put(trait.name, trait);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);

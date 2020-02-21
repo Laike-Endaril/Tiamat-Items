@@ -173,6 +173,7 @@ public class TiamatItems
 
         Test.create2HAxeItemType();
         Test.create2HAxeheadItemType();
+        Test.create2HAxeSkinItemType();
         //TODO test code end
     }
 
