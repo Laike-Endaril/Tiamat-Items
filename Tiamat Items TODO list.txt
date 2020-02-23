@@ -1,3 +1,6 @@
+Possible issue: if you equip 2 1 handed swords, they will both apply both skins to both weapons
+
+
 "Empty" layers/texture (tiamat items only)
 "Partial" layers/texture (tiamat items only)
 "Full" layers/texture (tiamat items only)
@@ -11,10 +14,6 @@ Handle: weighted 10-50  roll 30
 range = 55
 roll minus min = 33
 33 / 55 = 60%
-
-
-
-Note: On old Faerun, we did our skins with sword skin type for mainhand and shield skin type for offhand
 
 
 
