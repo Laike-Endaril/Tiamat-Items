@@ -2,18 +2,17 @@ package com.fantasticsource.tiamatitems;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
-import com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -105,11 +104,10 @@ public class TransientAttributeModEvent extends PlayerEvent
             //Tiamat slots
             if (Compat.tiamatrpg)
             {
-                IInventory inventory = TiamatPlayerInventory.tiamatServerInventories.get(player.getPersistentID());
-                for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
+                int slot = 0;
+                for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
                 {
-                    ItemStack stack = inventory.getStackInSlot(slot);
-                    handleGenericModsForSlot(player, slot, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
+                    handleGenericModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
                 }
             }
 

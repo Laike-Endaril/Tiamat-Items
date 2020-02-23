@@ -232,18 +232,29 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_TransientAWSkin element = new CTraitElement_TransientAWSkin();
-        element.libraryFile = "downloads/5080 - Storm Breaker";
-        element.skinType = "armourers:axe";
-        element.dyes.add(new Color(255, 0, 0, 255));
-        element.dyes.add(new Color(0, 255, 0, 255));
-        element.dyes.add(new Color(0, 0, 255, 255));
+        CTraitElement_TransientAWSkin skinElement = new CTraitElement_TransientAWSkin();
+        skinElement.libraryFile = "downloads/5080 - Storm Breaker";
+        skinElement.skinType = "armourers:axe";
+        skinElement.dyes.add(new Color(255, 0, 0, 255));
+        skinElement.dyes.add(new Color(0, 255, 0, 255));
+        skinElement.dyes.add(new Color(0, 0, 255, 255));
 
         CTrait trait = new CTrait();
         trait.name = "Storm Breaker";
-        trait.elements.add(element);
+        trait.elements.add(skinElement);
+        trait.minValue = 10;
+        trait.maxValue = 10;
+        itemType.staticTraits.put(trait.name, trait);
+
+
+        CTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CTraitElement_ForcedAWSkinTypeOverride();
+        skinTypeOverrideElement.skinType = "axe";
+
+        trait = new CTrait();
+        trait.name = "Axe Skin Override";
+        trait.elements.add(skinTypeOverrideElement);
         trait.minValue = 1;
-        trait.maxValue = 3;
+        trait.maxValue = 1;
         itemType.staticTraits.put(trait.name, trait);
 
 
