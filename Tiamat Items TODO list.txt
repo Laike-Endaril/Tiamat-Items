@@ -1,6 +1,3 @@
-Possible issue: if you equip 2 1 handed swords, they will both apply both skins to both weapons
-
-
 "Empty" layers/texture (tiamat items only)
 "Partial" layers/texture (tiamat items only)
 "Full" layers/texture (tiamat items only)

@@ -19,6 +19,61 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part)
+    {
+        return putPartInEmptySlot(core, part, true);
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged)
+    {
+        return putPartInEmptySlot(core, part, recalcIfChanged, Integer.MAX_VALUE);
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, int level)
+    {
+        return putPartInEmptySlot(core, part, true, level);
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged, int level)
+    {
+        if (level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part))
+        {
+            ArrayList<ItemStack> result = new ArrayList<>();
+            result.add(part);
+            return result;
+        }
+
+
+        int i = 0, optional = -1;
+        for (PartSlot slot : AssemblyTags.getPartSlots(core))
+        {
+            if (slot.part.isEmpty() && slot.partIsValidForSlot(part))
+            {
+                if (slot.required) return putPartInSlot(core, i, part, recalcIfChanged, level);
+                else if (optional == -1) optional = i;
+            }
+            i++;
+        }
+
+        if (optional != -1) return putPartInSlot(core, optional, part, recalcIfChanged, level);
+
+        ArrayList<ItemStack> result = new ArrayList<>();
+        result.add(part);
+        return result;
+    }
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     */
     public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part)
     {
         return putPartInSlot(core, slot, part, true);
@@ -45,13 +100,16 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
     {
-        if (slot < 0 || core.isEmpty()) return new ArrayList<>();
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (slot < 0 || core.isEmpty())
+        {
+            result.add(part);
+            return result;
+        }
 
 
         if (part.isEmpty()) return removePartFromSlot(core, slot, recalcIfChanged, level);
 
-
-        ArrayList<ItemStack> result = new ArrayList<>();
 
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
         if (slot >= partSlots.size())

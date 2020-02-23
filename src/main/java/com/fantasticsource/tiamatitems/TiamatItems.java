@@ -16,6 +16,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -26,6 +27,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -236,5 +238,13 @@ public class TiamatItems
                 ClientData.badStackToGoodStack.remove(stack);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void test(PlayerInteractEvent.EntityInteractSpecific event)
+    {
+        if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
+
+        ItemAssembly.putPartInEmptySlot(event.getEntityPlayer().inventory.getStackInSlot(0), event.getEntityPlayer().inventory.getStackInSlot(1));
     }
 }

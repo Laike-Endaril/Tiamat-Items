@@ -121,6 +121,17 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
+        CTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CTraitElement_ForcedAWSkinTypeOverride();
+        skinTypeOverrideElement.skinType = "axe";
+
+        trait = new CTrait();
+        trait.name = "Axe Skin Override";
+        trait.elements.add(skinTypeOverrideElement);
+        trait.minValue = 1;
+        trait.maxValue = 1;
+        itemType.staticTraits.put(trait.name, trait);
+
+
         HashSet<String> validItemTypes = new HashSet<>();
         validItemTypes.add("2H Axehead");
         PartSlot.validItemTypes.put("2H Axehead", validItemTypes);
@@ -232,7 +243,7 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_TransientAWSkin skinElement = new CTraitElement_TransientAWSkin();
+        CTraitElement_NormalAWSkin skinElement = new CTraitElement_NormalAWSkin();
         skinElement.libraryFile = "downloads/5080 - Storm Breaker";
         skinElement.skinType = "armourers:axe";
         skinElement.dyes.add(new Color(255, 0, 0, 255));
@@ -244,17 +255,6 @@ public class Test
         trait.elements.add(skinElement);
         trait.minValue = 10;
         trait.maxValue = 10;
-        itemType.staticTraits.put(trait.name, trait);
-
-
-        CTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CTraitElement_ForcedAWSkinTypeOverride();
-        skinTypeOverrideElement.skinType = "axe";
-
-        trait = new CTrait();
-        trait.name = "Axe Skin Override";
-        trait.elements.add(skinTypeOverrideElement);
-        trait.minValue = 1;
-        trait.maxValue = 1;
         itemType.staticTraits.put(trait.name, trait);
 
 
