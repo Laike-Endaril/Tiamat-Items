@@ -82,8 +82,6 @@ public class ActiveAttributeModTags
 
     public static void addActiveMod(ItemStack stack, String attributeMod)
     {
-        if (itemHasActiveMod(stack, attributeMod)) return;
-
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 

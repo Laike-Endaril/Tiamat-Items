@@ -82,8 +82,6 @@ public class PassiveAttributeModTags
 
     public static void addPassiveMod(ItemStack stack, String attributeMod)
     {
-        if (itemHasPassiveMod(stack, attributeMod)) return;
-
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
