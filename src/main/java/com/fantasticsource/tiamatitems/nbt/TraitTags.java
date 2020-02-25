@@ -18,7 +18,7 @@ public class TraitTags
     //OR
     //<poolSetName>:<poolName>:<traitName>:<wholeNumberPercentage>
 
-    public static void addTraitTag(ItemStack stack, String poolSetName, CTraitPool pool, CTrait trait, int wholeNumberPercentage)
+    public static void addTraitTag(ItemStack stack, String poolSetName, CTraitPool pool, CTrait trait, ArrayList<Integer> baseArgs)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -29,7 +29,9 @@ public class TraitTags
         if (!compound.hasKey("traits")) compound.setTag("traits", new NBTTagList());
         NBTTagList traitList = compound.getTagList("traits", Constants.NBT.TAG_STRING);
 
-        traitList.appendTag(new NBTTagString(poolSetName + ":" + (pool == null ? "" : pool.name + ":") + trait.name + ":" + wholeNumberPercentage));
+        StringBuilder traitString = new StringBuilder(poolSetName + ":" + (pool == null ? "" : pool.name + ":") + trait.name);
+        for (int arg : baseArgs) traitString.append(":").append(arg);
+        traitList.appendTag(new NBTTagString(traitString.toString()));
     }
 
     public static void clearTraitTags(ItemStack stack)

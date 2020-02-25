@@ -2,7 +2,6 @@ package com.fantasticsource.tiamatitems.trait.element;
 
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.CTraitElement;
-import com.fantasticsource.tiamatitems.trait.IUnmultipliedRangeTrait;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -12,46 +11,46 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
-public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipliedRangeTrait
+public class CTraitElement_PartSlot extends CTraitElement
 {
     public String partSlotType = "";
+    public int minCount = 0, maxCount = 1;
     public boolean required = false;
 
-    @Override
-    public String getDescription()
-    {
-        return "Add " + Tools.max(0, (int) minimum) + " to " + Tools.max(0, (int) maximum) + (required ? " required " : " optional ") + partSlotType + " slots";
-    }
 
     @Override
-    public String getDescription(int wholeNumberPercentage)
+    public int requiredArgumentCount()
     {
-        return "Add " + getIntAmount(wholeNumberPercentage) + (required ? " required " : " optional ") + partSlotType + " slots";
-    }
-
-    @Override
-    public void applyToItem(ItemStack stack, int wholeNumberPercentage)
-    {
-        for (int i = getIntAmount(wholeNumberPercentage); i > 0; i--) AssemblyTags.addPartSlot(stack, partSlotType, required);
+        return 1;
     }
 
 
     @Override
-    public boolean equals(Object obj)
+    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        if (!(obj instanceof CTraitElement_PartSlot)) return false;
+        if (baseArgs.size() == 0)
+        {
+            return "Add " + Tools.max(0, minCount) + " to " + Tools.max(0, maxCount) + (required ? " required " : " optional ") + partSlotType + " slots";
+        }
 
-        CTraitElement_PartSlot other = (CTraitElement_PartSlot) obj;
-        return other.partSlotType.equals(partSlotType) && other.required == required;
+        int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        return "Add " + count + (required ? " required " : " optional ") + partSlotType + " slots";
+    }
+
+
+    @Override
+    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    {
+        int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        for (; count > 0; count--) AssemblyTags.addPartSlot(stack, partSlotType, required);
     }
 
 
     @Override
     public CTraitElement_PartSlot write(ByteBuf buf)
     {
-        super.write(buf);
-
         ByteBufUtils.writeUTF8String(buf, partSlotType);
         buf.writeBoolean(required);
 
@@ -61,8 +60,6 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
     @Override
     public CTraitElement_PartSlot read(ByteBuf buf)
     {
-        super.read(buf);
-
         partSlotType = ByteBufUtils.readUTF8String(buf);
         required = buf.readBoolean();
 
@@ -72,8 +69,6 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
     @Override
     public CTraitElement_PartSlot save(OutputStream stream)
     {
-        super.save(stream);
-
         new CStringUTF8().set(partSlotType).save(stream);
         new CBoolean().set(required).save(stream);
 
@@ -83,8 +78,6 @@ public class CTraitElement_PartSlot extends CTraitElement implements IUnmultipli
     @Override
     public CTraitElement_PartSlot load(InputStream stream)
     {
-        super.load(stream);
-
         partSlotType = new CStringUTF8().load(stream).value;
         required = new CBoolean().load(stream).value;
 

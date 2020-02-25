@@ -9,42 +9,37 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
 {
     public String skinType = "";
 
+
     @Override
-    public String getDescription()
+    public int requiredArgumentCount()
+    {
+        return 0;
+    }
+
+
+    @Override
+    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Forced AW Skin Type Override: " + skinType;
     }
 
-    @Override
-    public String getDescription(int wholeNumberPercentage)
-    {
-        return getDescription();
-    }
 
     @Override
-    public void applyToItem(ItemStack stack, int wholeNumberPercentage)
+    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         ForcedAWSkinOverrides.setForcedAWSkinType(stack, skinType);
     }
 
 
     @Override
-    public boolean equals(Object obj)
-    {
-        return obj instanceof CTraitElement_ForcedAWSkinTypeOverride && ((CTraitElement_ForcedAWSkinTypeOverride) obj).skinType.equals(skinType);
-    }
-
-
-    @Override
     public CTraitElement_ForcedAWSkinTypeOverride write(ByteBuf buf)
     {
-        super.write(buf);
-
         ByteBufUtils.writeUTF8String(buf, skinType);
 
         return this;
@@ -53,8 +48,6 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     @Override
     public CTraitElement_ForcedAWSkinTypeOverride read(ByteBuf buf)
     {
-        super.read(buf);
-
         skinType = ByteBufUtils.readUTF8String(buf);
 
         return this;
@@ -63,8 +56,6 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     @Override
     public CTraitElement_ForcedAWSkinTypeOverride save(OutputStream stream)
     {
-        super.save(stream);
-
         new CStringUTF8().set(skinType).save(stream);
 
         return this;
@@ -73,8 +64,6 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     @Override
     public CTraitElement_ForcedAWSkinTypeOverride load(InputStream stream)
     {
-        super.load(stream);
-
         skinType = new CStringUTF8().load(stream).value;
 
         return this;

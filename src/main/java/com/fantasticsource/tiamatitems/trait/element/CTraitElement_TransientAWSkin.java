@@ -19,46 +19,31 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
     public ArrayList<Color> dyes = new ArrayList<>(); //The alpha of these colors is used for the AW paint type
     //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
 
+
     @Override
-    public String getDescription()
+    public int requiredArgumentCount()
+    {
+        return 0;
+    }
+
+
+    @Override
+    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "AW Skin: " + libraryFile;
     }
 
-    @Override
-    public String getDescription(int wholeNumberPercentage)
-    {
-        return getDescription();
-    }
 
     @Override
-    public void applyToItem(ItemStack stack, int wholeNumberPercentage)
+    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         TransientAWSkinHandler.addTransientAWSkin(stack, libraryFile, skinType, dyes.toArray(new Color[0]));
     }
 
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof CTraitElement_TransientAWSkin)) return false;
-
-        CTraitElement_TransientAWSkin other = (CTraitElement_TransientAWSkin) obj;
-        if (other.dyes.size() != dyes.size()) return false;
-        for (int i = dyes.size() - 1; i >= 0; i--)
-        {
-            if (!dyes.get(i).equals(other.dyes.get(i))) return false;
-        }
-
-        return other.libraryFile.equals(libraryFile) && other.skinType.equals(skinType);
-    }
-
-
-    @Override
     public CTraitElement_TransientAWSkin write(ByteBuf buf)
     {
-        super.write(buf);
-
         ByteBufUtils.writeUTF8String(buf, libraryFile);
         ByteBufUtils.writeUTF8String(buf, skinType);
 
@@ -71,8 +56,6 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
     @Override
     public CTraitElement_TransientAWSkin read(ByteBuf buf)
     {
-        super.read(buf);
-
         libraryFile = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
 
@@ -85,8 +68,6 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
     @Override
     public CTraitElement_TransientAWSkin save(OutputStream stream)
     {
-        super.save(stream);
-
         new CStringUTF8().set(libraryFile).save(stream).set(skinType).save(stream);
 
         CInt ci = new CInt().set(dyes.size()).save(stream);
@@ -98,8 +79,6 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
     @Override
     public CTraitElement_TransientAWSkin load(InputStream stream)
     {
-        super.load(stream);
-
         CStringUTF8 cs = new CStringUTF8();
         libraryFile = cs.load(stream).value;
         skinType = cs.load(stream).value;

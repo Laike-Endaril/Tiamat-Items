@@ -1,4 +1,8 @@
-AW dye traits, using wholeNumberPercentage as the color int...and dye index? I have enough bits because the 4th channel of an AW dye is paint type not alpha...
+Randomly colored skin traits
+
+Random skin traits
+
+Randomly colored random skin traits
 
 
 

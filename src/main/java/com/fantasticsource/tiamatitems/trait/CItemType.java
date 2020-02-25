@@ -73,11 +73,14 @@ public class CItemType extends Component
             for (String traitString : traitStrings.toArray(new String[0]))
             {
                 String[] tokens = Tools.fixedSplit(traitString, ":");
-                if (tokens.length != 3) continue;
+                if (!tokens[0].equals("Static")) continue;
 
                 if (tokens[1].equals(trait.name))
                 {
-                    totalValue += trait.applyToItem(stack, "Static", this, genLevel, null, Integer.parseInt(tokens[2]));
+                    int[] baseArgs = new int[tokens.length - 2];
+                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+
+                    totalValue += trait.applyToItem(stack, "Static", this, genLevel, null, baseArgs);
                     traitStrings.remove(traitString);
                     done = true;
                     break;
@@ -126,7 +129,7 @@ public class CItemType extends Component
                 for (String traitString : traitStrings.toArray(new String[0]))
                 {
                     String[] tokens = Tools.fixedSplit(traitString, ":");
-                    if (tokens.length != 4) continue;
+                    if (tokens[0].equals("Static")) continue;
 
                     String poolSetName2 = tokens[0];
                     if (!poolSetName2.equals(poolSetName)) continue;
@@ -152,7 +155,11 @@ public class CItemType extends Component
                         weightedPools.remove(pool);
                     }
 
-                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool, Integer.parseInt(tokens[3]));
+
+                    int[] baseArgs = new int[tokens.length - 3];
+                    for (int i2 = 0; i2 < baseArgs.length; i2++) baseArgs[i2] = Integer.parseInt(tokens[i2 + 3]);
+
+                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool, baseArgs);
                     traitStrings.remove(traitString);
                     done = true;
                     break;

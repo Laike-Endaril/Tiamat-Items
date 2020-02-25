@@ -38,8 +38,8 @@ public class Test
 
         CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
         passiveAttributeMod.attributeName = "generic.maxHealth";
-        passiveAttributeMod.minimum = 1;
-        passiveAttributeMod.maximum = 3;
+        passiveAttributeMod.minAmount = 1;
+        passiveAttributeMod.maxAmount = 3;
 
         CTrait trait = new CTrait();
         trait.name = "MaxHP";
@@ -62,8 +62,6 @@ public class Test
 
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
-        partSlot.minimum = 0;
-        partSlot.maximum = 1;
 
         CTrait trait;
         for (int i = 0; i < 10; i++)
@@ -139,8 +137,7 @@ public class Test
         CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
         partSlot.required = true;
-        partSlot.minimum = 1;
-        partSlot.maximum = 1;
+        partSlot.minCount = 1;
 
         trait = new CTrait();
         trait.name = "2HAxehead";
@@ -157,8 +154,7 @@ public class Test
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
         partSlot.required = true;
-        partSlot.minimum = 1;
-        partSlot.maximum = 1;
+        partSlot.minCount = 1;
 
         trait = new CTrait();
         trait.name = "2HAxeHandle";
@@ -175,8 +171,7 @@ public class Test
         partSlot = new CTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
         partSlot.required = true;
-        partSlot.minimum = 1;
-        partSlot.maximum = 1;
+        partSlot.minCount = 1;
 
         trait = new CTrait();
         trait.name = "2HAxeSkin";
@@ -216,8 +211,8 @@ public class Test
 
         CTraitElement_ActiveAttributeMod element = new CTraitElement_ActiveAttributeMod();
         element.attributeName = "generic.attackDamage";
-        element.minimum = 1;
-        element.maximum = 3;
+        element.minAmount = 1;
+        element.maxAmount = 3;
 
         CTrait trait = new CTrait();
         trait.name = "Damage";
@@ -243,7 +238,7 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_NormalAWSkin skinElement = new CTraitElement_NormalAWSkin();
+        CTraitElement_AWSkin skinElement = new CTraitElement_AWSkin();
         skinElement.libraryFile = "downloads/5080 - Storm Breaker";
         skinElement.skinType = "armourers:axe";
         skinElement.dyes.add(new Color(255, 0, 0, 255));

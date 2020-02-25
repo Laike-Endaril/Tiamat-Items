@@ -369,11 +369,15 @@ public class ItemAssembly
             {
                 String[] tokens = Tools.fixedSplit(traitString, ":");
 
-                if (tokens.length == 3)
+                if (tokens[0].equals("Static"))
                 {
                     //Static trait
                     CTrait trait = itemType.staticTraits.get(tokens[1]);
-                    trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, Integer.parseInt(tokens[2]));
+
+                    int[] baseArgs = new int[tokens.length - 2];
+                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+
+                    value += trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, baseArgs);
                 }
                 else
                 {
@@ -390,7 +394,11 @@ public class ItemAssembly
                             break;
                         }
                     }
-                    trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, Integer.parseInt(tokens[3]));
+
+                    int[] baseArgs = new int[tokens.length - 3];
+                    for (int i2 = 0; i2 < baseArgs.length; i2++) baseArgs[i2] = Integer.parseInt(tokens[i2 + 3]);
+
+                    value += trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, baseArgs);
                 }
             }
         }

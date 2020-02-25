@@ -9,45 +9,37 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class CTraitElement_RightClickAction extends CTraitElement
 {
     public String actionName = "";
 
+
     @Override
-    public String getDescription()
+    public int requiredArgumentCount()
+    {
+        return 0;
+    }
+
+
+    @Override
+    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Right click: " + actionName;
     }
 
-    @Override
-    public String getDescription(int wholeNumberPercentage)
-    {
-        return getDescription();
-    }
 
     @Override
-    public void applyToItem(ItemStack stack, int wholeNumberPercentage)
+    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         ActionTags.setRightClickAction(stack, actionName);
     }
 
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof CTraitElement_RightClickAction)) return false;
-
-        CTraitElement_RightClickAction other = (CTraitElement_RightClickAction) obj;
-        return other.actionName.equals(actionName);
-    }
-
-
-    @Override
     public CTraitElement_RightClickAction write(ByteBuf buf)
     {
-        super.write(buf);
-
         ByteBufUtils.writeUTF8String(buf, actionName);
 
         return this;
@@ -56,8 +48,6 @@ public class CTraitElement_RightClickAction extends CTraitElement
     @Override
     public CTraitElement_RightClickAction read(ByteBuf buf)
     {
-        super.read(buf);
-
         actionName = ByteBufUtils.readUTF8String(buf);
 
         return this;
@@ -66,8 +56,6 @@ public class CTraitElement_RightClickAction extends CTraitElement
     @Override
     public CTraitElement_RightClickAction save(OutputStream stream)
     {
-        super.save(stream);
-
         new CStringUTF8().set(actionName).save(stream);
 
         return this;
@@ -76,8 +64,6 @@ public class CTraitElement_RightClickAction extends CTraitElement
     @Override
     public CTraitElement_RightClickAction load(InputStream stream)
     {
-        super.load(stream);
-
         actionName = new CStringUTF8().load(stream).value;
 
         return this;

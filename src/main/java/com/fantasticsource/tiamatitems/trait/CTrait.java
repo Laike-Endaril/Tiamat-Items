@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -9,6 +10,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class CTrait extends Component
@@ -22,27 +24,41 @@ public class CTrait extends Component
     /**
      * @return The monetary value of the resulting trait
      */
-    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitPool pool)
+    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitPool pool, int... baseArgs)
     {
-        int baseWholeNumberPercentage = (int) (Math.random() * 101);
-        return applyToItem(stack, poolSetName, itemTypeGen, level, pool, baseWholeNumberPercentage);
-    }
+        ArrayList<Integer> baseArguments = new ArrayList<>();
+        for (int base : baseArgs) baseArguments.add(base);
 
-    /**
-     * @return The monetary value of the resulting trait
-     */
-    public double applyToItem(ItemStack stack, String poolSetName, CItemType itemTypeGen, double level, CTraitPool pool, int baseWholeNumberPercentage)
-    {
-        int wholeNumberPercentage = (int) (baseWholeNumberPercentage * itemTypeGen.percentageMultiplier * (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)));
+
+        int requiredArgumentCount = 0;
         for (CTraitElement element : elements)
         {
-            if (element instanceof IUnmultipliedRangeTrait) element.applyToItem(stack, baseWholeNumberPercentage);
-            else element.applyToItem(stack, wholeNumberPercentage);
+            requiredArgumentCount = Tools.max(requiredArgumentCount, element.requiredArgumentCount());
+        }
+        while (baseArguments.size() < requiredArgumentCount)
+        {
+            baseArguments.add(Tools.random(Integer.MAX_VALUE));
         }
 
-        TraitTags.addTraitTag(stack, poolSetName, pool, this, baseWholeNumberPercentage);
 
-        return minValue + (maxValue - minValue) * wholeNumberPercentage / 100;
+        double multipliedTotal = 0;
+        double[] multipliedArgs = new double[baseArguments.size()];
+        int i = 0;
+        for (int base : baseArguments)
+        {
+            double multiplied = ((double) base / (Integer.MAX_VALUE - 1) * itemTypeGen.percentageMultiplier * (CGlobalSettings.baseAttributeMultiplier + (CGlobalSettings.attributeMultiplierPerLevel * level)));
+            multipliedArgs[i++] = multiplied;
+            multipliedTotal += multiplied;
+        }
+
+
+        for (CTraitElement element : elements) element.applyToItem(stack, baseArguments, multipliedArgs);
+
+
+        TraitTags.addTraitTag(stack, poolSetName, pool, this, baseArguments);
+
+
+        return minValue + (maxValue - minValue) * multipliedTotal / multipliedArgs.length / (Integer.MAX_VALUE - 1);
     }
 
 
