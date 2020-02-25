@@ -17,7 +17,7 @@ public class CTraitElement_TransientAWSkin extends CTraitElement
 {
     public String libraryFile = "", skinType = "";
     public ArrayList<Color> dyes = new ArrayList<>(); //The alpha of these colors is used for the AW paint type
-    //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES
+    //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
 
     @Override
     public String getDescription()

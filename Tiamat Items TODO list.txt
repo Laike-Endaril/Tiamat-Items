@@ -4,6 +4,7 @@ AW dye traits, using wholeNumberPercentage as the color int...and dye index? I h
 
 Some way of generating a skin from within a specified folder, with the pool defined as the first <itemlevel>/<maxitemlevel> fraction of skin files in the pool
 ...probably as a pseudo-trait generation specification!  This doesn't work well with definition as a single trait, so it's best to auto-generate a trait pool for this!
+...should I make a standard pseudo-generation system?
 
 
 

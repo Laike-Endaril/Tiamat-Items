@@ -13,9 +13,9 @@ import java.util.HashSet;
 
 public class CTrait extends Component
 {
-    public String name;
+    public String name = "";
     public boolean isGood = true; //Whether it's a good thing to have more of this trait
-    public double minValue, maxValue; //The monetary value of this trait at minimum and maximum percentage, respectively
+    public double minValue = 0, maxValue = 0; //The monetary value of this trait at minimum and maximum percentage, respectively
     public HashSet<CTraitElement> elements = new HashSet<>();
 
 
