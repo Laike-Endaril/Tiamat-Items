@@ -1,6 +1,8 @@
 package com.fantasticsource.tiamatitems.trait.element;
 
+import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.datastructures.Color;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 public class CTraitElement_AWSkin extends CTraitElement
 {
     public String libraryFile = "", skinType = "";
+    public boolean isTransient = false;
     public ArrayList<Color> dyes = new ArrayList<>(); //The alpha of these colors is used for the AW paint type
     //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
 
@@ -30,6 +33,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
+        if (isTransient) return "Transient AW Skin: " + libraryFile;
         return "AW Skin: " + libraryFile;
     }
 
@@ -37,6 +41,13 @@ public class CTraitElement_AWSkin extends CTraitElement
     @Override
     public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
+        if (isTransient)
+        {
+            TransientAWSkinHandler.addTransientAWSkin(stack, libraryFile, skinType, dyes.toArray(new Color[0]));
+            return;
+        }
+
+
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
 
         NBTTagCompound compound = new NBTTagCompound();
@@ -68,6 +79,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     {
         ByteBufUtils.writeUTF8String(buf, libraryFile);
         ByteBufUtils.writeUTF8String(buf, skinType);
+        buf.writeBoolean(isTransient);
 
         buf.writeInt(dyes.size());
         for (Color color : dyes) buf.writeInt(color.color());
@@ -80,6 +92,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     {
         libraryFile = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
+        isTransient = buf.readBoolean();
 
         dyes.clear();
         for (int i = buf.readInt(); i > 0; i--) dyes.add(new Color(buf.readInt()));
@@ -91,6 +104,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     public CTraitElement_AWSkin save(OutputStream stream)
     {
         new CStringUTF8().set(libraryFile).save(stream).set(skinType).save(stream);
+        new CBoolean().set(isTransient).save(stream);
 
         CInt ci = new CInt().set(dyes.size()).save(stream);
         for (Color color : dyes) ci.set(color.color()).save(stream);
@@ -104,6 +118,7 @@ public class CTraitElement_AWSkin extends CTraitElement
         CStringUTF8 cs = new CStringUTF8();
         libraryFile = cs.load(stream).value;
         skinType = cs.load(stream).value;
+        isTransient = new CBoolean().load(stream).value;
 
         CInt ci = new CInt();
         dyes.clear();
