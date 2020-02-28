@@ -1,8 +1,15 @@
 package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.nbt.TraitTags;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
@@ -27,8 +34,10 @@ public class CItemType extends Component
 
     public String name = "", slotting = "None";
     public double percentageMultiplier = 1, value;
-    public LinkedHashMap<String, CTrait> staticTraits = new LinkedHashMap<>();
-    public LinkedHashMap<String, LinkedHashMap<String, CTraitPool>> randomTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
+    public LinkedHashMap<String, CRecalculableTrait> staticRecalculableTraits = new LinkedHashMap<>();
+    public LinkedHashMap<String, CUnrecalculableTrait> staticUnrecalculableTraits = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
+    public LinkedHashMap<String, LinkedHashMap<String, CUnrecalculableTraitPool>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
 
 
     //TODO call this method on item gen definition change, including globals
@@ -46,16 +55,19 @@ public class CItemType extends Component
 
     public ItemStack generateItem(int level, CRarity rarity)
     {
-        return generateItem(level, rarity, new ArrayList<>());
+        return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity);
     }
 
-    public ItemStack generateItem(int level, CRarity rarity, ArrayList<String> traitStrings)
+
+    public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity)
     {
-        ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
+        //Ensure we're working with a clean core
+        ItemStack core = AssemblyTags.getInternalCore(stack);
+        if (!core.isEmpty()) stack = core;
 
 
+        //Apply and/or overwrite most main data
         MiscTags.setItemGenVersion(stack, getVersion());
-
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);
@@ -64,10 +76,18 @@ public class CItemType extends Component
         MiscTags.setItemSlotting(stack, slotting);
 
 
-        //Static traits
-        double genLevel = rarity.itemLevelModifier + level;
+        //Prep generation vars
+        double itemTypeAndLevelMultiplier = percentageMultiplier * (CGlobalSettings.baseMultiplier + (CGlobalSettings.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
         double totalValue = value;
-        for (CTrait trait : staticTraits.values())
+
+
+        //Grab trait NBT, then clear it from item
+        ArrayList<String> traitStrings = TraitTags.getTraitStrings(stack);
+        TraitTags.clearTraitTags(stack);
+
+
+        //Generate NBT and value for static recalculable traits
+        for (CRecalculableTrait trait : staticRecalculableTraits.values())
         {
             boolean done = false;
             for (String traitString : traitStrings.toArray(new String[0]))
@@ -80,17 +100,17 @@ public class CItemType extends Component
                     int[] baseArgs = new int[tokens.length - 2];
                     for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
 
-                    totalValue += trait.applyToItem(stack, "Static", this, genLevel, null, baseArgs);
+                    totalValue += trait.generateNBT(stack, "Static", null, itemTypeAndLevelMultiplier, baseArgs);
                     traitStrings.remove(traitString);
                     done = true;
                     break;
                 }
             }
-            if (!done) totalValue += trait.applyToItem(stack, "Static", this, genLevel, null);
+            if (!done) totalValue += trait.generateNBT(stack, "Static", null, itemTypeAndLevelMultiplier);
         }
 
 
-        //Trait pools
+        //Generate NBT and value for random recalculable traits
         for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
         {
             int rollCount = poolSetRollCountEntry.getValue();
@@ -98,17 +118,17 @@ public class CItemType extends Component
 
 
             String poolSetName = poolSetRollCountEntry.getKey();
-            LinkedHashMap<String, CTraitPool> randomTraitPools = randomTraitPoolSets.get(poolSetName);
+            LinkedHashMap<String, CRecalculableTraitPool> randomTraitPools = randomRecalculableTraitPoolSets.get(poolSetName);
             if (randomTraitPools == null) continue;
 
 
-            ArrayList<CTraitPool> weightedPools = new ArrayList<>();
-            LinkedHashMap<CTraitPool, ArrayList<CTrait>> traitPools = new LinkedHashMap<>();
-            for (CTraitPool pool : randomTraitPools.values())
+            ArrayList<CRecalculableTraitPool> weightedPools = new ArrayList<>();
+            LinkedHashMap<CRecalculableTraitPool, ArrayList<CRecalculableTrait>> traitPools = new LinkedHashMap<>();
+            for (CRecalculableTraitPool pool : randomTraitPools.values())
             {
-                ArrayList<CTrait> traits = new ArrayList<>();
+                ArrayList<CRecalculableTrait> traits = new ArrayList<>();
 
-                for (Map.Entry<CTrait, Integer> entry : pool.traitGenWeights.entrySet())
+                for (Map.Entry<CRecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
                 {
                     for (int i = entry.getValue(); i > 0; i--)
                     {
@@ -134,12 +154,12 @@ public class CItemType extends Component
                     String poolSetName2 = tokens[0];
                     if (!poolSetName2.equals(poolSetName)) continue;
 
-                    CTraitPool pool = randomTraitPools.get(tokens[1]);
+                    CRecalculableTraitPool pool = randomTraitPools.get(tokens[1]);
                     if (pool == null || !weightedPools.contains(pool)) continue;
 
-                    ArrayList<CTrait> list = traitPools.get(pool);
-                    CTrait trait = null;
-                    for (CTrait trait2 : pool.traitGenWeights.keySet())
+                    ArrayList<CRecalculableTrait> list = traitPools.get(pool);
+                    CRecalculableTrait trait = null;
+                    for (CRecalculableTrait trait2 : pool.traitGenWeights.keySet())
                     {
                         if (trait2.name.equals(tokens[2]))
                         {
@@ -159,7 +179,7 @@ public class CItemType extends Component
                     int[] baseArgs = new int[tokens.length - 3];
                     for (int i2 = 0; i2 < baseArgs.length; i2++) baseArgs[i2] = Integer.parseInt(tokens[i2 + 3]);
 
-                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool, baseArgs);
+                    totalValue += trait.generateNBT(stack, poolSetName, pool, itemTypeAndLevelMultiplier, baseArgs);
                     traitStrings.remove(traitString);
                     done = true;
                     break;
@@ -167,11 +187,11 @@ public class CItemType extends Component
 
                 if (!done)
                 {
-                    CTraitPool pool = Tools.choose(weightedPools);
-                    ArrayList<CTrait> list = traitPools.get(pool);
-                    CTrait trait = Tools.choose(list);
+                    CRecalculableTraitPool pool = Tools.choose(weightedPools);
+                    ArrayList<CRecalculableTrait> list = traitPools.get(pool);
+                    CRecalculableTrait trait = Tools.choose(list);
 
-                    totalValue += trait.applyToItem(stack, poolSetName, this, genLevel, pool);
+                    totalValue += trait.generateNBT(stack, poolSetName, pool, itemTypeAndLevelMultiplier);
 
                     while (list.remove(trait))
                     {
@@ -182,13 +202,103 @@ public class CItemType extends Component
         }
 
 
-        //Value
+        //Apply and generate value for static unrecalculable traits
+        for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values())
+        {
+            totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+        }
+
+
+        //Apply and generate value for random unrecalculable traits
+        for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
+        {
+            int rollCount = poolSetRollCountEntry.getValue();
+            if (rollCount <= 0) continue;
+
+
+            String poolSetName = poolSetRollCountEntry.getKey();
+            LinkedHashMap<String, CUnrecalculableTraitPool> randomTraitPools = randomUnrecalculableTraitPoolSets.get(poolSetName);
+            if (randomTraitPools == null) continue;
+
+
+            ArrayList<CUnrecalculableTraitPool> weightedPools = new ArrayList<>();
+            LinkedHashMap<CUnrecalculableTraitPool, ArrayList<CUnrecalculableTrait>> traitPools = new LinkedHashMap<>();
+            for (CUnrecalculableTraitPool pool : randomTraitPools.values())
+            {
+                ArrayList<CUnrecalculableTrait> traits = new ArrayList<>();
+
+                for (Map.Entry<CUnrecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
+                {
+                    for (int i = entry.getValue(); i > 0; i--)
+                    {
+                        traits.add(entry.getKey());
+                        weightedPools.add(pool);
+                    }
+                }
+
+                traitPools.put(pool, traits);
+            }
+
+
+            for (int i = rollCount; i > 0; i--)
+            {
+                if (weightedPools.size() == 0) break;
+
+                CUnrecalculableTraitPool pool = Tools.choose(weightedPools);
+                ArrayList<CUnrecalculableTrait> list = traitPools.get(pool);
+                CUnrecalculableTrait trait = Tools.choose(list);
+
+                totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+
+                while (list.remove(trait))
+                {
+                    weightedPools.remove(pool);
+                }
+            }
+        }
+
+
+        //Apply value
         MiscTags.setItemValue(stack, (int) totalValue);
 
 
-        //Name
+        //Generate name
         stack.setStackDisplayName(rarity.textColor + name);
         //TODO Generate affixes
+
+
+        //Save internal core
+        AssemblyTags.saveInternalCore(stack);
+
+
+        //Apply static and random recalculable traits
+        for (String traitString : TraitTags.getTraitStrings(stack))
+        {
+            String[] tokens = Tools.fixedSplit(traitString, ":");
+            if (tokens[0].equals("Static"))
+            {
+                CRecalculableTrait trait = staticRecalculableTraits.get(tokens[1]);
+                {
+                    int[] baseArgs = new int[tokens.length - 2];
+                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+
+                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                }
+            }
+            else
+            {
+                for (CRecalculableTrait trait : randomRecalculableTraitPoolSets.get(tokens[0]).get(tokens[1]).traitGenWeights.keySet())
+                {
+                    if (trait.name.equals(tokens[2]))
+                    {
+                        int[] baseArgs = new int[tokens.length - 3];
+                        for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 3]);
+
+                        trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                    }
+                }
+            }
+        }
 
 
         return stack;
@@ -203,17 +313,17 @@ public class CItemType extends Component
         buf.writeDouble(percentageMultiplier);
         buf.writeDouble(value);
 
-        buf.writeInt(staticTraits.size());
-        for (CTrait gen : staticTraits.values()) gen.write(buf);
+        buf.writeInt(staticRecalculableTraits.size());
+        for (CRecalculableTrait trait : staticRecalculableTraits.values()) trait.write(buf);
 
-        buf.writeInt(randomTraitPoolSets.size());
-        for (Map.Entry<String, LinkedHashMap<String, CTraitPool>> entry : randomTraitPoolSets.entrySet())
+        buf.writeInt(randomRecalculableTraitPoolSets.size());
+        for (Map.Entry<String, LinkedHashMap<String, CRecalculableTraitPool>> entry : randomRecalculableTraitPoolSets.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
 
-            LinkedHashMap<String, CTraitPool> poolSet = entry.getValue();
+            LinkedHashMap<String, CRecalculableTraitPool> poolSet = entry.getValue();
             buf.writeInt(poolSet.size());
-            for (CTraitPool pool : poolSet.values()) pool.write(buf);
+            for (CRecalculableTraitPool pool : poolSet.values()) pool.write(buf);
         }
 
         return this;
@@ -227,24 +337,24 @@ public class CItemType extends Component
         percentageMultiplier = buf.readDouble();
         value = buf.readDouble();
 
-        staticTraits.clear();
-        CTrait trait;
+        staticRecalculableTraits.clear();
+        CRecalculableTrait trait;
         for (int i = buf.readInt(); i > 0; i--)
         {
-            trait = new CTrait().read(buf);
-            staticTraits.put(trait.name, trait);
+            trait = new CRecalculableTrait().read(buf);
+            staticRecalculableTraits.put(trait.name, trait);
         }
 
-        randomTraitPoolSets.clear();
-        CTraitPool pool;
+        randomRecalculableTraitPoolSets.clear();
+        CRecalculableTraitPool pool;
         for (int i = buf.readInt(); i > 0; i--)
         {
-            LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
-            randomTraitPoolSets.put(ByteBufUtils.readUTF8String(buf), poolSet);
+            LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            randomRecalculableTraitPoolSets.put(ByteBufUtils.readUTF8String(buf), poolSet);
 
             for (int i2 = buf.readInt(); i2 > 0; i2--)
             {
-                pool = new CTraitPool().read(buf);
+                pool = new CRecalculableTraitPool().read(buf);
                 poolSet.put(pool.name, pool);
             }
         }
@@ -258,17 +368,17 @@ public class CItemType extends Component
         CStringUTF8 cs = new CStringUTF8().set(name).save(stream).set(slotting).save(stream);
         new CDouble().set(percentageMultiplier).save(stream).set(value).save(stream);
 
-        CInt ci = new CInt().set(staticTraits.size()).save(stream);
-        for (CTrait gen : staticTraits.values()) gen.save(stream);
+        CInt ci = new CInt().set(staticRecalculableTraits.size()).save(stream);
+        for (CRecalculableTrait trait : staticRecalculableTraits.values()) trait.save(stream);
 
-        ci.set(randomTraitPoolSets.size()).save(stream);
-        for (Map.Entry<String, LinkedHashMap<String, CTraitPool>> entry : randomTraitPoolSets.entrySet())
+        ci.set(randomRecalculableTraitPoolSets.size()).save(stream);
+        for (Map.Entry<String, LinkedHashMap<String, CRecalculableTraitPool>> entry : randomRecalculableTraitPoolSets.entrySet())
         {
             cs.set(entry.getKey()).save(stream);
 
-            LinkedHashMap<String, CTraitPool> poolSet = entry.getValue();
+            LinkedHashMap<String, CRecalculableTraitPool> poolSet = entry.getValue();
             ci.set(poolSet.size()).save(stream);
-            for (CTraitPool pool : poolSet.values()) pool.save(stream);
+            for (CRecalculableTraitPool pool : poolSet.values()) pool.save(stream);
         }
 
         return this;
@@ -285,24 +395,24 @@ public class CItemType extends Component
         value = cd.load(stream).value;
 
         CInt ci = new CInt();
-        staticTraits.clear();
-        CTrait trait;
+        staticRecalculableTraits.clear();
+        CRecalculableTrait trait;
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            trait = new CTrait().load(stream);
-            staticTraits.put(trait.name, trait);
+            trait = new CRecalculableTrait().load(stream);
+            staticRecalculableTraits.put(trait.name, trait);
         }
 
-        randomTraitPoolSets.clear();
-        CTraitPool pool;
+        randomRecalculableTraitPoolSets.clear();
+        CRecalculableTraitPool pool;
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
-            randomTraitPoolSets.put(cs.load(stream).value, poolSet);
+            LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            randomRecalculableTraitPoolSets.put(cs.load(stream).value, poolSet);
 
             for (int i2 = ci.load(stream).value; i2 > 0; i2--)
             {
-                pool = new CTraitPool().load(stream);
+                pool = new CRecalculableTraitPool().load(stream);
                 poolSet.put(pool.name, pool);
             }
         }

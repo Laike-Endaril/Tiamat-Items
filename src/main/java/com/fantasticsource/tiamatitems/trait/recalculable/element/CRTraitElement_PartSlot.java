@@ -1,7 +1,7 @@
-package com.fantasticsource.tiamatitems.trait.element;
+package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
-import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class CTraitElement_PartSlot extends CTraitElement
+public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 {
     public String partSlotType = "";
     public int minCount = 0, maxCount = 1;
@@ -41,15 +41,15 @@ public class CTraitElement_PartSlot extends CTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
-        int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        int count = minCount + (int) ((double) baseArgs[0] / Integer.MAX_VALUE * (maxCount - minCount + 1));
         for (; count > 0; count--) AssemblyTags.addPartSlot(stack, partSlotType, required);
     }
 
 
     @Override
-    public CTraitElement_PartSlot write(ByteBuf buf)
+    public CRTraitElement_PartSlot write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, partSlotType);
         buf.writeBoolean(required);
@@ -58,7 +58,7 @@ public class CTraitElement_PartSlot extends CTraitElement
     }
 
     @Override
-    public CTraitElement_PartSlot read(ByteBuf buf)
+    public CRTraitElement_PartSlot read(ByteBuf buf)
     {
         partSlotType = ByteBufUtils.readUTF8String(buf);
         required = buf.readBoolean();
@@ -67,7 +67,7 @@ public class CTraitElement_PartSlot extends CTraitElement
     }
 
     @Override
-    public CTraitElement_PartSlot save(OutputStream stream)
+    public CRTraitElement_PartSlot save(OutputStream stream)
     {
         new CStringUTF8().set(partSlotType).save(stream);
         new CBoolean().set(required).save(stream);
@@ -76,7 +76,7 @@ public class CTraitElement_PartSlot extends CTraitElement
     }
 
     @Override
-    public CTraitElement_PartSlot load(InputStream stream)
+    public CRTraitElement_PartSlot load(InputStream stream)
     {
         partSlotType = new CStringUTF8().load(stream).value;
         required = new CBoolean().load(stream).value;

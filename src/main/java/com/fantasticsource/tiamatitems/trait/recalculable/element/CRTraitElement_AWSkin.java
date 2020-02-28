@@ -1,7 +1,7 @@
-package com.fantasticsource.tiamatitems.trait.element;
+package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class CTraitElement_AWSkin extends CTraitElement
+public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 {
     public String libraryFile = "", skinType = "";
     public boolean isTransient = false;
@@ -39,7 +39,7 @@ public class CTraitElement_AWSkin extends CTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         if (isTransient)
         {
@@ -75,7 +75,7 @@ public class CTraitElement_AWSkin extends CTraitElement
 
 
     @Override
-    public CTraitElement_AWSkin write(ByteBuf buf)
+    public CRTraitElement_AWSkin write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, libraryFile);
         ByteBufUtils.writeUTF8String(buf, skinType);
@@ -88,7 +88,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     }
 
     @Override
-    public CTraitElement_AWSkin read(ByteBuf buf)
+    public CRTraitElement_AWSkin read(ByteBuf buf)
     {
         libraryFile = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
@@ -101,7 +101,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     }
 
     @Override
-    public CTraitElement_AWSkin save(OutputStream stream)
+    public CRTraitElement_AWSkin save(OutputStream stream)
     {
         new CStringUTF8().set(libraryFile).save(stream).set(skinType).save(stream);
         new CBoolean().set(isTransient).save(stream);
@@ -113,7 +113,7 @@ public class CTraitElement_AWSkin extends CTraitElement
     }
 
     @Override
-    public CTraitElement_AWSkin load(InputStream stream)
+    public CRTraitElement_AWSkin load(InputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8();
         libraryFile = cs.load(stream).value;

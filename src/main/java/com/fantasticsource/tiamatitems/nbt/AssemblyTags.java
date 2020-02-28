@@ -181,20 +181,21 @@ public class AssemblyTags
         saveInternalCore(core, core);
     }
 
-    public static boolean saveInternalCore(ItemStack assembly, ItemStack core)
+    public static boolean saveInternalCore(ItemStack stack, ItemStack core)
     {
         if (core.isEmpty())
         {
-            removeInternalCore(assembly);
+            removeInternalCore(stack);
             return true;
         }
 
 
-        if (!assembly.hasTagCompound()) assembly.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = assembly.getTagCompound();
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
 
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
+
 
         try
         {

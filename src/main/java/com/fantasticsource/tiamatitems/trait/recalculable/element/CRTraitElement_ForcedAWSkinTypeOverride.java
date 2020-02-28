@@ -1,7 +1,7 @@
-package com.fantasticsource.tiamatitems.trait.element;
+package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
-import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
+public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitElement
 {
     public String skinType = "";
 
@@ -31,14 +31,14 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         ForcedAWSkinOverrides.setForcedAWSkinType(stack, skinType);
     }
 
 
     @Override
-    public CTraitElement_ForcedAWSkinTypeOverride write(ByteBuf buf)
+    public CRTraitElement_ForcedAWSkinTypeOverride write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, skinType);
 
@@ -46,7 +46,7 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ForcedAWSkinTypeOverride read(ByteBuf buf)
+    public CRTraitElement_ForcedAWSkinTypeOverride read(ByteBuf buf)
     {
         skinType = ByteBufUtils.readUTF8String(buf);
 
@@ -54,7 +54,7 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ForcedAWSkinTypeOverride save(OutputStream stream)
+    public CRTraitElement_ForcedAWSkinTypeOverride save(OutputStream stream)
     {
         new CStringUTF8().set(skinType).save(stream);
 
@@ -62,7 +62,7 @@ public class CTraitElement_ForcedAWSkinTypeOverride extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ForcedAWSkinTypeOverride load(InputStream stream)
+    public CRTraitElement_ForcedAWSkinTypeOverride load(InputStream stream)
     {
         skinType = new CStringUTF8().load(stream).value;
 

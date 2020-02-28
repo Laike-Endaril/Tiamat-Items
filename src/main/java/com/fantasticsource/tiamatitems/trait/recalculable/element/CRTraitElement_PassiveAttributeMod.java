@@ -1,8 +1,8 @@
-package com.fantasticsource.tiamatitems.trait.element;
+package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
-import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class CTraitElement_ActiveAttributeMod extends CTraitElement
+public class CRTraitElement_PassiveAttributeMod extends CRecalculableTraitElement
 {
     public String attributeName = "";
     public double minAmount = 0, maxAmount = 0;
@@ -76,7 +76,7 @@ public class CTraitElement_ActiveAttributeMod extends CTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
         if (amount == 0) return;
@@ -86,12 +86,12 @@ public class CTraitElement_ActiveAttributeMod extends CTraitElement
 
         if (operation == 2) amount -= 1; //For internal calcs (above) and editing (minimum, maximum), treat operation 2 as a direct multiplier (2 means 2x as opposed to 3x)
         //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
-        ActiveAttributeModTags.addActiveMod(stack, attributeName + ";" + amount + ";" + operation);
+        PassiveAttributeModTags.addPassiveMod(stack, attributeName + ";" + amount + ";" + operation);
     }
 
 
     @Override
-    public CTraitElement_ActiveAttributeMod write(ByteBuf buf)
+    public CRTraitElement_PassiveAttributeMod write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, attributeName);
         buf.writeBoolean(isGood);
@@ -101,7 +101,7 @@ public class CTraitElement_ActiveAttributeMod extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ActiveAttributeMod read(ByteBuf buf)
+    public CRTraitElement_PassiveAttributeMod read(ByteBuf buf)
     {
         attributeName = ByteBufUtils.readUTF8String(buf);
         isGood = buf.readBoolean();
@@ -111,7 +111,7 @@ public class CTraitElement_ActiveAttributeMod extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ActiveAttributeMod save(OutputStream stream)
+    public CRTraitElement_PassiveAttributeMod save(OutputStream stream)
     {
         new CStringUTF8().set(attributeName).save(stream);
         new CBoolean().set(isGood).save(stream);
@@ -121,7 +121,7 @@ public class CTraitElement_ActiveAttributeMod extends CTraitElement
     }
 
     @Override
-    public CTraitElement_ActiveAttributeMod load(InputStream stream)
+    public CRTraitElement_PassiveAttributeMod load(InputStream stream)
     {
         attributeName = new CStringUTF8().load(stream).value;
         isGood = new CBoolean().load(stream).value;

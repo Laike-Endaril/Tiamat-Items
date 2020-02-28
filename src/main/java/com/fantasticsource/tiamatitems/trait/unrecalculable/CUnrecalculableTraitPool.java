@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.trait;
+package com.fantasticsource.tiamatitems.trait.unrecalculable;
 
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -11,24 +11,24 @@ import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CTraitPool extends Component
+public class CUnrecalculableTraitPool extends Component
 {
-    public static LinkedHashMap<String, CTraitPool> traitGenPools = new LinkedHashMap<>(); //TODO handle data retention
+    public static LinkedHashMap<String, CUnrecalculableTraitPool> pools = new LinkedHashMap<>(); //TODO handle data retention
 
 
     public String name; //TODO disallow setting to the name "null" (see TraitTags class)
-    public LinkedHashMap<CTrait, Integer> traitGenWeights = new LinkedHashMap<>();
+    public LinkedHashMap<CUnrecalculableTrait, Integer> traitGenWeights = new LinkedHashMap<>();
 
 
     @Override
-    public CTraitPool write(ByteBuf buf)
+    public CUnrecalculableTraitPool write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
 
         buf.writeInt(traitGenWeights.size());
-        for (Map.Entry<CTrait, Integer> entry : traitGenWeights.entrySet())
+        for (Map.Entry<CUnrecalculableTrait, Integer> entry : traitGenWeights.entrySet())
         {
-            writeMarked(buf, entry.getKey());
+            entry.getKey().write(buf);
             buf.writeInt(entry.getValue());
         }
 
@@ -36,25 +36,25 @@ public class CTraitPool extends Component
     }
 
     @Override
-    public CTraitPool read(ByteBuf buf)
+    public CUnrecalculableTraitPool read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
 
         traitGenWeights.clear();
-        for (int i = buf.readInt(); i > 0; i--) traitGenWeights.put((CTrait) readMarked(buf), buf.readInt());
+        for (int i = buf.readInt(); i > 0; i--) traitGenWeights.put(new CUnrecalculableTrait().read(buf), buf.readInt());
 
         return this;
     }
 
     @Override
-    public CTraitPool save(OutputStream stream)
+    public CUnrecalculableTraitPool save(OutputStream stream)
     {
         new CStringUTF8().set(name).save(stream);
 
         CInt ci = new CInt().set(traitGenWeights.size()).save(stream);
-        for (Map.Entry<CTrait, Integer> entry : traitGenWeights.entrySet())
+        for (Map.Entry<CUnrecalculableTrait, Integer> entry : traitGenWeights.entrySet())
         {
-            saveMarked(stream, entry.getKey());
+            entry.getKey().save(stream);
             ci.set(entry.getValue()).save(stream);
         }
 
@@ -62,13 +62,13 @@ public class CTraitPool extends Component
     }
 
     @Override
-    public CTraitPool load(InputStream stream)
+    public CUnrecalculableTraitPool load(InputStream stream)
     {
         name = new CStringUTF8().load(stream).value;
 
         CInt ci = new CInt();
         traitGenWeights.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) traitGenWeights.put((CTrait) loadMarked(stream), ci.load(stream).value);
+        for (int i = ci.load(stream).value; i > 0; i--) traitGenWeights.put(new CUnrecalculableTrait().load(stream), ci.load(stream).value);
 
         return this;
     }

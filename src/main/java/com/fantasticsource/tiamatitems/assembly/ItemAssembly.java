@@ -4,20 +4,28 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tiamatitems.trait.CItemType;
-import com.fantasticsource.tiamatitems.trait.CTrait;
-import com.fantasticsource.tiamatitems.trait.CTraitPool;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class ItemAssembly
 {
     /**
-     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the parts passed in if they cannot be placed in a slot
+     */
+    public static ArrayList<ItemStack> assemble(ItemStack core, ItemStack... parts)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        for (ItemStack part : parts) result.addAll(putPartInEmptySlot(core, part));
+        return result;
+    }
+
+
+    /**
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
     public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part)
     {
@@ -25,7 +33,7 @@ public class ItemAssembly
     }
 
     /**
-     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
     public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged)
     {
@@ -33,7 +41,7 @@ public class ItemAssembly
     }
 
     /**
-     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
     public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, int level)
     {
@@ -41,11 +49,11 @@ public class ItemAssembly
     }
 
     /**
-     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
+     * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
     public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged, int level)
     {
-        if (level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part))
+        if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part))
         {
             ArrayList<ItemStack> result = new ArrayList<>();
             result.add(part);
@@ -70,6 +78,7 @@ public class ItemAssembly
         result.add(part);
         return result;
     }
+
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
@@ -191,39 +200,34 @@ public class ItemAssembly
         ArrayList<ItemStack> result = new ArrayList<>();
 
 
-        //Count and queue parts
+        //Recalc parts, and if they still exist, count and queue them
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(stack), oldPartSlots = new ArrayList<>();
         int partCount = 0;
         for (PartSlot partSlot : partSlots)
         {
-            if (partSlot.part.isEmpty()) continue;
+            ItemStack part = partSlot.part;
+            result.addAll(recalc(part));
+            if (part.isEmpty()) continue;
 
             partCount++;
             oldPartSlots.add(partSlot);
         }
 
 
-        //Get clean core
-        ItemStack core = AssemblyTags.getInternalCore(stack); //Internal core should always be clean
-        if (core.isEmpty()) //If no internal core, create one
+        //Get internal core (version of item with all trait NBT, but without recalculable traits applied yet)
+        ItemStack core = AssemblyTags.getInternalCore(stack);
+        if (core.isEmpty())
         {
-            //Tell automatic recalc event not to recalc the core, by marking it with a special version number
-            long version = MiscTags.getItemGenVersion(stack);
-            MiscTags.setItemGenVersion(stack, Long.MAX_VALUE);
+            //If the core itself is invalid, empty the stack and return all old parts that were on it
+            stack.setTagCompound(null);
+            stack.setCount(0);
 
-            //Copy the stack
-            core = MCTools.cloneItemStack(stack);
-
-            //Reset version on original and new stack
-            MiscTags.setItemGenVersion(stack, version);
-            MiscTags.setItemGenVersion(core, version);
-
-            //Clear the part tags on the new core
-            AssemblyTags.clearPartTags(core);
+            for (PartSlot partSlot : oldPartSlots) result.add(partSlot.part);
+            return result;
         }
 
 
-        //Validate native traits on clean core and recalculate them if necessary
+        //Validate native traits on core and recalculate them if necessary
         if (!recalcEmptyPartTraits(core))
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
@@ -235,10 +239,13 @@ public class ItemAssembly
         }
 
 
-        //If there were no parts on the given stack, just construct a clean core with no internal core and return
+        //At this point, we have our new core, so save it
+        AssemblyTags.saveInternalCore(core);
+
+
+        //If there were no parts on the given stack, we can return now
         if (partCount == 0)
         {
-            AssemblyTags.removeInternalCore(core);
             stack.setTagCompound(core.getTagCompound());
             return result;
         }
@@ -246,15 +253,11 @@ public class ItemAssembly
 
         //We have parts to apply
 
-        //Set the core of the clean core to...well...itself
-        AssemblyTags.saveInternalCore(core);
-
-        //Recalc all parts and reinsert them into fully matching slots if possible
+        //Reinsert all parts into fully matching slots if possible
         partSlots = AssemblyTags.getPartSlots(core);
         for (PartSlot oldPartSlot : oldPartSlots.toArray(new PartSlot[0]))
         {
             ItemStack part = oldPartSlot.part;
-            result.addAll(recalc(part));
 
             for (PartSlot newPartSlot : partSlots)
             {
@@ -305,25 +308,34 @@ public class ItemAssembly
             }
         }
 
-        //Add remaining parts to leftovers list
+        //Add remaining parts to list of resulting leftovers
         for (PartSlot oldPartSlot : oldPartSlots)
         {
             result.add(oldPartSlot.part);
         }
 
+
+        //Apply NBT and value from parts to core
+        if (!core.hasTagCompound()) core.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = core.getTagCompound();
+        int value = MiscTags.getItemValue(core);
+        for (PartSlot partSlot : partSlots)
+        {
+            //TODO Merge all NBT in non-override mode except...
+            ItemStack part = partSlot.part;
+            MCTools.mergeNBT(compound, false, part.getTagCompound());
+            value += MiscTags.getItemValue(part);
+        }
+        MiscTags.setItemValue(core, value);
+
+
         //Set part tags
         AssemblyTags.setPartSlots(core, partSlots);
 
 
-        //Apply traits from parts
-        for (PartSlot partSlot : partSlots)
-        {
-            applyTraits(core, partSlot.part);
-        }
-
-
         //Set current stack to new calculated one
         stack.setTagCompound(core.getTagCompound());
+
 
         //Return removed parts
         return result;
@@ -344,64 +356,8 @@ public class ItemAssembly
         if (rarity == null) return false;
 
 
-        //Recalc
-        ItemStack newItem = itemType.generateItem(MiscTags.getItemLevel(stack), rarity, TraitTags.getTraitStrings(stack));
-
-        //Set this stack's tag and return
-        stack.setTagCompound(newItem.getTagCompound());
+        //Re-apply item type and return
+        itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity);
         return true;
-    }
-
-
-    /**
-     * Applies traits from a part to a core
-     * Should only be used for validated cores and parts
-     */
-    private static void applyTraits(ItemStack core, ItemStack... parts)
-    {
-        int value = MiscTags.getItemValue(core);
-        for (ItemStack part : parts)
-        {
-            value += MiscTags.getItemValue(part);
-            CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemTypeName(part));
-
-            for (String traitString : TraitTags.getTraitStrings(part))
-            {
-                String[] tokens = Tools.fixedSplit(traitString, ":");
-
-                if (tokens[0].equals("Static"))
-                {
-                    //Static trait
-                    CTrait trait = itemType.staticTraits.get(tokens[1]);
-
-                    int[] baseArgs = new int[tokens.length - 2];
-                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
-
-                    value += trait.applyToItem(core, "Static", itemType, MiscTags.getItemLevel(part), null, baseArgs);
-                }
-                else
-                {
-                    //Weighted trait
-                    String poolSetName = tokens[0];
-                    LinkedHashMap<String, CTraitPool> poolSet = itemType.randomTraitPoolSets.get(poolSetName);
-                    CTraitPool pool = poolSet.get(tokens[1]);
-                    CTrait trait = null;
-                    for (CTrait trait2 : pool.traitGenWeights.keySet())
-                    {
-                        if (trait2.name.equals(tokens[2]))
-                        {
-                            trait = trait2;
-                            break;
-                        }
-                    }
-
-                    int[] baseArgs = new int[tokens.length - 3];
-                    for (int i2 = 0; i2 < baseArgs.length; i2++) baseArgs[i2] = Integer.parseInt(tokens[i2 + 3]);
-
-                    value += trait.applyToItem(core, poolSetName, itemType, MiscTags.getItemLevel(part), pool, baseArgs);
-                }
-            }
-        }
-        MiscTags.setItemValue(core, value);
     }
 }

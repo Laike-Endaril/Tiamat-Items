@@ -1,7 +1,7 @@
-package com.fantasticsource.tiamatitems.trait.element;
+package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.tiamatitems.nbt.ActionTags;
-import com.fantasticsource.tiamatitems.trait.CTraitElement;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class CTraitElement_LeftClickAction extends CTraitElement
+public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
 {
     public String actionName = "";
 
@@ -26,19 +26,19 @@ public class CTraitElement_LeftClickAction extends CTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        return "Left Click: " + actionName;
+        return "Right click: " + actionName;
     }
 
 
     @Override
-    public void applyToItem(ItemStack stack, ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
-        ActionTags.setLeftClickAction(stack, actionName);
+        ActionTags.setRightClickAction(stack, actionName);
     }
 
 
     @Override
-    public CTraitElement_LeftClickAction write(ByteBuf buf)
+    public CRTraitElement_RightClickAction write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, actionName);
 
@@ -46,7 +46,7 @@ public class CTraitElement_LeftClickAction extends CTraitElement
     }
 
     @Override
-    public CTraitElement_LeftClickAction read(ByteBuf buf)
+    public CRTraitElement_RightClickAction read(ByteBuf buf)
     {
         actionName = ByteBufUtils.readUTF8String(buf);
 
@@ -54,7 +54,7 @@ public class CTraitElement_LeftClickAction extends CTraitElement
     }
 
     @Override
-    public CTraitElement_LeftClickAction save(OutputStream stream)
+    public CRTraitElement_RightClickAction save(OutputStream stream)
     {
         new CStringUTF8().set(actionName).save(stream);
 
@@ -62,7 +62,7 @@ public class CTraitElement_LeftClickAction extends CTraitElement
     }
 
     @Override
-    public CTraitElement_LeftClickAction load(InputStream stream)
+    public CRTraitElement_RightClickAction load(InputStream stream)
     {
         actionName = new CStringUTF8().load(stream).value;
 

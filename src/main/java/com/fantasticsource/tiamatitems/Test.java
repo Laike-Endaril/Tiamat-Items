@@ -3,9 +3,9 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.trait.CItemType;
-import com.fantasticsource.tiamatitems.trait.CTrait;
-import com.fantasticsource.tiamatitems.trait.CTraitPool;
-import com.fantasticsource.tiamatitems.trait.element.*;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
+import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 
@@ -32,16 +32,16 @@ public class Test
 
     public static void createGeneralPool()
     {
-        CTraitPool pool = new CTraitPool();
+        CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "General";
-        CTraitPool.traitGenPools.put(pool.name, pool);
+        CRecalculableTraitPool.pools.put(pool.name, pool);
 
-        CTraitElement_PassiveAttributeMod passiveAttributeMod = new CTraitElement_PassiveAttributeMod();
+        CRTraitElement_PassiveAttributeMod passiveAttributeMod = new CRTraitElement_PassiveAttributeMod();
         passiveAttributeMod.attributeName = "generic.maxHealth";
         passiveAttributeMod.minAmount = 1;
         passiveAttributeMod.maxAmount = 3;
 
-        CTrait trait = new CTrait();
+        CRecalculableTrait trait = new CRecalculableTrait();
         trait.name = "MaxHP";
         trait.elements.add(passiveAttributeMod);
         trait.minValue = 1;
@@ -56,17 +56,17 @@ public class Test
         validItemTypes.add("Rune");
         PartSlot.validItemTypes.put("Socket", validItemTypes);
 
-        CTraitPool pool = new CTraitPool();
+        CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "Sockets";
-        CTraitPool.traitGenPools.put(pool.name, pool);
+        CRecalculableTraitPool.pools.put(pool.name, pool);
 
-        CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
+        CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
 
-        CTrait trait;
+        CRecalculableTrait trait;
         for (int i = 0; i < 10; i++)
         {
-            trait = new CTrait();
+            trait = new CRecalculableTrait();
             trait.name = "Socket" + i;
             trait.elements.add(partSlot);
             trait.minValue = 0;
@@ -79,15 +79,15 @@ public class Test
     public static void create2HAxeItemType()
     {
         //Main action traits
-        CTraitPool pool = new CTraitPool();
+        CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActLC";
-        CTraitPool.traitGenPools.put(pool.name, pool);
+        CRecalculableTraitPool.pools.put(pool.name, pool);
 
 
-        CTraitElement_LeftClickAction leftClickAction = new CTraitElement_LeftClickAction();
+        CRTraitElement_LeftClickAction leftClickAction = new CRTraitElement_LeftClickAction();
         leftClickAction.actionName = "2HAxeAttack1";
 
-        CTrait trait = new CTrait();
+        CRecalculableTrait trait = new CRecalculableTrait();
         trait.name = "2HAxeAttack1";
         trait.elements.add(leftClickAction);
         trait.minValue = 3;
@@ -96,15 +96,15 @@ public class Test
 
 
         //Sub action traits
-        pool = new CTraitPool();
+        pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActRC";
-        CTraitPool.traitGenPools.put(pool.name, pool);
+        CRecalculableTraitPool.pools.put(pool.name, pool);
 
 
-        CTraitElement_RightClickAction rightClickAction = new CTraitElement_RightClickAction();
+        CRTraitElement_RightClickAction rightClickAction = new CRTraitElement_RightClickAction();
         rightClickAction.actionName = "2HAxeAttack2";
 
-        trait = new CTrait();
+        trait = new CRecalculableTrait();
         trait.name = "2HAxeAttack2";
         trait.elements.add(rightClickAction);
         trait.minValue = 3;
@@ -119,83 +119,83 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CTraitElement_ForcedAWSkinTypeOverride();
+        CRTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CRTraitElement_ForcedAWSkinTypeOverride();
         skinTypeOverrideElement.skinType = "axe";
 
-        trait = new CTrait();
+        trait = new CRecalculableTrait();
         trait.name = "Axe Skin Override";
         trait.elements.add(skinTypeOverrideElement);
         trait.minValue = 1;
         trait.maxValue = 1;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
         HashSet<String> validItemTypes = new HashSet<>();
         validItemTypes.add("2H Axehead");
         PartSlot.validItemTypes.put("2H Axehead", validItemTypes);
 
-        CTraitElement_PartSlot partSlot = new CTraitElement_PartSlot();
+        CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
         partSlot.required = true;
         partSlot.minCount = 1;
 
-        trait = new CTrait();
+        trait = new CRecalculableTrait();
         trait.name = "2HAxehead";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
         validItemTypes = new HashSet<>();
         validItemTypes.add("2H Axe Handle");
         PartSlot.validItemTypes.put("2H Axe Handle", validItemTypes);
 
-        partSlot = new CTraitElement_PartSlot();
+        partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
         partSlot.required = true;
         partSlot.minCount = 1;
 
-        trait = new CTrait();
+        trait = new CRecalculableTrait();
         trait.name = "2HAxeHandle";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
         validItemTypes = new HashSet<>();
         validItemTypes.add("2H Axe Skin");
         PartSlot.validItemTypes.put("2H Axe Skin", validItemTypes);
 
-        partSlot = new CTraitElement_PartSlot();
+        partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
         partSlot.required = true;
         partSlot.minCount = 1;
 
-        trait = new CTrait();
+        trait = new CRecalculableTrait();
         trait.name = "2HAxeSkin";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActLC", CTraitPool.traitGenPools.get("2HAxeActLC"));
-        itemType.randomTraitPoolSets.put("ActLC", poolSet);
-
-        poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActRC", CTraitPool.traitGenPools.get("2HAxeActRC"));
-        itemType.randomTraitPoolSets.put("ActRC", poolSet);
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("2HAxeActLC", CRecalculableTraitPool.pools.get("2HAxeActLC"));
+        itemType.randomRecalculableTraitPoolSets.put("ActLC", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CTraitPool.traitGenPools.get("General"));
-        itemType.randomTraitPoolSets.put("Gen", poolSet);
+        poolSet.put("2HAxeActRC", CRecalculableTraitPool.pools.get("2HAxeActRC"));
+        itemType.randomRecalculableTraitPoolSets.put("ActRC", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("Sockets", CTraitPool.traitGenPools.get("Sockets"));
-        itemType.randomTraitPoolSets.put("Socket", poolSet);
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+        poolSet = new LinkedHashMap<>();
+        poolSet.put("Sockets", CRecalculableTraitPool.pools.get("Sockets"));
+        itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);
@@ -209,22 +209,22 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_ActiveAttributeMod element = new CTraitElement_ActiveAttributeMod();
+        CRTraitElement_ActiveAttributeMod element = new CRTraitElement_ActiveAttributeMod();
         element.attributeName = "generic.attackDamage";
         element.minAmount = 1;
         element.maxAmount = 3;
 
-        CTrait trait = new CTrait();
+        CRecalculableTrait trait = new CRecalculableTrait();
         trait.name = "Damage";
         trait.elements.add(element);
         trait.minValue = 1;
         trait.maxValue = 3;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        LinkedHashMap<String, CTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CTraitPool.traitGenPools.get("General"));
-        itemType.randomTraitPoolSets.put("Gen", poolSet);
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);
@@ -238,19 +238,19 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CTraitElement_AWSkin skinElement = new CTraitElement_AWSkin();
+        CRTraitElement_AWSkin skinElement = new CRTraitElement_AWSkin();
         skinElement.libraryFile = "downloads/5080 - Storm Breaker";
         skinElement.skinType = "armourers:axe";
         skinElement.dyes.add(new Color(255, 0, 0, 255));
         skinElement.dyes.add(new Color(0, 255, 0, 255));
         skinElement.dyes.add(new Color(0, 0, 255, 255));
 
-        CTrait trait = new CTrait();
+        CRecalculableTrait trait = new CRecalculableTrait();
         trait.name = "Storm Breaker";
         trait.elements.add(skinElement);
         trait.minValue = 10;
         trait.maxValue = 10;
-        itemType.staticTraits.put(trait.name, trait);
+        itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);

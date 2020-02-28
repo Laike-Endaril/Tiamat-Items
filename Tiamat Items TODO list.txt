@@ -1,20 +1,28 @@
-Randomly colored skin traits
+Add/edit both versions of all current trait elements, where applicable
 
-Random skin traits
 
-Randomly colored random skin traits
+
+AW random skin trait
+* Random skin (within a specified folder, recursive search)
+* Specifications for each of up to 8 dye channels...
+* * Paint type
+* * Range for base amount for each of R, G, B
+* * Chance of grayscale
 
 
 
 Some way of generating a skin from within a specified folder, with the pool defined as the first <itemlevel>/<maxitemlevel> fraction of skin files in the pool
-...probably as a pseudo-trait generation specification!  This doesn't work well with definition as a single trait, so it's best to auto-generate a trait pool for this!
-...should I make a standard pseudo-generation system?
 
 
 
-"Empty" layers/texture (tiamat items only)
-"Partial" layers/texture (tiamat items only)
-"Full" layers/texture (tiamat items only)
+"Empty" layers/texture (tiamat items only) (as trait?)
+"Partial" layers/texture (tiamat items only) (as trait?)
+"Full" layers/texture (tiamat items only) (as trait?)
+
+
+
+Itemstack-specific stack size, via NBT and Item.getItemStackLimit(ItemStack stack)
+
 
 
 Name generation...
@@ -50,3 +58,9 @@ Improve render via back-to-front voxel ordering...
 * CONFIG
 
 Add default caching options (what values they have each time you edit a new item)
+
+
+
+* SYSTEMS
+
+System for using existing vanilla textures as layers?
