@@ -1,20 +1,3 @@
-Add/edit both versions of all current trait elements, where applicable
-
-
-
-AW random skin trait
-* Random skin (within a specified folder, recursive search)
-* Specifications for each of up to 8 dye channels...
-* * Paint type
-* * Range for base amount for each of R, G, B
-* * Chance of grayscale
-
-
-
-Some way of generating a skin from within a specified folder, with the pool defined as the first <itemlevel>/<maxitemlevel> fraction of skin files in the pool
-
-
-
 "Empty" layers/texture (tiamat items only) (as trait?)
 "Partial" layers/texture (tiamat items only) (as trait?)
 "Full" layers/texture (tiamat items only) (as trait?)

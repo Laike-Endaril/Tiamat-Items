@@ -6,6 +6,11 @@ import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBGrayscale;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 
@@ -238,19 +243,28 @@ public class Test
         itemType.percentageMultiplier = 2;
 
 
-        CRTraitElement_AWSkin skinElement = new CRTraitElement_AWSkin();
-        skinElement.libraryFile = "downloads/5080 - Storm Breaker";
+        CUTraitElement_AWSkin skinElement = new CUTraitElement_AWSkin();
+        skinElement.libraryFileOrFolder = "official";
         skinElement.skinType = "armourers:axe";
-        skinElement.dyes.add(new Color(255, 0, 0, 255));
-        skinElement.dyes.add(new Color(0, 255, 0, 255));
-        skinElement.dyes.add(new Color(0, 0, 255, 255));
 
-        CRecalculableTrait trait = new CRecalculableTrait();
-        trait.name = "Storm Breaker";
+        CRandomRGB rgb = new CRandomRGB();
+        rgb.rMin = 125;
+        rgb.gMax = 125;
+        CRGBBoost boost = new CRGBBoost();
+        boost.toAdd[1] = 255;
+        rgb.functions.add(boost);
+        skinElement.dyeChannels.add(rgb);
+
+        rgb = new CRandomRGB();
+        rgb.functions.add(new CRGBGrayscale());
+        skinElement.dyeChannels.add(rgb);
+
+        CUnrecalculableTrait trait = new CUnrecalculableTrait();
+        trait.name = "Random Skin";
         trait.elements.add(skinElement);
         trait.minValue = 10;
         trait.maxValue = 10;
-        itemType.staticRecalculableTraits.put(trait.name, trait);
+        itemType.staticUnrecalculableTraits.put(trait.name, trait);
 
 
         CItemType.itemTypes.put(itemType.name, itemType);

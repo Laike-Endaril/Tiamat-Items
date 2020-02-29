@@ -29,6 +29,8 @@ public class CItemType extends Component
 {
     public static final int ITEM_GEN_CODE_VERSION = 0;
     private static int itemGenConfigVersion = 0; //TODO handle data retention
+
+    public static int maxItemLevel = 20;
     public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
 
 
@@ -41,9 +43,10 @@ public class CItemType extends Component
 
 
     //TODO call this method on item gen definition change, including globals
-    public void incrementVersion()
+    public void updateVersion()
     {
         itemGenConfigVersion++;
+
         //TODO sync to connected clients
     }
 

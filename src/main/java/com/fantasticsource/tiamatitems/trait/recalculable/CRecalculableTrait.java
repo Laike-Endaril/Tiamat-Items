@@ -4,10 +4,8 @@ import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;
-import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,7 +14,6 @@ import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
-    public String name = "";
     public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
 
 
@@ -88,8 +85,6 @@ public final class CRecalculableTrait extends CTrait
     {
         super.write(buf);
 
-        ByteBufUtils.writeUTF8String(buf, name);
-
         buf.writeInt(elements.size());
         for (CRecalculableTraitElement element : elements) writeMarked(buf, element);
 
@@ -100,8 +95,6 @@ public final class CRecalculableTrait extends CTrait
     public CRecalculableTrait read(ByteBuf buf)
     {
         super.read(buf);
-
-        name = ByteBufUtils.readUTF8String(buf);
 
         elements.clear();
         for (int i = buf.readInt(); i > 0; i--) elements.add((CRecalculableTraitElement) readMarked(buf));
@@ -114,8 +107,6 @@ public final class CRecalculableTrait extends CTrait
     {
         super.save(stream);
 
-        new CStringUTF8().set(name).save(stream);
-
         new CInt().set(elements.size()).save(stream);
         for (CRecalculableTraitElement element : elements) saveMarked(stream, element);
 
@@ -127,10 +118,7 @@ public final class CRecalculableTrait extends CTrait
     {
         super.load(stream);
 
-        CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt();
-
-        name = cs.load(stream).value;
 
         elements.clear();
         for (int i = ci.load(stream).value; i > 0; i--) elements.add((CRecalculableTraitElement) loadMarked(stream));
