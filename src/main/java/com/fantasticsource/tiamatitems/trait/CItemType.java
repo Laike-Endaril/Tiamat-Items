@@ -64,6 +64,9 @@ public class CItemType extends Component
 
     public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity)
     {
+        //See whether this is the first time we're generating or not
+        boolean firstGeneration = MiscTags.getItemGenVersion(stack) == -1;
+
         //Ensure we're working with a clean core
         ItemStack core = AssemblyTags.getInternalCore(stack);
         if (!core.isEmpty()) stack = core;
@@ -205,57 +208,60 @@ public class CItemType extends Component
         }
 
 
-        //Apply and generate value for static unrecalculable traits
-        for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values())
+        if (firstGeneration)
         {
-            totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
-        }
-
-
-        //Apply and generate value for random unrecalculable traits
-        for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
-        {
-            int rollCount = poolSetRollCountEntry.getValue();
-            if (rollCount <= 0) continue;
-
-
-            String poolSetName = poolSetRollCountEntry.getKey();
-            LinkedHashMap<String, CUnrecalculableTraitPool> randomTraitPools = randomUnrecalculableTraitPoolSets.get(poolSetName);
-            if (randomTraitPools == null) continue;
-
-
-            ArrayList<CUnrecalculableTraitPool> weightedPools = new ArrayList<>();
-            LinkedHashMap<CUnrecalculableTraitPool, ArrayList<CUnrecalculableTrait>> traitPools = new LinkedHashMap<>();
-            for (CUnrecalculableTraitPool pool : randomTraitPools.values())
+            //Apply and generate value for static unrecalculable traits
+            for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values())
             {
-                ArrayList<CUnrecalculableTrait> traits = new ArrayList<>();
-
-                for (Map.Entry<CUnrecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
-                {
-                    for (int i = entry.getValue(); i > 0; i--)
-                    {
-                        traits.add(entry.getKey());
-                        weightedPools.add(pool);
-                    }
-                }
-
-                traitPools.put(pool, traits);
+                totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
             }
 
 
-            for (int i = rollCount; i > 0; i--)
+            //Apply and generate value for random unrecalculable traits
+            for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
             {
-                if (weightedPools.size() == 0) break;
+                int rollCount = poolSetRollCountEntry.getValue();
+                if (rollCount <= 0) continue;
 
-                CUnrecalculableTraitPool pool = Tools.choose(weightedPools);
-                ArrayList<CUnrecalculableTrait> list = traitPools.get(pool);
-                CUnrecalculableTrait trait = Tools.choose(list);
 
-                totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+                String poolSetName = poolSetRollCountEntry.getKey();
+                LinkedHashMap<String, CUnrecalculableTraitPool> randomTraitPools = randomUnrecalculableTraitPoolSets.get(poolSetName);
+                if (randomTraitPools == null) continue;
 
-                while (list.remove(trait))
+
+                ArrayList<CUnrecalculableTraitPool> weightedPools = new ArrayList<>();
+                LinkedHashMap<CUnrecalculableTraitPool, ArrayList<CUnrecalculableTrait>> traitPools = new LinkedHashMap<>();
+                for (CUnrecalculableTraitPool pool : randomTraitPools.values())
                 {
-                    weightedPools.remove(pool);
+                    ArrayList<CUnrecalculableTrait> traits = new ArrayList<>();
+
+                    for (Map.Entry<CUnrecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
+                    {
+                        for (int i = entry.getValue(); i > 0; i--)
+                        {
+                            traits.add(entry.getKey());
+                            weightedPools.add(pool);
+                        }
+                    }
+
+                    traitPools.put(pool, traits);
+                }
+
+
+                for (int i = rollCount; i > 0; i--)
+                {
+                    if (weightedPools.size() == 0) break;
+
+                    CUnrecalculableTraitPool pool = Tools.choose(weightedPools);
+                    ArrayList<CUnrecalculableTrait> list = traitPools.get(pool);
+                    CUnrecalculableTrait trait = Tools.choose(list);
+
+                    totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+
+                    while (list.remove(trait))
+                    {
+                        weightedPools.remove(pool);
+                    }
                 }
             }
         }

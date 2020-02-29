@@ -80,4 +80,10 @@ public class TiamatItem extends Item
             items.add(get(false, true));
         }
     }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack)
+    {
+        return MiscTags.getTiamatItemStackLimit(stack);
+    }
 }

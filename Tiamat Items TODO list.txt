@@ -1,14 +1,10 @@
-Fix bug where items recalc their unrecalculable traits (maybe only static ones?)
+Add support for build/gender-specific skin parts (as part of unrecalculable skin trait?)
 
 
 
 "Empty" layers/texture (tiamat items only) (as trait?)
 "Partial" layers/texture (tiamat items only) (as trait?)
 "Full" layers/texture (tiamat items only) (as trait?)
-
-
-
-Itemstack-specific stack size, via NBT and Item.getItemStackLimit(ItemStack stack)
 
 
 

@@ -362,4 +362,29 @@ public class MiscTags
             if (mainTag.hasNoTags()) stack.setTagCompound(null);
         }
     }
+
+
+    public static void setTiamatItemStackLimit(ItemStack stack, int limit)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setInteger("limit", limit);
+    }
+
+    public static int getTiamatItemStackLimit(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return 64;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return 64;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("limit")) return 64;
+
+        return compound.getInteger("limit");
+    }
 }
