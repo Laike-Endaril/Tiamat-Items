@@ -1,3 +1,7 @@
+Fix bug where items recalc their unrecalculable traits (maybe only static ones?)
+
+
+
 "Empty" layers/texture (tiamat items only) (as trait?)
 "Partial" layers/texture (tiamat items only) (as trait?)
 "Full" layers/texture (tiamat items only) (as trait?)
