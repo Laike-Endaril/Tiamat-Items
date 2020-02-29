@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -93,13 +94,15 @@ public class TiamatItemRenderer implements IItemRenderer
     @Override
     public void render(ItemStack stack, IBakedModel model, ItemCameraTransforms.TransformType transformType, float v)
     {
-        if (!TextureTags.itemHasMainLayerTag(stack))
+        int state = AssemblyTags.getState(stack);
+
+        if (!TextureTags.itemHasMainLayerTag(stack, state))
         {
             IItemRendererHandler.renderItemStack(stack, model);
             return;
         }
 
-        ArrayList<String> layerKeys = TextureTags.getItemLayers(stack);
+        ArrayList<String> layerKeys = TextureTags.getItemLayers(stack, state);
         if (layerKeys.size() == 0) return;
 
 

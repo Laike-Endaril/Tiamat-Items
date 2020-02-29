@@ -5,6 +5,8 @@ import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
 import com.fantasticsource.tiamatitems.TiamatItem;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 
+import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_FULL;
+
 public class GUIItemLayer extends GUIItemStack
 {
     public GUIItemLayer(GUIScreen screen, double unscaledWidth, double unscaledHeight, String layer)
@@ -19,7 +21,7 @@ public class GUIItemLayer extends GUIItemStack
 
     public String getLayer()
     {
-        return TextureTags.getItemLayers(getItemStack()).get(0);
+        return TextureTags.getItemLayers(getItemStack(), STATE_FULL).get(0);
     }
 
     public void setLayer(String layer)

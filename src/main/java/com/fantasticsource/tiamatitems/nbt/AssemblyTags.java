@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -14,6 +15,47 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class AssemblyTags
 {
+    public static final int
+            STATE_EMPTY = 0,
+            STATE_UNUSABLE = 1,
+            STATE_USABLE = 2,
+            STATE_FULL = 3;
+
+
+    public static int getState(ItemStack stack)
+    {
+        ArrayList<PartSlot> partSlots = getPartSlots(stack);
+        if (partSlots.size() == 0) return STATE_FULL;
+
+
+        boolean empty = true, full = true, usable = true;
+        ItemStack part;
+        int state = STATE_FULL;
+        for (PartSlot partSlot : partSlots)
+        {
+            part = partSlot.part;
+            if (part.isEmpty())
+            {
+                full = false;
+                if (partSlot.required) usable = false;
+            }
+            else
+            {
+                empty = false;
+                state = Tools.min(state, getState(part));
+            }
+        }
+
+        if (empty) return STATE_EMPTY;
+
+
+        if (!full && state > STATE_USABLE) state = STATE_USABLE;
+        if (!usable && state > STATE_UNUSABLE) state = STATE_UNUSABLE;
+
+        return state;
+    }
+
+
     public static void addPartSlot(ItemStack stack, String slotType)
     {
         addPartSlot(stack, slotType, false);
@@ -160,19 +202,6 @@ public class AssemblyTags
         }
 
         compound.setTag("partSlots", list);
-    }
-
-
-    public static boolean isUsable(ItemStack stack)
-    {
-        for (PartSlot partSlot : getPartSlots(stack))
-        {
-            if (!partSlot.required) continue;
-
-            if (partSlot.part.isEmpty() || !isUsable(partSlot.part)) return false;
-        }
-
-        return true;
     }
 
 

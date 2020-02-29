@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.FILTER_POSITIVE;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
+import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_FULL;
 
 public class ItemEditorGUI extends GUIScreen
 {
@@ -209,7 +210,7 @@ public class ItemEditorGUI extends GUIScreen
             //If no errors occurred...
 
             //Add existing layers
-            for (String layerString : TextureTags.getItemLayers(stack))
+            for (String layerString : TextureTags.getItemLayers(stack, STATE_FULL))
             {
                 String[] tokens = Tools.fixedSplit(layerString, ":");
                 if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
@@ -410,8 +411,8 @@ public class ItemEditorGUI extends GUIScreen
                     layers[i] = ((GUIItemLayer) line.getLineElement(0)).getLayer();
                 }
 
-                TextureTags.clearItemLayers(stack);
-                for (String layer : layers) TextureTags.addItemLayer(stack, layer);
+                TextureTags.clearItemLayerGroup(stack, STATE_FULL);
+                for (String layer : layers) TextureTags.addItemLayer(stack, STATE_FULL, layer);
             }
 
             //Category tags are already stored in the stack via GUI logic

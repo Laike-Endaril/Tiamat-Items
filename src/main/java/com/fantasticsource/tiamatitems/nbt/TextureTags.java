@@ -12,7 +12,10 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TextureTags
 {
-    public static ArrayList<String> getItemLayers(ItemStack stack)
+    //textureFilename:index:colorHex
+    //Texture files are stored in config/tiamatitems
+
+    public static ArrayList<String> getItemLayers(ItemStack stack, int state)
     {
         ArrayList<String> result = new ArrayList<>();
 
@@ -22,15 +25,16 @@ public class TextureTags
         if (!compound.hasKey(DOMAIN)) return result;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("layers")) return result;
+        String key = "layers" + state;
+        if (!compound.hasKey(key)) return result;
 
-        NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList(key, Constants.NBT.TAG_STRING);
         for (int i = 0; i < list.tagCount(); i++) result.add(list.getStringTagAt(i));
 
         return result;
     }
 
-    public static void clearItemLayers(ItemStack stack)
+    public static void clearItemLayerGroup(ItemStack stack, int state)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -38,9 +42,10 @@ public class TextureTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("layers")) return;
+        String key = "layers" + state;
+        if (!compound.hasKey(key)) return;
 
-        compound.removeTag("layers");
+        compound.removeTag(key);
         if (compound.hasNoTags())
         {
             mainTag.removeTag(DOMAIN);
@@ -48,7 +53,7 @@ public class TextureTags
         }
     }
 
-    public static void removeItemLayer(ItemStack stack, String layer)
+    public static void removeItemLayer(ItemStack stack, int state, String layer)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -56,9 +61,10 @@ public class TextureTags
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("layers")) return;
+        String key = "layers" + state;
+        if (!compound.hasKey(key)) return;
 
-        NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList(key, Constants.NBT.TAG_STRING);
         for (int i = 0; i < list.tagCount(); i++)
         {
             if (list.getStringTagAt(i).equals(layer))
@@ -66,7 +72,7 @@ public class TextureTags
                 list.removeTag(i);
                 if (list.tagCount() == 0)
                 {
-                    compound.removeTag("layers");
+                    compound.removeTag(key);
                     if (compound.hasNoTags())
                     {
                         mainTag.removeTag(DOMAIN);
@@ -78,23 +84,22 @@ public class TextureTags
         }
     }
 
-    public static void addItemLayer(ItemStack stack, String layer)
+    public static void addItemLayer(ItemStack stack, int state, String layer)
     {
-        if (itemHasLayer(stack, layer)) return;
-
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("layers")) compound.setTag("layers", new NBTTagList());
-        NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
+        String key = "layers" + state;
+        if (!compound.hasKey(key)) compound.setTag(key, new NBTTagList());
+        NBTTagList list = compound.getTagList(key, Constants.NBT.TAG_STRING);
 
         list.appendTag(new NBTTagString(layer));
     }
 
-    public static boolean itemHasLayer(ItemStack stack, String layer)
+    public static boolean itemHasLayer(ItemStack stack, int state, String layer)
     {
         if (!stack.hasTagCompound()) return false;
 
@@ -102,14 +107,15 @@ public class TextureTags
         if (!compound.hasKey(DOMAIN)) return false;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("layers")) return false;
+        String key = "layers" + state;
+        if (!compound.hasKey(key)) return false;
 
-        NBTTagList list = compound.getTagList("layers", Constants.NBT.TAG_STRING);
+        NBTTagList list = compound.getTagList(key, Constants.NBT.TAG_STRING);
         for (int i = list.tagCount() - 1; i >= 0; i--) if (list.getStringTagAt(i).equals(layer)) return true;
         return false;
     }
 
-    public static boolean itemHasMainLayerTag(ItemStack stack)
+    public static boolean itemHasMainLayerTag(ItemStack stack, int state)
     {
         if (!stack.hasTagCompound()) return false;
 
@@ -117,7 +123,7 @@ public class TextureTags
         if (!compound.hasKey(DOMAIN)) return false;
 
         compound = compound.getCompoundTag(DOMAIN);
-        return compound.hasKey("layers");
+        return compound.hasKey("layers" + state);
     }
 
 

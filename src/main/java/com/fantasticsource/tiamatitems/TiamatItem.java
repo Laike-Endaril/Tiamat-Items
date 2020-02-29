@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
+import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_FULL;
 
 public class TiamatItem extends Item
 {
@@ -27,12 +28,12 @@ public class TiamatItem extends Item
         setRegistryName("tiamatitem");
     }
 
-    public static ItemStack get(boolean cacheLayers, boolean cacheTexture, String... layers)
+    public static ItemStack get(boolean cacheLayers, boolean cacheTexture, String... fullStateLayers)
     {
         ItemStack stack = new ItemStack(TiamatItems.tiamatItem);
-        for (String layer : layers)
+        for (String layer : fullStateLayers)
         {
-            if (layer != null) TextureTags.addItemLayer(stack, layer);
+            if (layer != null) TextureTags.addItemLayer(stack, STATE_FULL, layer);
         }
         if (cacheLayers) TextureTags.addItemLayerCacheTag(stack);
         if (cacheTexture) TextureTags.addItemTextureCacheTag(stack);

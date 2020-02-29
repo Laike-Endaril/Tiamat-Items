@@ -14,8 +14,11 @@ import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandom
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+
+import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.*;
 
 public class Test
 {
@@ -186,6 +189,24 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("axe:0:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
+
+
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
         poolSet.put("2HAxeActLC", CRecalculableTraitPool.pools.get("2HAxeActLC"));
         itemType.randomRecalculableTraitPoolSets.put("ActLC", poolSet);
@@ -225,6 +246,71 @@ public class Test
         trait.minValue = 1;
         trait.maxValue = 3;
         itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_EMPTY, STATE_UNUSABLE, STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("axe:2:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
+
+
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void create2HAxeHandleItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "2H Axe Handle";
+        itemType.percentageMultiplier = 2;
+
+
+        CRTraitElement_ActiveAttributeMod attributeElement = new CRTraitElement_ActiveAttributeMod();
+        attributeElement.attributeName = "generic.attackSpeed";
+        attributeElement.minAmount = 0.5;
+        attributeElement.maxAmount = 1;
+
+        CRecalculableTrait trait = new CRecalculableTrait();
+        trait.name = "Attack Speed";
+        trait.elements.add(attributeElement);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_EMPTY, STATE_UNUSABLE, STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("axe:1:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
