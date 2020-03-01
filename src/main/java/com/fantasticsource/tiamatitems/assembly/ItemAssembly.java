@@ -197,6 +197,16 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> recalc(ItemStack stack)
     {
+        return recalc(stack, false);
+    }
+
+    /**
+     * Completely recalculates an item (recursively)
+     *
+     * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
+     */
+    public static ArrayList<ItemStack> recalc(ItemStack stack, boolean recursive)
+    {
         ArrayList<ItemStack> result = new ArrayList<>();
 
 
@@ -206,7 +216,7 @@ public class ItemAssembly
         for (PartSlot partSlot : partSlots)
         {
             ItemStack part = partSlot.part;
-            result.addAll(recalc(part));
+            result.addAll(recalc(part, true));
             if (part.isEmpty()) continue;
 
             partCount++;
@@ -227,8 +237,8 @@ public class ItemAssembly
         }
 
 
-        //Validate native traits on core and recalculate them if necessary
-        if (!recalcEmptyPartTraits(core))
+        //Validate native traits on core and recalculate them if necessary, applying recalculable traits
+        if (!recalcEmptyPartTraits(core, recursive))
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
@@ -321,7 +331,6 @@ public class ItemAssembly
         int value = MiscTags.getItemValue(core);
         for (PartSlot partSlot : partSlots)
         {
-            //TODO Merge all NBT in non-override mode except...
             ItemStack part = partSlot.part;
             MCTools.mergeNBT(compound, false, part.getTagCompound());
             value += MiscTags.getItemValue(part);
@@ -346,7 +355,7 @@ public class ItemAssembly
      * Validates and recalculates the traits of an *empty part*
      * Returns false if the part itself should be deleted (eg. if its item type no longer exists)
      */
-    private static boolean recalcEmptyPartTraits(ItemStack stack)
+    private static boolean recalcEmptyPartTraits(ItemStack stack, boolean recursive)
     {
         //Validate itemtype/rarity
         CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemTypeName(stack));
@@ -357,7 +366,7 @@ public class ItemAssembly
 
 
         //Re-apply item type and return
-        itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity);
+        itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity, recursive);
         return true;
     }
 }

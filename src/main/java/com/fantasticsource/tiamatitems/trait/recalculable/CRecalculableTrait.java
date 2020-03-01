@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems.trait.recalculable;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
+    public boolean addToCoreOnAssembly = true;
     public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
 
 
@@ -85,6 +87,8 @@ public final class CRecalculableTrait extends CTrait
     {
         super.write(buf);
 
+        buf.writeBoolean(addToCoreOnAssembly);
+
         buf.writeInt(elements.size());
         for (CRecalculableTraitElement element : elements) writeMarked(buf, element);
 
@@ -95,6 +99,8 @@ public final class CRecalculableTrait extends CTrait
     public CRecalculableTrait read(ByteBuf buf)
     {
         super.read(buf);
+
+        addToCoreOnAssembly = buf.readBoolean();
 
         elements.clear();
         for (int i = buf.readInt(); i > 0; i--) elements.add((CRecalculableTraitElement) readMarked(buf));
@@ -107,6 +113,8 @@ public final class CRecalculableTrait extends CTrait
     {
         super.save(stream);
 
+        new CBoolean().set(addToCoreOnAssembly).save(stream);
+
         new CInt().set(elements.size()).save(stream);
         for (CRecalculableTraitElement element : elements) saveMarked(stream, element);
 
@@ -117,6 +125,8 @@ public final class CRecalculableTrait extends CTrait
     public CRecalculableTrait load(InputStream stream)
     {
         super.load(stream);
+
+        addToCoreOnAssembly = new CBoolean().load(stream).value;
 
         CInt ci = new CInt();
 

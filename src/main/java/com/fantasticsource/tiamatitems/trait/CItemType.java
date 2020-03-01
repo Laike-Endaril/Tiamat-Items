@@ -58,11 +58,11 @@ public class CItemType extends Component
 
     public ItemStack generateItem(int level, CRarity rarity)
     {
-        return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity);
+        return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity, false);
     }
 
 
-    public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity)
+    public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity, boolean recursive)
     {
         //See whether this is the first time we're generating or not
         boolean firstGeneration = MiscTags.getItemGenVersion(stack) == -1;
@@ -280,32 +280,39 @@ public class CItemType extends Component
         AssemblyTags.saveInternalCore(stack);
 
 
-        //Apply static and random recalculable traits
+        //Apply static and random recalculable traits, but if this is recursive, then only the traits with addToCoreOnAssembly set to true
         for (String traitString : TraitTags.getTraitStrings(stack))
         {
             String[] tokens = Tools.fixedSplit(traitString, ":");
             if (tokens[0].equals("Static"))
             {
                 CRecalculableTrait trait = staticRecalculableTraits.get(tokens[1]);
-                {
-                    int[] baseArgs = new int[tokens.length - 2];
-                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+                if (recursive && !trait.addToCoreOnAssembly) continue;
 
-                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
-                }
+                int[] baseArgs = new int[tokens.length - 2];
+                for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+
+                trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
             }
             else
             {
-                for (CRecalculableTrait trait : randomRecalculableTraitPoolSets.get(tokens[0]).get(tokens[1]).traitGenWeights.keySet())
+                CRecalculableTrait trait = null;
+                for (CRecalculableTrait trait2 : randomRecalculableTraitPoolSets.get(tokens[0]).get(tokens[1]).traitGenWeights.keySet())
                 {
-                    if (trait.name.equals(tokens[2]))
+                    if (trait2.name.equals(tokens[2]))
                     {
-                        int[] baseArgs = new int[tokens.length - 3];
-                        for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 3]);
-
-                        trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                        trait = trait2;
+                        break;
                     }
                 }
+
+                if (trait == null || (recursive && !trait.addToCoreOnAssembly)) continue;
+
+
+                int[] baseArgs = new int[tokens.length - 3];
+                for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 3]);
+
+                trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
             }
         }
 

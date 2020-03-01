@@ -2,12 +2,6 @@ Add support for build/gender-specific skin parts (as part of unrecalculable skin
 
 
 
-"Empty" layers/texture (tiamat items only) (as trait?)
-"Partial" layers/texture (tiamat items only) (as trait?)
-"Full" layers/texture (tiamat items only) (as trait?)
-
-
-
 Name generation...
 When calculating a name due to assembly, generation, or recalculation of stats, use 2 highest attributes on item to determine name, using this comparison method:
 head : always 5-10  roll 8
