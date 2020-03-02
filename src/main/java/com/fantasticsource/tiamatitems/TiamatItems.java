@@ -10,20 +10,23 @@ import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.trait.CItemType;
+import moe.plushie.armourers_workshop.api.common.IExtraColours;
+import moe.plushie.armourers_workshop.api.common.capability.IPlayerWardrobeCap;
+import moe.plushie.armourers_workshop.api.common.capability.IWardrobeCap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -50,6 +53,11 @@ import java.util.List;
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.033b,);required-after:tiamatactions@[1.12.2.000,)")
 public class TiamatItems
 {
+    //TODO Remove this and use one from AW API if it's added
+    @CapabilityInject(IPlayerWardrobeCap.class)
+    public static final Capability<IPlayerWardrobeCap> PLAYER_WARDROBE_CAP = null;
+
+
     public static final String MODID = "tiamatitems";
     public static final String NAME = "Tiamat Items";
     public static final String VERSION = "1.12.2.000b";
@@ -243,28 +251,33 @@ public class TiamatItems
         }
     }
 
+
+    //TODO Remove this and use one from AW API if it's added
+    public static IPlayerWardrobeCap getWardrobe(EntityPlayerMP player)
+    {
+        return player.getCapability(PLAYER_WARDROBE_CAP, null);
+    }
+
+
     @SubscribeEvent
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
         //TODO Remove all this
         if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
 
-        NBTTagCompound mainTag = new NBTTagCompound();
-        event.getEntityPlayer().writeToNBT(mainTag);
-        NBTTagCompound compound = mainTag.getCompoundTag("ForgeCaps").getCompoundTag("armourers_workshop:player-wardrobe-provider");
-        compound.setInteger("extra-colour-skin", (255 << 24) | (255 << 16) | (0 << 8) | 255);
-        event.getEntityPlayer().readFromNBT(mainTag);
+        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
+        IWardrobeCap wardrobe = getWardrobe(player);
+        wardrobe.getExtraColours().setColour(IExtraColours.ExtraColourType.SKIN, (255 << 24) | (255 << 16) | (0 << 8) | 255);
+        wardrobe.syncToPlayer(player);
+        wardrobe.syncToAllTracking();
 
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        server.commandManager.executeCommand(server, "/armourers resyncWardrobe Laike_Endaril");
+//        NBTTagCompound mainTag = new NBTTagCompound();
+//        event.getEntityPlayer().writeToNBT(mainTag);
+//        NBTTagCompound compound = mainTag.getCompoundTag("ForgeCaps").getCompoundTag("armourers_workshop:player-wardrobe-provider");
+//        compound.setInteger("extra-colour-skin", (255 << 24) | (255 << 16) | (0 << 8) | 255);
+//        event.getEntityPlayer().readFromNBT(mainTag);
 
-//        NBTTagList list = compound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-//        for (int i = 0; i < list.tagCount(); i++)
-//        {
-//            compound = list.getCompoundTagAt(i);
-//        for (String key : compound.getKeySet()) System.out.println(key + ": " + compound.getTag(key).getId());
-//        }
-
-//        ItemAssembly.putPartInEmptySlot(event.getEntityPlayer().inventory.getStackInSlot(0), event.getEntityPlayer().inventory.getStackInSlot(1));
+//        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+//        server.commandManager.executeCommand(server, "/armourers resyncWardrobe Laike_Endaril");
     }
 }
