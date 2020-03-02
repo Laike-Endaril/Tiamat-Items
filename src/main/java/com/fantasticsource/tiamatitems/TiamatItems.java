@@ -16,6 +16,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
@@ -244,8 +246,25 @@ public class TiamatItems
     @SubscribeEvent
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
+        //TODO Remove all this
         if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
 
-        ItemAssembly.putPartInEmptySlot(event.getEntityPlayer().inventory.getStackInSlot(0), event.getEntityPlayer().inventory.getStackInSlot(1));
+        NBTTagCompound mainTag = new NBTTagCompound();
+        event.getEntityPlayer().writeToNBT(mainTag);
+        NBTTagCompound compound = mainTag.getCompoundTag("ForgeCaps").getCompoundTag("armourers_workshop:player-wardrobe-provider");
+        compound.setInteger("extra-colour-skin", (255 << 24) | (255 << 16) | (0 << 8) | 255);
+        event.getEntityPlayer().readFromNBT(mainTag);
+
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        server.commandManager.executeCommand(server, "/armourers resyncWardrobe Laike_Endaril");
+
+//        NBTTagList list = compound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+//        for (int i = 0; i < list.tagCount(); i++)
+//        {
+//            compound = list.getCompoundTagAt(i);
+//        for (String key : compound.getKeySet()) System.out.println(key + ": " + compound.getTag(key).getId());
+//        }
+
+//        ItemAssembly.putPartInEmptySlot(event.getEntityPlayer().inventory.getStackInSlot(0), event.getEntityPlayer().inventory.getStackInSlot(1));
     }
 }
