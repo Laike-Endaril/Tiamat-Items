@@ -55,7 +55,7 @@ public class TiamatItems
 {
     //TODO Remove this and use one from AW API if it's added
     @CapabilityInject(IPlayerWardrobeCap.class)
-    public static final Capability<IPlayerWardrobeCap> PLAYER_WARDROBE_CAP = null;
+    public static Capability<IPlayerWardrobeCap> PLAYER_WARDROBE_CAP = null;
 
 
     public static final String MODID = "tiamatitems";
@@ -271,13 +271,7 @@ public class TiamatItems
         wardrobe.syncToPlayer(player);
         wardrobe.syncToAllTracking();
 
-//        NBTTagCompound mainTag = new NBTTagCompound();
-//        event.getEntityPlayer().writeToNBT(mainTag);
-//        NBTTagCompound compound = mainTag.getCompoundTag("ForgeCaps").getCompoundTag("armourers_workshop:player-wardrobe-provider");
-//        compound.setInteger("extra-colour-skin", (255 << 24) | (255 << 16) | (0 << 8) | 255);
-//        event.getEntityPlayer().readFromNBT(mainTag);
 
-//        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-//        server.commandManager.executeCommand(server, "/armourers resyncWardrobe Laike_Endaril");
+        ItemAssembly.assemble(player.inventory.getStackInSlot(0), player.inventory.getStackInSlot(1), player.inventory.getStackInSlot(2), player.inventory.getStackInSlot(3));
     }
 }
