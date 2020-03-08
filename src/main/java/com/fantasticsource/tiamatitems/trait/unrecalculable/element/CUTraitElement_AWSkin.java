@@ -85,8 +85,8 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         //If it's a skin file, just add it and be done
         if (!file.isDirectory())
         {
-            if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
-            else addAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
+            if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
+            else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
             return 1;
         }
 
@@ -106,7 +106,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
                 //Only have one main skin if non-transient
                 anySkinAdded = true;
                 mainSkinAdded = true;
-                addAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
+                addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
             }
             else
             {
@@ -119,7 +119,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
                     if (renderModeFile.isDirectory()) continue;
 
                     anySkinAdded = true;
-                    TransientAWSkinHandler.addTransientAWSkin(stack, file.getAbsolutePath(), skinType, file.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
+                    TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(renderModeFile.getAbsolutePath()), skinType, file.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
                 }
             }
         }
@@ -127,6 +127,11 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         return anySkinAdded ? 1 : -1;
     }
 
+
+    protected String getSkinOrSkinFolderDir(String fullDir)
+    {
+        return fullDir.replace(MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator, "");
+    }
 
     protected static File getSkinOrFolder(String filename)
     {
