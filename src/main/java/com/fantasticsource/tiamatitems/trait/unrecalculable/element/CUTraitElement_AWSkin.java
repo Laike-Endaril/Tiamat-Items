@@ -111,7 +111,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             else
             {
                 //Folder; possibly a render channel folder
-                File[] renderModeFiles = file.listFiles();
+                File[] renderModeFiles = skinOrRenderModeChannel.listFiles();
                 if (renderModeFiles == null || renderModeFiles.length == 0) continue;
 
                 for (File renderModeFile : renderModeFiles)
@@ -119,7 +119,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
                     if (renderModeFile.isDirectory()) continue;
 
                     anySkinAdded = true;
-                    TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(renderModeFile.getAbsolutePath()), skinType, file.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
+                    TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(renderModeFile.getAbsolutePath()), skinType, skinOrRenderModeChannel.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
                 }
             }
         }
