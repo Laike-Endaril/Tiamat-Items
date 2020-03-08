@@ -22,8 +22,9 @@ import java.util.regex.Matcher;
 
 public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 {
+    //TODO this trait may not work correctly if your skin folders have non-skin files in them (anything besides folders and skins)
     public String libraryFileOrFolder = "", skinType = "";
-    public boolean isTransient = false;
+    public boolean isTransient = false, isRandomFromFolder = false;
     public ArrayList<CRandomRGB> dyeChannels = new ArrayList<>();
     //TODO limit dye channel count to 8 max
     //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
@@ -33,16 +34,19 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public String getDescription()
     {
         String folderString = (MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
+
+
         File file = new File(folderString);
         boolean isfolder = file.exists() && file.isDirectory();
 
         if (isTransient)
         {
-            if (isfolder) return "Transient AW Skin from folder: " + libraryFileOrFolder;
+            if (isfolder) return "Transient AW Skins from folder: " + libraryFileOrFolder;
             return "Transient AW Skin: " + libraryFileOrFolder;
         }
 
-        if (isfolder) return "AW Skin from folder: " + libraryFileOrFolder;
+        if (isfolder) return "AW Skins from folder: " + libraryFileOrFolder;
         return "AW Skin: " + libraryFileOrFolder;
     }
 
@@ -50,39 +54,92 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     @Override
     public double applyToItem(ItemStack stack, double itemTypeAndLevelMultiplier)
     {
-        String folderString = (MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
-        File file = new File(folderString);
-        boolean isfolder = file.isDirectory();
-
-        if (isfolder)
-        {
-            double percentage = itemTypeAndLevelMultiplier / CItemType.maxItemLevel;
-            File[] files = file.listFiles();
-            if (files == null) return -1;
-
-            file = files[(int) (Math.random() * files.length * percentage)];
-        }
-        else file = new File(folderString + ".armour");
-
-
-        if (!file.exists()) return -1;
-
-
-        String filename = isfolder ? libraryFileOrFolder + "/" + file.getName().replace(".armour", "") : libraryFileOrFolder;
-
-
+        //Dyes
         Color[] dyes = new Color[dyeChannels.size()];
         int i = 0;
         for (CRandomRGB randomRGB : dyeChannels) dyes[i++] = randomRGB.generate();
 
 
-        if (isTransient)
+        //Skin file(s)
+        File file = getSkinOrFolder(MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        if (file == null) return -1;
+
+
+        if (isRandomFromFolder)
         {
-            TransientAWSkinHandler.addTransientAWSkin(stack, filename, skinType, dyes);
+            if (!file.isDirectory()) return -1;
+
+            File[] files = file.listFiles();
+            if (files == null || files.length == 0) return -1;
+
+
+            double percentage = itemTypeAndLevelMultiplier / CItemType.maxItemLevel;
+
+            file = files[(int) (Math.random() * files.length * percentage)];
+        }
+
+
+        //At this point, "file" is either a skin file, or a folder (either way, it exists)
+
+
+        //If it's a skin file, just add it and be done
+        if (!file.isDirectory())
+        {
+            if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
+            else addAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
             return 1;
         }
 
 
+        //It's a folder; this skin may be using multiple parts, possibly with render channels
+        File[] files = file.listFiles();
+        if (files == null || files.length == 0) return -1;
+
+        boolean mainSkinAdded = false, anySkinAdded = false;
+        for (File skinOrRenderModeChannel : files)
+        {
+            if (!skinOrRenderModeChannel.isDirectory())
+            {
+                //Normal skin part
+                if (!isTransient && mainSkinAdded) continue;
+
+                //Only have one main skin if non-transient
+                anySkinAdded = true;
+                mainSkinAdded = true;
+                addAWSkin(stack, file.getAbsolutePath(), skinType, dyes);
+            }
+            else
+            {
+                //Folder; possibly a render channel folder
+                File[] renderModeFiles = file.listFiles();
+                if (renderModeFiles == null || renderModeFiles.length == 0) continue;
+
+                for (File renderModeFile : renderModeFiles)
+                {
+                    if (renderModeFile.isDirectory()) continue;
+
+                    anySkinAdded = true;
+                    TransientAWSkinHandler.addTransientAWSkin(stack, file.getAbsolutePath(), skinType, file.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
+                }
+            }
+        }
+
+        return anySkinAdded ? 1 : -1;
+    }
+
+
+    protected static File getSkinOrFolder(String filename)
+    {
+        File file = new File(filename);
+        if (file.isDirectory()) return file;
+
+        file = new File(filename + ".armour");
+        if (!file.exists() || file.isDirectory()) return null;
+        return file;
+    }
+
+    protected static void addAWSkin(ItemStack stack, String filename, String skinType, Color[] dyes)
+    {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
 
         NBTTagCompound compound = new NBTTagCompound();
@@ -97,7 +154,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         compound2 = new NBTTagCompound();
         compound.setTag("dyeData", compound2);
 
-        i = 0;
+        int i = 0;
         for (Color dye : dyes)
         {
             compound2.setByte("dye" + i + "r", (byte) dye.r());
@@ -106,8 +163,6 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             compound2.setByte("dye" + i + "t", (byte) dye.a());
             i++;
         }
-
-        return 1;
     }
 
 
@@ -117,6 +172,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         ByteBufUtils.writeUTF8String(buf, libraryFileOrFolder);
         ByteBufUtils.writeUTF8String(buf, skinType);
         buf.writeBoolean(isTransient);
+        buf.writeBoolean(isRandomFromFolder);
 
         buf.writeInt(dyeChannels.size());
         for (CRandomRGB dyeChannel : dyeChannels) dyeChannel.write(buf);
@@ -130,6 +186,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         libraryFileOrFolder = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
         isTransient = buf.readBoolean();
+        isRandomFromFolder = buf.readBoolean();
 
         dyeChannels.clear();
         for (int i = buf.readInt(); i > 0; i--) dyeChannels.add(new CRandomRGB().read(buf));
@@ -141,7 +198,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public CUTraitElement_AWSkin save(OutputStream stream)
     {
         new CStringUTF8().set(libraryFileOrFolder).save(stream).set(skinType).save(stream);
-        new CBoolean().set(isTransient).save(stream);
+        new CBoolean().set(isTransient).save(stream).set(isRandomFromFolder).save(stream);
 
         new CInt().set(dyeChannels.size()).save(stream);
         for (CRandomRGB dyeChannel : dyeChannels) dyeChannel.save(stream);
@@ -153,9 +210,12 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public CUTraitElement_AWSkin load(InputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8();
+        CBoolean cb = new CBoolean();
+
         libraryFileOrFolder = cs.load(stream).value;
         skinType = cs.load(stream).value;
-        isTransient = new CBoolean().load(stream).value;
+        isTransient = cb.load(stream).value;
+        isRandomFromFolder = cb.load(stream).value;
 
         dyeChannels.clear();
         for (int i = new CInt().load(stream).value; i > 0; i--) dyeChannels.add(new CRandomRGB().load(stream));
