@@ -76,8 +76,6 @@ public class Commands extends CommandBase
             {
                 if (sender.canUseCommand(entry.getValue(), getName())) result.add(entry.getKey());
             }
-
-            if (partial.length() != 0) result.removeIf(k -> partial.length() > k.length() || !k.substring(0, partial.length()).equalsIgnoreCase(partial));
         }
         else if (args.length == 2)
         {
@@ -108,6 +106,8 @@ public class Commands extends CommandBase
                     break;
             }
         }
+
+        if (partial.length() != 0) result.removeIf(k -> partial.length() > k.length() || !k.substring(0, partial.length()).equalsIgnoreCase(partial));
         return result;
     }
 

@@ -334,6 +334,7 @@ public class Test
 
         CUTraitElement_AWSkin skinElement = new CUTraitElement_AWSkin();
         skinElement.libraryFileOrFolder = "official";
+        skinElement.isRandomFromFolder = true;
         skinElement.skinType = "armourers:axe";
 
         CRandomRGB rgb = new CRandomRGB();

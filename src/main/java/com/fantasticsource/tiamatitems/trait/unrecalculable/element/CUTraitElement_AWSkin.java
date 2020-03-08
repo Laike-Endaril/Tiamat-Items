@@ -95,18 +95,14 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         File[] files = file.listFiles();
         if (files == null || files.length == 0) return -1;
 
-        boolean mainSkinAdded = false, anySkinAdded = false;
+        boolean skinAdded = false;
         for (File skinOrRenderModeChannel : files)
         {
             if (!skinOrRenderModeChannel.isDirectory())
             {
-                //Normal skin part
-                if (!isTransient && mainSkinAdded) continue;
-
-                //Only have one main skin if non-transient
-                anySkinAdded = true;
-                mainSkinAdded = true;
-                addAWSkin(stack, getSkinOrSkinFolderDir(skinOrRenderModeChannel.getAbsolutePath()), skinType, dyes);
+                //Skin not in a render channel folder; always add as transient to prevent the wardrobe from conflicting with the native item skin
+                skinAdded = true;
+                TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(skinOrRenderModeChannel.getAbsolutePath()), skinType, dyes);
             }
             else
             {
@@ -118,13 +114,13 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
                 {
                     if (renderModeFile.isDirectory()) continue;
 
-                    anySkinAdded = true;
+                    skinAdded = true;
                     TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(renderModeFile.getAbsolutePath()), skinType, skinOrRenderModeChannel.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
                 }
             }
         }
 
-        return anySkinAdded ? 1 : -1;
+        return skinAdded ? 1 : -1;
     }
 
 
@@ -153,7 +149,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         NBTTagCompound compound2 = new NBTTagCompound();
         compound.setTag("identifier", compound2);
 
-        compound2.setString("libraryFile", filename);
+        compound2.setString("libraryFile", filename.replace(".armour", ""));
         compound2.setString("skinType", skinType);
 
         compound2 = new NBTTagCompound();
