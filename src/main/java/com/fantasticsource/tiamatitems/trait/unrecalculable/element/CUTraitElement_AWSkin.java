@@ -106,7 +106,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
                 //Only have one main skin if non-transient
                 anySkinAdded = true;
                 mainSkinAdded = true;
-                addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
+                addAWSkin(stack, getSkinOrSkinFolderDir(skinOrRenderModeChannel.getAbsolutePath()), skinType, dyes);
             }
             else
             {
