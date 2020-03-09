@@ -22,6 +22,8 @@ import java.util.regex.Matcher;
 
 public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 {
+    public static final String AW_SKIN_LIBRARY_DIR = MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator;
+
     //TODO this trait may not work correctly if your skin folders have non-skin files in them (anything besides folders and skins)
     public String libraryFileOrFolder = "", skinType = "";
     public boolean isTransient = false, isRandomFromFolder = false;
@@ -33,7 +35,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     @Override
     public String getDescription()
     {
-        String folderString = (MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        String folderString = (AW_SKIN_LIBRARY_DIR + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
         if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
 
 
@@ -61,7 +63,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
 
         //Skin file(s)
-        File file = getSkinOrFolder(MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
         if (file == null) return -1;
 
 
@@ -126,7 +128,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
     protected String getSkinOrSkinFolderDir(String fullDir)
     {
-        return fullDir.replace(MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator, "");
+        return fullDir.replace(AW_SKIN_LIBRARY_DIR, "");
     }
 
     protected static File getSkinOrFolder(String filename)
