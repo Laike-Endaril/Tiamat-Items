@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -18,7 +19,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 {
@@ -35,7 +35,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     @Override
     public String getDescription()
     {
-        String folderString = (AW_SKIN_LIBRARY_DIR + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
         if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
 
 
@@ -63,7 +63,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
 
         //Skin file(s)
-        File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + libraryFileOrFolder.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator)));
+        File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder));
         if (file == null) return -1;
 
 

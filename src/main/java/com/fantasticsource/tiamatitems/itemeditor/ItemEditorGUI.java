@@ -203,7 +203,7 @@ public class ItemEditorGUI extends GUIScreen
         {
             layerArrayElement.clear();
             tabView.tabViews.get(1).clear();
-            tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "No texture files were found! You can add them to...\n" + TextFormatting.RED + MCTools.getConfigDir().replaceAll("\\\\", "/") + MODID));
+            tabView.tabViews.get(1).add(0, new GUIText(gui, TextFormatting.RED + "No texture files were found! You can add them to...\n" + TextFormatting.RED + Tools.fixFileSeparators(MCTools.getConfigDir()) + MODID));
         }
         else
         {
