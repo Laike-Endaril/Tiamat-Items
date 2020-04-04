@@ -195,7 +195,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("axe:0:ffffffff");
+            layerGroup.add("equipment/axe:0:ffffffff");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -255,7 +255,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("axe:2:ffffffff");
+            layerGroup.add("equipment/axe:2:ffffffff");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -303,7 +303,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("axe:1:ffffffff");
+            layerGroup.add("equipment/axe:1:ffffffff");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
