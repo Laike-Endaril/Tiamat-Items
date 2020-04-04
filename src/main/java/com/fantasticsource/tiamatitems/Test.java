@@ -148,7 +148,7 @@ public class Test
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "2HAxehead";
+        trait.name = "2H Axehead Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -165,7 +165,7 @@ public class Test
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "2HAxeHandle";
+        trait.name = "2H Axe Handle Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -182,7 +182,7 @@ public class Test
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "2HAxeSkin";
+        trait.name = "2H Axe Skin Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -350,7 +350,244 @@ public class Test
         skinElement.dyeChannels.add(rgb);
 
         CUnrecalculableTrait trait = new CUnrecalculableTrait();
-        trait.name = "Random Skin";
+        trait.name = "Random Axe Skin";
+        trait.elements.add(skinElement);
+        trait.minValue = 10;
+        trait.maxValue = 10;
+        itemType.staticUnrecalculableTraits.put(trait.name, trait);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+
+    public static void createChestplateItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "Chestplate";
+        itemType.slotting = "Chest";
+        itemType.percentageMultiplier = 1;
+
+
+        CRTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CRTraitElement_ForcedAWSkinTypeOverride();
+        skinTypeOverrideElement.skinType = "chest";
+
+        CRecalculableTrait trait = new CRecalculableTrait();
+        trait.name = "Chest Skin Override";
+        trait.elements.add(skinTypeOverrideElement);
+        trait.minValue = 1;
+        trait.maxValue = 1;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        HashSet<String> validItemTypes = new HashSet<>();
+        validItemTypes.add("Chestplate Plates");
+        PartSlot.validItemTypes.put("Chestplate Plates", validItemTypes);
+
+        CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
+        partSlot.partSlotType = "Chestplate Plates";
+        partSlot.required = true;
+        partSlot.minCount = 1;
+
+        trait = new CRecalculableTrait();
+        trait.name = "Chestplate Plates Slot";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        validItemTypes = new HashSet<>();
+        validItemTypes.add("Chestplate Straps");
+        PartSlot.validItemTypes.put("Chestplate Straps", validItemTypes);
+
+        partSlot = new CRTraitElement_PartSlot();
+        partSlot.partSlotType = "Chestplate Straps";
+        partSlot.required = true;
+        partSlot.minCount = 1;
+
+        trait = new CRecalculableTrait();
+        trait.name = "Chestplate Straps Slot";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        validItemTypes = new HashSet<>();
+        validItemTypes.add("Chestplate Skin");
+        PartSlot.validItemTypes.put("Chestplate Skin", validItemTypes);
+
+        partSlot = new CRTraitElement_PartSlot();
+        partSlot.partSlotType = "Chestplate Skin";
+        partSlot.required = true;
+        partSlot.minCount = 1;
+
+        trait = new CRecalculableTrait();
+        trait.name = "Chestplate Skin Slot";
+        trait.elements.add(partSlot);
+        trait.minValue = 0;
+        trait.maxValue = 0;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("equipment/metal_armor:2:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            trait.addToCoreOnAssembly = false;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
+
+
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+        poolSet = new LinkedHashMap<>();
+        poolSet.put("Sockets", CRecalculableTraitPool.pools.get("Sockets"));
+        itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void createChestplatePlatesItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "Chestplate Plates";
+        itemType.percentageMultiplier = 2;
+
+
+        CRTraitElement_ActiveAttributeMod element = new CRTraitElement_ActiveAttributeMod();
+        element.attributeName = "generic.armor";
+        element.minAmount = 1;
+        element.maxAmount = 3;
+
+        CRecalculableTrait trait = new CRecalculableTrait();
+        trait.name = "Armor";
+        trait.elements.add(element);
+        trait.minValue = 1;
+        trait.maxValue = 4;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_EMPTY, STATE_UNUSABLE, STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("equipment/shield:1:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            trait.addToCoreOnAssembly = false;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
+
+
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void createChestplateStrapsItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "Chestplate Straps";
+        itemType.percentageMultiplier = 2;
+
+
+        CRTraitElement_ActiveAttributeMod attributeElement = new CRTraitElement_ActiveAttributeMod();
+        attributeElement.attributeName = "generic.armorToughness";
+        attributeElement.minAmount = 0;
+        attributeElement.maxAmount = 1;
+
+        CRecalculableTrait trait = new CRecalculableTrait();
+        trait.name = "Armor Toughness";
+        trait.elements.add(attributeElement);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        itemType.staticRecalculableTraits.put(trait.name, trait);
+
+
+        CRTraitElement_TextureLayers textureElement;
+        ArrayList<String> layerGroup;
+        for (int state : new int[]{STATE_EMPTY, STATE_UNUSABLE, STATE_USABLE, STATE_FULL})
+        {
+            textureElement = new CRTraitElement_TextureLayers();
+            layerGroup = new ArrayList<>();
+            layerGroup.add("equipment/shield:2:ffffffff");
+            textureElement.layerGroups.put(state, layerGroup);
+
+            trait = new CRecalculableTrait();
+            trait.name = "Layer Group " + state;
+            trait.elements.add(textureElement);
+            trait.minValue = 0;
+            trait.maxValue = 0;
+            trait.addToCoreOnAssembly = false;
+            itemType.staticRecalculableTraits.put(trait.name, trait);
+        }
+
+
+        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+        poolSet.put("General", CRecalculableTraitPool.pools.get("General"));
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+
+        CItemType.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void createChestplateSkinItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "Chestplate Skin";
+        itemType.percentageMultiplier = 2;
+
+
+        CUTraitElement_AWSkin skinElement = new CUTraitElement_AWSkin();
+        skinElement.libraryFileOrFolder = "official";
+        skinElement.isRandomFromFolder = true;
+        skinElement.isTransient = true;
+        skinElement.skinType = "armourers:chest";
+        skinElement.indexWithinSkinTypeIfTransient = 1;
+
+        CRandomRGB rgb = new CRandomRGB();
+        rgb.rMin = 125;
+        rgb.gMax = 125;
+        CRGBBoost boost = new CRGBBoost();
+        boost.toAdd[1] = 255;
+        rgb.functions.add(boost);
+        skinElement.dyeChannels.add(rgb);
+
+        rgb = new CRandomRGB();
+        rgb.functions.add(new CRGBGrayscale());
+        skinElement.dyeChannels.add(rgb);
+
+        CUnrecalculableTrait trait = new CUnrecalculableTrait();
+        trait.name = "Random Chestplate Skin";
         trait.elements.add(skinElement);
         trait.minValue = 10;
         trait.maxValue = 10;

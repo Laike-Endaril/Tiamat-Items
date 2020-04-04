@@ -180,6 +180,11 @@ public class TiamatItems
         Test.create2HAxeheadItemType();
         Test.create2HAxeHandleItemType();
         Test.create2HAxeSkinItemType();
+
+        Test.createChestplateItemType();
+        Test.createChestplatePlatesItemType();
+        Test.createChestplateStrapsItemType();
+        Test.createChestplateSkinItemType();
         //TODO test code end
     }
 
