@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -29,7 +30,7 @@ public class TextureTags
         if (!compound.hasKey(key)) return result;
 
         NBTTagList list = compound.getTagList(key, Constants.NBT.TAG_STRING);
-        for (int i = 0; i < list.tagCount(); i++) result.add(list.getStringTagAt(i));
+        for (int i = 0; i < list.tagCount(); i++) result.add(Tools.fixFileSeparators(list.getStringTagAt(i)));
 
         return result;
     }

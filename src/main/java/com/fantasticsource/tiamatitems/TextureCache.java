@@ -35,7 +35,7 @@ public class TextureCache
             if (!relativeFilename.substring(relativeFilename.lastIndexOf(".") + 1).equals("png")) continue;
 
 
-            String fullFilePathAndName = mainTextureDir + '/' + relativeFilename;
+            String fullFilePathAndName = mainTextureDir + File.separator + relativeFilename;
 
             PNG png = PNG.load(fullFilePathAndName);
             if (!png.isLoaded()) continue;

@@ -438,7 +438,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/metal_armor:2:ffffffff");
+            layerGroup.add("equipment/metalarmor:2:ffffffff");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
