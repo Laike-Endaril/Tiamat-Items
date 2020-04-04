@@ -47,7 +47,7 @@ public class TextureCache
             if (max % min != 0 || !Tools.isPowerOfTwo(min))
             {
                 png.free();
-                System.err.println("Dynamic textures should be a single row or single column, and 3ach cell of a dynamic texture should be a power of two!  Problem file: " + fullFilePathAndName);
+                System.err.println("Dynamic textures should be a single row or single column, and each cell of a dynamic texture should be a power of two!  Problem file: " + fullFilePathAndName);
                 continue;
             }
 
