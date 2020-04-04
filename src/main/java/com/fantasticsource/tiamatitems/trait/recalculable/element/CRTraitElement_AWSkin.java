@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
+import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 {
     public String libraryFile = "", skinType = "";
+    public int indexWithinSkinTypeIfTransient = 0;
     public boolean isTransient = false;
     public ArrayList<Color> dyes = new ArrayList<>(); //The alpha of these colors is used for the AW paint type
     //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
@@ -43,7 +45,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     {
         if (isTransient)
         {
-            TransientAWSkinHandler.addTransientAWSkin(stack, libraryFile, skinType, dyes.toArray(new Color[0]));
+            ItemStack skinStack = AWSkinGenerator.generate(libraryFile, skinType, dyes.toArray(new Color[0]));
+            TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
             return;
         }
 

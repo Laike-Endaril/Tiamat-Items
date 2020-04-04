@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.trait.unrecalculable.element;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
@@ -26,6 +27,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
     //TODO this trait may not work correctly if your skin folders have non-skin files in them (anything besides folders and skins)
     public String libraryFileOrFolder = "", skinType = "";
+    public int indexWithinSkinTypeIfTransient = 0;
     public boolean isTransient = false, isRandomFromFolder = false;
     public ArrayList<CRandomRGB> dyeChannels = new ArrayList<>();
     //TODO limit dye channel count to 8 max
@@ -85,44 +87,13 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
 
         //If it's a skin file, just add it and be done
-        if (!file.isDirectory())
+        if (isTransient)
         {
-            if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
-            else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
-            return 1;
+            ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
+            TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
         }
-
-
-        //It's a folder; this skin may be using multiple parts, possibly with render channels
-        File[] files = file.listFiles();
-        if (files == null || files.length == 0) return -1;
-
-        boolean skinAdded = false;
-        for (File skinOrRenderModeChannel : files)
-        {
-            if (!skinOrRenderModeChannel.isDirectory())
-            {
-                //Skin not in a render channel folder; always add as transient to prevent the wardrobe from conflicting with the native item skin
-                skinAdded = true;
-                TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(skinOrRenderModeChannel.getAbsolutePath()), skinType, dyes);
-            }
-            else
-            {
-                //Folder; possibly a render channel folder
-                File[] renderModeFiles = skinOrRenderModeChannel.listFiles();
-                if (renderModeFiles == null || renderModeFiles.length == 0) continue;
-
-                for (File renderModeFile : renderModeFiles)
-                {
-                    if (renderModeFile.isDirectory()) continue;
-
-                    skinAdded = true;
-                    TransientAWSkinHandler.addTransientAWSkin(stack, getSkinOrSkinFolderDir(renderModeFile.getAbsolutePath()), skinType, skinOrRenderModeChannel.getName(), renderModeFile.getName().replace(".armour", ""), dyes);
-                }
-            }
-        }
-
-        return skinAdded ? 1 : -1;
+        else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
+        return 1;
     }
 
 
