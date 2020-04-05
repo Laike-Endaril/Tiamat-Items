@@ -58,7 +58,7 @@ public class CSettings extends Component
     }
 
 
-    public static void saveAll()
+    protected static void saveAll()
     {
         System.out.println("Saving changes to Tiamat Items settings");
         File file = new File(MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME);
