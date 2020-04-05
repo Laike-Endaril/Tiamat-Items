@@ -4,12 +4,12 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
-import com.fantasticsource.tiamatitems.settings.BlockSettings;
-import com.fantasticsource.tiamatitems.settings.CSettings;
-import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.settings.BlockSettings;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import moe.plushie.armourers_workshop.api.common.IExtraColours;
 import moe.plushie.armourers_workshop.api.common.capability.IPlayerWardrobeCap;
@@ -46,6 +46,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.io.IOException;
 import java.util.List;
 
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.034a,);required-after:tiamatactions@[1.12.2.000,)")
@@ -164,11 +165,11 @@ public class TiamatItems
 
 
     @Mod.EventHandler
-    public static void serverStarting(FMLServerStartingEvent event)
+    public static void serverStarting(FMLServerStartingEvent event) throws IOException
     {
         event.registerServerCommand(new Commands());
 
-        CSettings.init(event);
+        CSettings.loadAll(event);
 
 
         //TODO test code start

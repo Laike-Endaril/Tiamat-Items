@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.settings;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
@@ -8,16 +9,20 @@ import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
+
 public class CSettings extends Component
 {
+    public static final String FILENAME = MODID + ".dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
     private static int itemGenConfigVersion = 0;
 
@@ -48,14 +53,38 @@ public class CSettings extends Component
     {
         itemGenConfigVersion++;
 
-        //TODO save
+        saveAll();
         //TODO sync to connected clients
     }
 
 
-    public static void init(FMLServerStartingEvent event)
+    public static void saveAll()
     {
-        //TODO load
+        System.out.println("Saving changes to Tiamat Items settings");
+        File file = new File(MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME);
+        if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME + " is a directory instead of a file!");
+        else while (file.exists()) file.delete();
+
+        try
+        {
+            FileOutputStream stream = new FileOutputStream(file);
+            new CSettings().save(stream);
+            stream.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadAll(FMLServerStartingEvent event) throws IOException
+    {
+        File file = new File(MCTools.getWorldSaveDir(event.getServer()) + FILENAME);
+        if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(event.getServer()) + FILENAME + " is a directory instead of a file!");
+
+        FileInputStream stream = new FileInputStream(file);
+        new CSettings().load(stream);
+        stream.close();
     }
 
 
