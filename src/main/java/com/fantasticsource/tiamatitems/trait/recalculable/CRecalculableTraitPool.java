@@ -13,9 +13,6 @@ import java.util.Map;
 
 public class CRecalculableTraitPool extends Component
 {
-    public static LinkedHashMap<String, CRecalculableTraitPool> pools = new LinkedHashMap<>(); //TODO handle data retention
-
-
     public String name; //TODO disallow setting to the name "null" (see TraitTags class)
     public LinkedHashMap<CRecalculableTrait, Integer> traitGenWeights = new LinkedHashMap<>();
 

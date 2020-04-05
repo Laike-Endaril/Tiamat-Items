@@ -1,6 +1,5 @@
 package com.fantasticsource.tiamatitems.nbt;
 
-import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import net.minecraft.item.ItemStack;

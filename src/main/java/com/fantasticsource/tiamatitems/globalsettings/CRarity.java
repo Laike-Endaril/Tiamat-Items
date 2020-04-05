@@ -16,8 +16,6 @@ import java.util.Map;
 
 public class CRarity extends Component
 {
-    public static LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>(); //TODO handle data retention
-
     public String name = "";
     public Color color = Color.WHITE;
     public TextFormatting textColor = TextFormatting.WHITE;

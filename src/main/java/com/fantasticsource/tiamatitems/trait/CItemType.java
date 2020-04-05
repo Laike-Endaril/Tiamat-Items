@@ -27,33 +27,12 @@ import java.util.Map;
 
 public class CItemType extends Component
 {
-    public static final int ITEM_GEN_CODE_VERSION = 0;
-    private static int itemGenConfigVersion = 0; //TODO handle data retention
-
-    public static int maxItemLevel = 20;
-    public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
-
-
     public String name = "", slotting = "None";
     public double percentageMultiplier = 1, value;
     public LinkedHashMap<String, CRecalculableTrait> staticRecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTrait> staticUnrecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
     public LinkedHashMap<String, LinkedHashMap<String, CUnrecalculableTraitPool>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
-
-
-    //TODO call this method on item gen definition change, including globals
-    public void updateVersion()
-    {
-        itemGenConfigVersion++;
-
-        //TODO sync to connected clients
-    }
-
-    public static long getVersion()
-    {
-        return (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion;
-    }
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -73,7 +52,7 @@ public class CItemType extends Component
 
 
         //Apply and/or overwrite most main data
-        MiscTags.setItemGenVersion(stack, getVersion());
+        MiscTags.setItemGenVersion(stack, CGlobalSettings.getVersion());
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);

@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.command.CommandBase;
@@ -82,7 +83,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    for (String itemType : CItemType.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
+                    for (String itemType : CGlobalSettings.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
                     break;
             }
         }
@@ -102,7 +103,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    result.addAll(CRarity.rarities.keySet());
+                    result.addAll(CGlobalSettings.rarities.keySet());
                     break;
             }
         }
@@ -134,8 +135,8 @@ public class Commands extends CommandBase
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
-                CItemType gen = CItemType.itemTypes.get(args[1].replaceAll("_", " "));
-                CRarity rarity = CRarity.rarities.get(args[3]);
+                CItemType gen = CGlobalSettings.itemTypes.get(args[1].replaceAll("_", " "));
+                CRarity rarity = CGlobalSettings.rarities.get(args[3]);
                 if (gen == null || rarity == null)
                 {
                     notifyCommandListener(sender, this, getUsage(sender));

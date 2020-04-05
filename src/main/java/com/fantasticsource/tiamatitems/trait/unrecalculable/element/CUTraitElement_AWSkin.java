@@ -3,7 +3,7 @@ package com.fantasticsource.tiamatitems.trait.unrecalculable.element;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.tiamatitems.trait.CItemType;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.Tools;
@@ -32,75 +32,6 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public ArrayList<CRandomRGB> dyeChannels = new ArrayList<>();
     //TODO limit dye channel count to 8 max
     //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
-
-
-    @Override
-    public String getDescription()
-    {
-        String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
-        if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
-
-
-        File file = new File(folderString);
-        boolean isfolder = file.exists() && file.isDirectory();
-
-        if (isTransient)
-        {
-            if (isfolder) return "Transient AW Skins from folder: " + libraryFileOrFolder;
-            return "Transient AW Skin: " + libraryFileOrFolder;
-        }
-
-        if (isfolder) return "AW Skins from folder: " + libraryFileOrFolder;
-        return "AW Skin: " + libraryFileOrFolder;
-    }
-
-
-    @Override
-    public double applyToItem(ItemStack stack, double itemTypeAndLevelMultiplier)
-    {
-        //Dyes
-        Color[] dyes = new Color[dyeChannels.size()];
-        int i = 0;
-        for (CRandomRGB randomRGB : dyeChannels) dyes[i++] = randomRGB.generate();
-
-
-        //Skin file(s)
-        File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder));
-        if (file == null) return -1;
-
-
-        if (isRandomFromFolder)
-        {
-            if (!file.isDirectory()) return -1;
-
-            File[] files = file.listFiles();
-            if (files == null || files.length == 0) return -1;
-
-
-            double percentage = itemTypeAndLevelMultiplier / CItemType.maxItemLevel;
-
-            file = files[(int) (Math.random() * files.length * percentage)];
-        }
-
-
-        //At this point, "file" is either a skin file, or a folder (either way, it exists)
-
-
-        //If it's a skin file, just add it and be done
-        if (isTransient)
-        {
-            ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
-            TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
-        }
-        else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
-        return 1;
-    }
-
-
-    protected String getSkinOrSkinFolderDir(String fullDir)
-    {
-        return fullDir.replace(AW_SKIN_LIBRARY_DIR, "");
-    }
 
     protected static File getSkinOrFolder(String filename)
     {
@@ -139,6 +70,71 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         }
     }
 
+    @Override
+    public String getDescription()
+    {
+        String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
+        if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
+
+
+        File file = new File(folderString);
+        boolean isfolder = file.exists() && file.isDirectory();
+
+        if (isTransient)
+        {
+            if (isfolder) return "Transient AW Skins from folder: " + libraryFileOrFolder;
+            return "Transient AW Skin: " + libraryFileOrFolder;
+        }
+
+        if (isfolder) return "AW Skins from folder: " + libraryFileOrFolder;
+        return "AW Skin: " + libraryFileOrFolder;
+    }
+
+    @Override
+    public double applyToItem(ItemStack stack, double itemTypeAndLevelMultiplier)
+    {
+        //Dyes
+        Color[] dyes = new Color[dyeChannels.size()];
+        int i = 0;
+        for (CRandomRGB randomRGB : dyeChannels) dyes[i++] = randomRGB.generate();
+
+
+        //Skin file(s)
+        File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder));
+        if (file == null) return -1;
+
+
+        if (isRandomFromFolder)
+        {
+            if (!file.isDirectory()) return -1;
+
+            File[] files = file.listFiles();
+            if (files == null || files.length == 0) return -1;
+
+
+            double percentage = itemTypeAndLevelMultiplier / CGlobalSettings.maxItemLevel;
+
+            file = files[(int) (Math.random() * files.length * percentage)];
+        }
+
+
+        //At this point, "file" is either a skin file, or a folder (either way, it exists)
+
+
+        //If it's a skin file, just add it and be done
+        if (isTransient)
+        {
+            ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
+            TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
+        }
+        else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
+        return 1;
+    }
+
+    protected String getSkinOrSkinFolderDir(String fullDir)
+    {
+        return fullDir.replace(AW_SKIN_LIBRARY_DIR, "");
+    }
 
     @Override
     public CUTraitElement_AWSkin write(ByteBuf buf)

@@ -5,11 +5,11 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.trait.CItemType;
 import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import moe.plushie.armourers_workshop.api.common.IExtraColours;
 import moe.plushie.armourers_workshop.api.common.capability.IPlayerWardrobeCap;
@@ -159,7 +159,7 @@ public class TiamatItems
     @SubscribeEvent
     public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CItemType.getVersion()), (EntityPlayerMP) event.player);
+        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CGlobalSettings.getVersion()), (EntityPlayerMP) event.player);
     }
 
 
@@ -201,7 +201,7 @@ public class TiamatItems
         if (itemTypeName.equals("")) return;
 
         long version = MiscTags.getItemGenVersion(stack);
-        if (version == Long.MAX_VALUE || version == CItemType.getVersion()) return;
+        if (version == Long.MAX_VALUE || version == CGlobalSettings.getVersion()) return;
 
 
         ItemAssembly.recalc(stack);

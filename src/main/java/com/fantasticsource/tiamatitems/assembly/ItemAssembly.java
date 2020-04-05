@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
 import com.fantasticsource.tiamatitems.globalsettings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -358,7 +359,7 @@ public class ItemAssembly
     private static boolean recalcEmptyPartTraits(ItemStack stack, boolean recursive)
     {
         //Validate itemtype/rarity
-        CItemType itemType = CItemType.itemTypes.get(MiscTags.getItemTypeName(stack));
+        CItemType itemType = CGlobalSettings.itemTypes.get(MiscTags.getItemTypeName(stack));
         if (itemType == null) return false;
 
         CRarity rarity = MiscTags.getItemRarity(stack);
