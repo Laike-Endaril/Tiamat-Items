@@ -3,7 +3,7 @@ itemGroup.tiamatitems=Tiamat Items
 item.tiamatitems:tiamatitem.name=Tiamat Item
 
 tile.tiamatitems:itemeditor.name=Item Editor
-tile.tiamatitems:globalsettings.name=Global Settings
+tile.tiamatitems:settings.name=Tiamat Items Settings Editor
 
 
 

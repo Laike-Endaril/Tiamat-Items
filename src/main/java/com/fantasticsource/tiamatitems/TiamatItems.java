@@ -4,9 +4,9 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
-import com.fantasticsource.tiamatitems.globalsettings.BlockGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.ItemGlobalSettings;
+import com.fantasticsource.tiamatitems.settings.BlockSettings;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -63,10 +63,10 @@ public class TiamatItems
     public static BlockItemEditor blockItemEditor;
     @GameRegistry.ObjectHolder(MODID + ":itemeditor")
     public static ItemItemEditor itemItemEditor;
-    @GameRegistry.ObjectHolder(MODID + ":globalsettings")
-    public static BlockGlobalSettings blockGlobalSettings;
-    @GameRegistry.ObjectHolder(MODID + ":globalsettings")
-    public static ItemGlobalSettings itemGlobalSettings;
+    @GameRegistry.ObjectHolder(MODID + ":settings")
+    public static BlockSettings blockSettings;
+    @GameRegistry.ObjectHolder(MODID + ":settings")
+    public static ItemSettings itemSettings;
 
     @GameRegistry.ObjectHolder(MODID + ":tiamatitem")
     public static TiamatItem tiamatItem;
@@ -126,7 +126,7 @@ public class TiamatItems
     {
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.register(new BlockItemEditor());
-        registry.register(new BlockGlobalSettings());
+        registry.register(new BlockSettings());
     }
 
     @SubscribeEvent
@@ -134,7 +134,7 @@ public class TiamatItems
     {
         IForgeRegistry<Item> registry = event.getRegistry();
         registry.register(new ItemItemEditor());
-        registry.register(new ItemGlobalSettings());
+        registry.register(new ItemSettings());
 
         registry.register(new TiamatItem());
     }
@@ -143,7 +143,7 @@ public class TiamatItems
     public static void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoader.setCustomModelResourceLocation(itemItemEditor, 0, new ModelResourceLocation(MODID + ":itemeditor", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(itemGlobalSettings, 0, new ModelResourceLocation(MODID + ":globalsettings", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(itemSettings, 0, new ModelResourceLocation(MODID + ":settings", "inventory"));
 
         ModelLoader.setCustomModelResourceLocation(tiamatItem, 0, new ModelResourceLocation(MODID + ":tiamatitem", "inventory"));
     }
@@ -159,7 +159,7 @@ public class TiamatItems
     @SubscribeEvent
     public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CGlobalSettings.getVersion()), (EntityPlayerMP) event.player);
+        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CSettings.getVersion()), (EntityPlayerMP) event.player);
     }
 
 
@@ -201,7 +201,7 @@ public class TiamatItems
         if (itemTypeName.equals("")) return;
 
         long version = MiscTags.getItemGenVersion(stack);
-        if (version == Long.MAX_VALUE || version == CGlobalSettings.getVersion()) return;
+        if (version == Long.MAX_VALUE || version == CSettings.getVersion()) return;
 
 
         ItemAssembly.recalc(stack);

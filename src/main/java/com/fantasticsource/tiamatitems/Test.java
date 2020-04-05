@@ -1,8 +1,8 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
@@ -40,7 +40,7 @@ public class Test
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);
 
-        CGlobalSettings.recalcTraitPools.put(pool.name, pool);
+        CSettings.recalcTraitPools.put(pool.name, pool);
     }
 
 
@@ -56,7 +56,7 @@ public class Test
         rarity.traitCounts.put("Gen", 1); //1x general trait
         rarity.traitCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
 
-        CGlobalSettings.rarities.put(rarity.name, rarity);
+        CSettings.rarities.put(rarity.name, rarity);
     }
 
 
@@ -69,7 +69,7 @@ public class Test
 
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "Sockets";
-        CGlobalSettings.recalcTraitPools.put(pool.name, pool);
+        CSettings.recalcTraitPools.put(pool.name, pool);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
@@ -92,7 +92,7 @@ public class Test
         //Main action traits
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActLC";
-        CGlobalSettings.recalcTraitPools.put(pool.name, pool);
+        CSettings.recalcTraitPools.put(pool.name, pool);
 
 
         CRTraitElement_LeftClickAction leftClickAction = new CRTraitElement_LeftClickAction();
@@ -109,7 +109,7 @@ public class Test
         //Sub action traits
         pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActRC";
-        CGlobalSettings.recalcTraitPools.put(pool.name, pool);
+        CSettings.recalcTraitPools.put(pool.name, pool);
 
 
         CRTraitElement_RightClickAction rightClickAction = new CRTraitElement_RightClickAction();
@@ -212,23 +212,23 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActLC", CGlobalSettings.recalcTraitPools.get("2HAxeActLC"));
+        poolSet.put("2HAxeActLC", CSettings.recalcTraitPools.get("2HAxeActLC"));
         itemType.randomRecalculableTraitPoolSets.put("ActLC", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActRC", CGlobalSettings.recalcTraitPools.get("2HAxeActRC"));
+        poolSet.put("2HAxeActRC", CSettings.recalcTraitPools.get("2HAxeActRC"));
         itemType.randomRecalculableTraitPoolSets.put("ActRC", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("Sockets", CGlobalSettings.recalcTraitPools.get("Sockets"));
+        poolSet.put("Sockets", CSettings.recalcTraitPools.get("Sockets"));
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeheadItemType()
@@ -272,11 +272,11 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeHandleItemType()
@@ -320,11 +320,11 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeSkinItemType()
@@ -360,7 +360,7 @@ public class Test
         itemType.staticUnrecalculableTraits.put(trait.name, trait);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
 
@@ -455,15 +455,15 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
         poolSet = new LinkedHashMap<>();
-        poolSet.put("Sockets", CGlobalSettings.recalcTraitPools.get("Sockets"));
+        poolSet.put("Sockets", CSettings.recalcTraitPools.get("Sockets"));
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplatePlatesItemType()
@@ -507,11 +507,11 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplateStrapsItemType()
@@ -555,11 +555,11 @@ public class Test
 
 
         LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CGlobalSettings.recalcTraitPools.get("General"));
+        poolSet.put("General", CSettings.recalcTraitPools.get("General"));
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplateSkinItemType()
@@ -597,6 +597,6 @@ public class Test
         itemType.staticUnrecalculableTraits.put(trait.name, trait);
 
 
-        CGlobalSettings.itemTypes.put(itemType.name, itemType);
+        CSettings.itemTypes.put(itemType.name, itemType);
     }
 }

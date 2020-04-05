@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.globalsettings;
+package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
@@ -12,11 +12,11 @@ import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-public class GlobalSettingsGUI extends GUIScreen
+public class SettingsGUI extends GUIScreen
 {
-    public static void show(Network.OpenGlobalSettingsPacket packet)
+    public static void show(Network.OpenSettingsPacket packet)
     {
-        GlobalSettingsGUI gui = new GlobalSettingsGUI();
+        SettingsGUI gui = new SettingsGUI();
         Minecraft.getMinecraft().displayGuiScreen(gui);
 
 

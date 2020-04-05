@@ -4,8 +4,8 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.GlobalSettingsGUI;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.SettingsGUI;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public class Network
     {
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
-        WRAPPER.registerMessage(OpenGlobalSettingsPacketHandler.class, OpenGlobalSettingsPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(OpenSettingsPacketHandler.class, OpenSettingsPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RequestItemStackUpdatePacketHandler.class, RequestItemStackUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(ItemStackUpdatePacketHandler.class, ItemStackUpdatePacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
@@ -126,11 +126,11 @@ public class Network
     }
 
 
-    public static class OpenGlobalSettingsPacket implements IMessage
+    public static class OpenSettingsPacket implements IMessage
     {
         public double baseItemComponentPower, itemComponentPowerPerLevel;
 
-        public OpenGlobalSettingsPacket()
+        public OpenSettingsPacket()
         {
             //Required
         }
@@ -138,8 +138,8 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeDouble(CGlobalSettings.baseMultiplier);
-            buf.writeDouble(CGlobalSettings.multiplierBonusPerLevel);
+            buf.writeDouble(CSettings.baseMultiplier);
+            buf.writeDouble(CSettings.multiplierBonusPerLevel);
         }
 
         @Override
@@ -150,13 +150,13 @@ public class Network
         }
     }
 
-    public static class OpenGlobalSettingsPacketHandler implements IMessageHandler<OpenGlobalSettingsPacket, IMessage>
+    public static class OpenSettingsPacketHandler implements IMessageHandler<OpenSettingsPacket, IMessage>
     {
         @Override
         @SideOnly(Side.CLIENT)
-        public IMessage onMessage(OpenGlobalSettingsPacket packet, MessageContext ctx)
+        public IMessage onMessage(OpenSettingsPacket packet, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(() -> GlobalSettingsGUI.show(packet));
+            Minecraft.getMinecraft().addScheduledTask(() -> SettingsGUI.show(packet));
             return null;
         }
     }

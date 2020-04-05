@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -158,7 +158,7 @@ public class MiscTags
         compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("rarity")) return null;
 
-        CRarity rarity = CGlobalSettings.rarities.get(compound.getString("rarity"));
+        CRarity rarity = CSettings.rarities.get(compound.getString("rarity"));
         if (rarity == null) clearItemRarity(stack);
 
         return rarity;

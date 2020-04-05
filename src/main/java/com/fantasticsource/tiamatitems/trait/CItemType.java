@@ -1,8 +1,8 @@
 package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tiamatitems.TiamatItems;
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
-import com.fantasticsource.tiamatitems.globalsettings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
@@ -52,7 +52,7 @@ public class CItemType extends Component
 
 
         //Apply and/or overwrite most main data
-        MiscTags.setItemGenVersion(stack, CGlobalSettings.getVersion());
+        MiscTags.setItemGenVersion(stack, CSettings.getVersion());
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);
@@ -62,7 +62,7 @@ public class CItemType extends Component
 
 
         //Prep generation vars
-        double itemTypeAndLevelMultiplier = percentageMultiplier * (CGlobalSettings.baseMultiplier + (CGlobalSettings.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
+        double itemTypeAndLevelMultiplier = percentageMultiplier * (CSettings.baseMultiplier + (CSettings.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
         double totalValue = value;
 
 

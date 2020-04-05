@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
@@ -65,7 +65,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 
 
         double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
-        amount *= CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
+        amount *= CSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
 
         if (operation == 0) return (getColorAndSign(amount, operation) + Math.abs(amount) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
         if (operation == 1) return (getColorAndSign(amount, operation) + (Math.abs(amount) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
@@ -81,7 +81,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
         double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
         if (amount == 0) return;
 
-        amount *= CGlobalSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
+        amount *= CSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
         if (amount == 0) return;
 
         if (operation == 2) amount -= 1; //For internal calcs (above) and editing (minimum, maximum), treat operation 2 as a direct multiplier (2 means 2x as opposed to 3x)

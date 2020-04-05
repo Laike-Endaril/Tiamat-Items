@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.globalsettings;
+package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 
-public class CGlobalSettings extends Component
+public class CSettings extends Component
 {
     public static final int ITEM_GEN_CODE_VERSION = 0;
 
@@ -47,7 +47,7 @@ public class CGlobalSettings extends Component
     }
 
     @Override
-    public CGlobalSettings write(ByteBuf buf)
+    public CSettings write(ByteBuf buf)
     {
         buf.writeDouble(baseMultiplier);
         buf.writeDouble(multiplierBonusPerLevel);
@@ -56,7 +56,7 @@ public class CGlobalSettings extends Component
     }
 
     @Override
-    public CGlobalSettings read(ByteBuf buf)
+    public CSettings read(ByteBuf buf)
     {
         baseMultiplier = buf.readDouble();
         multiplierBonusPerLevel = buf.readDouble();
@@ -65,7 +65,7 @@ public class CGlobalSettings extends Component
     }
 
     @Override
-    public CGlobalSettings save(OutputStream stream)
+    public CSettings save(OutputStream stream)
     {
         new CDouble().set(baseMultiplier).save(stream).set(multiplierBonusPerLevel).save(stream);
 
@@ -73,7 +73,7 @@ public class CGlobalSettings extends Component
     }
 
     @Override
-    public CGlobalSettings load(InputStream stream)
+    public CSettings load(InputStream stream)
     {
         CDouble cd = new CDouble();
         baseMultiplier = cd.load(stream).value;

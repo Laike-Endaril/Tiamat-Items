@@ -3,7 +3,7 @@ package com.fantasticsource.tiamatitems.trait.unrecalculable.element;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.tiamatitems.globalsettings.CGlobalSettings;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.Tools;
@@ -112,7 +112,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             if (files == null || files.length == 0) return -1;
 
 
-            double percentage = itemTypeAndLevelMultiplier / CGlobalSettings.maxItemLevel;
+            double percentage = itemTypeAndLevelMultiplier / CSettings.maxItemLevel;
 
             file = files[(int) (Math.random() * files.length * percentage)];
         }

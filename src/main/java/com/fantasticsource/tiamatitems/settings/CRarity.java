@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.globalsettings;
+package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
