@@ -4,16 +4,22 @@ import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.component.CDouble;
+import com.fantasticsource.tools.component.CInt;
+import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CSettings extends Component
 {
     public static final int ITEM_GEN_CODE_VERSION = 0;
+    private static int itemGenConfigVersion = 0;
 
 
     public static int maxItemLevel = 20;
@@ -22,16 +28,15 @@ public class CSettings extends Component
             baseMultiplier = 1,
             multiplierBonusPerLevel = 1;
 
+
+    public static LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>();
+    public static LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>();
+    public static LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>();
+    public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
+
+
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
 
-
-    public static LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>(); //TODO handle data retention
-    public static LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>(); //TODO handle data retention
-    public static LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>(); //TODO handle data retention
-    public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>(); //TODO handle data retention
-
-
-    private static int itemGenConfigVersion = 0; //TODO handle data retention
 
     public static long getVersion()
     {
@@ -39,18 +44,68 @@ public class CSettings extends Component
     }
 
     //TODO call this method on item gen definition change, including globals
-    public void updateVersion()
+    public void updateVersionAndSave()
     {
         itemGenConfigVersion++;
 
+        //TODO save
         //TODO sync to connected clients
     }
+
+
+    public static void init(FMLServerStartingEvent event)
+    {
+        //TODO load
+    }
+
 
     @Override
     public CSettings write(ByteBuf buf)
     {
+        buf.writeInt(itemGenConfigVersion);
+
+
+        buf.writeInt(maxItemLevel);
+
         buf.writeDouble(baseMultiplier);
         buf.writeDouble(multiplierBonusPerLevel);
+
+
+        buf.writeInt(recalcTraitPools.size());
+        for (Map.Entry<String, CRecalculableTraitPool> entry : recalcTraitPools.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            entry.getValue().write(buf);
+        }
+
+        buf.writeInt(unrecalcTraitPools.size());
+        for (Map.Entry<String, CUnrecalculableTraitPool> entry : unrecalcTraitPools.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            entry.getValue().write(buf);
+        }
+
+        buf.writeInt(rarities.size());
+        for (Map.Entry<String, CRarity> entry : rarities.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            entry.getValue().write(buf);
+        }
+
+        buf.writeInt(itemTypes.size());
+        for (Map.Entry<String, CItemType> entry : itemTypes.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            entry.getValue().write(buf);
+        }
+
+
+        buf.writeInt(attributeBalanceMultipliers.size());
+        for (Map.Entry<String, Double> entry : attributeBalanceMultipliers.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            buf.writeDouble(entry.getValue());
+        }
 
         return this;
     }
@@ -58,8 +113,45 @@ public class CSettings extends Component
     @Override
     public CSettings read(ByteBuf buf)
     {
+        itemGenConfigVersion = buf.readInt();
+
+
+        (maxItemLevel) = buf.readInt();
+
         baseMultiplier = buf.readDouble();
         multiplierBonusPerLevel = buf.readDouble();
+
+
+        recalcTraitPools.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            recalcTraitPools.put(ByteBufUtils.readUTF8String(buf), new CRecalculableTraitPool().read(buf));
+        }
+
+        unrecalcTraitPools.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            unrecalcTraitPools.put(ByteBufUtils.readUTF8String(buf), new CUnrecalculableTraitPool().read(buf));
+        }
+
+        rarities.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            rarities.put(ByteBufUtils.readUTF8String(buf), new CRarity().read(buf));
+        }
+
+        itemTypes.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            itemTypes.put(ByteBufUtils.readUTF8String(buf), new CItemType().read(buf));
+        }
+
+
+        attributeBalanceMultipliers.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            attributeBalanceMultipliers.put(ByteBufUtils.readUTF8String(buf), buf.readDouble());
+        }
 
         return this;
     }
@@ -67,7 +159,47 @@ public class CSettings extends Component
     @Override
     public CSettings save(OutputStream stream)
     {
-        new CDouble().set(baseMultiplier).save(stream).set(multiplierBonusPerLevel).save(stream);
+        CInt ci = new CInt().set(itemGenConfigVersion).save(stream).set(maxItemLevel).save(stream);
+
+        CDouble cd = new CDouble().set(baseMultiplier).save(stream).set(multiplierBonusPerLevel).save(stream);
+
+
+        CStringUTF8 cs = new CStringUTF8();
+        ci.set(recalcTraitPools.size()).save(stream);
+        for (Map.Entry<String, CRecalculableTraitPool> entry : recalcTraitPools.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            entry.getValue().save(stream);
+        }
+
+        ci.set(unrecalcTraitPools.size()).save(stream);
+        for (Map.Entry<String, CUnrecalculableTraitPool> entry : unrecalcTraitPools.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            entry.getValue().save(stream);
+        }
+
+        ci.set(rarities.size()).save(stream);
+        for (Map.Entry<String, CRarity> entry : rarities.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            entry.getValue().save(stream);
+        }
+
+        ci.set(itemTypes.size()).save(stream);
+        for (Map.Entry<String, CItemType> entry : itemTypes.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            entry.getValue().save(stream);
+        }
+
+
+        ci.set(attributeBalanceMultipliers.size()).save(stream);
+        for (Map.Entry<String, Double> entry : attributeBalanceMultipliers.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            cd.set(entry.getValue()).save(stream);
+        }
 
         return this;
     }
@@ -75,9 +207,48 @@ public class CSettings extends Component
     @Override
     public CSettings load(InputStream stream)
     {
+        CInt ci = new CInt();
         CDouble cd = new CDouble();
-        baseMultiplier = cd.load(stream).value;
-        multiplierBonusPerLevel = cd.load(stream).value;
+        CStringUTF8 cs = new CStringUTF8();
+
+
+        itemGenConfigVersion = ci.load(stream).value;
+
+
+        baseMultiplier = ci.load(stream).value;
+        multiplierBonusPerLevel = ci.load(stream).value;
+
+
+        recalcTraitPools.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            recalcTraitPools.put(cs.load(stream).value, new CRecalculableTraitPool().load(stream));
+        }
+
+        unrecalcTraitPools.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            unrecalcTraitPools.put(cs.load(stream).value, new CUnrecalculableTraitPool().load(stream));
+        }
+
+        rarities.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            rarities.put(cs.load(stream).value, new CRarity().load(stream));
+        }
+
+        itemTypes.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            itemTypes.put(cs.load(stream).value, new CItemType().load(stream));
+        }
+
+
+        attributeBalanceMultipliers.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            attributeBalanceMultipliers.put(cs.load(stream).value, cd.load(stream).value);
+        }
 
         return this;
     }

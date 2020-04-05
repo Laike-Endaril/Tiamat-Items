@@ -168,6 +168,8 @@ public class TiamatItems
     {
         event.registerServerCommand(new Commands());
 
+        CSettings.init(event);
+
 
         //TODO test code start
         //TODO remove this!
