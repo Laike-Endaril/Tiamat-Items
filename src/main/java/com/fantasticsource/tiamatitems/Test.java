@@ -22,6 +22,27 @@ import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.*;
 
 public class Test
 {
+    public static void createGeneralPool()
+    {
+        CRecalculableTraitPool pool = new CRecalculableTraitPool();
+        pool.name = "General";
+
+        CRTraitElement_PassiveAttributeMod passiveAttributeMod = new CRTraitElement_PassiveAttributeMod();
+        passiveAttributeMod.attributeName = "generic.maxHealth";
+        passiveAttributeMod.minAmount = 1;
+        passiveAttributeMod.maxAmount = 3;
+
+        CRecalculableTrait trait = new CRecalculableTrait();
+        trait.name = "MaxHP";
+        trait.elements.add(passiveAttributeMod);
+        trait.minValue = 1;
+        trait.maxValue = 3;
+        pool.traitGenWeights.put(trait, 1);
+
+        CRecalculableTraitPool.pools.put(pool.name, pool);
+    }
+
+
     public static void createRarity()
     {
         CRarity rarity = new CRarity();
@@ -37,25 +58,6 @@ public class Test
         CRarity.rarities.put(rarity.name, rarity);
     }
 
-
-    public static void createGeneralPool()
-    {
-        CRecalculableTraitPool pool = new CRecalculableTraitPool();
-        pool.name = "General";
-        CRecalculableTraitPool.pools.put(pool.name, pool);
-
-        CRTraitElement_PassiveAttributeMod passiveAttributeMod = new CRTraitElement_PassiveAttributeMod();
-        passiveAttributeMod.attributeName = "generic.maxHealth";
-        passiveAttributeMod.minAmount = 1;
-        passiveAttributeMod.maxAmount = 3;
-
-        CRecalculableTrait trait = new CRecalculableTrait();
-        trait.name = "MaxHP";
-        trait.elements.add(passiveAttributeMod);
-        trait.minValue = 1;
-        trait.maxValue = 3;
-        pool.traitGenWeights.put(trait, 1);
-    }
 
     public static void createSocketPool()
     {
