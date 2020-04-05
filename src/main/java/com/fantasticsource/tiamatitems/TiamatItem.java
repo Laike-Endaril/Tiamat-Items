@@ -70,7 +70,7 @@ public class TiamatItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flagIn)
     {
-        //TODO
+        //TODO tooltips
     }
 
     @Override
