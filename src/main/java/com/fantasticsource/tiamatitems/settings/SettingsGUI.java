@@ -88,8 +88,14 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO CUnrecalculableTraitPool
-                return new GUIElement[0];
+                GUIButton listButton = GUIButton.newListButton(gui);
+
+                return new GUIElement[]
+                        {
+                                listButton,
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")),
+                        };
             }
         };
         GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraitPools);
