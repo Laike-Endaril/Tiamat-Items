@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
@@ -48,13 +49,12 @@ public class CSettings extends Component
         return (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion;
     }
 
-    //TODO call this method on item gen definition change, including globals
     public static void updateVersionAndSave()
     {
         itemGenConfigVersion++;
 
         saveAll();
-        //TODO sync to connected clients
+        Network.WRAPPER.sendToAll(new Network.ItemgenVersionPacket(getVersion()));
     }
 
 
@@ -79,7 +79,7 @@ public class CSettings extends Component
 
     public static void loadAll(FMLServerStartingEvent event) throws IOException
     {
-        File file = new File(MCTools.getWorldSaveDir(event.getServer()) + FILENAME);
+        File file = new File(MCTools.getConfigDir() + FILENAME);
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(event.getServer()) + FILENAME + " is a directory instead of a file!");
         if (!file.exists()) return;
 

@@ -7,11 +7,14 @@ import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+
+import java.util.Map;
 
 public class SettingsGUI extends GUIScreen
 {
@@ -131,9 +134,12 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO .Attribute
-                //TODO .Attribute multiplier
-                return new GUIElement[0];
+                return new GUIElement[]{
+                        new GUIElement(gui, 1, 0),
+                        new GUILabeledTextInput(gui, "Attribute: ", "generic.attributeName", FilterNotEmpty.INSTANCE),
+                        new GUIElement(gui, 1, 0),
+                        new GUILabeledTextInput(gui, "Multiplier: ", "1", FilterFloat.INSTANCE)
+                };
             }
         };
         GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, attributeBalanceMultipliers);
@@ -142,6 +148,12 @@ public class SettingsGUI extends GUIScreen
                         attributeBalanceMultipliers,
                         scrollbar5
                 );
+        for (Map.Entry<String, Double> entry : CSettings.attributeBalanceMultipliers.entrySet())
+        {
+            GUIList.Line line = attributeBalanceMultipliers.addLine();
+            ((GUILabeledTextInput) line.getLineElement(1)).setInput(entry.getKey());
+            ((GUILabeledTextInput) line.getLineElement(3)).setInput("" + entry.getValue());
+        }
 
 
         //Insert new tabs here
@@ -165,6 +177,14 @@ public class SettingsGUI extends GUIScreen
             CSettings.maxItemLevel = FilterInt.INSTANCE.parse(maxItemLevel.getText());
             CSettings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
             CSettings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
+
+            //Attribute Balance Multipliers
+            CSettings.attributeBalanceMultipliers.clear();
+            for (GUIList.Line line : attributeBalanceMultipliers.getLines())
+            {
+                CSettings.attributeBalanceMultipliers.put(((GUILabeledTextInput) line.getLineElement(1)).getText(), (double) FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(3)).getText()));
+            }
+
             //TODO
 
 
