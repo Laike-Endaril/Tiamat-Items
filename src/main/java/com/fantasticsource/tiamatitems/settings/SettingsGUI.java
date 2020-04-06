@@ -4,10 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
@@ -40,17 +37,18 @@ public class SettingsGUI extends GUIScreen
 
 
         //General tab
-        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, "Max Item Level", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
-        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, "Base Trait Multiplier", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
-        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, "Trait Multiplier Bonus Per Item Level", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
+        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, "Max Item Level: ", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
+        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, "Base Trait Multiplier: ", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
+        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, "Trait Multiplier Bonus Per Item Level: ", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
         tabView.tabViews.get(0).addAll
                 (
+                        new GUITextSpacer(gui),
                         new GUIText(gui, "Current Version: " + CSettings.getVersion()),
-                        new GUIElement(gui, 1, 0),
+                        new GUITextSpacer(gui),
                         maxItemLevel,
-                        new GUIElement(gui, 1, 0),
+                        new GUITextSpacer(gui),
                         baseMultiplier,
-                        new GUIElement(gui, 1, 0),
+                        new GUITextSpacer(gui),
                         multiplierBonusPerLevel
                 );
 
@@ -128,11 +126,21 @@ public class SettingsGUI extends GUIScreen
 
 
         //Attribute Multipliers tab
-        //TODO list
-        //TODO .Attribute
-        //TODO .Attribute multiplier
+        GUIList attributeBalanceMultipliers = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                //TODO .Attribute
+                //TODO .Attribute multiplier
+                return new GUIElement[0];
+            }
+        };
+        GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, attributeBalanceMultipliers);
         tabView.tabViews.get(5).addAll
                 (
+                        attributeBalanceMultipliers,
+                        scrollbar5
                 );
 
 
