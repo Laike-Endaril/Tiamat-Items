@@ -24,7 +24,7 @@ public class CSettings extends Component
 {
     public static final String FILENAME = MODID + ".dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
-    private static int itemGenConfigVersion = 0;
+    protected static int itemGenConfigVersion = 0;
 
 
     public static int maxItemLevel = 20;
@@ -49,7 +49,7 @@ public class CSettings extends Component
     }
 
     //TODO call this method on item gen definition change, including globals
-    public void updateVersionAndSave()
+    public static void updateVersionAndSave()
     {
         itemGenConfigVersion++;
 
@@ -62,6 +62,7 @@ public class CSettings extends Component
     {
         System.out.println("Saving changes to Tiamat Items settings");
         File file = new File(MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME);
+        System.out.println(TextFormatting.LIGHT_PURPLE + "Saving " + file.getAbsolutePath());
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME + " is a directory instead of a file!");
         else while (file.exists()) file.delete();
 
@@ -80,7 +81,9 @@ public class CSettings extends Component
     public static void loadAll(FMLServerStartingEvent event) throws IOException
     {
         File file = new File(MCTools.getWorldSaveDir(event.getServer()) + FILENAME);
+        System.out.println(TextFormatting.LIGHT_PURPLE + "Loading " + file.getAbsolutePath());
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(event.getServer()) + FILENAME + " is a directory instead of a file!");
+        if (!file.exists()) return;
 
         FileInputStream stream = new FileInputStream(file);
         new CSettings().load(stream);
@@ -244,8 +247,10 @@ public class CSettings extends Component
         itemGenConfigVersion = ci.load(stream).value;
 
 
-        baseMultiplier = ci.load(stream).value;
-        multiplierBonusPerLevel = ci.load(stream).value;
+        maxItemLevel = ci.load(stream).value;
+
+        baseMultiplier = cd.load(stream).value;
+        multiplierBonusPerLevel = cd.load(stream).value;
 
 
         recalcTraitPools.clear();

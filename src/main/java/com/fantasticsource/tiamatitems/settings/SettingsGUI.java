@@ -4,8 +4,12 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
+import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
+import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
@@ -26,49 +30,64 @@ public class SettingsGUI extends GUIScreen
 
         //Header
         GUINavbar navbar = new GUINavbar(gui);
-        GUITextButton save = new GUITextButton(gui, "Save", Color.GREEN);
-        GUITextButton cancel = new GUITextButton(gui, "Cancel", Color.RED);
+        GUITextButton save = new GUITextButton(gui, "Save and Close", Color.GREEN);
+        GUITextButton cancel = new GUITextButton(gui, "Close Without Saving", Color.RED);
         gui.root.addAll(navbar, save, cancel);
 
 
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Trait Pools", "Rarities", "Item Types", "Attribute Balance Multipliers");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Trait Pools (Recalculable)", "Trait Pools (Unrecalculable)", "Rarities", "Item Types", "Attribute Balance Multipliers");
         gui.root.add(tabView);
 
 
         //General tab
-        //TODO Base item component power (base power of any item type or affix)
-        //TODO Item component power per level (power bonus per level for each item type and affix)
-        //TODO Item power variance
+        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, "Max Item Level", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
+        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, "Base Trait Multiplier", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
+        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, "Trait Multiplier Bonus Per Item Level", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
         tabView.tabViews.get(0).addAll
                 (
+                        new GUIText(gui, "Current Version: " + CSettings.getVersion()),
+                        new GUIElement(gui, 1, 0),
+                        maxItemLevel,
+                        new GUIElement(gui, 1, 0),
+                        baseMultiplier,
+                        new GUIElement(gui, 1, 0),
+                        multiplierBonusPerLevel
                 );
 
 
-        //Attribute Multipliers tab
-        //TODO list
-        //TODO .Attribute
-        //TODO .Attribute multiplier
-        tabView.tabViews.get(1).addAll
-                (
-                );
-
-
-        //Affixes tab
-        GUIList affixes = new GUIList(gui, true, 0.98, 1)
+        //Trait Pools (Recalculable) tab
+        GUIList recalculableTraitPools = new GUIList(gui, true, 0.98, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO Name
-                //TODO Weighted attribute distribution
+                //TODO CRecalculableTraitPool
                 return new GUIElement[0];
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, affixes);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraitPools);
+        tabView.tabViews.get(1).addAll
+                (
+                        recalculableTraitPools,
+                        scrollbar
+                );
+
+
+        //Trait Pools (Unrecalculable) tab
+        GUIList unrecalculableTraitPools = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                //TODO CUnrecalculableTraitPool
+                return new GUIElement[0];
+            }
+        };
+        GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraitPools);
         tabView.tabViews.get(2).addAll
                 (
-                        affixes,
-                        scrollbar
+                        unrecalculableTraitPools,
+                        scrollbar2
                 );
 
 
@@ -78,36 +97,46 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO Name
-                //TODO Color
-                //TODO Item level bonus (decimal)
-                //TODO Affix pools
-                //TODO .Affix position (integer)
-                //TODO .Weighted list of affixes
+                //TODO CRarity
                 return new GUIElement[0];
             }
         };
-        GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, rarities);
+        GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, rarities);
         tabView.tabViews.get(3).addAll
                 (
                         rarities,
-                        scrollbar2
+                        scrollbar3
                 );
 
 
         //Item Types tab
-        //TODO list
-        //TODO .Type name
-        //TODO .Slotting
-        //TODO .Component power multiplier
-        //TODO .Weighted attribute distribution
-        //TODO .Affix IDs to generate
+        GUIList itemTypes = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                //TODO CItemType
+                return new GUIElement[0];
+            }
+        };
+        GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, itemTypes);
         tabView.tabViews.get(4).addAll
+                (
+                        itemTypes,
+                        scrollbar4
+                );
+
+
+        //Attribute Multipliers tab
+        //TODO list
+        //TODO .Attribute
+        //TODO .Attribute multiplier
+        tabView.tabViews.get(5).addAll
                 (
                 );
 
 
-        //...
+        //Insert new tabs here
 
 
         //Add main header actions
@@ -116,15 +145,23 @@ public class SettingsGUI extends GUIScreen
         save.addClickActions(() ->
         {
             //Validation
+
+            //General
+            if (!maxItemLevel.valid() || !baseMultiplier.valid() || !multiplierBonusPerLevel.valid()) return;
             //TODO
 
 
             //Processing
+
+            //General
+            CSettings.maxItemLevel = FilterInt.INSTANCE.parse(maxItemLevel.getText());
+            CSettings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
+            CSettings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
             //TODO
 
 
             //Send to server
-            //TODO
+            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket());
 
 
             //Close GUI

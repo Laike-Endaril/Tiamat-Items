@@ -4,9 +4,9 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
+import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.SettingsGUI;
-import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,6 +34,7 @@ public class Network
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(OpenSettingsPacketHandler.class, OpenSettingsPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(SaveSettingsPacketHandler.class, SaveSettingsPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(RequestItemStackUpdatePacketHandler.class, RequestItemStackUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(ItemStackUpdatePacketHandler.class, ItemStackUpdatePacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
@@ -128,8 +129,6 @@ public class Network
 
     public static class OpenSettingsPacket implements IMessage
     {
-        public double baseItemComponentPower, itemComponentPowerPerLevel;
-
         public OpenSettingsPacket()
         {
             //Required
@@ -138,15 +137,13 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeDouble(CSettings.baseMultiplier);
-            buf.writeDouble(CSettings.multiplierBonusPerLevel);
+            new CSettings().write(buf);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            baseItemComponentPower = buf.readDouble();
-            itemComponentPowerPerLevel = buf.readDouble();
+            new CSettings().read(buf);
         }
     }
 
@@ -157,6 +154,49 @@ public class Network
         public IMessage onMessage(OpenSettingsPacket packet, MessageContext ctx)
         {
             Minecraft.getMinecraft().addScheduledTask(() -> SettingsGUI.show(packet));
+            return null;
+        }
+    }
+
+
+    public static class SaveSettingsPacket implements IMessage
+    {
+        ByteBuf buf;
+
+        public SaveSettingsPacket()
+        {
+            //Required
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            new CSettings().write(buf);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            this.buf = buf.copy();
+            buf.clear();
+        }
+    }
+
+    public static class SaveSettingsPacketHandler implements IMessageHandler<SaveSettingsPacket, IMessage>
+    {
+        @Override
+        public IMessage onMessage(SaveSettingsPacket packet, MessageContext ctx)
+        {
+            EntityPlayerMP player = ctx.getServerHandler().player;
+            MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+            server.addScheduledTask(() ->
+            {
+                if (MCTools.isOP(player))
+                {
+                    new CSettings().read(packet.buf);
+                    CSettings.updateVersionAndSave();
+                }
+            });
             return null;
         }
     }
