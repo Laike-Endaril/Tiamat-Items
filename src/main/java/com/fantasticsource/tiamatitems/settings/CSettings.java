@@ -22,7 +22,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CSettings extends Component
 {
-    public static final String FILENAME = MODID + ".dat";
+    public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
     protected static int itemGenConfigVersion = 0;
 
@@ -61,8 +61,7 @@ public class CSettings extends Component
     protected static void saveAll()
     {
         System.out.println("Saving changes to Tiamat Items settings");
-        File file = new File(MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME);
-        System.out.println(TextFormatting.LIGHT_PURPLE + "Saving " + file.getAbsolutePath());
+        File file = new File(MCTools.getConfigDir() + FILENAME);
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME + " is a directory instead of a file!");
         else while (file.exists()) file.delete();
 
@@ -81,7 +80,6 @@ public class CSettings extends Component
     public static void loadAll(FMLServerStartingEvent event) throws IOException
     {
         File file = new File(MCTools.getWorldSaveDir(event.getServer()) + FILENAME);
-        System.out.println(TextFormatting.LIGHT_PURPLE + "Loading " + file.getAbsolutePath());
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(event.getServer()) + FILENAME + " is a directory instead of a file!");
         if (!file.exists()) return;
 

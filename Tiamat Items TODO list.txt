@@ -1,7 +1,3 @@
-Figure out why settings are acting like they're global when they should be world-specific
-
-
-
 Test conditional rendering of skin parts added with render modes as part of unrecalculable skin trait
 
 
