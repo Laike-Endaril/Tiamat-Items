@@ -2,9 +2,11 @@ package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
@@ -40,13 +42,13 @@ public class SettingsGUI extends GUIScreen
 
 
         //General tab
-        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, "Max Item Level: ", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
-        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, "Base Trait Multiplier: ", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
-        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, "Trait Multiplier Bonus Per Item Level: ", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
+        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, " Max Item Level: ", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
+        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, " Base Trait Multiplier: ", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
+        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, " Trait Multiplier Bonus Per Item Level: ", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
         tabView.tabViews.get(0).addAll
                 (
                         new GUITextSpacer(gui),
-                        new GUIText(gui, "Current Version: " + CSettings.getVersion()),
+                        new GUIText(gui, " Current Version: " + CSettings.getVersion()),
                         new GUITextSpacer(gui),
                         maxItemLevel,
                         new GUITextSpacer(gui),
@@ -62,8 +64,14 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO CRecalculableTraitPool
-                return new GUIElement[0];
+                GUIButton listButton = GUIButton.newListButton(gui);
+
+                return new GUIElement[]
+                        {
+                                listButton,
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")),
+                        };
             }
         };
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraitPools);
@@ -136,9 +144,9 @@ public class SettingsGUI extends GUIScreen
             {
                 return new GUIElement[]{
                         new GUIElement(gui, 1, 0),
-                        new GUILabeledTextInput(gui, "Attribute: ", "generic.attributeName", FilterNotEmpty.INSTANCE),
+                        new GUILabeledTextInput(gui, " Attribute: ", "generic.attributeName", FilterNotEmpty.INSTANCE),
                         new GUIElement(gui, 1, 0),
-                        new GUILabeledTextInput(gui, "Multiplier: ", "1", FilterFloat.INSTANCE)
+                        new GUILabeledTextInput(gui, " Multiplier: ", "1", FilterFloat.INSTANCE)
                 };
             }
         };
