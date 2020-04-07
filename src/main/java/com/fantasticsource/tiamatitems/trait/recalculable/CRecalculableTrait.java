@@ -5,8 +5,10 @@ import com.fantasticsource.tiamatitems.trait.CTrait;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
+import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +17,7 @@ import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
+    public String name = "";
     public boolean addToCoreOnAssembly = true;
     public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
 
@@ -87,6 +90,8 @@ public final class CRecalculableTrait extends CTrait
     {
         super.write(buf);
 
+        ByteBufUtils.writeUTF8String(buf, name);
+
         buf.writeBoolean(addToCoreOnAssembly);
 
         buf.writeInt(elements.size());
@@ -99,6 +104,8 @@ public final class CRecalculableTrait extends CTrait
     public CRecalculableTrait read(ByteBuf buf)
     {
         super.read(buf);
+
+        name = ByteBufUtils.readUTF8String(buf);
 
         addToCoreOnAssembly = buf.readBoolean();
 
@@ -113,6 +120,8 @@ public final class CRecalculableTrait extends CTrait
     {
         super.save(stream);
 
+        new CStringUTF8().set(name).save(stream);
+
         new CBoolean().set(addToCoreOnAssembly).save(stream);
 
         new CInt().set(elements.size()).save(stream);
@@ -125,6 +134,8 @@ public final class CRecalculableTrait extends CTrait
     public CRecalculableTrait load(InputStream stream)
     {
         super.load(stream);
+
+        name = new CStringUTF8().load(stream).value;
 
         addToCoreOnAssembly = new CBoolean().load(stream).value;
 

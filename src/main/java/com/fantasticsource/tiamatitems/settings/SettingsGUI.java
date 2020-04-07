@@ -13,14 +13,19 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SettingsGUI extends GUIScreen
 {
     public CSettings settings;
+
+    protected LinkedHashMap<GUILabeledTextInput, CRecalculableTraitPool> nameElementToRecalculableTraitPoolMap = new LinkedHashMap<>();
 
     protected SettingsGUI(CSettings settings)
     {
@@ -71,11 +76,33 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")).setNamespace("Recalculable Trait Pools");
+                String nameString = "RTraitPool";
+                ArrayList<GUITextInput> namespace = gui.namespaces.get("Recalculable Trait Pools");
+                if (namespace != null)
+                {
+                    int i = 0;
+                    for (; i >= 0; i++)
+                    {
+                        boolean found = false;
+                        for (GUITextInput input : namespace)
+                        {
+                            if (input.getText().equals(nameString + i))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) break;
+                    }
+                    nameString += i;
+                }
+
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", nameString, new FilterBlacklist("null")).setNamespace("Recalculable Trait Pools");
+                gui.nameElementToRecalculableTraitPoolMap.put(name, new CRecalculableTraitPool());
 
                 return new GUIElement[]
                         {
-                                GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitPoolGUI.show(name.getText())),
+                                GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitPoolGUI.show(name.getText(), gui.nameElementToRecalculableTraitPoolMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name
                         };
@@ -87,6 +114,13 @@ public class SettingsGUI extends GUIScreen
                         recalculableTraitPools,
                         scrollbar
                 );
+        for (CRecalculableTraitPool pool : gui.settings.recalcTraitPools.values())
+        {
+            GUIList.Line line = recalculableTraitPools.addLine();
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            nameElement.setText(pool.name);
+            gui.nameElementToRecalculableTraitPoolMap.put(nameElement, pool);
+        }
 
 
         //Trait Pools (Unrecalculable) tab
@@ -172,7 +206,7 @@ public class SettingsGUI extends GUIScreen
                                 {
                                     //TODO show gui
                                     //TODO disallow "Static" as a name when editing trait pool sets
-                                }),
+                                })
                         };
             }
         };
@@ -263,6 +297,16 @@ public class SettingsGUI extends GUIScreen
             gui.settings.maxItemLevel = FilterInt.INSTANCE.parse(maxItemLevel.getText());
             gui.settings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
             gui.settings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
+
+            //Recalculable Trait Pools
+            gui.settings.recalcTraitPools.clear();
+            for (GUIList.Line line : recalculableTraitPools.getLines())
+            {
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(nameElement);
+                pool.name = nameElement.getText();
+                gui.settings.recalcTraitPools.put(nameElement.getText(), pool);
+            }
 
             //TODO
 
