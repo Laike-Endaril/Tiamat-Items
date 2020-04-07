@@ -25,18 +25,6 @@ import java.util.Map;
 public class RecalculableTraitPoolGUI extends GUIScreen
 {
     public static final FilterRangedInt WEIGHT_FILTER = FilterRangedInt.get(1, Integer.MAX_VALUE);
-    public static final String[] RECALCULABLE_TRAIT_ELEMENT_OPTIONS = new String[]
-            {
-                    " (Empty Trait Element)",
-                    " Left Click Action",
-                    " Right Click Action",
-                    " Active Attribute Modifier",
-                    " Passive Attribute Modifier",
-                    " Part Slot",
-                    " Texture Layers",
-                    " AW Skin",
-                    " Forced AW Skin Type Override",
-            };
 
 
     protected String poolName;

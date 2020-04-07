@@ -32,7 +32,7 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     {
         if (baseArgs.size() == 0)
         {
-            return "Add " + Tools.max(0, minCount) + " to " + Tools.max(0, maxCount) + (required ? " required " : " optional ") + partSlotType + " slots";
+            return "Add " + Tools.max(0, minCount) + " to " + Tools.max(0, maxCount) + (required ? " required " : " optional ") + (partSlotType.equals("") ? "(undefined type)" : partSlotType) + " slots";
         }
 
         int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));

@@ -26,7 +26,7 @@ public class CRTraitElement_LeftClickAction extends CRecalculableTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        return "Left Click: " + actionName;
+        return "Left Click: " + (actionName.equals("") ? "(Do Nothing)" : actionName);
     }
 
 

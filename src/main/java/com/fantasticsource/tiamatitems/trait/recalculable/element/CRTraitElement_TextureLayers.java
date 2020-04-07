@@ -40,7 +40,7 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        return null;
+        return "Adds textures to the itemstack";
     }
 
 

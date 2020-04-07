@@ -26,7 +26,7 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        return "Forced AW Skin Type Override: " + skinType;
+        return "Forced AW Skin Type Override: " + (skinType.equals("") ? "No skin type selected" : skinType);
     }
 
 

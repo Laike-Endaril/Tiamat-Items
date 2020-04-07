@@ -35,8 +35,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        if (isTransient) return "Transient AW Skin: " + libraryFile;
-        return "AW Skin: " + libraryFile;
+        if (isTransient) return "Transient AW Skin: " + (libraryFile.equals("") ? "No Skin" : libraryFile);
+        return "AW Skin: " + (libraryFile.equals("") ? "No Skin" : libraryFile);
     }
 
 

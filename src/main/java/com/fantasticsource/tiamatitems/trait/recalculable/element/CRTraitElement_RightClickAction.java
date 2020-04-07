@@ -26,7 +26,7 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
-        return "Right click: " + actionName;
+        return "Right Click: " + (actionName.equals("") ? "(Do Nothing)" : actionName);
     }
 
 
