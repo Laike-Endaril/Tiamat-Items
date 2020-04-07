@@ -71,7 +71,7 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null"));
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")).setNamespace("Recalculable Trait Pools");
 
                 return new GUIElement[]
                         {
@@ -95,7 +95,7 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null"));
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")).setNamespace("Unrecalculable Trait Pools");
 
                 return new GUIElement[]
                         {
@@ -121,8 +121,16 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO CRarity
-                return new GUIElement[0];
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Rarity Name: ", "rarityName", FilterNotEmpty.INSTANCE).setNamespace("Rarities");
+
+                return new GUIElement[]
+                        {
+                                GUIButton.newListButton(gui).addClickActions(
+                                        //TODO show gui referencing name.getText()
+                                ),
+                                new GUIElement(gui, 1, 0),
+                                name
+                        };
             }
         };
         GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, rarities);
@@ -139,7 +147,7 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", "itemTypeName", FilterNotEmpty.INSTANCE);
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", "itemTypeName", FilterNotEmpty.INSTANCE).setNamespace("Item Types");
 
                 return new GUIElement[]
                         {
@@ -171,7 +179,7 @@ public class SettingsGUI extends GUIScreen
             {
                 return new GUIElement[]{
                         new GUIElement(gui, 1, 0),
-                        new GUILabeledTextInput(gui, " Attribute: ", "generic.attributeName", FilterNotEmpty.INSTANCE),
+                        new GUILabeledTextInput(gui, " Attribute: ", "generic.attributeName", FilterNotEmpty.INSTANCE).setNamespace("Attribute Balance Multipliers"),
                         new GUIElement(gui, 1, 0),
                         new GUILabeledTextInput(gui, " Multiplier: ", "1", FilterFloat.INSTANCE)
                 };
@@ -213,14 +221,14 @@ public class SettingsGUI extends GUIScreen
             gui.settings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
             gui.settings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
 
+            //TODO
+
             //Attribute Balance Multipliers
             CSettings.attributeBalanceMultipliers.clear();
             for (GUIList.Line line : attributeBalanceMultipliers.getLines())
             {
                 CSettings.attributeBalanceMultipliers.put(((GUILabeledTextInput) line.getLineElement(1)).getText(), (double) FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(3)).getText()));
             }
-
-            //TODO
 
 
             //Send to server

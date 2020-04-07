@@ -53,7 +53,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 new GUILabeledTextInput(gui, " Trait name: ", "RTrait", FilterNotEmpty.INSTANCE),
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Add to core on assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE),
+                                new GUILabeledTextInput(gui, " Add to core on assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE).setNamespace("Traits"),
                         };
             }
         };
