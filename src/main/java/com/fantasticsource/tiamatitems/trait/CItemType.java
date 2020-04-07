@@ -1,11 +1,11 @@
 package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.tiamatitems.TiamatItems;
-import com.fantasticsource.tiamatitems.settings.CSettings;
-import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
+import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
@@ -28,11 +28,11 @@ import java.util.Map;
 public class CItemType extends Component
 {
     public String name = "", slotting = "None";
-    public double percentageMultiplier = 1, value;
+    public double percentageMultiplier = 1, value = 0;
     public LinkedHashMap<String, CRecalculableTrait> staticRecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTrait> staticUnrecalculableTraits = new LinkedHashMap<>();
-    public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
-    public LinkedHashMap<String, LinkedHashMap<String, CUnrecalculableTraitPool>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>(); //TODO disallow "Static" as a name during editing
+    public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashMap<String, CUnrecalculableTraitPool>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>();
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -62,7 +62,7 @@ public class CItemType extends Component
 
 
         //Prep generation vars
-        double itemTypeAndLevelMultiplier = percentageMultiplier * (CSettings.baseMultiplier + (CSettings.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
+        double itemTypeAndLevelMultiplier = percentageMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
         double totalValue = value;
 
 

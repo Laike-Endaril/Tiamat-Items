@@ -112,7 +112,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             if (files == null || files.length == 0) return -1;
 
 
-            double percentage = itemTypeAndLevelMultiplier / CSettings.maxItemLevel;
+            double percentage = itemTypeAndLevelMultiplier / CSettings.SETTINGS.maxItemLevel;
 
             file = files[(int) (Math.random() * files.length * percentage)];
         }

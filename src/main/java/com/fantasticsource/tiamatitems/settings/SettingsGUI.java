@@ -20,9 +20,16 @@ import java.util.Map;
 
 public class SettingsGUI extends GUIScreen
 {
+    public CSettings settings;
+
+    protected SettingsGUI(CSettings settings)
+    {
+        this.settings = settings;
+    }
+
     public static void show(Network.OpenSettingsPacket packet)
     {
-        SettingsGUI gui = new SettingsGUI();
+        SettingsGUI gui = new SettingsGUI(packet.settings);
         Minecraft.getMinecraft().displayGuiScreen(gui);
 
 
@@ -42,9 +49,9 @@ public class SettingsGUI extends GUIScreen
 
 
         //General tab
-        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, " Max Item Level: ", "" + CSettings.maxItemLevel, FilterInt.INSTANCE);
-        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, " Base Trait Multiplier: ", "" + CSettings.baseMultiplier, FilterFloat.INSTANCE);
-        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, " Trait Multiplier Bonus Per Item Level: ", "" + CSettings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
+        GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, " Max Item Level: ", "" + gui.settings.maxItemLevel, FilterInt.INSTANCE);
+        GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, " Base Trait Multiplier: ", "" + gui.settings.baseMultiplier, FilterFloat.INSTANCE);
+        GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, " Trait Multiplier Bonus Per Item Level: ", "" + gui.settings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
         tabView.tabViews.get(0).addAll
                 (
                         new GUITextSpacer(gui),
@@ -64,13 +71,13 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIButton listButton = GUIButton.newListButton(gui);
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null"));
 
                 return new GUIElement[]
                         {
-                                listButton,
+                                GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitPoolGUI.show(name.getText())),
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")),
+                                name
                         };
             }
         };
@@ -88,13 +95,15 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIButton listButton = GUIButton.newListButton(gui);
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null"));
 
                 return new GUIElement[]
                         {
-                                listButton,
+                                GUIButton.newListButton(gui).addClickActions(
+                                        //TODO show gui referencing name.getText()
+                                ),
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")),
+                                name
                         };
             }
         };
@@ -130,8 +139,20 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                //TODO CItemType
-                return new GUIElement[0];
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", "itemTypeName", FilterNotEmpty.INSTANCE);
+
+                return new GUIElement[]
+                        {
+                                new GUIElement(gui, 1, 0),
+                                name,
+                                new GUIElement(gui, 1, 0),
+                                new GUITextButton(gui, "Edit Static Recalculable Traits"),
+                                new GUITextButton(gui, "Edit Static Unrecalculable Traits"),
+                                new GUIElement(gui, 1, 0),
+                                new GUITextButton(gui, "Edit Random Recalculable Trait Pools"),
+                                new GUITextButton(gui, "Edit Random Unrecalculable Trait Pools"),
+                                //TODO disallow "Static" as a name when editing trait pool sets
+                        };
             }
         };
         GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, itemTypes);
@@ -188,9 +209,9 @@ public class SettingsGUI extends GUIScreen
             //Processing
 
             //General
-            CSettings.maxItemLevel = FilterInt.INSTANCE.parse(maxItemLevel.getText());
-            CSettings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
-            CSettings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
+            gui.settings.maxItemLevel = FilterInt.INSTANCE.parse(maxItemLevel.getText());
+            gui.settings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
+            gui.settings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
 
             //Attribute Balance Multipliers
             CSettings.attributeBalanceMultipliers.clear();
@@ -203,7 +224,7 @@ public class SettingsGUI extends GUIScreen
 
 
             //Send to server
-            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket());
+            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket(gui.settings));
 
 
             //Close GUI
@@ -214,6 +235,6 @@ public class SettingsGUI extends GUIScreen
     @Override
     public String title()
     {
-        return "Item Editor";
+        return "Settings";
     }
 }

@@ -129,6 +129,8 @@ public class Network
 
     public static class OpenSettingsPacket implements IMessage
     {
+        public CSettings settings;
+
         public OpenSettingsPacket()
         {
             //Required
@@ -137,13 +139,13 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            new CSettings().write(buf);
+            CSettings.SETTINGS.write(buf);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            new CSettings().read(buf);
+            settings = new CSettings().read(buf);
         }
     }
 
@@ -161,24 +163,28 @@ public class Network
 
     public static class SaveSettingsPacket implements IMessage
     {
-        ByteBuf buf;
+        public CSettings settings;
 
         public SaveSettingsPacket()
         {
             //Required
         }
 
+        public SaveSettingsPacket(CSettings settings)
+        {
+            this.settings = settings;
+        }
+
         @Override
         public void toBytes(ByteBuf buf)
         {
-            new CSettings().write(buf);
+            settings.write(buf);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            this.buf = buf.copy();
-            buf.clear();
+            settings = new CSettings().read(buf);
         }
     }
 
@@ -193,7 +199,7 @@ public class Network
             {
                 if (MCTools.isOP(player))
                 {
-                    new CSettings().read(packet.buf);
+                    CSettings.SETTINGS = packet.settings;
                     CSettings.updateVersionAndSave();
                 }
             });

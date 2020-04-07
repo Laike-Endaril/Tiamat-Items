@@ -23,22 +23,25 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CSettings extends Component
 {
+    public static CSettings SETTINGS;
     public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
-    protected static int itemGenConfigVersion = 0;
 
 
-    public static int maxItemLevel = 20;
+    protected int itemGenConfigVersion = 0;
 
-    public static double
+
+    public int maxItemLevel = 20;
+
+    public double
             baseMultiplier = 1,
             multiplierBonusPerLevel = 1;
 
 
-    public static LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>();
-    public static LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>();
-    public static LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>();
-    public static LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
+    public LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>();
+    public LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>();
+    public LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>();
+    public LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
 
 
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
@@ -46,12 +49,12 @@ public class CSettings extends Component
 
     public static long getVersion()
     {
-        return (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion;
+        return (((long) ITEM_GEN_CODE_VERSION) << 32) | SETTINGS.itemGenConfigVersion;
     }
 
     public static void updateVersionAndSave()
     {
-        itemGenConfigVersion++;
+        SETTINGS.itemGenConfigVersion++;
 
         saveAll();
         Network.WRAPPER.sendToAll(new Network.ItemgenVersionPacket(getVersion()));
@@ -68,7 +71,7 @@ public class CSettings extends Component
         try
         {
             FileOutputStream stream = new FileOutputStream(file);
-            new CSettings().save(stream);
+            SETTINGS.save(stream);
             stream.close();
         }
         catch (IOException e)
@@ -84,7 +87,7 @@ public class CSettings extends Component
         if (!file.exists()) return;
 
         FileInputStream stream = new FileInputStream(file);
-        new CSettings().load(stream);
+        SETTINGS = new CSettings().load(stream);
         stream.close();
     }
 

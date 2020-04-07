@@ -359,7 +359,7 @@ public class ItemAssembly
     private static boolean recalcEmptyPartTraits(ItemStack stack, boolean recursive)
     {
         //Validate itemtype/rarity
-        CItemType itemType = CSettings.itemTypes.get(MiscTags.getItemTypeName(stack));
+        CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
         if (itemType == null) return false;
 
         CRarity rarity = MiscTags.getItemRarity(stack);

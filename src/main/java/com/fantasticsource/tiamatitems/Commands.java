@@ -83,7 +83,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    for (String itemType : CSettings.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
+                    for (String itemType : CSettings.SETTINGS.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
                     break;
             }
         }
@@ -103,7 +103,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    result.addAll(CSettings.rarities.keySet());
+                    result.addAll(CSettings.SETTINGS.rarities.keySet());
                     break;
             }
         }
@@ -135,8 +135,8 @@ public class Commands extends CommandBase
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
-                CItemType gen = CSettings.itemTypes.get(args[1].replaceAll("_", " "));
-                CRarity rarity = CSettings.rarities.get(args[3]);
+                CItemType gen = CSettings.SETTINGS.itemTypes.get(args[1].replaceAll("_", " "));
+                CRarity rarity = CSettings.SETTINGS.rarities.get(args[3]);
                 if (gen == null || rarity == null)
                 {
                     notifyCommandListener(sender, this, getUsage(sender));

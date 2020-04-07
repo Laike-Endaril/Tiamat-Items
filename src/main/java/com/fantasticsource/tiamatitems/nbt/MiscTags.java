@@ -158,7 +158,7 @@ public class MiscTags
         compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("rarity")) return null;
 
-        CRarity rarity = CSettings.rarities.get(compound.getString("rarity"));
+        CRarity rarity = CSettings.SETTINGS.rarities.get(compound.getString("rarity"));
         if (rarity == null) clearItemRarity(stack);
 
         return rarity;
