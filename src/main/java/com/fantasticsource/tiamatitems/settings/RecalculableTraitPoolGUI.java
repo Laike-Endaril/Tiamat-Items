@@ -9,8 +9,9 @@ import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.GUITextInput;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 public class RecalculableTraitPoolGUI extends GUIScreen
 {
+    public static final FilterRangedInt WEIGHT_FILTER = FilterRangedInt.get(1, Integer.MAX_VALUE);
     public static final String[] RECALCULABLE_TRAIT_ELEMENT_OPTIONS = new String[]
             {
                     " (Empty Trait Element)",
@@ -97,11 +99,13 @@ public class RecalculableTraitPoolGUI extends GUIScreen
 
                 return new GUIElement[]
                         {
-                                GUIButton.newEditButton(gui).addClickActions(() -> RecalculableTraitGUI.show(name.getText(), gui.nameElementToRecalculableTraitMap.get(name))),
+                                GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitGUI.show(name.getText(), gui.nameElementToRecalculableTraitMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Trait Weight: ", "1", FilterInt.INSTANCE)
+                                new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER),
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledTextInput(gui, " Add to Core on Assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE)
                         };
             }
         };
@@ -135,6 +139,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
             }
 
 
@@ -145,7 +150,8 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                gui.pool.traitGenWeights.put(trait, FilterInt.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
+                trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
+                gui.pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
             }
 
 
