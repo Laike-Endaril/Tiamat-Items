@@ -199,7 +199,11 @@ public class Network
             {
                 if (MCTools.isOP(player))
                 {
+                    //Swap current version into incoming settings, just in case multiple people edited settings at once
+                    int itemGenConfigVersion = CSettings.SETTINGS.itemGenConfigVersion;
                     CSettings.SETTINGS = packet.settings;
+                    CSettings.SETTINGS.itemGenConfigVersion = itemGenConfigVersion;
+
                     CSettings.updateVersionAndSave();
                 }
             });

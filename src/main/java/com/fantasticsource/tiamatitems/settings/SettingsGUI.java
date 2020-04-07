@@ -100,7 +100,7 @@ public class SettingsGUI extends GUIScreen
                 return new GUIElement[]
                         {
                                 GUIButton.newListButton(gui).addClickActions(
-                                        //TODO show gui referencing name.getText()
+                                        //TODO show gui
                                 ),
                                 new GUIElement(gui, 1, 0),
                                 name
@@ -126,7 +126,7 @@ public class SettingsGUI extends GUIScreen
                 return new GUIElement[]
                         {
                                 GUIButton.newListButton(gui).addClickActions(
-                                        //TODO show gui referencing name.getText()
+                                        //TODO show gui
                                 ),
                                 new GUIElement(gui, 1, 0),
                                 name
@@ -154,12 +154,25 @@ public class SettingsGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUITextButton(gui, "Edit Static Recalculable Traits"),
-                                new GUITextButton(gui, "Edit Static Unrecalculable Traits"),
+                                new GUITextButton(gui, "Edit Static Recalculable Traits").addClickActions(() ->
+                                {
+                                    //TODO show gui
+                                }),
+                                new GUITextButton(gui, "Edit Static Unrecalculable Traits").addClickActions(() ->
+                                {
+                                    //TODO show gui
+                                }),
                                 new GUIElement(gui, 1, 0),
-                                new GUITextButton(gui, "Edit Random Recalculable Trait Pools"),
-                                new GUITextButton(gui, "Edit Random Unrecalculable Trait Pools"),
-                                //TODO disallow "Static" as a name when editing trait pool sets
+                                new GUITextButton(gui, "Edit Random Recalculable Trait Pool Sets").addClickActions(() ->
+                                {
+                                    //TODO show gui
+                                    //TODO disallow "Static" as a name when editing trait pool sets
+                                }),
+                                new GUITextButton(gui, "Edit Random Unrecalculable Trait Pool Sets").addClickActions(() ->
+                                {
+                                    //TODO show gui
+                                    //TODO disallow "Static" as a name when editing trait pool sets
+                                }),
                         };
             }
         };
@@ -211,7 +224,37 @@ public class SettingsGUI extends GUIScreen
 
             //General
             if (!maxItemLevel.valid() || !baseMultiplier.valid() || !multiplierBonusPerLevel.valid()) return;
-            //TODO
+
+            //Recalculable Trait Pools
+            for (GUIList.Line line : recalculableTraitPools.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
+            //Unrecalculable Trait Pools
+            for (GUIList.Line line : unrecalculableTraitPools.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
+            //Rarities
+            for (GUIList.Line line : rarities.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
+            //Item Types
+            for (GUIList.Line line : itemTypes.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+            }
+
+            //Attribute Balance Multipliers
+            for (GUIList.Line line : attributeBalanceMultipliers.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
+            }
 
 
             //Processing

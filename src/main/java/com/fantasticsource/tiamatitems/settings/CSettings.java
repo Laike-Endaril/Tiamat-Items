@@ -28,7 +28,7 @@ public class CSettings extends Component
     public static final int ITEM_GEN_CODE_VERSION = 0;
 
 
-    protected int itemGenConfigVersion = 0;
+    public int itemGenConfigVersion = 0;
 
 
     public int maxItemLevel = 20;
