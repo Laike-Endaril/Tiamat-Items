@@ -7,13 +7,15 @@ import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
+import com.fantasticsource.mctools.gui.element.text.filter.*;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
+    public static final FilterRangedInt OPERATION_FILTER = FilterRangedInt.get(0, 2);
+
     protected String typeName;
 
     protected RecalculableTraitElementGUI(String typeName)
@@ -68,6 +70,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!action.valid()) return;
+
+
                 //Processing
                 actionElement.actionName = action.getText();
 
@@ -76,16 +82,82 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_ActiveAttributeMod || traitElement instanceof CRTraitElement_PassiveAttributeMod)
+        else if (traitElement instanceof CRTraitElement_ActiveAttributeMod)
         {
-            //TODO
+            CRTraitElement_ActiveAttributeMod actionElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", actionElement.attributeName.equals("") ? "generic.name" : actionElement.attributeName, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + actionElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + actionElement.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + actionElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + actionElement.maxAmount, FilterFloat.INSTANCE);
+            gui.root.addAll(
+                    new GUIElement(gui, 1, 0),
+                    attribute,
+                    new GUIElement(gui, 1, 0),
+                    isGood,
+                    new GUIElement(gui, 1, 0),
+                    operation,
+                    new GUIElement(gui, 1, 0),
+                    minAmount,
+                    new GUIElement(gui, 1, 0),
+                    maxAmount
+            );
 
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!attribute.valid() || !isGood.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
+
+
                 //Processing
-                //TODO
+                actionElement.attributeName = attribute.getText();
+                actionElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                actionElement.operation = FilterInt.INSTANCE.parse(operation.getText());
+                actionElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                actionElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement instanceof CRTraitElement_PassiveAttributeMod)
+        {
+            CRTraitElement_PassiveAttributeMod actionElement = (CRTraitElement_PassiveAttributeMod) traitElement;
+
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", actionElement.attributeName.equals("") ? "generic.name" : actionElement.attributeName, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + actionElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + actionElement.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + actionElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + actionElement.maxAmount, FilterFloat.INSTANCE);
+            gui.root.addAll(
+                    new GUIElement(gui, 1, 0),
+                    attribute,
+                    new GUIElement(gui, 1, 0),
+                    isGood,
+                    new GUIElement(gui, 1, 0),
+                    operation,
+                    new GUIElement(gui, 1, 0),
+                    minAmount,
+                    new GUIElement(gui, 1, 0),
+                    maxAmount
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!attribute.valid() || !isGood.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
+
+
+                //Processing
+                actionElement.attributeName = attribute.getText();
+                actionElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                actionElement.operation = FilterInt.INSTANCE.parse(operation.getText());
+                actionElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                actionElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
 
 
                 //Close GUI

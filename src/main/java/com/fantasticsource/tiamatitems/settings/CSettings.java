@@ -23,7 +23,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CSettings extends Component
 {
-    public static CSettings SETTINGS;
+    public static CSettings SETTINGS = new CSettings();
     public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
 

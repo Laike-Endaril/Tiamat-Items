@@ -1,9 +1,10 @@
 package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
-import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.component.CBoolean;
+import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
@@ -94,6 +95,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     public CRTraitElement_ActiveAttributeMod write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, attributeName);
+        buf.writeDouble(minAmount);
+        buf.writeDouble(maxAmount);
         buf.writeBoolean(isGood);
         buf.writeInt(operation);
 
@@ -104,6 +107,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     public CRTraitElement_ActiveAttributeMod read(ByteBuf buf)
     {
         attributeName = ByteBufUtils.readUTF8String(buf);
+        minAmount = buf.readDouble();
+        maxAmount = buf.readDouble();
         isGood = buf.readBoolean();
         operation = buf.readInt();
 
@@ -114,6 +119,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     public CRTraitElement_ActiveAttributeMod save(OutputStream stream)
     {
         new CStringUTF8().set(attributeName).save(stream);
+        new CDouble().set(minAmount).save(stream).set(maxAmount).save(stream);
         new CBoolean().set(isGood).save(stream);
         new CInt().set(operation).save(stream);
 
@@ -123,7 +129,10 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     @Override
     public CRTraitElement_ActiveAttributeMod load(InputStream stream)
     {
+        CDouble cd = new CDouble();
         attributeName = new CStringUTF8().load(stream).value;
+        minAmount = cd.load(stream).value;
+        maxAmount = cd.load(stream).value;
         isGood = new CBoolean().load(stream).value;
         operation = new CInt().load(stream).value;
 
