@@ -346,11 +346,11 @@ public class Test
         CRGBBoost boost = new CRGBBoost();
         boost.toAdd[1] = 255;
         rgb.functions.add(boost);
-        skinElement.dyeChannels.add(rgb);
+        skinElement.dyeChannels.put(0, rgb);
 
         rgb = new CRandomRGB();
         rgb.functions.add(new CRGBGrayscale());
-        skinElement.dyeChannels.add(rgb);
+        skinElement.dyeChannels.put(0, rgb);
 
         CUnrecalculableTrait trait = new CUnrecalculableTrait();
         trait.name = "Random Axe Skin";
@@ -583,11 +583,11 @@ public class Test
         CRGBBoost boost = new CRGBBoost();
         boost.toAdd[1] = 255;
         rgb.functions.add(boost);
-        skinElement.dyeChannels.add(rgb);
+        skinElement.dyeChannels.put(0, rgb);
 
         rgb = new CRandomRGB();
         rgb.functions.add(new CRGBGrayscale());
-        skinElement.dyeChannels.add(rgb);
+        skinElement.dyeChannels.put(0, rgb);
 
         CUnrecalculableTrait trait = new CUnrecalculableTrait();
         trait.name = "Random Chestplate Skin";

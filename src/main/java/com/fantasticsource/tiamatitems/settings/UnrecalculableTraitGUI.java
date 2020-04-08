@@ -25,7 +25,6 @@ public class UnrecalculableTraitGUI extends GUIScreen
 
     static
     {
-        OPTIONS.put(" Select Type...", null);
         OPTIONS.put(" AW Skin", CUTraitElement_AWSkin.class);
     }
 
@@ -79,7 +78,7 @@ public class UnrecalculableTraitGUI extends GUIScreen
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (U. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
                                     CUnrecalculableTraitElement traitElement = gui.typeElementToUnrecalculableTraitElementMap.get(type);
-                                    if (type.getText().equals(" (U. Trait Element Type)"))
+                                    if (type.getText().equals(" Select Type..."))
                                     {
                                         gui.typeElementToUnrecalculableTraitElementMap.remove(type);
                                         description.setText(" (No type selected)");

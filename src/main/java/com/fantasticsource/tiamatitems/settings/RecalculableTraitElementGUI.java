@@ -15,14 +15,17 @@ import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
     public static final FilterRangedInt
             OPERATION_FILTER = FilterRangedInt.get(0, 2),
             PART_SLOT_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE),
-            AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9);
+            AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9),
+            AW_DYE_INDEX_FILTER = FilterRangedInt.get(0, 7);
 
     protected String typeName;
 
@@ -286,6 +289,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                     new GUITextSpacer(gui),
                     indexWithinSkinTypeIfTransient,
                     new GUITextSpacer(gui),
+                    new GUIText(gui, " Dyes...", Color.YELLOW),
                     separator
             );
 
@@ -297,15 +301,45 @@ public class RecalculableTraitElementGUI extends GUIScreen
                     GUIButton editButton = GUIButton.newEditButton(gui);
                     gui.editButtonToCRandomRGBMap.put(editButton, new CRandomRGB());
 
-                    return new GUIElement[]{editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton)))};
+                    int index = 0;
+                    String indexString = "" + index;
+                    ArrayList<GUITextInput> namespace = gui.namespaces.get("Dye Indices");
+                    if (namespace != null)
+                    {
+                        boolean found = true;
+                        while (found)
+                        {
+                            found = false;
+                            indexString = "" + index;
+                            for (GUITextInput input : namespace)
+                            {
+                                if (input.getText().equals(indexString))
+                                {
+                                    found = true;
+                                    index++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", indexString, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
+
+                    return new GUIElement[]{
+                            editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton))),
+                            dyeIndex
+                    };
                 }
             };
             GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
             gui.root.addAll(dyes, scrollbar);
-            for (CRandomRGB randomRGB : skinElement.dyeChannels)
+            for (Map.Entry<Integer, CRandomRGB> entry : skinElement.dyeChannels.entrySet())
             {
-                GUIButton editButton = (GUIButton) dyes.addLine().getLineElement(0);
-                gui.editButtonToCRandomRGBMap.put(editButton, randomRGB);
+                GUIList.Line line = dyes.addLine();
+                GUIButton editButton = (GUIButton) line.getLineElement(0);
+                gui.editButtonToCRandomRGBMap.put(editButton, entry.getValue());
+
+                ((GUILabeledTextInput) line.getLineElement(1)).setText("" + entry.getKey());
             }
 
 
@@ -319,6 +353,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
             {
                 //Validation
                 if (!libraryFileOrFolder.valid() || !isRandomFromFolder.valid() || !skinType.valid() || !isTransient.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
+                for (GUIList.Line line : dyes.getLines())
+                {
+                    if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                }
 
 
                 //Processing
@@ -331,7 +369,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 for (GUIList.Line line : dyes.getLines())
                 {
                     GUIButton editButton = (GUIButton) line.getLineElement(0);
-                    skinElement.dyeChannels.add(gui.editButtonToCRandomRGBMap.get(editButton));
+                    GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(1);
+                    skinElement.dyeChannels.put(AW_DYE_INDEX_FILTER.parse(index.getText()), gui.editButtonToCRandomRGBMap.get(editButton));
                 }
 
 

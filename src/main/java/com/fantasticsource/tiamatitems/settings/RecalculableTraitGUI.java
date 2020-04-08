@@ -16,7 +16,6 @@ import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,7 +25,6 @@ public class RecalculableTraitGUI extends GUIScreen
 
     static
     {
-        OPTIONS.put(" Select Type...", null);
         OPTIONS.put(" Left Click Action", CRTraitElement_LeftClickAction.class);
         OPTIONS.put(" Right Click Action", CRTraitElement_RightClickAction.class);
         OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
@@ -87,7 +85,7 @@ public class RecalculableTraitGUI extends GUIScreen
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
                                     CRecalculableTraitElement traitElement = gui.typeElementToRecalculableTraitElementMap.get(type);
-                                    if (type.getText().equals(" (R. Trait Element Type)"))
+                                    if (type.getText().equals(" Select Type..."))
                                     {
                                         gui.typeElementToRecalculableTraitElementMap.remove(type);
                                         description.setText(" (No type selected)");

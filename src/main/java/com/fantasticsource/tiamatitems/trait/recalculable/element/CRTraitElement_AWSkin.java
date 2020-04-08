@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 {
@@ -28,45 +30,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     public String libraryFileOrFolder = "", skinType = "";
     public boolean isTransient = false, isRandomFromFolder = false;
     public int indexWithinSkinTypeIfTransient = 0;
-    public ArrayList<CRandomRGB> dyeChannels = new ArrayList<>();
-
-
-    protected static File getSkinOrFolder(String filename)
-    {
-        File file = new File(filename);
-        if (file.isDirectory()) return file;
-
-        file = new File(filename + ".armour");
-        if (!file.exists() || file.isDirectory()) return null;
-        return file;
-    }
-
-    protected static void addAWSkin(ItemStack stack, String filename, String skinType, Color[] dyes)
-    {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-
-        NBTTagCompound compound = new NBTTagCompound();
-        stack.getTagCompound().setTag("armourersWorkshop", compound);
-
-        NBTTagCompound compound2 = new NBTTagCompound();
-        compound.setTag("identifier", compound2);
-
-        compound2.setString("libraryFile", filename.replace(".armour", ""));
-        compound2.setString("skinType", skinType);
-
-        compound2 = new NBTTagCompound();
-        compound.setTag("dyeData", compound2);
-
-        int i = 0;
-        for (Color dye : dyes)
-        {
-            compound2.setByte("dye" + i + "r", (byte) dye.r());
-            compound2.setByte("dye" + i + "g", (byte) dye.g());
-            compound2.setByte("dye" + i + "b", (byte) dye.b());
-            compound2.setByte("dye" + i + "t", (byte) dye.a());
-            i++;
-        }
-    }
+    public LinkedHashMap<Integer, CRandomRGB> dyeChannels = new LinkedHashMap<>();
 
 
     @Override
@@ -88,12 +52,12 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 
         if (isTransient)
         {
-            if (isfolder) return "Transient AW Skins from folder: " + libraryFileOrFolder;
-            return "Transient AW Skin: " + libraryFileOrFolder;
+            if (isfolder) return "Transient AW Skins from folder: " + folderString;
+            return "Transient AW Skin: " + folderString;
         }
 
-        if (isfolder) return "AW Skins from folder: " + libraryFileOrFolder;
-        return "AW Skin: " + libraryFileOrFolder;
+        if (isfolder) return "AW Skins from folder: " + folderString;
+        return "AW Skin: " + folderString;
     }
 
 
@@ -101,9 +65,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         //Dyes
-        Color[] dyes = new Color[dyeChannels.size()];
-        int i = 0;
-        for (CRandomRGB randomRGB : dyeChannels) dyes[i++] = randomRGB.generate();
+        LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
+        for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet()) dyes.put(entry.getKey(), entry.getValue().generate());
 
 
         //Skin file(s)
@@ -117,24 +80,29 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) return;
-
-
-            file = files[(int) (Math.random() * files.length)];
         }
 
 
         //At this point, "file" is either a skin file, or a folder (either way, it exists)
-        if (isTransient)
-        {
-            ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
-            TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
-        }
-        else addAWSkin(stack, getSkinOrSkinFolderDir(file.getAbsolutePath()), skinType, dyes);
+        ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
+        if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
+        else setAWSkin(stack, skinStack);
     }
 
-    protected String getSkinOrSkinFolderDir(String fullDir)
+    protected static File getSkinOrFolder(String filename)
     {
-        return fullDir.replace(AW_SKIN_LIBRARY_DIR, "");
+        File file = new File(filename);
+        if (file.isDirectory()) return file;
+
+        file = new File(filename + ".armour");
+        if (!file.exists() || file.isDirectory()) return null;
+        return file;
+    }
+
+    protected static void setAWSkin(ItemStack stack, ItemStack skinStack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setTag("armourersWorkshop", MCTools.cloneItemStack(skinStack).getTagCompound().getCompoundTag("armourersWorkshop"));
     }
 
 
@@ -147,7 +115,11 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         buf.writeInt(indexWithinSkinTypeIfTransient);
 
         buf.writeInt(dyeChannels.size());
-        for (CRandomRGB dyeChannel : dyeChannels) dyeChannel.write(buf);
+        for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet())
+        {
+            buf.writeInt(entry.getKey());
+            entry.getValue().write(buf);
+        }
 
         return this;
     }
@@ -161,7 +133,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         indexWithinSkinTypeIfTransient = buf.readInt();
 
         dyeChannels.clear();
-        for (int i = buf.readInt(); i > 0; i--) dyeChannels.add(new CRandomRGB().read(buf));
+        for (int i = buf.readInt(); i > 0; i--) dyeChannels.put(buf.readInt(), new CRandomRGB().read(buf));
 
         return this;
     }
@@ -174,7 +146,11 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         CInt ci = new CInt().set(indexWithinSkinTypeIfTransient).save(stream);
 
         ci.set(dyeChannels.size()).save(stream);
-        for (CRandomRGB dyeChannel : dyeChannels) dyeChannel.save(stream);
+        for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet())
+        {
+            ci.set(entry.getKey()).save(stream);
+            entry.getValue().save(stream);
+        }
 
         return this;
     }
@@ -190,7 +166,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         indexWithinSkinTypeIfTransient = ci.load(stream).value;
 
         dyeChannels.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) dyeChannels.add(new CRandomRGB().load(stream));
+        for (int i = ci.load(stream).value; i > 0; i--) dyeChannels.put(ci.load(stream).value, new CRandomRGB().load(stream));
 
         return this;
     }
