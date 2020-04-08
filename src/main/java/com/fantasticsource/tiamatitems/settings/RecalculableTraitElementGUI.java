@@ -3,8 +3,11 @@ package com.fantasticsource.tiamatitems.settings;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
+import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.*;
+import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
@@ -12,7 +15,10 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
-    public static final FilterRangedInt OPERATION_FILTER = FilterRangedInt.get(0, 2), SLOT_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE);
+    public static final FilterRangedInt
+            OPERATION_FILTER = FilterRangedInt.get(0, 2),
+            PART_SLOT_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE),
+            AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9);
 
     protected String typeName;
 
@@ -45,11 +51,15 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_LeftClickAction actionElement = (CRTraitElement_LeftClickAction) traitElement;
 
             GUILabeledTextInput action = new GUILabeledTextInput(gui, " Action Name: ", actionElement.actionName.equals("") ? "ActionName" : actionElement.actionName, FilterNotEmpty.INSTANCE);
-            gui.root.addAll(new GUIElement(gui, 1, 0), action);
+            gui.root.addAll(new GUITextSpacer(gui), action);
 
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!action.valid()) return;
+
+
                 //Processing
                 actionElement.actionName = action.getText();
 
@@ -63,7 +73,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_RightClickAction actionElement = (CRTraitElement_RightClickAction) traitElement;
 
             GUILabeledTextInput action = new GUILabeledTextInput(gui, " Action Name: ", actionElement.actionName.equals("") ? "ActionName" : actionElement.actionName, FilterNotEmpty.INSTANCE);
-            gui.root.addAll(new GUIElement(gui, 1, 0), action);
+            gui.root.addAll(new GUITextSpacer(gui), action);
 
             //Add main header actions
             done.addClickActions(() ->
@@ -90,15 +100,15 @@ public class RecalculableTraitElementGUI extends GUIScreen
             GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
             GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
             gui.root.addAll(
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     attribute,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     isGood,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     operation,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     minAmount,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     maxAmount
             );
 
@@ -131,15 +141,15 @@ public class RecalculableTraitElementGUI extends GUIScreen
             GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
             GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
             gui.root.addAll(
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     attribute,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     isGood,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     operation,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     minAmount,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     maxAmount
             );
 
@@ -168,16 +178,16 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
             GUILabeledTextInput partSlotType = new GUILabeledTextInput(gui, " Part Slot Type: ", partSlotElement.partSlotType.equals("") ? "PartSlotType" : partSlotElement.partSlotType, FilterNotEmpty.INSTANCE);
             GUILabeledTextInput required = new GUILabeledTextInput(gui, " Required: ", "" + partSlotElement.required, FilterBoolean.INSTANCE);
-            GUILabeledTextInput minCount = new GUILabeledTextInput(gui, " Min Count: ", "" + partSlotElement.minCount, SLOT_COUNT_FILTER);
-            GUILabeledTextInput maxCount = new GUILabeledTextInput(gui, " Max Count: ", "" + partSlotElement.maxCount, SLOT_COUNT_FILTER);
+            GUILabeledTextInput minCount = new GUILabeledTextInput(gui, " Min Count: ", "" + partSlotElement.minCount, PART_SLOT_COUNT_FILTER);
+            GUILabeledTextInput maxCount = new GUILabeledTextInput(gui, " Max Count: ", "" + partSlotElement.maxCount, PART_SLOT_COUNT_FILTER);
             gui.root.addAll(
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     partSlotType,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     required,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     minCount,
-                    new GUIElement(gui, 1, 0),
+                    new GUITextSpacer(gui),
                     maxCount
             );
 
@@ -185,14 +195,14 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!partSlotType.valid()) return;
+                if (!partSlotType.valid() || !required.valid() || !minCount.valid() || !maxCount.valid()) return;
 
 
                 //Processing
                 partSlotElement.partSlotType = partSlotType.getText();
                 partSlotElement.required = FilterBoolean.INSTANCE.parse(required.getText());
-                partSlotElement.minCount = SLOT_COUNT_FILTER.parse(minCount.getText());
-                partSlotElement.maxCount = SLOT_COUNT_FILTER.parse(maxCount.getText());
+                partSlotElement.minCount = PART_SLOT_COUNT_FILTER.parse(minCount.getText());
+                partSlotElement.maxCount = PART_SLOT_COUNT_FILTER.parse(maxCount.getText());
 
 
                 //Close GUI
@@ -250,14 +260,64 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_AWSkin)
         {
-            //TODO
+            CRTraitElement_AWSkin skinElement = (CRTraitElement_AWSkin) traitElement;
+
+            GUILabeledTextInput libraryFile = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFile.equals("") ? "LibraryFile" : skinElement.libraryFile), FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", (skinElement.skinType.equals("") ? "SkinType" : skinElement.skinType), FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isTransient = new GUILabeledTextInput(gui, " Transient: ", "" + skinElement.isTransient, FilterBoolean.INSTANCE);
+            GUILabeledTextInput indexWithinSkinTypeIfTransient = new GUILabeledTextInput(gui, " Wardrobe Slot Index Within Skin Type (if Transient): ", "" + skinElement.indexWithinSkinTypeIfTransient, AW_SLOT_INDEX_FILTER);
+            GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    libraryFile,
+                    new GUITextSpacer(gui),
+                    skinType,
+                    new GUITextSpacer(gui),
+                    isTransient,
+                    new GUITextSpacer(gui),
+                    indexWithinSkinTypeIfTransient,
+                    new GUITextSpacer(gui),
+                    separator
+            );
+
+            GUIList dyes = new GUIList(gui, true, 0.98, 1 - (separator.y + separator.height))
+            {
+                @Override
+                public GUIElement[] newLineDefaultElements()
+                {
+                    return new GUIElement[]{new GUIColor(gui)};
+                }
+            };
+            GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
+            gui.root.addAll(dyes, scrollbar);
+            for (Color color : skinElement.dyes)
+            {
+                ((GUIColor) dyes.addLine().getLineElement(0)).setValue(color);
+            }
 
 
             //Add main header actions
+            separator.addRecalcActions(() ->
+            {
+                dyes.height = 1 - (separator.y + separator.height);
+                scrollbar.height = 1 - (separator.y + separator.height);
+            });
             done.addClickActions(() ->
             {
+                //Validation
+                if (!libraryFile.valid() || !skinType.valid() || !isTransient.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
+
+
                 //Processing
-                //TODO
+                skinElement.libraryFile = libraryFile.getText();
+                skinElement.skinType = skinType.getText();
+                skinElement.isTransient = FilterBoolean.INSTANCE.parse(isTransient.getText());
+                skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
+                skinElement.dyes.clear();
+                for (GUIList.Line line : dyes.getLines())
+                {
+                    skinElement.dyes.add(((GUIColor) line.getLineElement(0)).getValue());
+                }
 
 
                 //Close GUI
@@ -272,6 +332,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                //TODO
+
+
                 //Processing
                 //TODO
 
@@ -288,6 +352,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
         //Add main header actions
         cancel.addClickActions(gui::close);
+
+
+        //Recalc once to fix any colors
+        gui.recalc();
 
 
         //Return gui reference

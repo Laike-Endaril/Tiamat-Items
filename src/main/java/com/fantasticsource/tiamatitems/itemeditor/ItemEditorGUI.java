@@ -124,6 +124,15 @@ public class ItemEditorGUI extends GUIScreen
         GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, "Cache Layers: ", TextureTags.itemHasLayerCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
         GUILabeledTextInput cacheTexture = new GUILabeledTextInput(gui, "Cache Texture: ", TextureTags.itemHasTextureCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
         GUIGradientBorder separator2 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
+        tabView.tabViews.get(1).addAll
+                (
+                        new GUITextSpacer(gui),
+                        cacheLayers,
+                        new GUITextSpacer(gui),
+                        cacheTexture,
+                        new GUITextSpacer(gui),
+                        separator2
+                );
 
         //Layer list
         String[] uncoloredTextures = Tools.sort(TextureCache.getUncoloredTextureNames());
@@ -182,12 +191,6 @@ public class ItemEditorGUI extends GUIScreen
 
         tabView.tabViews.get(1).addAll
                 (
-                        new GUITextSpacer(gui),
-                        cacheLayers,
-                        new GUITextSpacer(gui),
-                        cacheTexture,
-                        new GUITextSpacer(gui),
-                        separator2,
                         layerArrayElement,
                         scrollbar2
                 );
