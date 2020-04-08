@@ -51,6 +51,7 @@ public class SettingsGUI extends GUIScreen
         gui.root.addAll(navbar, save, cancel);
 
 
+        //Main
         GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Trait Pools (Recalculable)", "Trait Pools (Unrecalculable)", "Rarities", "Item Types", "Attribute Balance Multipliers");
         gui.root.add(tabView);
 

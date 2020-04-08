@@ -39,19 +39,17 @@ public class RecalculableTraitGUI extends GUIScreen
 
 
     protected String traitName;
-    protected CRecalculableTrait trait;
 
     protected LinkedHashMap<GUIText, CRecalculableTraitElement> typeElementToRecalculableTraitElementMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitGUI(String traitName, CRecalculableTrait trait)
+    protected RecalculableTraitGUI(String traitName)
     {
         this.traitName = traitName;
-        this.trait = trait;
     }
 
-    public static void show(String poolName, CRecalculableTrait trait)
+    public static void show(String traitName, CRecalculableTrait trait)
     {
-        RecalculableTraitGUI gui = new RecalculableTraitGUI(poolName, trait);
+        RecalculableTraitGUI gui = new RecalculableTraitGUI(traitName);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -67,6 +65,7 @@ public class RecalculableTraitGUI extends GUIScreen
         gui.root.addAll(navbar, done, cancel);
 
 
+        //Main
         GUIList recalculableTraitElements = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
@@ -76,7 +75,14 @@ public class RecalculableTraitGUI extends GUIScreen
                 GUIText description = new GUIText(gui, " (No type selected)");
                 return new GUIElement[]
                         {
-                                GUIButton.newEditButton(gui),
+                                GUIButton.newEditButton(gui).addClickActions(() ->
+                                {
+                                    if (!type.getText().equals(" Select Type..."))
+                                    {
+                                        RecalculableTraitElementGUI.show(type.getText().replaceFirst(" ", ""), gui.typeElementToRecalculableTraitElementMap.get(type)).addOnClosedActions(() ->
+                                                description.setText(" " + gui.typeElementToRecalculableTraitElementMap.get(type).getDescription(new ArrayList<>(), new double[0])));
+                                    }
+                                }),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
@@ -122,11 +128,13 @@ public class RecalculableTraitGUI extends GUIScreen
             {
                 if (traitElement.getClass() == entry.getValue())
                 {
-                    ((GUIText) line.getLineElement(2)).setText(entry.getKey());
+                    GUIText typeElement = (GUIText) line.getLineElement(2);
+                    typeElement.setText(entry.getKey());
+                    gui.typeElementToRecalculableTraitElementMap.put(typeElement, traitElement);
                     break;
                 }
             }
-            ((GUIText) line.getLineElement(4)).setText(traitElement.getDescription(new ArrayList<>(), new double[0]));
+            ((GUIText) line.getLineElement(4)).setText(" " + traitElement.getDescription(new ArrayList<>(), new double[0]));
         }
 
 

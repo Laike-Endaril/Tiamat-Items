@@ -28,19 +28,17 @@ public class RecalculableTraitPoolGUI extends GUIScreen
 
 
     protected String poolName;
-    protected CRecalculableTraitPool pool;
 
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTrait> nameElementToRecalculableTraitMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitPoolGUI(String poolName, CRecalculableTraitPool pool)
+    protected RecalculableTraitPoolGUI(String poolName)
     {
         this.poolName = poolName;
-        this.pool = pool;
     }
 
     public static void show(String poolName, CRecalculableTraitPool pool)
     {
-        RecalculableTraitPoolGUI gui = new RecalculableTraitPoolGUI(poolName, pool);
+        RecalculableTraitPoolGUI gui = new RecalculableTraitPoolGUI(poolName);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -56,6 +54,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
         gui.root.addAll(navbar, done, cancel);
 
 
+        //Main
         GUIList recalculableTraits = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
@@ -103,7 +102,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                         recalculableTraits,
                         scrollbar
                 );
-        for (Map.Entry<CRecalculableTrait, Integer> entry : gui.pool.traitGenWeights.entrySet())
+        for (Map.Entry<CRecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
         {
             GUIList.Line line = recalculableTraits.addLine();
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
@@ -132,14 +131,14 @@ public class RecalculableTraitPoolGUI extends GUIScreen
 
 
             //Processing
-            gui.pool.traitGenWeights.clear();
+            pool.traitGenWeights.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
                 trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
-                gui.pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
+                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
             }
 
 
