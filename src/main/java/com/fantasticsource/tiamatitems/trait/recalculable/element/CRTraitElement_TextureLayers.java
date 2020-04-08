@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +17,8 @@ import java.util.Map;
 
 public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
 {
+    //See AssemblyTags.STATE_
+    public boolean cacheLayers = false, cacheTextures = true;
     public LinkedHashMap<Integer, ArrayList<String>> layerGroups = new LinkedHashMap<>();
 
     @Override
@@ -27,6 +30,12 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
+        if (cacheLayers) TextureTags.addItemLayerCacheTag(stack);
+        else TextureTags.removeItemLayerCacheTag(stack);
+
+        if (cacheTextures) TextureTags.addItemTextureCacheTag(stack);
+        else TextureTags.removeItemTextureCacheTag(stack);
+
         for (Map.Entry<Integer, ArrayList<String>> entry : layerGroups.entrySet())
         {
             int state = entry.getKey();
@@ -47,6 +56,9 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers write(ByteBuf buf)
     {
+        buf.writeBoolean(cacheLayers);
+        buf.writeBoolean(cacheTextures);
+
         buf.writeInt(layerGroups.size());
         for (Map.Entry<Integer, ArrayList<String>> entry : layerGroups.entrySet())
         {
@@ -62,6 +74,9 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers read(ByteBuf buf)
     {
+        cacheLayers = buf.readBoolean();
+        cacheTextures = buf.readBoolean();
+
         layerGroups.clear();
         for (int i = buf.readInt(); i > 0; i--)
         {
@@ -77,6 +92,8 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers save(OutputStream stream)
     {
+        new CBoolean().set(cacheLayers).save(stream).set(cacheTextures).save(stream);
+
         CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt().set(layerGroups.size()).save(stream);
         for (Map.Entry<Integer, ArrayList<String>> entry : layerGroups.entrySet())
@@ -91,6 +108,10 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers load(InputStream stream)
     {
+        CBoolean cb = new CBoolean();
+        cacheLayers = cb.load(stream).value;
+        cacheTextures = cb.load(stream).value;
+
         CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt();
 

@@ -3,11 +3,9 @@ package com.fantasticsource.tiamatitems.settings;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.*;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
@@ -203,14 +201,47 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_TextureLayers)
         {
-            //TODO
+            CRTraitElement_TextureLayers textureElement = (CRTraitElement_TextureLayers) traitElement;
+
+            GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, " Cache Layers: ", "" + textureElement.cacheLayers, FilterBoolean.INSTANCE);
+            GUILabeledTextInput cacheTextures = new GUILabeledTextInput(gui, " Cache Textures: ", "" + textureElement.cacheTextures, FilterBoolean.INSTANCE);
+
+            GUITextButton emptyLayers = new GUITextButton(gui, "'Empty Item' Layers");
+            GUITextButton unusableLayers = new GUITextButton(gui, "'Unusable Item' Layers");
+            GUITextButton usableLayers = new GUITextButton(gui, "'Usable Item' Layers");
+            GUITextButton fullLayers = new GUITextButton(gui, "'Full Item' Layers");
+
+            emptyLayers.addClickActions(() -> TextureLayersGUI.show(textureElement, AssemblyTags.STATE_EMPTY));
+            unusableLayers.addClickActions(() -> TextureLayersGUI.show(textureElement, AssemblyTags.STATE_UNUSABLE));
+            usableLayers.addClickActions(() -> TextureLayersGUI.show(textureElement, AssemblyTags.STATE_USABLE));
+            fullLayers.addClickActions(() -> TextureLayersGUI.show(textureElement, AssemblyTags.STATE_FULL));
+
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    cacheLayers,
+                    new GUITextSpacer(gui),
+                    cacheTextures,
+                    new GUITextSpacer(gui),
+                    emptyLayers,
+                    new GUIElement(gui, 1, 0),
+                    unusableLayers,
+                    new GUIElement(gui, 1, 0),
+                    usableLayers,
+                    new GUIElement(gui, 1, 0),
+                    fullLayers
+            );
 
 
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!cacheLayers.valid() || !cacheTextures.valid()) return;
+
+
                 //Processing
-                //TODO
+                textureElement.cacheLayers = FilterBoolean.INSTANCE.parse(cacheLayers.getText());
+                textureElement.cacheTextures = FilterBoolean.INSTANCE.parse(cacheTextures.getText());
 
 
                 //Close GUI
