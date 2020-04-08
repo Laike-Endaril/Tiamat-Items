@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class RecalculableTraitGUI extends GUIScreen
 {
@@ -40,7 +41,7 @@ public class RecalculableTraitGUI extends GUIScreen
     protected String traitName;
     protected CRecalculableTrait trait;
 
-    protected LinkedHashMap<GUIText, CRecalculableTraitElement> nameElementToRecalculableTraitElementMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUIText, CRecalculableTraitElement> typeElementToRecalculableTraitElementMap = new LinkedHashMap<>();
 
     protected RecalculableTraitGUI(String traitName, CRecalculableTrait trait)
     {
@@ -48,9 +49,9 @@ public class RecalculableTraitGUI extends GUIScreen
         this.trait = trait;
     }
 
-    public static void show(String poolName, CRecalculableTrait pool)
+    public static void show(String poolName, CRecalculableTrait trait)
     {
-        RecalculableTraitGUI gui = new RecalculableTraitGUI(poolName, pool);
+        RecalculableTraitGUI gui = new RecalculableTraitGUI(poolName, trait);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -66,7 +67,7 @@ public class RecalculableTraitGUI extends GUIScreen
         gui.root.addAll(navbar, done, cancel);
 
 
-        GUIList recalculableTraits = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
+        GUIList recalculableTraitElements = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -79,10 +80,10 @@ public class RecalculableTraitGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
-                                    CRecalculableTraitElement traitElement = gui.nameElementToRecalculableTraitElementMap.get(type);
+                                    CRecalculableTraitElement traitElement = gui.typeElementToRecalculableTraitElementMap.get(type);
                                     if (type.getText().equals(" (R. Trait Element Type)"))
                                     {
-                                        gui.nameElementToRecalculableTraitElementMap.remove(type);
+                                        gui.typeElementToRecalculableTraitElementMap.remove(type);
                                         description.setText(" (No type selected)");
                                     }
                                     else
@@ -93,7 +94,7 @@ public class RecalculableTraitGUI extends GUIScreen
                                             try
                                             {
                                                 CRecalculableTraitElement element = cls.newInstance();
-                                                gui.nameElementToRecalculableTraitElementMap.put(type, element);
+                                                gui.typeElementToRecalculableTraitElementMap.put(type, element);
                                                 description.setText(" " + element.getDescription(new ArrayList<>(), new double[0]));
                                             }
                                             catch (InstantiationException | IllegalAccessException e)
@@ -108,29 +109,46 @@ public class RecalculableTraitGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraits);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraitElements);
         gui.root.addAll
                 (
-                        recalculableTraits,
+                        recalculableTraitElements,
                         scrollbar
                 );
+        for (CRecalculableTraitElement traitElement : trait.elements)
+        {
+            GUIList.Line line = recalculableTraitElements.addLine();
+            for (Map.Entry<String, Class<? extends CRecalculableTraitElement>> entry : OPTIONS.entrySet())
+            {
+                if (traitElement.getClass() == entry.getValue())
+                {
+                    ((GUIText) line.getLineElement(2)).setText(entry.getKey());
+                    break;
+                }
+            }
+            ((GUIText) line.getLineElement(4)).setText(traitElement.getDescription(new ArrayList<>(), new double[0]));
+        }
 
 
         //Add main header actions
         cancel.addRecalcActions(() ->
         {
-            recalculableTraits.height = 1 - (cancel.y + cancel.height);
+            recalculableTraitElements.height = 1 - (cancel.y + cancel.height);
             scrollbar.height = 1 - (cancel.y + cancel.height);
         });
         cancel.addClickActions(gui::close);
         done.addClickActions(() ->
         {
-            //Validation
-            //TODO
-
-
             //Processing
-            //TODO
+
+            trait.elements.clear();
+            for (GUIList.Line line : recalculableTraitElements.getLines())
+            {
+                GUIText typeElement = (GUIText) line.getLineElement(2);
+                if (typeElement.getText().equals(" Select Type...")) continue;
+
+                trait.elements.add(gui.typeElementToRecalculableTraitElementMap.get(typeElement));
+            }
 
 
             //Close GUI
