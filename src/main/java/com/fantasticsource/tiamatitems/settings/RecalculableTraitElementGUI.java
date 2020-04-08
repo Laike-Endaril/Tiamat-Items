@@ -326,18 +326,20 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_ForcedAWSkinTypeOverride)
         {
-            //TODO
+            CRTraitElement_ForcedAWSkinTypeOverride overrideElement = (CRTraitElement_ForcedAWSkinTypeOverride) traitElement;
+            GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", overrideElement.skinType.equals("") ? "SkinType" : overrideElement.skinType, FilterNotEmpty.INSTANCE);
+            gui.root.addAll(new GUITextSpacer(gui), skinType);
 
 
             //Add main header actions
             done.addClickActions(() ->
             {
                 //Validation
-                //TODO
+                if (!skinType.valid()) return;
 
 
                 //Processing
-                //TODO
+                overrideElement.skinType = skinType.getText();
 
 
                 //Close GUI
