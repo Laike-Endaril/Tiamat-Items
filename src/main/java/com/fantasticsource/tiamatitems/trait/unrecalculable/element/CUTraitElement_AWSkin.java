@@ -103,6 +103,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         ByteBufUtils.writeUTF8String(buf, libraryFileOrFolder);
         ByteBufUtils.writeUTF8String(buf, skinType);
+        buf.writeBoolean(isRandomFromFolder);
         buf.writeBoolean(isTransient);
         buf.writeInt(indexWithinSkinTypeIfTransient);
 
@@ -121,6 +122,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         libraryFileOrFolder = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
+        isRandomFromFolder = buf.readBoolean();
         isTransient = buf.readBoolean();
         indexWithinSkinTypeIfTransient = buf.readInt();
 
@@ -134,6 +136,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public CUTraitElement_AWSkin save(OutputStream stream)
     {
         new CStringUTF8().set(libraryFileOrFolder).save(stream).set(skinType).save(stream);
+        new CBoolean().set(isRandomFromFolder).save(stream).set(isTransient).save(stream);
         new CBoolean().set(isTransient).save(stream);
         CInt ci = new CInt().set(indexWithinSkinTypeIfTransient).save(stream);
 
@@ -152,9 +155,11 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt();
+        CBoolean cb = new CBoolean();
         libraryFileOrFolder = cs.load(stream).value;
         skinType = cs.load(stream).value;
-        isTransient = new CBoolean().load(stream).value;
+        isRandomFromFolder = cb.load(stream).value;
+        isTransient = cb.load(stream).value;
         indexWithinSkinTypeIfTransient = ci.load(stream).value;
 
         dyeChannels.clear();
