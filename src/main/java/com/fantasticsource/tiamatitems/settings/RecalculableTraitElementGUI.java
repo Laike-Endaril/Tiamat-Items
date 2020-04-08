@@ -14,7 +14,7 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
-    public static final FilterRangedInt OPERATION_FILTER = FilterRangedInt.get(0, 2);
+    public static final FilterRangedInt OPERATION_FILTER = FilterRangedInt.get(0, 2), SLOT_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE);
 
     protected String typeName;
 
@@ -84,13 +84,13 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_ActiveAttributeMod)
         {
-            CRTraitElement_ActiveAttributeMod actionElement = (CRTraitElement_ActiveAttributeMod) traitElement;
+            CRTraitElement_ActiveAttributeMod attributeElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 
-            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", actionElement.attributeName.equals("") ? "generic.name" : actionElement.attributeName, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + actionElement.isGood, FilterBoolean.INSTANCE);
-            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + actionElement.operation, OPERATION_FILTER);
-            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + actionElement.minAmount, FilterFloat.INSTANCE);
-            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + actionElement.maxAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.attributeName.equals("") ? "generic.name" : attributeElement.attributeName, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + attributeElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
             gui.root.addAll(
                     new GUIElement(gui, 1, 0),
                     attribute,
@@ -112,11 +112,11 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
-                actionElement.attributeName = attribute.getText();
-                actionElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
-                actionElement.operation = FilterInt.INSTANCE.parse(operation.getText());
-                actionElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
-                actionElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+                attributeElement.attributeName = attribute.getText();
+                attributeElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
+                attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
 
 
                 //Close GUI
@@ -125,13 +125,13 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_PassiveAttributeMod)
         {
-            CRTraitElement_PassiveAttributeMod actionElement = (CRTraitElement_PassiveAttributeMod) traitElement;
+            CRTraitElement_PassiveAttributeMod attributeElement = (CRTraitElement_PassiveAttributeMod) traitElement;
 
-            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", actionElement.attributeName.equals("") ? "generic.name" : actionElement.attributeName, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + actionElement.isGood, FilterBoolean.INSTANCE);
-            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + actionElement.operation, OPERATION_FILTER);
-            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + actionElement.minAmount, FilterFloat.INSTANCE);
-            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + actionElement.maxAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.attributeName.equals("") ? "generic.name" : attributeElement.attributeName, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + attributeElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
             gui.root.addAll(
                     new GUIElement(gui, 1, 0),
                     attribute,
@@ -153,11 +153,11 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
-                actionElement.attributeName = attribute.getText();
-                actionElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
-                actionElement.operation = FilterInt.INSTANCE.parse(operation.getText());
-                actionElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
-                actionElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+                attributeElement.attributeName = attribute.getText();
+                attributeElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
+                attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
 
 
                 //Close GUI
@@ -166,14 +166,35 @@ public class RecalculableTraitElementGUI extends GUIScreen
         }
         else if (traitElement instanceof CRTraitElement_PartSlot)
         {
-            //TODO
+            CRTraitElement_PartSlot partSlotElement = (CRTraitElement_PartSlot) traitElement;
 
+            GUILabeledTextInput partSlotType = new GUILabeledTextInput(gui, " Part Slot Type: ", partSlotElement.partSlotType.equals("") ? "PartSlotType" : partSlotElement.partSlotType, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput required = new GUILabeledTextInput(gui, " Required: ", "" + partSlotElement.required, FilterBoolean.INSTANCE);
+            GUILabeledTextInput minCount = new GUILabeledTextInput(gui, " Min Count: ", "" + partSlotElement.minCount, SLOT_COUNT_FILTER);
+            GUILabeledTextInput maxCount = new GUILabeledTextInput(gui, " Max Count: ", "" + partSlotElement.maxCount, SLOT_COUNT_FILTER);
+            gui.root.addAll(
+                    new GUIElement(gui, 1, 0),
+                    partSlotType,
+                    new GUIElement(gui, 1, 0),
+                    required,
+                    new GUIElement(gui, 1, 0),
+                    minCount,
+                    new GUIElement(gui, 1, 0),
+                    maxCount
+            );
 
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!partSlotType.valid()) return;
+
+
                 //Processing
-                //TODO
+                partSlotElement.partSlotType = partSlotType.getText();
+                partSlotElement.required = FilterBoolean.INSTANCE.parse(required.getText());
+                partSlotElement.minCount = SLOT_COUNT_FILTER.parse(minCount.getText());
+                partSlotElement.maxCount = SLOT_COUNT_FILTER.parse(maxCount.getText());
 
 
                 //Close GUI

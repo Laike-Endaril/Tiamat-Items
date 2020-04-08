@@ -4,6 +4,7 @@ import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
+import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -52,6 +53,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     public CRTraitElement_PartSlot write(ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, partSlotType);
+        buf.writeInt(minCount);
+        buf.writeInt(maxCount);
         buf.writeBoolean(required);
 
         return this;
@@ -61,6 +64,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     public CRTraitElement_PartSlot read(ByteBuf buf)
     {
         partSlotType = ByteBufUtils.readUTF8String(buf);
+        minCount = buf.readInt();
+        maxCount = buf.readInt();
         required = buf.readBoolean();
 
         return this;
@@ -70,6 +75,7 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     public CRTraitElement_PartSlot save(OutputStream stream)
     {
         new CStringUTF8().set(partSlotType).save(stream);
+        new CInt().set(minCount).save(stream).set(maxCount).save(stream);
         new CBoolean().set(required).save(stream);
 
         return this;
@@ -78,7 +84,11 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     @Override
     public CRTraitElement_PartSlot load(InputStream stream)
     {
+        CInt ci = new CInt();
+
         partSlotType = new CStringUTF8().load(stream).value;
+        minCount = ci.load(stream).value;
+        maxCount = ci.load(stream).value;
         required = new CBoolean().load(stream).value;
 
         return this;
