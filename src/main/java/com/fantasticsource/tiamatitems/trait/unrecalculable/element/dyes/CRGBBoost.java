@@ -11,6 +11,18 @@ public class CRGBBoost extends CRGBFunction
     public int[] toAdd = new int[]{0, 0, 0};
 
     @Override
+    public String name()
+    {
+        return "Color Boost";
+    }
+
+    @Override
+    public String description()
+    {
+        return "Boost RGB by (" + toAdd[0] + ", " + toAdd[1] + ", " + toAdd[2] + ") (" + (int) (chance * 100) + "% chance)";
+    }
+
+    @Override
     public void apply(int[] rgb)
     {
         rgb[0] += toAdd[0];

@@ -21,4 +21,9 @@ public abstract class CRecalculableTraitElement extends Component
      * @param multipliedArgs A list of random doubles ranging from 0 to 1 *and possibly beyond due to multipliers*.  Use these for relative ranges, eg. an amount for an attribute bonus
      */
     public abstract String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs);
+
+    public final String getDescription()
+    {
+        return getDescription(new ArrayList<>(), new double[0]);
+    }
 }

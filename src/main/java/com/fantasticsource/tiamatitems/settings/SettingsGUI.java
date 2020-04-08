@@ -14,6 +14,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
@@ -28,6 +29,7 @@ public class SettingsGUI extends GUIScreen
     public CSettings settings;
 
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTraitPool> nameElementToRecalculableTraitPoolMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUILabeledTextInput, CUnrecalculableTraitPool> nameElementToUnrecalculableTraitPoolMap = new LinkedHashMap<>();
 
     protected SettingsGUI(CSettings settings)
     {
@@ -132,13 +134,33 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", "poolName", new FilterBlacklist("null")).setNamespace("Unrecalculable Trait Pools");
+                String nameString = "UTraitPool";
+                ArrayList<GUITextInput> namespace = gui.namespaces.get("Unrecalculable Trait Pools");
+                if (namespace != null)
+                {
+                    int i = 0;
+                    for (; i >= 0; i++)
+                    {
+                        boolean found = false;
+                        for (GUITextInput input : namespace)
+                        {
+                            if (input.getText().equals(nameString + i))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) break;
+                    }
+                    nameString += i;
+                }
+
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", nameString, new FilterBlacklist("null")).setNamespace("Unrecalculable Trait Pools");
+                gui.nameElementToUnrecalculableTraitPoolMap.put(name, new CUnrecalculableTraitPool());
 
                 return new GUIElement[]
                         {
-                                GUIButton.newListButton(gui).addClickActions(
-                                        //TODO show gui
-                                ),
+                                GUIButton.newListButton(gui).addClickActions(() -> UnrecalculableTraitPoolGUI.show(name.getText(), gui.nameElementToUnrecalculableTraitPoolMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name
                         };
@@ -150,6 +172,13 @@ public class SettingsGUI extends GUIScreen
                         unrecalculableTraitPools,
                         scrollbar2
                 );
+        for (CUnrecalculableTraitPool pool : gui.settings.unrecalcTraitPools.values())
+        {
+            GUIList.Line line = unrecalculableTraitPools.addLine();
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            nameElement.setText(pool.name);
+            gui.nameElementToUnrecalculableTraitPoolMap.put(nameElement, pool);
+        }
 
 
         //Rarities tab
@@ -311,6 +340,20 @@ public class SettingsGUI extends GUIScreen
                 gui.settings.recalcTraitPools.put(nameElement.getText(), pool);
             }
 
+            //Unrecalculable Trait Pools
+            gui.settings.unrecalcTraitPools.clear();
+            for (GUIList.Line line : unrecalculableTraitPools.getLines())
+            {
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(nameElement);
+                pool.name = nameElement.getText();
+                gui.settings.unrecalcTraitPools.put(nameElement.getText(), pool);
+            }
+
+            //Rarities
+            //TODO
+
+            //Item Types
             //TODO
 
             //Attribute Balance Multipliers

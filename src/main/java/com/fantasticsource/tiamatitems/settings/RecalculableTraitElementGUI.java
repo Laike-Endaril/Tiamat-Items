@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
@@ -11,7 +12,10 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
+
+import java.util.LinkedHashMap;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
@@ -21,6 +25,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
             AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9);
 
     protected String typeName;
+
+    protected LinkedHashMap<GUIButton, CRandomRGB> editButtonToCRandomRGBMap = new LinkedHashMap<>();
 
     protected RecalculableTraitElementGUI(String typeName)
     {
@@ -46,7 +52,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
         //Main
-        if (traitElement instanceof CRTraitElement_LeftClickAction)
+        if (traitElement.getClass() == CRTraitElement_LeftClickAction.class)
         {
             CRTraitElement_LeftClickAction actionElement = (CRTraitElement_LeftClickAction) traitElement;
 
@@ -68,7 +74,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_RightClickAction)
+        else if (traitElement.getClass() == CRTraitElement_RightClickAction.class)
         {
             CRTraitElement_RightClickAction actionElement = (CRTraitElement_RightClickAction) traitElement;
 
@@ -90,7 +96,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_ActiveAttributeMod)
+        else if (traitElement.getClass() == CRTraitElement_ActiveAttributeMod.class)
         {
             CRTraitElement_ActiveAttributeMod attributeElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 
@@ -131,7 +137,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_PassiveAttributeMod)
+        else if (traitElement.getClass() == CRTraitElement_PassiveAttributeMod.class)
         {
             CRTraitElement_PassiveAttributeMod attributeElement = (CRTraitElement_PassiveAttributeMod) traitElement;
 
@@ -172,7 +178,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_PartSlot)
+        else if (traitElement.getClass() == CRTraitElement_PartSlot.class)
         {
             CRTraitElement_PartSlot partSlotElement = (CRTraitElement_PartSlot) traitElement;
 
@@ -209,7 +215,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_TextureLayers)
+        else if (traitElement.getClass() == CRTraitElement_TextureLayers.class)
         {
             CRTraitElement_TextureLayers textureElement = (CRTraitElement_TextureLayers) traitElement;
 
@@ -258,18 +264,21 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_AWSkin)
+        else if (traitElement.getClass() == CRTraitElement_AWSkin.class)
         {
             CRTraitElement_AWSkin skinElement = (CRTraitElement_AWSkin) traitElement;
 
-            GUILabeledTextInput libraryFile = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFile.equals("") ? "LibraryFile" : skinElement.libraryFile), FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput libraryFileOrFolder = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFileOrFolder.equals("") ? "LibraryFileOrFolder" : skinElement.libraryFileOrFolder), FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput isRandomFromFolder = new GUILabeledTextInput(gui, " Is Random From Folder: ", "" + skinElement.isRandomFromFolder, FilterBoolean.INSTANCE);
             GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", (skinElement.skinType.equals("") ? "SkinType" : skinElement.skinType), FilterNotEmpty.INSTANCE);
             GUILabeledTextInput isTransient = new GUILabeledTextInput(gui, " Transient: ", "" + skinElement.isTransient, FilterBoolean.INSTANCE);
             GUILabeledTextInput indexWithinSkinTypeIfTransient = new GUILabeledTextInput(gui, " Wardrobe Slot Index Within Skin Type (if Transient): ", "" + skinElement.indexWithinSkinTypeIfTransient, AW_SLOT_INDEX_FILTER);
             GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
             gui.root.addAll(
                     new GUITextSpacer(gui),
-                    libraryFile,
+                    libraryFileOrFolder,
+                    new GUITextSpacer(gui),
+                    isRandomFromFolder,
                     new GUITextSpacer(gui),
                     skinType,
                     new GUITextSpacer(gui),
@@ -285,14 +294,18 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 @Override
                 public GUIElement[] newLineDefaultElements()
                 {
-                    return new GUIElement[]{new GUIColor(gui)};
+                    GUIButton editButton = GUIButton.newEditButton(gui);
+                    gui.editButtonToCRandomRGBMap.put(editButton, new CRandomRGB());
+
+                    return new GUIElement[]{editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton)))};
                 }
             };
             GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
             gui.root.addAll(dyes, scrollbar);
-            for (Color color : skinElement.dyes)
+            for (CRandomRGB randomRGB : skinElement.dyeChannels)
             {
-                ((GUIColor) dyes.addLine().getLineElement(0)).setValue(color);
+                GUIButton editButton = (GUIButton) dyes.addLine().getLineElement(0);
+                gui.editButtonToCRandomRGBMap.put(editButton, randomRGB);
             }
 
 
@@ -305,18 +318,20 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!libraryFile.valid() || !skinType.valid() || !isTransient.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
+                if (!libraryFileOrFolder.valid() || !isRandomFromFolder.valid() || !skinType.valid() || !isTransient.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
 
 
                 //Processing
-                skinElement.libraryFile = libraryFile.getText();
+                skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
+                skinElement.isRandomFromFolder = FilterBoolean.INSTANCE.parse(isRandomFromFolder.getText());
                 skinElement.skinType = skinType.getText();
                 skinElement.isTransient = FilterBoolean.INSTANCE.parse(isTransient.getText());
                 skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
-                skinElement.dyes.clear();
+                skinElement.dyeChannels.clear();
                 for (GUIList.Line line : dyes.getLines())
                 {
-                    skinElement.dyes.add(((GUIColor) line.getLineElement(0)).getValue());
+                    GUIButton editButton = (GUIButton) line.getLineElement(0);
+                    skinElement.dyeChannels.add(gui.editButtonToCRandomRGBMap.get(editButton));
                 }
 
 
@@ -324,7 +339,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
-        else if (traitElement instanceof CRTraitElement_ForcedAWSkinTypeOverride)
+        else if (traitElement.getClass() == CRTraitElement_ForcedAWSkinTypeOverride.class)
         {
             CRTraitElement_ForcedAWSkinTypeOverride overrideElement = (CRTraitElement_ForcedAWSkinTypeOverride) traitElement;
             GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", overrideElement.skinType.equals("") ? "SkinType" : overrideElement.skinType, FilterNotEmpty.INSTANCE);

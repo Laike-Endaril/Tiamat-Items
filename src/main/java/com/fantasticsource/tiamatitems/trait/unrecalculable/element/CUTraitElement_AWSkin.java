@@ -25,13 +25,12 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 {
     public static final String AW_SKIN_LIBRARY_DIR = MCTools.getConfigDir() + ".." + File.separator + "armourers_workshop" + File.separator + "skin-library" + File.separator;
 
-    //TODO this trait may not work correctly if your skin folders have non-skin files in them (anything besides folders and skins)
+    //This trait may not work correctly if your skin folders have non-skin files in them (anything besides folders and skins)
     public String libraryFileOrFolder = "", skinType = "";
-    public int indexWithinSkinTypeIfTransient = 0;
     public boolean isTransient = false, isRandomFromFolder = false;
+    public int indexWithinSkinTypeIfTransient = 0;
     public ArrayList<CRandomRGB> dyeChannels = new ArrayList<>();
-    //TODO limit dye channel count to 8 max
-    //TODO when editing, get paint types from PaintRegistry.REGISTERED_TYPES (use the alpha of the Color for the paint type)
+
 
     protected static File getSkinOrFolder(String filename)
     {
@@ -69,6 +68,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             i++;
         }
     }
+
 
     @Override
     public String getDescription()
@@ -119,9 +119,6 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
 
         //At this point, "file" is either a skin file, or a folder (either way, it exists)
-
-
-        //If it's a skin file, just add it and be done
         if (isTransient)
         {
             ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
@@ -142,6 +139,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         ByteBufUtils.writeUTF8String(buf, libraryFileOrFolder);
         ByteBufUtils.writeUTF8String(buf, skinType);
         buf.writeBoolean(isTransient);
+        buf.writeInt(indexWithinSkinTypeIfTransient);
         buf.writeBoolean(isRandomFromFolder);
 
         buf.writeInt(dyeChannels.size());
@@ -156,6 +154,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         libraryFileOrFolder = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
         isTransient = buf.readBoolean();
+        indexWithinSkinTypeIfTransient = buf.readInt();
         isRandomFromFolder = buf.readBoolean();
 
         dyeChannels.clear();
@@ -169,8 +168,9 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         new CStringUTF8().set(libraryFileOrFolder).save(stream).set(skinType).save(stream);
         new CBoolean().set(isTransient).save(stream).set(isRandomFromFolder).save(stream);
+        CInt ci = new CInt().set(indexWithinSkinTypeIfTransient).save(stream);
 
-        new CInt().set(dyeChannels.size()).save(stream);
+        ci.set(dyeChannels.size()).save(stream);
         for (CRandomRGB dyeChannel : dyeChannels) dyeChannel.save(stream);
 
         return this;
@@ -181,14 +181,16 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         CStringUTF8 cs = new CStringUTF8();
         CBoolean cb = new CBoolean();
+        CInt ci = new CInt();
 
         libraryFileOrFolder = cs.load(stream).value;
         skinType = cs.load(stream).value;
         isTransient = cb.load(stream).value;
+        indexWithinSkinTypeIfTransient = ci.load(stream).value;
         isRandomFromFolder = cb.load(stream).value;
 
         dyeChannels.clear();
-        for (int i = new CInt().load(stream).value; i > 0; i--) dyeChannels.add(new CRandomRGB().load(stream));
+        for (int i = ci.load(stream).value; i > 0; i--) dyeChannels.add(new CRandomRGB().load(stream));
 
         return this;
     }

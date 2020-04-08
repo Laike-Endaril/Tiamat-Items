@@ -130,8 +130,6 @@ public class TextureLayersGUI extends GUIScreen
             }
         }
 
-        //Add recalc actions
-
 
         //Add main header actions
         cancel.addRecalcActions(() ->

@@ -10,46 +10,38 @@ import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
-import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
-import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
-import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class RecalculableTraitGUI extends GUIScreen
+public class UnrecalculableTraitGUI extends GUIScreen
 {
-    public static final LinkedHashMap<String, Class<? extends CRecalculableTraitElement>> OPTIONS = new LinkedHashMap<>();
+    public static final LinkedHashMap<String, Class<? extends CUnrecalculableTraitElement>> OPTIONS = new LinkedHashMap<>();
 
     static
     {
         OPTIONS.put(" Select Type...", null);
-        OPTIONS.put(" Left Click Action", CRTraitElement_LeftClickAction.class);
-        OPTIONS.put(" Right Click Action", CRTraitElement_RightClickAction.class);
-        OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
-        OPTIONS.put(" Passive Attribute Modifier", CRTraitElement_PassiveAttributeMod.class);
-        OPTIONS.put(" Part Slot", CRTraitElement_PartSlot.class);
-        OPTIONS.put(" Texture Layers", CRTraitElement_TextureLayers.class);
-        OPTIONS.put(" AW Skin", CRTraitElement_AWSkin.class);
-        OPTIONS.put(" Forced AW Skin Type Override", CRTraitElement_ForcedAWSkinTypeOverride.class);
+        OPTIONS.put(" AW Skin", CUTraitElement_AWSkin.class);
     }
 
 
     protected String traitName;
 
-    protected LinkedHashMap<GUIText, CRecalculableTraitElement> typeElementToRecalculableTraitElementMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUIText, CUnrecalculableTraitElement> typeElementToUnrecalculableTraitElementMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitGUI(String traitName)
+    protected UnrecalculableTraitGUI(String traitName)
     {
         this.traitName = traitName;
     }
 
-    public static void show(String traitName, CRecalculableTrait trait)
+    public static void show(String traitName, CUnrecalculableTrait trait)
     {
-        RecalculableTraitGUI gui = new RecalculableTraitGUI(traitName);
+        UnrecalculableTraitGUI gui = new UnrecalculableTraitGUI(traitName);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -66,7 +58,7 @@ public class RecalculableTraitGUI extends GUIScreen
 
 
         //Main
-        GUIList recalculableTraitElements = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
+        GUIList unrecalculableTraitElements = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -79,28 +71,28 @@ public class RecalculableTraitGUI extends GUIScreen
                                 {
                                     if (!type.getText().equals(" Select Type..."))
                                     {
-                                        RecalculableTraitElementGUI.show(type.getText().replaceFirst(" ", ""), gui.typeElementToRecalculableTraitElementMap.get(type)).addOnClosedActions(() ->
-                                                description.setText(" " + gui.typeElementToRecalculableTraitElementMap.get(type).getDescription()));
+                                        UnrecalculableTraitElementGUI.show(type.getText().replaceFirst(" ", ""), gui.typeElementToUnrecalculableTraitElementMap.get(type)).addOnClosedActions(() ->
+                                                description.setText(" " + gui.typeElementToUnrecalculableTraitElementMap.get(type).getDescription()));
                                     }
                                 }),
                                 new GUIElement(gui, 1, 0),
-                                type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
+                                type.addClickActions(() -> new TextSelectionGUI(type, " (U. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
-                                    CRecalculableTraitElement traitElement = gui.typeElementToRecalculableTraitElementMap.get(type);
-                                    if (type.getText().equals(" (R. Trait Element Type)"))
+                                    CUnrecalculableTraitElement traitElement = gui.typeElementToUnrecalculableTraitElementMap.get(type);
+                                    if (type.getText().equals(" (U. Trait Element Type)"))
                                     {
-                                        gui.typeElementToRecalculableTraitElementMap.remove(type);
+                                        gui.typeElementToUnrecalculableTraitElementMap.remove(type);
                                         description.setText(" (No type selected)");
                                     }
                                     else
                                     {
-                                        Class<? extends CRecalculableTraitElement> cls = OPTIONS.get(type.getText());
+                                        Class<? extends CUnrecalculableTraitElement> cls = OPTIONS.get(type.getText());
                                         if (traitElement == null || traitElement.getClass() != cls)
                                         {
                                             try
                                             {
-                                                CRecalculableTraitElement element = cls.newInstance();
-                                                gui.typeElementToRecalculableTraitElementMap.put(type, element);
+                                                CUnrecalculableTraitElement element = cls.newInstance();
+                                                gui.typeElementToUnrecalculableTraitElementMap.put(type, element);
                                                 description.setText(" " + element.getDescription());
                                             }
                                             catch (InstantiationException | IllegalAccessException e)
@@ -115,22 +107,22 @@ public class RecalculableTraitGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraitElements);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraitElements);
         gui.root.addAll
                 (
-                        recalculableTraitElements,
+                        unrecalculableTraitElements,
                         scrollbar
                 );
-        for (CRecalculableTraitElement traitElement : trait.elements)
+        for (CUnrecalculableTraitElement traitElement : trait.elements)
         {
-            GUIList.Line line = recalculableTraitElements.addLine();
-            for (Map.Entry<String, Class<? extends CRecalculableTraitElement>> entry : OPTIONS.entrySet())
+            GUIList.Line line = unrecalculableTraitElements.addLine();
+            for (Map.Entry<String, Class<? extends CUnrecalculableTraitElement>> entry : OPTIONS.entrySet())
             {
                 if (traitElement.getClass() == entry.getValue())
                 {
                     GUIText typeElement = (GUIText) line.getLineElement(2);
                     typeElement.setText(entry.getKey());
-                    gui.typeElementToRecalculableTraitElementMap.put(typeElement, traitElement);
+                    gui.typeElementToUnrecalculableTraitElementMap.put(typeElement, traitElement);
                     break;
                 }
             }
@@ -141,7 +133,7 @@ public class RecalculableTraitGUI extends GUIScreen
         //Add main header actions
         cancel.addRecalcActions(() ->
         {
-            recalculableTraitElements.height = 1 - (cancel.y + cancel.height);
+            unrecalculableTraitElements.height = 1 - (cancel.y + cancel.height);
             scrollbar.height = 1 - (cancel.y + cancel.height);
         });
         cancel.addClickActions(gui::close);
@@ -150,12 +142,12 @@ public class RecalculableTraitGUI extends GUIScreen
             //Processing
 
             trait.elements.clear();
-            for (GUIList.Line line : recalculableTraitElements.getLines())
+            for (GUIList.Line line : unrecalculableTraitElements.getLines())
             {
                 GUIText typeElement = (GUIText) line.getLineElement(2);
                 if (typeElement.getText().equals(" Select Type...")) continue;
 
-                trait.elements.add(gui.typeElementToRecalculableTraitElementMap.get(typeElement));
+                trait.elements.add(gui.typeElementToUnrecalculableTraitElementMap.get(typeElement));
             }
 
 
@@ -167,6 +159,6 @@ public class RecalculableTraitGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? traitName + " (R. Trait)" : traitName;
+        return Minecraft.getMinecraft().currentScreen == this ? traitName + " (U. Trait)" : traitName;
     }
 }

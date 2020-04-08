@@ -24,7 +24,7 @@ public class CRandomRGB extends Component
         rgb[1] = gMin + Tools.random(gMax - gMin);
         rgb[2] = bMin + Tools.random(bMax - bMin);
 
-        for (CRGBFunction function : functions) function.apply(rgb);
+        for (CRGBFunction function : functions) function.tryApply(rgb);
 
         rgb[0] = Tools.min(Tools.max(rgb[0], 0), 255);
         rgb[1] = Tools.min(Tools.max(rgb[1], 0), 255);

@@ -13,6 +13,15 @@ public abstract class CRGBFunction extends Component
     public double chance = 0.5;
     public boolean endIfExecuted = false;
 
+    public abstract String name();
+
+    public abstract String description();
+
+    public final void tryApply(int[] rgb)
+    {
+        if (Math.random() < chance) apply(rgb);
+    }
+
     public abstract void apply(int[] rgb);
 
     @Override
