@@ -48,7 +48,7 @@ public class CRarity extends Component
     public CRarity read(ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
-        color.setColor(buf.readInt());
+        color = new Color(buf.readInt());
         textColor = TextFormatting.fromColorIndex(buf.readInt());
 
         itemLevelModifier = buf.readDouble();
@@ -84,7 +84,7 @@ public class CRarity extends Component
         CInt ci = new CInt();
 
         name = cs.load(stream).value;
-        color.setColor(ci.load(stream).value);
+        color = new Color(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
 
         itemLevelModifier = new CDouble().load(stream).value;
