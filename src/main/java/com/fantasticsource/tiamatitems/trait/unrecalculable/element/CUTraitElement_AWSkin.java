@@ -137,7 +137,6 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     {
         new CStringUTF8().set(libraryFileOrFolder).save(stream).set(skinType).save(stream);
         new CBoolean().set(isRandomFromFolder).save(stream).set(isTransient).save(stream);
-        new CBoolean().set(isTransient).save(stream);
         CInt ci = new CInt().set(indexWithinSkinTypeIfTransient).save(stream);
 
         ci.set(dyeChannels.size()).save(stream);
