@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.settings;
 
+import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
@@ -14,6 +15,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
@@ -52,6 +54,7 @@ public class SettingsGUI extends GUIScreen
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTraitPool> nameElementToRecalculableTraitPoolMap = new LinkedHashMap<>();
     protected LinkedHashMap<GUILabeledTextInput, CUnrecalculableTraitPool> nameElementToUnrecalculableTraitPoolMap = new LinkedHashMap<>();
     protected LinkedHashMap<GUILabeledTextInput, CRarity> nameElementToRarityMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUILabeledTextInput, CItemType> nameElementToItemTypeMap = new LinkedHashMap<>();
 
     protected SettingsGUI(CSettings settings)
     {
@@ -282,17 +285,49 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", "itemTypeName", FilterNotEmpty.INSTANCE).setNamespace("Item Types");
+                String nameString = "Item Type";
+                ArrayList<GUITextInput> namespace = gui.namespaces.get("Item Types");
+                if (namespace != null)
+                {
+                    int i = 0;
+                    for (; i >= 0; i++)
+                    {
+                        boolean found = false;
+                        for (GUITextInput input : namespace)
+                        {
+                            if (input.getText().equals(nameString + i))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) break;
+                    }
+                    nameString += i;
+                }
+
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Item Types");
+                CItemType itemType = new CItemType();
+                gui.nameElementToItemTypeMap.put(name, itemType);
+
+                GUIText slottingLabel = new GUIText(gui, " Slotting: ");
+                GUIText slotting = new GUIText(gui, itemType.slotting, getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
+                GUILabeledTextInput traitLevelMultiplier = new GUILabeledTextInput(gui, " Trait Level Multiplier: ", "" + itemType.traitLevelMultiplier, FilterFloat.INSTANCE);
+                GUILabeledTextInput value = new GUILabeledTextInput(gui, " Base Value: ", "" + itemType.value, FilterFloat.INSTANCE);
+
 
                 return new GUIElement[]
                         {
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUITextButton(gui, "Edit Static Recalculable Traits").addClickActions(() ->
-                                {
-                                    //TODO show gui
-                                }),
+                                slottingLabel, slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting Selection", Slottings.availableSlottings())),
+                                new GUIElement(gui, 1, 0),
+                                traitLevelMultiplier,
+                                new GUIElement(gui, 1, 0),
+                                value,
+                                new GUIElement(gui, 1, 0),
+                                new GUITextButton(gui, "Edit Static Recalculable Traits").addClickActions(() -> RecalculableTraitListGUI.show(name.getText(), gui.nameElementToItemTypeMap.get(name).staticRecalculableTraits)),
                                 new GUITextButton(gui, "Edit Static Unrecalculable Traits").addClickActions(() ->
                                 {
                                     //TODO show gui
@@ -319,7 +354,17 @@ public class SettingsGUI extends GUIScreen
                         itemTypes,
                         scrollbar4
                 );
-        //TODO add existing item types
+        for (CItemType itemType : gui.settings.itemTypes.values())
+        {
+            GUIList.Line line = itemTypes.addLine();
+            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+            name.setText(itemType.name);
+            gui.nameElementToItemTypeMap.put(name, itemType);
+
+            ((GUIText) line.getLineElement(4)).setText(itemType.slotting);
+            ((GUILabeledTextInput) line.getLineElement(6)).setText("" + itemType.traitLevelMultiplier);
+            ((GUILabeledTextInput) line.getLineElement(8)).setText("" + itemType.value);
+        }
 
 
         //Attribute Multipliers tab
@@ -385,7 +430,9 @@ public class SettingsGUI extends GUIScreen
             //Item Types
             for (GUIList.Line line : itemTypes.getLines())
             {
-                //TODO
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(8)).valid()) return;
             }
 
             //Attribute Balance Multipliers
@@ -438,7 +485,18 @@ public class SettingsGUI extends GUIScreen
             }
 
             //Item Types
-            //TODO
+            gui.settings.itemTypes.clear();
+            for (GUIList.Line line : itemTypes.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                CItemType itemType = gui.nameElementToItemTypeMap.get(name);
+                itemType.name = name.getText();
+                itemType.slotting = ((GUIText) line.getLineElement(4)).getText();
+                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
+                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(8)).getText());
+
+                gui.settings.itemTypes.put(itemType.name, itemType);
+            }
 
             //Attribute Balance Multipliers
             CSettings.attributeBalanceMultipliers.clear();

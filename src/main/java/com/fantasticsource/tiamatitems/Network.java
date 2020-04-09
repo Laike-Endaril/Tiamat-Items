@@ -204,7 +204,7 @@ public class Network
                     CSettings.SETTINGS = packet.settings;
                     CSettings.SETTINGS.itemGenConfigVersion = itemGenConfigVersion;
 
-                    CSettings.updateVersionAndSave();
+                    CSettings.updateVersionAndSave(ctx.getServerHandler().player);
                 }
             });
             return null;

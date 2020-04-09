@@ -11,34 +11,28 @@ import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.GUITextInput;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
-import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
-public class RecalculableTraitPoolGUI extends GUIScreen
+public class RecalculableTraitListGUI extends GUIScreen
 {
-    public static final FilterRangedInt WEIGHT_FILTER = FilterRangedInt.get(1, Integer.MAX_VALUE);
-
-
-    protected String poolName;
+    protected String itemType;
 
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTrait> nameElementToRecalculableTraitMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitPoolGUI(String poolName)
+    protected RecalculableTraitListGUI(String itemType)
     {
-        this.poolName = poolName;
+        this.itemType = itemType;
     }
 
-    public static void show(String poolName, CRecalculableTraitPool pool)
+    public static void show(String itemType, LinkedHashMap<String, CRecalculableTrait> list)
     {
-        RecalculableTraitPoolGUI gui = new RecalculableTraitPoolGUI(poolName);
+        RecalculableTraitListGUI gui = new RecalculableTraitListGUI(itemType);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -90,8 +84,6 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER),
-                                new GUIElement(gui, 1, 0),
                                 new GUILabeledTextInput(gui, " Add to Core on Assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE)
                         };
             }
@@ -102,14 +94,13 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                         recalculableTraits,
                         scrollbar
                 );
-        for (Map.Entry<CRecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
+        for (CRecalculableTrait trait : list.values())
         {
             GUIList.Line line = recalculableTraits.addLine();
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
-            nameElement.setText(entry.getKey().name);
-            gui.nameElementToRecalculableTraitMap.put(nameElement, entry.getKey());
-            ((GUILabeledTextInput) line.getLineElement(6)).setText("" + entry.getKey().addToCoreOnAssembly);
-            ((GUILabeledTextInput) line.getLineElement(4)).setText("" + entry.getValue());
+            nameElement.setText(trait.name);
+            gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
+            ((GUILabeledTextInput) line.getLineElement(4)).setText("" + trait.addToCoreOnAssembly);
         }
 
 
@@ -127,19 +118,18 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
             }
 
 
             //Processing
-            pool.traitGenWeights.clear();
+            list.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
-                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
+                trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(4)).getText());
+                list.put(trait.name, trait);
             }
 
 
@@ -151,6 +141,6 @@ public class RecalculableTraitPoolGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? poolName + " (R. Trait Pool)" : poolName;
+        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Static R. Traits)" : itemType;
     }
 }

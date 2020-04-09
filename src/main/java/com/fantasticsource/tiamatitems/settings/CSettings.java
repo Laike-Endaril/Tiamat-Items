@@ -10,6 +10,7 @@ import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -52,18 +53,18 @@ public class CSettings extends Component
         return (((long) ITEM_GEN_CODE_VERSION) << 32) | SETTINGS.itemGenConfigVersion;
     }
 
-    public static void updateVersionAndSave()
+    public static void updateVersionAndSave(EntityPlayerMP player)
     {
         SETTINGS.itemGenConfigVersion++;
 
-        saveAll();
+        saveAll(player);
         Network.WRAPPER.sendToAll(new Network.ItemgenVersionPacket(getVersion()));
     }
 
 
-    protected static void saveAll()
+    protected static void saveAll(EntityPlayerMP player)
     {
-        System.out.println("Saving changes to Tiamat Items settings");
+        System.out.println("Saving changes to Tiamat Items settings" + (player == null ? "" : " (" + player.getName() + ")"));
         File file = new File(MCTools.getConfigDir() + FILENAME);
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME + " is a directory instead of a file!");
         else while (file.exists()) file.delete();

@@ -127,7 +127,7 @@ public class Test
         CItemType itemType = new CItemType();
         itemType.name = "2H Axe";
         itemType.slotting = "Tiamat 2H";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CRTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CRTraitElement_ForcedAWSkinTypeOverride();
@@ -236,7 +236,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "2H Axehead";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CRTraitElement_ActiveAttributeMod element = new CRTraitElement_ActiveAttributeMod();
@@ -284,7 +284,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "2H Axe Handle";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CRTraitElement_ActiveAttributeMod attributeElement = new CRTraitElement_ActiveAttributeMod();
@@ -332,7 +332,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "2H Axe Skin";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CUTraitElement_AWSkin skinElement = new CUTraitElement_AWSkin();
@@ -370,7 +370,7 @@ public class Test
         CItemType itemType = new CItemType();
         itemType.name = "Chestplate";
         itemType.slotting = "Chest";
-        itemType.percentageMultiplier = 1;
+        itemType.traitLevelMultiplier = 1;
 
 
         CRTraitElement_ForcedAWSkinTypeOverride skinTypeOverrideElement = new CRTraitElement_ForcedAWSkinTypeOverride();
@@ -471,7 +471,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "Chestplate Plates";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CRTraitElement_ActiveAttributeMod element = new CRTraitElement_ActiveAttributeMod();
@@ -519,7 +519,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "Chestplate Straps";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CRTraitElement_ActiveAttributeMod attributeElement = new CRTraitElement_ActiveAttributeMod();
@@ -567,7 +567,7 @@ public class Test
         //Item type
         CItemType itemType = new CItemType();
         itemType.name = "Chestplate Skin";
-        itemType.percentageMultiplier = 2;
+        itemType.traitLevelMultiplier = 2;
 
 
         CUTraitElement_AWSkin skinElement = new CUTraitElement_AWSkin();

@@ -28,7 +28,7 @@ import java.util.Map;
 public class CItemType extends Component
 {
     public String name = "", slotting = "None";
-    public double percentageMultiplier = 1, value = 0;
+    public double traitLevelMultiplier = 1, value = 0;
     public LinkedHashMap<String, CRecalculableTrait> staticRecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTrait> staticUnrecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>();
@@ -62,7 +62,7 @@ public class CItemType extends Component
 
 
         //Prep generation vars
-        double itemTypeAndLevelMultiplier = percentageMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
+        double itemTypeAndLevelMultiplier = traitLevelMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
         double totalValue = value;
 
 
@@ -305,7 +305,7 @@ public class CItemType extends Component
     {
         ByteBufUtils.writeUTF8String(buf, name);
         ByteBufUtils.writeUTF8String(buf, slotting);
-        buf.writeDouble(percentageMultiplier);
+        buf.writeDouble(traitLevelMultiplier);
         buf.writeDouble(value);
 
         buf.writeInt(staticRecalculableTraits.size());
@@ -329,7 +329,7 @@ public class CItemType extends Component
     {
         name = ByteBufUtils.readUTF8String(buf);
         slotting = ByteBufUtils.readUTF8String(buf);
-        percentageMultiplier = buf.readDouble();
+        traitLevelMultiplier = buf.readDouble();
         value = buf.readDouble();
 
         staticRecalculableTraits.clear();
@@ -361,7 +361,7 @@ public class CItemType extends Component
     public CItemType save(OutputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8().set(name).save(stream).set(slotting).save(stream);
-        new CDouble().set(percentageMultiplier).save(stream).set(value).save(stream);
+        new CDouble().set(traitLevelMultiplier).save(stream).set(value).save(stream);
 
         CInt ci = new CInt().set(staticRecalculableTraits.size()).save(stream);
         for (CRecalculableTrait trait : staticRecalculableTraits.values()) trait.save(stream);
@@ -386,7 +386,7 @@ public class CItemType extends Component
         CDouble cd = new CDouble();
         name = cs.load(stream).value;
         slotting = cs.load(stream).value;
-        percentageMultiplier = cd.load(stream).value;
+        traitLevelMultiplier = cd.load(stream).value;
         value = cd.load(stream).value;
 
         CInt ci = new CInt();
