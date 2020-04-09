@@ -8,6 +8,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
@@ -113,7 +114,10 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", indexString, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
 
                     return new GUIElement[]{
-                            editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton))),
+                            editButton.addClickActions(() ->
+                            {
+                                if (dyeIndex.valid()) CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()));
+                            }),
                             dyeIndex
                     };
                 }

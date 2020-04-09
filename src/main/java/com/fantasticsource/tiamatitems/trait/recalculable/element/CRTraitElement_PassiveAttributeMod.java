@@ -86,7 +86,6 @@ public class CRTraitElement_PassiveAttributeMod extends CRecalculableTraitElemen
         if (amount == 0) return;
 
         if (operation == 2) amount -= 1; //For internal calcs (above) and editing (minimum, maximum), treat operation 2 as a direct multiplier (2 means 2x as opposed to 3x)
-        //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
         PassiveAttributeModTags.addPassiveMod(stack, attributeName + ";" + amount + ";" + operation);
     }
 

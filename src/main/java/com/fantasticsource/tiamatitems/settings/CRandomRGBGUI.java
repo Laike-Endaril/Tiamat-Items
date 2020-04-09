@@ -7,10 +7,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterWhitelist;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
@@ -18,6 +15,8 @@ import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBFun
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBGrayscale;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
+import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
+import moe.plushie.armourers_workshop.api.common.painting.IPaintType;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,25 +31,30 @@ public class CRandomRGBGUI extends GUIScreen
         FUNCTION_TYPES.put("Color Boost", CRGBBoost.class);
         FUNCTION_TYPES.put("Grayscale", CRGBGrayscale.class);
 
-        //TODO get paint types from PaintRegistry.REGISTERED_TYPES
+
+        for (IPaintType paintType : ArmourersWorkshopApi.paintTypeRegistry.getRegisteredTypes())
+        {
+            PAINT_TYPES.put(paintType.getLocalizedName(), paintType.getId());
+        }
     }
 
-    public static final FilterWhitelist PAINT_FILTER = new FilterWhitelist(PAINT_TYPES.keySet().toArray(new String[0]));
     public static final FilterRangedInt UBYTE_FILTER = FilterRangedInt.get(0, 255);
 
 
     protected LinkedHashMap<GUIButton, CRGBFunction> editButtonToCRGBFunctionMap = new LinkedHashMap<>();
 
     protected CRandomRGB randomRGB;
+    protected int dyeIndex;
 
-    protected CRandomRGBGUI(CRandomRGB randomRGB)
+    protected CRandomRGBGUI(CRandomRGB randomRGB, int dyeIndex)
     {
         this.randomRGB = randomRGB;
+        this.dyeIndex = dyeIndex;
     }
 
-    public static CRandomRGBGUI show(CRandomRGB randomRGB)
+    public static CRandomRGBGUI show(CRandomRGB randomRGB, int dyeIndex)
     {
-        CRandomRGBGUI gui = new CRandomRGBGUI(randomRGB);
+        CRandomRGBGUI gui = new CRandomRGBGUI(randomRGB, dyeIndex);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -76,7 +80,8 @@ public class CRandomRGBGUI extends GUIScreen
                 break;
             }
         }
-        GUILabeledTextInput paintType = new GUILabeledTextInput(gui, " Paint Type: ", paintString, PAINT_FILTER);
+        GUIText paintTypeLabel = new GUIText(gui, " Paint Type: ");
+        GUIText paintType = new GUIText(gui, paintString, getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
         GUILabeledTextInput rMin = new GUILabeledTextInput(gui, " Red Base Minimum: ", "" + randomRGB.rMin, UBYTE_FILTER);
         GUILabeledTextInput rMax = new GUILabeledTextInput(gui, " to ", "" + randomRGB.rMax, UBYTE_FILTER);
         GUILabeledTextInput gMin = new GUILabeledTextInput(gui, " Green Base Minimum: ", "" + randomRGB.gMin, UBYTE_FILTER);
@@ -87,13 +92,16 @@ public class CRandomRGBGUI extends GUIScreen
         gui.root.addAll
                 (
                         new GUITextSpacer(gui),
-                        paintType,
+                        paintTypeLabel.addClickActions(() -> new TextSelectionGUI(paintType, "Paint Type Selection", PAINT_TYPES.keySet().toArray(new String[0]))),
+                        paintType.addClickActions(() -> new TextSelectionGUI(paintType, "Paint Type Selection", PAINT_TYPES.keySet().toArray(new String[0]))),
                         new GUITextSpacer(gui),
                         rMin, rMax,
                         new GUITextSpacer(gui),
                         gMin, gMax,
                         new GUITextSpacer(gui),
                         bMin, bMax,
+                        new GUITextSpacer(gui),
+                        new GUIText(gui, " Functions...", Color.YELLOW),
                         separator
                 );
 
@@ -102,7 +110,7 @@ public class CRandomRGBGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIText type = new GUIText(gui, FUNCTION_TYPES.keySet().iterator().next());
+                GUIText type = new GUIText(gui, FUNCTION_TYPES.keySet().iterator().next(), getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
 
                 CRGBFunction function = null;
                 try
@@ -117,14 +125,11 @@ public class CRandomRGBGUI extends GUIScreen
                 GUIButton editButton = GUIButton.newEditButton(gui);
                 gui.editButtonToCRGBFunctionMap.put(editButton, function);
 
-                GUIText description = new GUIText(gui, function.description(), getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
-
-                GUILabeledTextInput chance = new GUILabeledTextInput(gui, " Chance: ", "" + function.chance, FilterFloat.INSTANCE);
-                GUILabeledTextInput endIfExecuted = new GUILabeledTextInput(gui, " End if Executed: ", "" + function.endIfExecuted, FilterBoolean.INSTANCE);
+                GUIText description = new GUIText(gui, function.description());
 
                 return new GUIElement[]
                         {
-                                editButton.addClickActions(() -> CRGBFunctionGUI.show(gui.editButtonToCRGBFunctionMap.get(editButton))),
+                                editButton.addClickActions(() -> CRGBFunctionGUI.show(gui.editButtonToCRGBFunctionMap.get(editButton)).addOnClosedActions(() -> description.setText(gui.editButtonToCRGBFunctionMap.get(editButton).description()))),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, "Function Type Selection", FUNCTION_TYPES.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
@@ -144,11 +149,7 @@ public class CRandomRGBGUI extends GUIScreen
                                     }
                                 })),
                                 new GUIElement(gui, 1, 0),
-                                description,
-                                new GUIElement(gui, 1, 0),
-                                chance,
-                                new GUIElement(gui, 1, 0),
-                                endIfExecuted
+                                description
                         };
             }
         };
@@ -171,8 +172,6 @@ public class CRandomRGBGUI extends GUIScreen
             }
             ((GUIText) line.getLineElement(2)).setText(typeString);
             ((GUIText) line.getLineElement(4)).setText(function.description());
-            ((GUILabeledTextInput) line.getLineElement(6)).setText("" + function.chance);
-            ((GUILabeledTextInput) line.getLineElement(8)).setText("" + function.endIfExecuted);
         }
 
 
@@ -186,12 +185,7 @@ public class CRandomRGBGUI extends GUIScreen
         done.addClickActions(() ->
         {
             //Validation
-            if (!paintType.valid() || !rMin.valid() || !rMax.valid() || !gMin.valid() || !gMax.valid() || !bMin.valid() || !bMax.valid()) return;
-            for (GUIList.Line line : functions.getLines())
-            {
-                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(8)).valid()) return;
-            }
+            if (!rMin.valid() || !rMax.valid() || !gMin.valid() || !gMax.valid() || !bMin.valid() || !bMax.valid()) return;
 
 
             //Processing
@@ -210,8 +204,6 @@ public class CRandomRGBGUI extends GUIScreen
                 if (function == null) continue;
 
                 randomRGB.functions.add(function);
-                function.chance = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
-                function.endIfExecuted = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(8)).getText());
             }
 
 
@@ -231,6 +223,6 @@ public class CRandomRGBGUI extends GUIScreen
     @Override
     public String title()
     {
-        return "Random Color Generator";
+        return "Dye Channel " + dyeIndex;
     }
 }

@@ -13,7 +13,7 @@ public class CRGBGrayscale extends CRGBFunction
     @Override
     public String description()
     {
-        return "Convert to grayscale (" + (int) (chance * 100) + "% chance)";
+        return "Convert to grayscale" + (endIfExecuted ? " and end" : "") + " (" + (int) (chance * 100) + "% chance)";
     }
 
     @Override

@@ -170,25 +170,6 @@ public class TiamatItems
         event.registerServerCommand(new Commands());
 
         CSettings.loadAll(event);
-
-
-        //TODO test code start
-        //TODO remove this!
-//        Test.createGeneralPool();
-//        Test.createSocketPool();
-//
-//        Test.createRarity();
-//
-//        Test.create2HAxeItemType();
-//        Test.create2HAxeheadItemType();
-//        Test.create2HAxeHandleItemType();
-//        Test.create2HAxeSkinItemType();
-//
-//        Test.createChestplateItemType();
-//        Test.createChestplatePlatesItemType();
-//        Test.createChestplateStrapsItemType();
-//        Test.createChestplateSkinItemType();
-        //TODO test code end
     }
 
 

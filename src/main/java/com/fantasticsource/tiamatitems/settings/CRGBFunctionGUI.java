@@ -3,6 +3,8 @@ package com.fantasticsource.tiamatitems.settings;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.*;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBFunction;
@@ -37,6 +39,15 @@ public class CRGBFunctionGUI extends GUIScreen
 
 
         //Main
+        GUILabeledTextInput chance = new GUILabeledTextInput(gui, " Chance: ", "" + function.chance, FilterFloat.INSTANCE);
+        GUILabeledTextInput endIfExecuted = new GUILabeledTextInput(gui, " End if Executed: ", "" + function.endIfExecuted, FilterBoolean.INSTANCE);
+        gui.root.addAll(
+                new GUITextSpacer(gui),
+                chance,
+                new GUITextSpacer(gui),
+                endIfExecuted
+        );
+
         if (function.getClass() == CRGBBoost.class)
         {
             CRGBBoost boostFunction = (CRGBBoost) function;
@@ -57,10 +68,14 @@ public class CRGBFunctionGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
+                if (!chance.valid() || !endIfExecuted.valid()) return;
                 if (!addRed.valid() || !addGreen.valid() || !addBlue.valid()) return;
 
 
                 //Processing
+                function.chance = FilterFloat.INSTANCE.parse(chance.getText());
+                function.endIfExecuted = FilterBoolean.INSTANCE.parse(endIfExecuted.getText());
+
                 boostFunction.toAdd[0] = FilterInt.INSTANCE.parse(addRed.getText());
                 boostFunction.toAdd[1] = FilterInt.INSTANCE.parse(addGreen.getText());
                 boostFunction.toAdd[2] = FilterInt.INSTANCE.parse(addBlue.getText());
@@ -72,18 +87,26 @@ public class CRGBFunctionGUI extends GUIScreen
         }
         else if (function.getClass() == CRGBGrayscale.class)
         {
-            gui.root.addAll(new GUITextSpacer(gui), new GUIText(gui, " (No additional options for this function type)"));
-
             //Add main header actions
             done.addClickActions(() ->
             {
+                //Validation
+                if (!chance.valid() || !endIfExecuted.valid()) return;
+
+
+                //Processing
+                function.chance = FilterFloat.INSTANCE.parse(chance.getText());
+                function.endIfExecuted = FilterBoolean.INSTANCE.parse(endIfExecuted.getText());
+
+
                 //Close GUI
                 gui.close();
             });
         }
         else
         {
-            gui.root.add(new GUIText(gui, "UNKNOWN FUNCTION CLASS: " + function.getClass()));
+            gui.root.clear();
+            gui.root.add(new GUIText(gui, "UNKNOWN FUNCTION CLASS: " + function.getClass(), Color.RED));
         }
 
 
