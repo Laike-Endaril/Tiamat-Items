@@ -328,10 +328,7 @@ public class SettingsGUI extends GUIScreen
                                 value,
                                 new GUIElement(gui, 1, 0),
                                 new GUITextButton(gui, "Edit Static Recalculable Traits").addClickActions(() -> RecalculableTraitListGUI.show(name.getText(), gui.nameElementToItemTypeMap.get(name).staticRecalculableTraits)),
-                                new GUITextButton(gui, "Edit Static Unrecalculable Traits").addClickActions(() ->
-                                {
-                                    //TODO show gui
-                                }),
+                                new GUITextButton(gui, "Edit Static Unrecalculable Traits").addClickActions(() -> UnrecalculableTraitListGUI.show(name.getText(), gui.nameElementToItemTypeMap.get(name).staticUnrecalculableTraits)),
                                 new GUIElement(gui, 1, 0),
                                 new GUITextButton(gui, "Edit Random Recalculable Trait Pool Sets").addClickActions(() ->
                                 {
