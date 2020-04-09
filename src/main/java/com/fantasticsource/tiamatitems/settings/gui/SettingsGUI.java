@@ -332,13 +332,13 @@ public class SettingsGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 new GUITextButton(gui, "Edit Random Recalculable Trait Pool Sets").addClickActions(() ->
                                 {
-                                    //TODO show gui
+                                    RecalculableTraitPoolSetsGUI.show(name.getText(), gui.nameElementToItemTypeMap.get(name).randomRecalculableTraitPoolSets);
                                     //TODO disallow "Static" as a name when editing trait pool sets
                                     //TODO enforce SAME namespace for both recalculable and unrecalculable trait pool sets
                                 }),
                                 new GUITextButton(gui, "Edit Random Unrecalculable Trait Pool Sets").addClickActions(() ->
                                 {
-                                    //TODO show gui
+                                    UnrecalculableTraitPoolSetsGUI.show(name.getText(), gui.nameElementToItemTypeMap.get(name).randomRecalculableTraitPoolSets);
                                     //TODO disallow "Static" as a name when editing trait pool sets
                                     //TODO enforce SAME namespace for both recalculable and unrecalculable trait pool sets
                                 })
