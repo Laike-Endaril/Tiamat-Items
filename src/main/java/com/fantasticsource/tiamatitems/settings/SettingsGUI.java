@@ -12,11 +12,13 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
+import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,11 +27,31 @@ import java.util.Map;
 public class SettingsGUI extends GUIScreen
 {
     public static final FilterRangedInt MAX_ITEM_LEVEL_FILTER = FilterRangedInt.get(1, Integer.MAX_VALUE);
+    public static final String[] TEXT_COLOR_OPTIONS = new String[]
+            {
+                    TextFormatting.WHITE + TextFormatting.WHITE.name(),
+                    TextFormatting.GRAY + TextFormatting.GRAY.name(),
+                    TextFormatting.DARK_GRAY + TextFormatting.DARK_GRAY.name(),
+                    TextFormatting.BLACK + TextFormatting.BLACK.name(),
+                    TextFormatting.RED + TextFormatting.RED.name(),
+                    TextFormatting.YELLOW + TextFormatting.YELLOW.name(),
+                    TextFormatting.GREEN + TextFormatting.GREEN.name(),
+                    TextFormatting.AQUA + TextFormatting.AQUA.name(),
+                    TextFormatting.BLUE + TextFormatting.BLUE.name(),
+                    TextFormatting.LIGHT_PURPLE + TextFormatting.LIGHT_PURPLE.name(),
+                    TextFormatting.DARK_RED + TextFormatting.DARK_RED.name(),
+                    TextFormatting.GOLD + TextFormatting.GOLD.name(),
+                    TextFormatting.DARK_GREEN + TextFormatting.DARK_GREEN.name(),
+                    TextFormatting.DARK_AQUA + TextFormatting.DARK_AQUA.name(),
+                    TextFormatting.DARK_BLUE + TextFormatting.DARK_BLUE.name(),
+                    TextFormatting.DARK_PURPLE + TextFormatting.DARK_PURPLE.name()
+            };
 
     public CSettings settings;
 
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTraitPool> nameElementToRecalculableTraitPoolMap = new LinkedHashMap<>();
     protected LinkedHashMap<GUILabeledTextInput, CUnrecalculableTraitPool> nameElementToUnrecalculableTraitPoolMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUILabeledTextInput, CRarity> nameElementToRarityMap = new LinkedHashMap<>();
 
     protected SettingsGUI(CSettings settings)
     {
@@ -187,15 +209,52 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Rarity Name: ", "rarityName", FilterNotEmpty.INSTANCE).setNamespace("Rarities");
+                String nameString = "Rarity";
+                ArrayList<GUITextInput> namespace = gui.namespaces.get("Rarities");
+                if (namespace != null)
+                {
+                    int i = 0;
+                    for (; i >= 0; i++)
+                    {
+                        boolean found = false;
+                        for (GUITextInput input : namespace)
+                        {
+                            if (input.getText().equals(nameString + i))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) break;
+                    }
+                    nameString += i;
+                }
+
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Rarity Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Rarities");
+                gui.nameElementToRarityMap.put(name, new CRarity());
+
+                GUIText colorLabel = new GUIText(gui, " Color: ");
+                GUIColor color = new GUIColor(gui);
+                GUIText textColorLabel = new GUIText(gui, " Text Color: ");
+                GUIText textColor = new GUIText(gui, TEXT_COLOR_OPTIONS[0]);
+                GUILabeledTextInput itemLevelModifier = new GUILabeledTextInput(gui, " Item Level Modifier: ", "" + new CRarity().itemLevelModifier, FilterFloat.INSTANCE);
+                GUITextButton traitRollCounts = new GUITextButton(gui, "Trait Pool Set Roll Counts");
+
 
                 return new GUIElement[]
                         {
-                                GUIButton.newListButton(gui).addClickActions(
-                                        //TODO show gui
-                                ),
-                                new GUIElement(gui, 1, 0),
-                                name
+                                new GUITextSpacer(gui),
+                                name,
+                                new GUITextSpacer(gui),
+                                colorLabel, color,
+                                new GUITextSpacer(gui),
+                                textColorLabel.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
+                                textColor.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
+                                new GUITextSpacer(gui),
+                                itemLevelModifier,
+                                new GUITextSpacer(gui),
+                                traitRollCounts,
+                                new GUITextSpacer(gui)
                         };
             }
         };
@@ -205,6 +264,17 @@ public class SettingsGUI extends GUIScreen
                         rarities,
                         scrollbar3
                 );
+        for (CRarity rarity : gui.settings.rarities.values())
+        {
+            GUIList.Line line = rarities.addLine();
+            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+            name.setText(rarity.name);
+            gui.nameElementToRarityMap.put(name, rarity);
+
+            ((GUIColor) line.getLineElement(4)).setValue(rarity.color);
+            ((GUIText) line.getLineElement(7)).setText(rarity.textColor + rarity.textColor.name());
+            ((GUILabeledTextInput) line.getLineElement(9)).setText("" + rarity.itemLevelModifier);
+        }
 
 
         //Item Types tab
@@ -248,6 +318,7 @@ public class SettingsGUI extends GUIScreen
                         itemTypes,
                         scrollbar4
                 );
+        //TODO add existing item types
 
 
         //Attribute Multipliers tab
@@ -306,13 +377,14 @@ public class SettingsGUI extends GUIScreen
             //Rarities
             for (GUIList.Line line : rarities.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
             }
 
             //Item Types
             for (GUIList.Line line : itemTypes.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                //TODO
             }
 
             //Attribute Balance Multipliers
@@ -334,24 +406,35 @@ public class SettingsGUI extends GUIScreen
             gui.settings.recalcTraitPools.clear();
             for (GUIList.Line line : recalculableTraitPools.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
-                CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(nameElement);
-                pool.name = nameElement.getText();
-                gui.settings.recalcTraitPools.put(nameElement.getText(), pool);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(name);
+                pool.name = name.getText();
+                gui.settings.recalcTraitPools.put(name.getText(), pool);
             }
 
             //Unrecalculable Trait Pools
             gui.settings.unrecalcTraitPools.clear();
             for (GUIList.Line line : unrecalculableTraitPools.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
-                CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(nameElement);
-                pool.name = nameElement.getText();
-                gui.settings.unrecalcTraitPools.put(nameElement.getText(), pool);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(name);
+                pool.name = name.getText();
+                gui.settings.unrecalcTraitPools.put(name.getText(), pool);
             }
 
             //Rarities
-            //TODO
+            gui.settings.rarities.clear();
+            for (GUIList.Line line : rarities.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                CRarity rarity = gui.nameElementToRarityMap.get(name);
+                rarity.name = name.getText();
+                rarity.color = ((GUIColor) line.getLineElement(4)).getValue();
+                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(7)).getText()));
+                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
+
+                gui.settings.rarities.put(rarity.name, rarity);
+            }
 
             //Item Types
             //TODO
