@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.nbt;
 
-import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

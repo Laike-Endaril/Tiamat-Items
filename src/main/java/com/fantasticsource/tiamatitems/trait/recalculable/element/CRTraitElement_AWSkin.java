@@ -32,13 +32,27 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     public int indexWithinSkinTypeIfTransient = 0;
     public LinkedHashMap<Integer, CRandomRGB> dyeChannels = new LinkedHashMap<>();
 
+    protected static File getSkinOrFolder(String filename)
+    {
+        File file = new File(filename);
+        if (file.isDirectory()) return file;
+
+        file = new File(filename + ".armour");
+        if (!file.exists() || file.isDirectory()) return null;
+        return file;
+    }
+
+    protected static void setAWSkin(ItemStack stack, ItemStack skinStack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setTag("armourersWorkshop", MCTools.cloneItemStack(skinStack).getTagCompound().getCompoundTag("armourersWorkshop"));
+    }
 
     @Override
     public int requiredArgumentCount()
     {
         return 0;
     }
-
 
     @Override
     public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
@@ -59,7 +73,6 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         if (isfolder) return "AW Skins from folder: " + folderString;
         return "AW Skin: " + folderString;
     }
-
 
     @Override
     public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
@@ -88,23 +101,6 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
         else setAWSkin(stack, skinStack);
     }
-
-    protected static File getSkinOrFolder(String filename)
-    {
-        File file = new File(filename);
-        if (file.isDirectory()) return file;
-
-        file = new File(filename + ".armour");
-        if (!file.exists() || file.isDirectory()) return null;
-        return file;
-    }
-
-    protected static void setAWSkin(ItemStack stack, ItemStack skinStack)
-    {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound().setTag("armourersWorkshop", MCTools.cloneItemStack(skinStack).getTagCompound().getCompoundTag("armourersWorkshop"));
-    }
-
 
     @Override
     public CRTraitElement_AWSkin write(ByteBuf buf)

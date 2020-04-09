@@ -6,7 +6,7 @@ import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import com.fantasticsource.tiamatitems.settings.CSettings;
-import com.fantasticsource.tiamatitems.settings.SettingsGUI;
+import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;

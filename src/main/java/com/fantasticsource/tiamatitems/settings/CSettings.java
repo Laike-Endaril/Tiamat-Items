@@ -24,29 +24,19 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CSettings extends Component
 {
-    public static CSettings SETTINGS = new CSettings();
     public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
-
-
+    public static CSettings SETTINGS = new CSettings();
+    public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
     public int itemGenConfigVersion = 0;
-
-
     public int maxItemLevel = 20;
-
     public double
             baseMultiplier = 1,
             multiplierBonusPerLevel = 1;
-
-
     public LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>();
     public LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>();
     public LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
-
-
-    public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
-
 
     public static long getVersion()
     {

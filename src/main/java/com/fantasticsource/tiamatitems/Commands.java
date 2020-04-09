@@ -1,8 +1,8 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;

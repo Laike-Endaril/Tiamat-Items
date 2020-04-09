@@ -1,10 +1,10 @@
 package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.tiamatitems.settings.CSettings;
-import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.settings;
+package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
@@ -25,6 +25,7 @@ public class CRandomRGBGUI extends GUIScreen
 {
     public static final LinkedHashMap<String, Class<? extends CRGBFunction>> FUNCTION_TYPES = new LinkedHashMap<>();
     public static final LinkedHashMap<String, Integer> PAINT_TYPES = new LinkedHashMap<>();
+    public static final FilterRangedInt UBYTE_FILTER = FilterRangedInt.get(0, 255);
 
     static
     {
@@ -37,9 +38,6 @@ public class CRandomRGBGUI extends GUIScreen
             PAINT_TYPES.put(paintType.getLocalizedName(), paintType.getId());
         }
     }
-
-    public static final FilterRangedInt UBYTE_FILTER = FilterRangedInt.get(0, 255);
-
 
     protected LinkedHashMap<GUIButton, CRGBFunction> editButtonToCRGBFunctionMap = new LinkedHashMap<>();
 

@@ -31,6 +31,21 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     public int indexWithinSkinTypeIfTransient = 0;
     public LinkedHashMap<Integer, CRandomRGB> dyeChannels = new LinkedHashMap<>();
 
+    protected static File getSkinOrFolder(String filename)
+    {
+        File file = new File(filename);
+        if (file.isDirectory()) return file;
+
+        file = new File(filename + ".armour");
+        if (!file.exists() || file.isDirectory()) return null;
+        return file;
+    }
+
+    protected static void setAWSkin(ItemStack stack, ItemStack skinStack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setTag("armourersWorkshop", MCTools.cloneItemStack(skinStack).getTagCompound().getCompoundTag("armourersWorkshop"));
+    }
 
     @Override
     public String getDescription()
@@ -80,23 +95,6 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
         else setAWSkin(stack, skinStack);
         return 1;
     }
-
-    protected static File getSkinOrFolder(String filename)
-    {
-        File file = new File(filename);
-        if (file.isDirectory()) return file;
-
-        file = new File(filename + ".armour");
-        if (!file.exists() || file.isDirectory()) return null;
-        return file;
-    }
-
-    protected static void setAWSkin(ItemStack stack, ItemStack skinStack)
-    {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound().setTag("armourersWorkshop", MCTools.cloneItemStack(skinStack).getTagCompound().getCompoundTag("armourersWorkshop"));
-    }
-
 
     @Override
     public CUTraitElement_AWSkin write(ByteBuf buf)

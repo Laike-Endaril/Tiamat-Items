@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.settings;
+package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
@@ -11,6 +11,7 @@ import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;

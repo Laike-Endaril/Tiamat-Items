@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.settings;
+package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;

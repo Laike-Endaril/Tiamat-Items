@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.settings;
+package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
@@ -15,6 +15,8 @@ import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
+import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
