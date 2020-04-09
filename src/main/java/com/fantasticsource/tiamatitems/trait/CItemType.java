@@ -96,7 +96,7 @@ public class CItemType extends Component
 
 
         //Generate NBT and value for random recalculable traits
-        for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
+        for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitPoolSetRollCounts.entrySet())
         {
             int rollCount = poolSetRollCountEntry.getValue();
             if (rollCount <= 0) continue;
@@ -197,7 +197,7 @@ public class CItemType extends Component
 
 
             //Apply and generate value for random unrecalculable traits
-            for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitCounts.entrySet())
+            for (Map.Entry<String, Integer> poolSetRollCountEntry : rarity.traitPoolSetRollCounts.entrySet())
             {
                 int rollCount = poolSetRollCountEntry.getValue();
                 if (rollCount <= 0) continue;

@@ -146,7 +146,6 @@ public class RecalculableTraitGUI extends GUIScreen
         done.addClickActions(() ->
         {
             //Processing
-
             trait.elements.clear();
             for (GUIList.Line line : recalculableTraitElements.getLines())
             {

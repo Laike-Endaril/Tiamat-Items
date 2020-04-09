@@ -243,18 +243,17 @@ public class SettingsGUI extends GUIScreen
 
                 return new GUIElement[]
                         {
-                                new GUITextSpacer(gui),
+                                new GUIElement(gui, 1, 0),
                                 name,
-                                new GUITextSpacer(gui),
+                                new GUIElement(gui, 1, 0),
                                 colorLabel, color,
-                                new GUITextSpacer(gui),
+                                new GUIElement(gui, 1, 0),
                                 textColorLabel.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
                                 textColor.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
-                                new GUITextSpacer(gui),
+                                new GUIElement(gui, 1, 0),
                                 itemLevelModifier,
-                                new GUITextSpacer(gui),
-                                traitRollCounts,
-                                new GUITextSpacer(gui)
+                                new GUIElement(gui, 1, 0),
+                                traitRollCounts.addClickActions(() -> TraitRollCountsGUI.show(name.getText(), gui.nameElementToRarityMap.get(name)))
                         };
             }
         };
@@ -303,11 +302,13 @@ public class SettingsGUI extends GUIScreen
                                 {
                                     //TODO show gui
                                     //TODO disallow "Static" as a name when editing trait pool sets
+                                    //TODO enforce SAME namespace for both recalculable and unrecalculable trait pool sets
                                 }),
                                 new GUITextButton(gui, "Edit Random Unrecalculable Trait Pool Sets").addClickActions(() ->
                                 {
                                     //TODO show gui
                                     //TODO disallow "Static" as a name when editing trait pool sets
+                                    //TODO enforce SAME namespace for both recalculable and unrecalculable trait pool sets
                                 })
                         };
             }

@@ -139,7 +139,6 @@ public class UnrecalculableTraitGUI extends GUIScreen
         done.addClickActions(() ->
         {
             //Processing
-
             trait.elements.clear();
             for (GUIList.Line line : unrecalculableTraitElements.getLines())
             {

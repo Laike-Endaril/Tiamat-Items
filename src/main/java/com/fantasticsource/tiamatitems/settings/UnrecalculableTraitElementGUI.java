@@ -114,10 +114,7 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", indexString, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
 
                     return new GUIElement[]{
-                            editButton.addClickActions(() ->
-                            {
-                                if (dyeIndex.valid()) CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()));
-                            }),
+                            editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()))),
                             dyeIndex
                     };
                 }

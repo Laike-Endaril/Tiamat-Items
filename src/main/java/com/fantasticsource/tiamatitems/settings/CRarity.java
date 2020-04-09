@@ -22,7 +22,7 @@ public class CRarity extends Component
 
     public double itemLevelModifier;
 
-    public LinkedHashMap<String, Integer> traitCounts = new LinkedHashMap<>();
+    public LinkedHashMap<String, Integer> traitPoolSetRollCounts = new LinkedHashMap<>();
 
 
     @Override
@@ -34,8 +34,8 @@ public class CRarity extends Component
 
         buf.writeDouble(itemLevelModifier);
 
-        buf.writeInt(traitCounts.size());
-        for (Map.Entry<String, Integer> entry : traitCounts.entrySet())
+        buf.writeInt(traitPoolSetRollCounts.size());
+        for (Map.Entry<String, Integer> entry : traitPoolSetRollCounts.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
             buf.writeInt(entry.getValue());
@@ -53,8 +53,8 @@ public class CRarity extends Component
 
         itemLevelModifier = buf.readDouble();
 
-        traitCounts.clear();
-        for (int i = buf.readInt(); i > 0; i--) traitCounts.put(ByteBufUtils.readUTF8String(buf), buf.readInt());
+        traitPoolSetRollCounts.clear();
+        for (int i = buf.readInt(); i > 0; i--) traitPoolSetRollCounts.put(ByteBufUtils.readUTF8String(buf), buf.readInt());
 
         return this;
     }
@@ -67,8 +67,8 @@ public class CRarity extends Component
 
         new CDouble().set(itemLevelModifier).save(stream);
 
-        ci.set(traitCounts.size()).save(stream);
-        for (Map.Entry<String, Integer> entry : traitCounts.entrySet())
+        ci.set(traitPoolSetRollCounts.size()).save(stream);
+        for (Map.Entry<String, Integer> entry : traitPoolSetRollCounts.entrySet())
         {
             cs.set(entry.getKey()).save(stream);
             ci.set(entry.getValue()).save(stream);
@@ -89,8 +89,8 @@ public class CRarity extends Component
 
         itemLevelModifier = new CDouble().load(stream).value;
 
-        traitCounts.clear();
-        for (int i = ci.load(stream).value; i > 0; i--) traitCounts.put(cs.load(stream).value, ci.load(stream).value);
+        traitPoolSetRollCounts.clear();
+        for (int i = ci.load(stream).value; i > 0; i--) traitPoolSetRollCounts.put(cs.load(stream).value, ci.load(stream).value);
 
         return this;
     }
