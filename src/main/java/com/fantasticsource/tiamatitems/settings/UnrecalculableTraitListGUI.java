@@ -53,7 +53,7 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "RTrait";
+                String nameString = "UTrait";
                 ArrayList<GUITextInput> namespace = gui.namespaces.get("Unrecalculable Traits");
                 if (namespace != null)
                 {
@@ -135,6 +135,6 @@ public class UnrecalculableTraitListGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Static R. Traits)" : itemType;
+        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Static U. Traits)" : itemType;
     }
 }
