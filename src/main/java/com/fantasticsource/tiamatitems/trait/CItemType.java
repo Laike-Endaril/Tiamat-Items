@@ -17,12 +17,14 @@ import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class CItemType extends Component
@@ -31,8 +33,8 @@ public class CItemType extends Component
     public double traitLevelMultiplier = 1, value = 0;
     public LinkedHashMap<String, CRecalculableTrait> staticRecalculableTraits = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTrait> staticUnrecalculableTraits = new LinkedHashMap<>();
-    public LinkedHashMap<String, LinkedHashMap<String, CRecalculableTraitPool>> randomRecalculableTraitPoolSets = new LinkedHashMap<>();
-    public LinkedHashMap<String, LinkedHashMap<String, CUnrecalculableTraitPool>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashSet<String>> randomRecalculableTraitPoolSets = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashSet<String>> randomUnrecalculableTraitPoolSets = new LinkedHashMap<>();
 
 
     public ItemStack generateItem(int level, CRarity rarity)
@@ -103,14 +105,24 @@ public class CItemType extends Component
 
 
             String poolSetName = poolSetRollCountEntry.getKey();
-            LinkedHashMap<String, CRecalculableTraitPool> randomTraitPools = randomRecalculableTraitPoolSets.get(poolSetName);
-            if (randomTraitPools == null) continue;
+            LinkedHashSet<String> randomTraitPoolNames = randomRecalculableTraitPoolSets.get(poolSetName);
+            if (randomTraitPoolNames == null) continue;
 
 
             ArrayList<CRecalculableTraitPool> weightedPools = new ArrayList<>();
             LinkedHashMap<CRecalculableTraitPool, ArrayList<CRecalculableTrait>> traitPools = new LinkedHashMap<>();
-            for (CRecalculableTraitPool pool : randomTraitPools.values())
+            for (String poolName : randomTraitPoolNames)
             {
+                CRecalculableTraitPool pool = CSettings.SETTINGS.recalcTraitPools.get(poolName);
+                if (pool == null)
+                {
+                    System.err.println(TextFormatting.RED + "Could not find recalculable pool: " + poolName);
+                    System.err.println(TextFormatting.RED + "Attempted from recalculable pool set: " + poolSetName);
+                    System.err.println(TextFormatting.RED + "In item type: " + name);
+                    System.err.println(TextFormatting.RED + "With rarity: " + rarity.name);
+                    continue;
+                }
+
                 ArrayList<CRecalculableTrait> traits = new ArrayList<>();
 
                 for (Map.Entry<CRecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
@@ -139,7 +151,7 @@ public class CItemType extends Component
                     String poolSetName2 = tokens[0];
                     if (!poolSetName2.equals(poolSetName)) continue;
 
-                    CRecalculableTraitPool pool = randomTraitPools.get(tokens[1]);
+                    CRecalculableTraitPool pool = CSettings.SETTINGS.recalcTraitPools.get(tokens[1]);
                     if (pool == null || !weightedPools.contains(pool)) continue;
 
                     ArrayList<CRecalculableTrait> list = traitPools.get(pool);
@@ -204,14 +216,24 @@ public class CItemType extends Component
 
 
                 String poolSetName = poolSetRollCountEntry.getKey();
-                LinkedHashMap<String, CUnrecalculableTraitPool> randomTraitPools = randomUnrecalculableTraitPoolSets.get(poolSetName);
-                if (randomTraitPools == null) continue;
+                LinkedHashSet<String> randomTraitPoolNames = randomUnrecalculableTraitPoolSets.get(poolSetName);
+                if (randomTraitPoolNames == null) continue;
 
 
                 ArrayList<CUnrecalculableTraitPool> weightedPools = new ArrayList<>();
                 LinkedHashMap<CUnrecalculableTraitPool, ArrayList<CUnrecalculableTrait>> traitPools = new LinkedHashMap<>();
-                for (CUnrecalculableTraitPool pool : randomTraitPools.values())
+                for (String poolName : randomTraitPoolNames)
                 {
+                    CUnrecalculableTraitPool pool = CSettings.SETTINGS.unrecalcTraitPools.get(poolName);
+                    if (pool == null)
+                    {
+                        System.err.println(TextFormatting.RED + "Could not find unrecalculable pool: " + poolName);
+                        System.err.println(TextFormatting.RED + "Attempted from unrecalculable pool set: " + poolSetName);
+                        System.err.println(TextFormatting.RED + "In item type: " + name);
+                        System.err.println(TextFormatting.RED + "With rarity: " + rarity.name);
+                        continue;
+                    }
+
                     ArrayList<CUnrecalculableTrait> traits = new ArrayList<>();
 
                     for (Map.Entry<CUnrecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
@@ -276,7 +298,7 @@ public class CItemType extends Component
             else
             {
                 CRecalculableTrait trait = null;
-                for (CRecalculableTrait trait2 : randomRecalculableTraitPoolSets.get(tokens[0]).get(tokens[1]).traitGenWeights.keySet())
+                for (CRecalculableTrait trait2 : CSettings.SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
                 {
                     if (trait2.name.equals(tokens[2]))
                     {
@@ -315,23 +337,23 @@ public class CItemType extends Component
         for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values()) trait.write(buf);
 
         buf.writeInt(randomRecalculableTraitPoolSets.size());
-        for (Map.Entry<String, LinkedHashMap<String, CRecalculableTraitPool>> entry : randomRecalculableTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashSet<String>> entry : randomRecalculableTraitPoolSets.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
 
-            LinkedHashMap<String, CRecalculableTraitPool> poolSet = entry.getValue();
+            LinkedHashSet<String> poolSet = entry.getValue();
             buf.writeInt(poolSet.size());
-            for (CRecalculableTraitPool pool : poolSet.values()) pool.write(buf);
+            for (String poolName : poolSet) ByteBufUtils.writeUTF8String(buf, poolName);
         }
 
         buf.writeInt(randomUnrecalculableTraitPoolSets.size());
-        for (Map.Entry<String, LinkedHashMap<String, CUnrecalculableTraitPool>> entry : randomUnrecalculableTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashSet<String>> entry : randomUnrecalculableTraitPoolSets.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
 
-            LinkedHashMap<String, CUnrecalculableTraitPool> poolSet = entry.getValue();
+            LinkedHashSet<String> poolSet = entry.getValue();
             buf.writeInt(poolSet.size());
-            for (CUnrecalculableTraitPool pool : poolSet.values()) pool.write(buf);
+            for (String poolName : poolSet) ByteBufUtils.writeUTF8String(buf, poolName);
         }
 
         return this;
@@ -362,30 +384,26 @@ public class CItemType extends Component
         }
 
         randomRecalculableTraitPoolSets.clear();
-        CRecalculableTraitPool rPool;
         for (int i = buf.readInt(); i > 0; i--)
         {
-            LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            LinkedHashSet<String> poolSet = new LinkedHashSet<>();
             randomRecalculableTraitPoolSets.put(ByteBufUtils.readUTF8String(buf), poolSet);
 
             for (int i2 = buf.readInt(); i2 > 0; i2--)
             {
-                rPool = new CRecalculableTraitPool().read(buf);
-                poolSet.put(rPool.name, rPool);
+                poolSet.add(ByteBufUtils.readUTF8String(buf));
             }
         }
 
         randomUnrecalculableTraitPoolSets.clear();
-        CUnrecalculableTraitPool uPool;
         for (int i = buf.readInt(); i > 0; i--)
         {
-            LinkedHashMap<String, CUnrecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            LinkedHashSet<String> poolSet = new LinkedHashSet<>();
             randomUnrecalculableTraitPoolSets.put(ByteBufUtils.readUTF8String(buf), poolSet);
 
             for (int i2 = buf.readInt(); i2 > 0; i2--)
             {
-                uPool = new CUnrecalculableTraitPool().read(buf);
-                poolSet.put(uPool.name, uPool);
+                poolSet.add(ByteBufUtils.readUTF8String(buf));
             }
         }
 
@@ -405,23 +423,23 @@ public class CItemType extends Component
         for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values()) trait.save(stream);
 
         ci.set(randomRecalculableTraitPoolSets.size()).save(stream);
-        for (Map.Entry<String, LinkedHashMap<String, CRecalculableTraitPool>> entry : randomRecalculableTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashSet<String>> entry : randomRecalculableTraitPoolSets.entrySet())
         {
             cs.set(entry.getKey()).save(stream);
 
-            LinkedHashMap<String, CRecalculableTraitPool> poolSet = entry.getValue();
+            LinkedHashSet<String> poolSet = entry.getValue();
             ci.set(poolSet.size()).save(stream);
-            for (CRecalculableTraitPool pool : poolSet.values()) pool.save(stream);
+            for (String poolName : poolSet) cs.set(poolName).save(stream);
         }
 
         ci.set(randomUnrecalculableTraitPoolSets.size()).save(stream);
-        for (Map.Entry<String, LinkedHashMap<String, CUnrecalculableTraitPool>> entry : randomUnrecalculableTraitPoolSets.entrySet())
+        for (Map.Entry<String, LinkedHashSet<String>> entry : randomUnrecalculableTraitPoolSets.entrySet())
         {
             cs.set(entry.getKey()).save(stream);
 
-            LinkedHashMap<String, CUnrecalculableTraitPool> poolSet = entry.getValue();
+            LinkedHashSet<String> poolSet = entry.getValue();
             ci.set(poolSet.size()).save(stream);
-            for (CUnrecalculableTraitPool pool : poolSet.values()) pool.save(stream);
+            for (String poolName : poolSet) cs.set(poolName).save(stream);
         }
 
         return this;
@@ -455,30 +473,26 @@ public class CItemType extends Component
         }
 
         randomRecalculableTraitPoolSets.clear();
-        CRecalculableTraitPool rPool;
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            LinkedHashSet<String> poolSet = new LinkedHashSet<>();
             randomRecalculableTraitPoolSets.put(cs.load(stream).value, poolSet);
 
             for (int i2 = ci.load(stream).value; i2 > 0; i2--)
             {
-                rPool = new CRecalculableTraitPool().load(stream);
-                poolSet.put(rPool.name, rPool);
+                poolSet.add(cs.load(stream).value);
             }
         }
 
         randomUnrecalculableTraitPoolSets.clear();
-        CUnrecalculableTraitPool uPool;
         for (int i = ci.load(stream).value; i > 0; i--)
         {
-            LinkedHashMap<String, CUnrecalculableTraitPool> poolSet = new LinkedHashMap<>();
+            LinkedHashSet<String> poolSet = new LinkedHashSet<>();
             randomUnrecalculableTraitPoolSets.put(cs.load(stream).value, poolSet);
 
             for (int i2 = ci.load(stream).value; i2 > 0; i2--)
             {
-                uPool = new CUnrecalculableTraitPool().load(stream);
-                poolSet.put(uPool.name, uPool);
+                poolSet.add(cs.load(stream).value);
             }
         }
 

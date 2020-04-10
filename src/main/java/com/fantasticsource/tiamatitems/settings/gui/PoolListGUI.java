@@ -9,24 +9,22 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
-import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.Minecraft;
 
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class PoolListGUI extends GUIScreen
 {
-    protected String itemType;
+    protected String title;
 
-    protected PoolListGUI(String itemType)
+    protected PoolListGUI(String title)
     {
-        this.itemType = itemType;
+        this.title = title;
     }
 
-    public static void show(String itemType, LinkedHashMap<String, CRecalculableTraitPool> poolNames)
+    public static void show(String title, LinkedHashSet<String> poolNames)
     {
-        PoolListGUI gui = new PoolListGUI(itemType);
+        PoolListGUI gui = new PoolListGUI(title);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -60,7 +58,7 @@ public class PoolListGUI extends GUIScreen
                         recalculableTraits,
                         scrollbar
                 );
-        for (String name : poolNames.keySet())
+        for (String name : poolNames)
         {
             ((GUILabeledTextInput) recalculableTraits.addLine().getLineElement(0)).setText(name);
         }
@@ -86,7 +84,7 @@ public class PoolListGUI extends GUIScreen
             poolNames.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                poolNames.put(((GUILabeledTextInput) line.getLineElement(0)).getText(), );
+                poolNames.add(((GUILabeledTextInput) line.getLineElement(0)).getText());
             }
 
 
@@ -98,6 +96,6 @@ public class PoolListGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Random Recalculable Pools)" : itemType;
+        return title;
     }
 }

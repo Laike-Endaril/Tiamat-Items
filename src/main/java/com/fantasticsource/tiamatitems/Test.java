@@ -17,7 +17,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.*;
 
@@ -211,20 +211,20 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActLC", CSettings.SETTINGS.recalcTraitPools.get("2HAxeActLC"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("2HAxeActLC");
         itemType.randomRecalculableTraitPoolSets.put("ActLC", poolSet);
 
-        poolSet = new LinkedHashMap<>();
-        poolSet.put("2HAxeActRC", CSettings.SETTINGS.recalcTraitPools.get("2HAxeActRC"));
+        poolSet = new LinkedHashSet<>();
+        poolSet.add("2HAxeActRC");
         itemType.randomRecalculableTraitPoolSets.put("ActRC", poolSet);
 
-        poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
-        poolSet = new LinkedHashMap<>();
-        poolSet.put("Sockets", CSettings.SETTINGS.recalcTraitPools.get("Sockets"));
+        poolSet = new LinkedHashSet<>();
+        poolSet.add("Sockets");
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
@@ -271,8 +271,8 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
@@ -319,8 +319,8 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
@@ -454,12 +454,12 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
-        poolSet = new LinkedHashMap<>();
-        poolSet.put("Sockets", CSettings.SETTINGS.recalcTraitPools.get("Sockets"));
+        poolSet = new LinkedHashSet<>();
+        poolSet.add("Sockets");
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
@@ -506,8 +506,8 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
@@ -554,8 +554,8 @@ public class Test
         }
 
 
-        LinkedHashMap<String, CRecalculableTraitPool> poolSet = new LinkedHashMap<>();
-        poolSet.put("General", CSettings.SETTINGS.recalcTraitPools.get("General"));
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 

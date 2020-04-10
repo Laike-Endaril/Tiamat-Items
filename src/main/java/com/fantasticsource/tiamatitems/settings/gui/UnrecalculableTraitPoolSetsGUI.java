@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.*;
 
-public class RecalculableTraitPoolSetsGUI extends GUIScreen
+public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
 {
     public static final FilterBlacklist POOL_SET_FILTER = new FilterBlacklist("Static");
 
@@ -25,14 +25,14 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
 
     protected LinkedHashMap<GUILabeledTextInput, LinkedHashSet<String>> nameElementToPoolSetMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitPoolSetsGUI(String itemType)
+    protected UnrecalculableTraitPoolSetsGUI(String itemType)
     {
         this.itemType = itemType;
     }
 
     public static void show(String itemType, LinkedHashMap<String, LinkedHashSet<String>> poolSets, Collection<String> otherPoolSetNames)
     {
-        RecalculableTraitPoolSetsGUI gui = new RecalculableTraitPoolSetsGUI(itemType);
+        UnrecalculableTraitPoolSetsGUI gui = new UnrecalculableTraitPoolSetsGUI(itemType);
         showStacked(gui);
         gui.drawStack = false;
 
@@ -40,7 +40,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
         //Special setup
         for (String otherName : otherPoolSetNames)
         {
-            new GUILabeledTextInput(gui, "", otherName, FilterNone.INSTANCE).setNamespace("Recalculable Trait Pool Sets");
+            new GUILabeledTextInput(gui, "", otherName, FilterNone.INSTANCE).setNamespace("Unrecalculable Trait Pool Sets");
         }
 
         //Background
@@ -60,8 +60,8 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "RPoolSet";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Recalculable Trait Pool Sets");
+                String nameString = "UPoolSet";
+                ArrayList<GUITextInput> namespace = gui.namespaces.get("Unrecalculable Trait Pool Sets");
                 if (namespace != null)
                 {
                     int i = 0;
@@ -81,12 +81,12 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
                     nameString += i;
                 }
 
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Set Name: ", nameString, POOL_SET_FILTER).setNamespace("Recalculable Trait Pool Sets");
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Set Name: ", nameString, POOL_SET_FILTER).setNamespace("Unrecalculable Trait Pool Sets");
                 gui.nameElementToPoolSetMap.put(name, new LinkedHashSet<>());
 
                 return new GUIElement[]
                         {
-                                GUIButton.newListButton(gui).addClickActions(() -> PoolListGUI.show(name.getText() + " (Random Recalculable Pool Set)", gui.nameElementToPoolSetMap.get(name))),
+                                GUIButton.newListButton(gui).addClickActions(() -> PoolListGUI.show(name.getText() + " (Random Unrecalculable Pool Set)", gui.nameElementToPoolSetMap.get(name))),
                                 name
                         };
             }
@@ -139,6 +139,6 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Random Recalculable Pool Sets)" : itemType;
+        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Random Unrecalculable Pool Sets)" : itemType;
     }
 }
