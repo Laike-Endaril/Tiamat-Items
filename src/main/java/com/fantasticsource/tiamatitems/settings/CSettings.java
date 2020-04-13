@@ -57,7 +57,8 @@ public class CSettings extends Component
         System.out.println("Saving changes to Tiamat Items settings" + (player == null ? "" : " (" + player.getName() + ")"));
         File file = new File(MCTools.getConfigDir() + FILENAME);
         if (file.isDirectory()) throw new IllegalStateException(TextFormatting.RED + MCTools.getWorldSaveDir(FMLCommonHandler.instance().getMinecraftServerInstance()) + FILENAME + " is a directory instead of a file!");
-        else while (file.exists()) file.delete();
+        file.mkdirs();
+        while (file.exists()) file.delete();
 
         try
         {
