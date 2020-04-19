@@ -37,6 +37,7 @@ public class TraitRollCountsGUI extends GUIScreen
         OPTIONS.put(" Texture Layers", CRTraitElement_TextureLayers.class);
         OPTIONS.put(" AW Skin", CRTraitElement_AWSkin.class);
         OPTIONS.put(" Forced AW Skin Type Override", CRTraitElement_ForcedAWSkinTypeOverride.class);
+        OPTIONS.put(" Durability", CRTraitElement_Durability.class);
     }
 
 

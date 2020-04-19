@@ -388,4 +388,53 @@ public class MiscTags
 
         return compound.getInteger("limit");
     }
+
+
+    public static void setItemDurability(ItemStack stack, int durability)
+    {
+        if (durability == 0)
+        {
+            clearItemDurability(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setInteger("durability", durability);
+    }
+
+    public static int getItemDurability(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return 0;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return 0;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("durability")) return 0;
+
+        return compound.getInteger("durability");
+    }
+
+    public static void clearItemDurability(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("durability")) return;
+
+        compound.removeTag("durability");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
 }

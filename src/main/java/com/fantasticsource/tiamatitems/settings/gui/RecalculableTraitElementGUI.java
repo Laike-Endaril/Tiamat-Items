@@ -402,6 +402,35 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
+        else if (traitElement.getClass() == CRTraitElement_Durability.class)
+        {
+            CRTraitElement_Durability durabilityElement = (CRTraitElement_Durability) traitElement;
+
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + durabilityElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + durabilityElement.maxAmount, FilterFloat.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    minAmount,
+                    new GUITextSpacer(gui),
+                    maxAmount
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!minAmount.valid() || !maxAmount.valid()) return;
+
+
+                //Processing
+                durabilityElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                durabilityElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
         else
         {
             gui.root.add(new GUIText(gui, "UNKNOWN TRAIT ELEMENT CLASS: " + traitElement.getClass()));

@@ -315,7 +315,7 @@ public class SettingsGUI extends GUIScreen
                 GUIText slottingLabel = new GUIText(gui, " Slotting: ");
                 GUIText slotting = new GUIText(gui, itemType.slotting, getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 GUILabeledTextInput traitLevelMultiplier = new GUILabeledTextInput(gui, " Trait Level Multiplier: ", "" + itemType.traitLevelMultiplier, FilterFloat.INSTANCE);
-                GUILabeledTextInput value = new GUILabeledTextInput(gui, " Base Value: ", "" + itemType.value, FilterFloat.INSTANCE);
+                GUILabeledTextInput value = new GUILabeledTextInput(gui, " Base Monetary Value: ", "" + itemType.value, FilterFloat.INSTANCE);
 
 
                 return new GUIElement[]

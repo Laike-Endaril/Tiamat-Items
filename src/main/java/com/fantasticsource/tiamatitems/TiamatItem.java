@@ -87,4 +87,16 @@ public class TiamatItem extends Item
     {
         return MiscTags.getTiamatItemStackLimit(stack);
     }
+
+    @Override
+    public int getMaxDamage(ItemStack stack)
+    {
+        return MiscTags.getItemDurability(stack);
+    }
+
+    @Override
+    public boolean isDamageable()
+    {
+        return true;
+    }
 }
