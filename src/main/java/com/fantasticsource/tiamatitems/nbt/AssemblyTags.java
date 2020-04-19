@@ -15,6 +15,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class AssemblyTags
 {
+    //TODO add broken state
     public static final int
             STATE_EMPTY = 0,
             STATE_UNUSABLE = 1,

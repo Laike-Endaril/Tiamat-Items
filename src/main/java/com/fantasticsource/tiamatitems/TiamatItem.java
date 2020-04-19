@@ -99,4 +99,17 @@ public class TiamatItem extends Item
     {
         return true;
     }
+
+    @Override
+    public void setDamage(ItemStack stack, int damage)
+    {
+        //TODO
+//        super.setDamage(stack, damage);
+//        int max = getMaxDamage(stack);
+//        if (damage >= max)
+//        {
+//            ItemStack copy = MCTools.cloneItemStack(stack);
+//            ServerTickTimer.schedule(1, () -> setDamage(stack, max));
+//        }
+    }
 }
