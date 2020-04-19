@@ -125,9 +125,10 @@ public class CRandomRGBGUI extends GUIScreen
 
                 GUIText description = new GUIText(gui, function.description());
 
+                Runnable action = () -> CRGBFunctionGUI.show(gui.editButtonToCRGBFunctionMap.get(editButton)).addOnClosedActions(() -> description.setText(gui.editButtonToCRGBFunctionMap.get(editButton).description()));
                 return new GUIElement[]
                         {
-                                editButton.addClickActions(() -> CRGBFunctionGUI.show(gui.editButtonToCRGBFunctionMap.get(editButton)).addOnClosedActions(() -> description.setText(gui.editButtonToCRGBFunctionMap.get(editButton).description()))),
+                                editButton.addClickActions(action),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, "Function Type Selection", FUNCTION_TYPES.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
@@ -147,7 +148,7 @@ public class CRandomRGBGUI extends GUIScreen
                                     }
                                 })),
                                 new GUIElement(gui, 1, 0),
-                                description
+                                description.addClickActions(action)
                         };
             }
         };

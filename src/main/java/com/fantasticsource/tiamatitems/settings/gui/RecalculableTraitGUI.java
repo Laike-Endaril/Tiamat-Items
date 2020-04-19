@@ -72,16 +72,19 @@ public class RecalculableTraitGUI extends GUIScreen
             {
                 GUIText type = new GUIText(gui, " Select Type...", getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 GUIText description = new GUIText(gui, " (No type selected)");
+
+                Runnable action = () ->
+                {
+                    if (!type.getText().equals(" Select Type..."))
+                    {
+                        RecalculableTraitElementGUI.show(type.getText().replaceFirst(" ", ""), gui.typeElementToRecalculableTraitElementMap.get(type)).addOnClosedActions(() ->
+                                description.setText(" " + gui.typeElementToRecalculableTraitElementMap.get(type).getDescription()));
+                    }
+                };
+
                 return new GUIElement[]
                         {
-                                GUIButton.newEditButton(gui).addClickActions(() ->
-                                {
-                                    if (!type.getText().equals(" Select Type..."))
-                                    {
-                                        RecalculableTraitElementGUI.show(type.getText().replaceFirst(" ", ""), gui.typeElementToRecalculableTraitElementMap.get(type)).addOnClosedActions(() ->
-                                                description.setText(" " + gui.typeElementToRecalculableTraitElementMap.get(type).getDescription()));
-                                    }
-                                }),
+                                GUIButton.newEditButton(gui).addClickActions(action),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
                                 {
@@ -110,7 +113,7 @@ public class RecalculableTraitGUI extends GUIScreen
                                     }
                                 })),
                                 new GUIElement(gui, 1, 0),
-                                description
+                                description.addClickActions(action)
                         };
             }
         };
