@@ -75,9 +75,10 @@ public class SettingsGUI extends GUIScreen
 
         //Header
         GUINavbar navbar = new GUINavbar(gui);
-        GUITextButton save = new GUITextButton(gui, "Save and Close", Color.GREEN);
+        GUITextButton saveAndClose = new GUITextButton(gui, "Save and Close", Color.GREEN);
+        GUITextButton saveWithoutClosing = new GUITextButton(gui, "Save Without Closing", Color.GREEN);
         GUITextButton cancel = new GUITextButton(gui, "Close Without Saving", Color.RED);
-        gui.root.addAll(navbar, save, cancel);
+        gui.root.addAll(navbar, saveAndClose, saveWithoutClosing, cancel);
 
 
         //Main
@@ -390,7 +391,115 @@ public class SettingsGUI extends GUIScreen
         //Add main header actions
         cancel.addRecalcActions(() -> tabView.height = 1 - (cancel.y + cancel.height));
         cancel.addClickActions(gui::close);
-        save.addClickActions(() ->
+        saveWithoutClosing.addClickActions(() ->
+        {
+            //Validation
+
+            //General
+            if (!maxItemLevel.valid() || !baseMultiplier.valid() || !multiplierBonusPerLevel.valid()) return;
+
+            //Recalculable Trait Pools
+            for (GUIList.Line line : recalculableTraitPools.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
+            //Unrecalculable Trait Pools
+            for (GUIList.Line line : unrecalculableTraitPools.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
+            //Rarities
+            for (GUIList.Line line : rarities.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
+            }
+
+            //Item Types
+            for (GUIList.Line line : itemTypes.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(8)).valid()) return;
+            }
+
+            //Attribute Balance Multipliers
+            for (GUIList.Line line : attributeBalanceMultipliers.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
+            }
+
+
+            //Processing
+
+            //General
+            gui.settings.maxItemLevel = MAX_ITEM_LEVEL_FILTER.parse(maxItemLevel.getText());
+            gui.settings.baseMultiplier = FilterFloat.INSTANCE.parse(baseMultiplier.getText());
+            gui.settings.multiplierBonusPerLevel = FilterFloat.INSTANCE.parse(multiplierBonusPerLevel.getText());
+
+            //Recalculable Trait Pools
+            gui.settings.recalcTraitPools.clear();
+            for (GUIList.Line line : recalculableTraitPools.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(name);
+                pool.name = name.getText();
+                gui.settings.recalcTraitPools.put(name.getText(), pool);
+            }
+
+            //Unrecalculable Trait Pools
+            gui.settings.unrecalcTraitPools.clear();
+            for (GUIList.Line line : unrecalculableTraitPools.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(name);
+                pool.name = name.getText();
+                gui.settings.unrecalcTraitPools.put(name.getText(), pool);
+            }
+
+            //Rarities
+            gui.settings.rarities.clear();
+            for (GUIList.Line line : rarities.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                CRarity rarity = gui.nameElementToRarityMap.get(name);
+                rarity.name = name.getText();
+                rarity.color = ((GUIColor) line.getLineElement(4)).getValue();
+                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(7)).getText()));
+                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
+
+                gui.settings.rarities.put(rarity.name, rarity);
+            }
+
+            //Item Types
+            gui.settings.itemTypes.clear();
+            for (GUIList.Line line : itemTypes.getLines())
+            {
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                CItemType itemType = gui.nameElementToItemTypeMap.get(name);
+                itemType.name = name.getText();
+                itemType.slotting = ((GUIText) line.getLineElement(4)).getText();
+                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
+                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(8)).getText());
+
+                gui.settings.itemTypes.put(itemType.name, itemType);
+            }
+
+            //Attribute Balance Multipliers
+            CSettings.attributeBalanceMultipliers.clear();
+            for (GUIList.Line line : attributeBalanceMultipliers.getLines())
+            {
+                CSettings.attributeBalanceMultipliers.put(((GUILabeledTextInput) line.getLineElement(1)).getText(), (double) FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(3)).getText()));
+            }
+
+
+            //Send to server
+            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket(gui.settings));
+        });
+        saveAndClose.addClickActions(() ->
         {
             //Validation
 
