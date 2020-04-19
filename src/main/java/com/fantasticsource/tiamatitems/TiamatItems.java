@@ -10,9 +10,6 @@ import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.BlockSettings;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.ItemSettings;
-import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
-import moe.plushie.armourers_workshop.api.common.IExtraColours;
-import moe.plushie.armourers_workshop.api.common.capability.IPlayerWardrobeCap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -238,15 +235,15 @@ public class TiamatItems
     public static void test(PlayerInteractEvent.EntityInteractSpecific event)
     {
         //TODO Remove all this
+        if (!MCTools.devEnv()) return;
         if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
 
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-        IPlayerWardrobeCap wardrobe = ArmourersWorkshopApi.getPlayerWardrobeCapability(player);
-        wardrobe.getExtraColours().setColour(IExtraColours.ExtraColourType.SKIN, (255 << 24) | (255 << 16) | (0 << 8) | 255);
-        wardrobe.syncToPlayer(player);
-        wardrobe.syncToAllTracking();
 
+        //Durability test
+        player.inventory.getStackInSlot(0).damageItem(1, player);
 
-        ItemAssembly.assemble(player.inventory.getStackInSlot(0), player.inventory.getStackInSlot(1), player.inventory.getStackInSlot(2), player.inventory.getStackInSlot(3));
+        //Assembly test
+//        ItemAssembly.assemble(player.inventory.getStackInSlot(0), player.inventory.getStackInSlot(1), player.inventory.getStackInSlot(2), player.inventory.getStackInSlot(3));
     }
 }
