@@ -5,11 +5,7 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUITextButton;
-import com.fantasticsource.mctools.gui.element.text.GUITextInput;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
@@ -92,7 +88,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER),
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Add to Core on Assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE)
+                                new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly)
                         };
             }
         };
@@ -127,7 +123,6 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
             }
 
 
@@ -138,7 +133,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
+                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(6)).getValue();
                 pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
             }
 

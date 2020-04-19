@@ -121,8 +121,8 @@ public class ItemEditorGUI extends GUIScreen
         //Texture tab
 
         //Caching options
-        GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, "Cache Layers: ", TextureTags.itemHasLayerCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
-        GUILabeledTextInput cacheTexture = new GUILabeledTextInput(gui, "Cache Texture: ", TextureTags.itemHasTextureCacheTag(stack) ? "true" : "false", FilterBoolean.INSTANCE);
+        GUILabeledBoolean cacheLayers = new GUILabeledBoolean(gui, "Cache Layers: ", TextureTags.itemHasLayerCacheTag(stack));
+        GUILabeledBoolean cacheTexture = new GUILabeledBoolean(gui, "Cache Texture: ", TextureTags.itemHasTextureCacheTag(stack));
         GUIGradientBorder separator2 = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
         tabView.tabViews.get(1).addAll
                 (
@@ -370,12 +370,6 @@ public class ItemEditorGUI extends GUIScreen
             //General
             if (!name.valid() || !level.valid() || !levelReq.valid() || !value.valid()) return;
 
-            //Texture
-            if (stack.getItem() == TiamatItems.tiamatItem && TextureCache.textures.size() > 0)
-            {
-                if (!cacheLayers.valid() || !cacheTexture.valid()) return;
-            }
-
             //Attribute Modifiers
             for (GUIList.Line line : passiveAttributeList.getLines())
             {
@@ -402,9 +396,9 @@ public class ItemEditorGUI extends GUIScreen
             //Texture
             if (stack.getItem() == TiamatItems.tiamatItem && TextureCache.textures.size() > 0)
             {
-                if (FilterBoolean.INSTANCE.parse(cacheLayers.getText())) TextureTags.addItemLayerCacheTag(stack);
+                if (cacheLayers.getValue()) TextureTags.addItemLayerCacheTag(stack);
                 else TextureTags.removeItemLayerCacheTag(stack);
-                if (FilterBoolean.INSTANCE.parse(cacheTexture.getText())) TextureTags.addItemTextureCacheTag(stack);
+                if (cacheTexture.getValue()) TextureTags.addItemTextureCacheTag(stack);
                 else TextureTags.removeItemTextureCacheTag(stack);
 
                 String[] layers = new String[layerArrayElement.lineCount()];

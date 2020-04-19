@@ -3,7 +3,6 @@ package com.fantasticsource.tiamatitems.settings.gui;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
@@ -40,7 +39,7 @@ public class CRGBFunctionGUI extends GUIScreen
 
         //Main
         GUILabeledTextInput chance = new GUILabeledTextInput(gui, " Chance: ", "" + function.chance, FilterFloat.INSTANCE);
-        GUILabeledTextInput endIfExecuted = new GUILabeledTextInput(gui, " End if Executed: ", "" + function.endIfExecuted, FilterBoolean.INSTANCE);
+        GUILabeledBoolean endIfExecuted = new GUILabeledBoolean(gui, " End if Executed: ", function.endIfExecuted);
         gui.root.addAll(
                 new GUITextSpacer(gui),
                 chance,
@@ -68,13 +67,13 @@ public class CRGBFunctionGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!chance.valid() || !endIfExecuted.valid()) return;
+                if (!chance.valid()) return;
                 if (!addRed.valid() || !addGreen.valid() || !addBlue.valid()) return;
 
 
                 //Processing
                 function.chance = FilterFloat.INSTANCE.parse(chance.getText());
-                function.endIfExecuted = FilterBoolean.INSTANCE.parse(endIfExecuted.getText());
+                function.endIfExecuted = endIfExecuted.getValue();
 
                 boostFunction.toAdd[0] = FilterInt.INSTANCE.parse(addRed.getText());
                 boostFunction.toAdd[1] = FilterInt.INSTANCE.parse(addGreen.getText());
@@ -91,12 +90,12 @@ public class CRGBFunctionGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!chance.valid() || !endIfExecuted.valid()) return;
+                if (!chance.valid()) return;
 
 
                 //Processing
                 function.chance = FilterFloat.INSTANCE.parse(chance.getText());
-                function.endIfExecuted = FilterBoolean.INSTANCE.parse(endIfExecuted.getText());
+                function.endIfExecuted = endIfExecuted.getValue();
 
 
                 //Close GUI

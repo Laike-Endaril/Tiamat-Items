@@ -5,11 +5,7 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUITextButton;
-import com.fantasticsource.mctools.gui.element.text.GUITextInput;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterBoolean;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
@@ -84,7 +80,7 @@ public class RecalculableTraitListGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Add to Core on Assembly: ", "" + new CRecalculableTrait().addToCoreOnAssembly, FilterBoolean.INSTANCE)
+                                new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly)
                         };
             }
         };
@@ -117,7 +113,6 @@ public class RecalculableTraitListGUI extends GUIScreen
             for (GUIList.Line line : recalculableTraits.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
             }
 
 
@@ -128,7 +123,7 @@ public class RecalculableTraitListGUI extends GUIScreen
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                trait.addToCoreOnAssembly = FilterBoolean.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(4)).getText());
+                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(4)).getValue();
                 list.put(trait.name, trait);
             }
 

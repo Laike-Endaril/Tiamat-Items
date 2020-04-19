@@ -7,7 +7,10 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.*;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
@@ -104,7 +107,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_ActiveAttributeMod attributeElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 
             GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.attributeName.equals("") ? "generic.name" : attributeElement.attributeName, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + attributeElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good Attribute: ", attributeElement.isGood);
             //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
             GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.operation, OPERATION_FILTER);
             GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
@@ -126,12 +129,12 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!attribute.valid() || !isGood.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
+                if (!attribute.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
 
 
                 //Processing
                 attributeElement.attributeName = attribute.getText();
-                attributeElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                attributeElement.isGood = isGood.getValue();
                 attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
                 attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
                 attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
@@ -146,7 +149,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_PassiveAttributeMod attributeElement = (CRTraitElement_PassiveAttributeMod) traitElement;
 
             GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.attributeName.equals("") ? "generic.name" : attributeElement.attributeName, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isGood = new GUILabeledTextInput(gui, " Is Good Attribute: ", "" + attributeElement.isGood, FilterBoolean.INSTANCE);
+            GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good Attribute: ", attributeElement.isGood);
             //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
             GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.operation, OPERATION_FILTER);
             GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
@@ -168,12 +171,12 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!attribute.valid() || !isGood.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
+                if (!attribute.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid()) return;
 
 
                 //Processing
                 attributeElement.attributeName = attribute.getText();
-                attributeElement.isGood = FilterBoolean.INSTANCE.parse(isGood.getText());
+                attributeElement.isGood = isGood.getValue();
                 attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
                 attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
                 attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
@@ -188,7 +191,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_PartSlot partSlotElement = (CRTraitElement_PartSlot) traitElement;
 
             GUILabeledTextInput partSlotType = new GUILabeledTextInput(gui, " Part Slot Type: ", partSlotElement.partSlotType.equals("") ? "PartSlotType" : partSlotElement.partSlotType, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput required = new GUILabeledTextInput(gui, " Required: ", "" + partSlotElement.required, FilterBoolean.INSTANCE);
+            GUILabeledBoolean required = new GUILabeledBoolean(gui, " Required: ", partSlotElement.required);
             GUILabeledTextInput minCount = new GUILabeledTextInput(gui, " Min Count: ", "" + partSlotElement.minCount, PART_SLOT_COUNT_FILTER);
             GUILabeledTextInput maxCount = new GUILabeledTextInput(gui, " Max Count: ", "" + partSlotElement.maxCount, PART_SLOT_COUNT_FILTER);
             gui.root.addAll(
@@ -206,12 +209,12 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!partSlotType.valid() || !required.valid() || !minCount.valid() || !maxCount.valid()) return;
+                if (!partSlotType.valid() || !minCount.valid() || !maxCount.valid()) return;
 
 
                 //Processing
                 partSlotElement.partSlotType = partSlotType.getText();
-                partSlotElement.required = FilterBoolean.INSTANCE.parse(required.getText());
+                partSlotElement.required = required.getValue();
                 partSlotElement.minCount = PART_SLOT_COUNT_FILTER.parse(minCount.getText());
                 partSlotElement.maxCount = PART_SLOT_COUNT_FILTER.parse(maxCount.getText());
 
@@ -224,8 +227,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
         {
             CRTraitElement_TextureLayers textureElement = (CRTraitElement_TextureLayers) traitElement;
 
-            GUILabeledTextInput cacheLayers = new GUILabeledTextInput(gui, " Cache Layers: ", "" + textureElement.cacheLayers, FilterBoolean.INSTANCE);
-            GUILabeledTextInput cacheTextures = new GUILabeledTextInput(gui, " Cache Textures: ", "" + textureElement.cacheTextures, FilterBoolean.INSTANCE);
+            GUILabeledBoolean cacheLayers = new GUILabeledBoolean(gui, " Cache Layers: ", textureElement.cacheLayers);
+            GUILabeledBoolean cacheTextures = new GUILabeledBoolean(gui, " Cache Textures: ", textureElement.cacheTextures);
 
             GUITextButton emptyLayers = new GUITextButton(gui, "'Empty Item' Layers");
             GUITextButton unusableLayers = new GUITextButton(gui, "'Unusable Item' Layers");
@@ -256,13 +259,9 @@ public class RecalculableTraitElementGUI extends GUIScreen
             //Add main header actions
             done.addClickActions(() ->
             {
-                //Validation
-                if (!cacheLayers.valid() || !cacheTextures.valid()) return;
-
-
                 //Processing
-                textureElement.cacheLayers = FilterBoolean.INSTANCE.parse(cacheLayers.getText());
-                textureElement.cacheTextures = FilterBoolean.INSTANCE.parse(cacheTextures.getText());
+                textureElement.cacheLayers = cacheLayers.getValue();
+                textureElement.cacheTextures = cacheTextures.getValue();
 
 
                 //Close GUI
@@ -274,9 +273,9 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_AWSkin skinElement = (CRTraitElement_AWSkin) traitElement;
 
             GUILabeledTextInput libraryFileOrFolder = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFileOrFolder.equals("") ? "LibraryFileOrFolder" : skinElement.libraryFileOrFolder), FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isRandomFromFolder = new GUILabeledTextInput(gui, " Is Random From Folder: ", "" + skinElement.isRandomFromFolder, FilterBoolean.INSTANCE);
+            GUILabeledBoolean isRandomFromFolder = new GUILabeledBoolean(gui, " Is Random From Folder: ", skinElement.isRandomFromFolder);
             GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", (skinElement.skinType.equals("") ? "SkinType" : skinElement.skinType), FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput isTransient = new GUILabeledTextInput(gui, " Transient: ", "" + skinElement.isTransient, FilterBoolean.INSTANCE);
+            GUILabeledBoolean isTransient = new GUILabeledBoolean(gui, " Transient: ", skinElement.isTransient);
             GUILabeledTextInput indexWithinSkinTypeIfTransient = new GUILabeledTextInput(gui, " Wardrobe Slot Index Within Skin Type (if Transient): ", "" + skinElement.indexWithinSkinTypeIfTransient, AW_SLOT_INDEX_FILTER);
             GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
             gui.root.addAll(
@@ -354,7 +353,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!libraryFileOrFolder.valid() || !isRandomFromFolder.valid() || !skinType.valid() || !isTransient.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
+                if (!libraryFileOrFolder.valid() || !skinType.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
                 for (GUIList.Line line : dyes.getLines())
                 {
                     if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
@@ -363,9 +362,9 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
                 //Processing
                 skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
-                skinElement.isRandomFromFolder = FilterBoolean.INSTANCE.parse(isRandomFromFolder.getText());
+                skinElement.isRandomFromFolder = isRandomFromFolder.getValue();
                 skinElement.skinType = skinType.getText();
-                skinElement.isTransient = FilterBoolean.INSTANCE.parse(isTransient.getText());
+                skinElement.isTransient = isTransient.getValue();
                 skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
                 skinElement.dyeChannels.clear();
                 for (GUIList.Line line : dyes.getLines())

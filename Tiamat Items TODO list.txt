@@ -2,7 +2,6 @@ Dropdown for attribute selections
 Array counts on parent GUIs
 Duplicate button
 Copy/paste of components
-Change booleans to toggles
 Render item layer options in layer selection GUI
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken
