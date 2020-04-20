@@ -250,7 +250,11 @@ public class SettingsGUI extends GUIScreen
 
                 duplicate.addClickActions(() ->
                 {
-                    GUIList.Line line = addLine();
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+
+                    GUIList.Line line = addLine(index);
                     GUILabeledTextInput name2 = (GUILabeledTextInput) line.getLineElement(2);
                     name2.setText(namespace.getFirstAvailableNumberedName(name.getText() + "_Copy"));
                     gui.nameElementToItemTypeMap.put(name2, (CItemType) gui.nameElementToItemTypeMap.get(name).copy());
