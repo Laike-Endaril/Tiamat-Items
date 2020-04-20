@@ -1,18 +1,21 @@
 package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
-import com.fantasticsource.mctools.gui.element.text.*;
+import com.fantasticsource.mctools.gui.element.text.GUILabeledBoolean;
+import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
+import com.fantasticsource.mctools.gui.element.text.GUINavbar;
+import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class RecalculableTraitListGUI extends GUIScreen
@@ -50,28 +53,10 @@ public class RecalculableTraitListGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "RTrait";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Recalculable Traits");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
+                Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Traits", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("RTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Traits");
+
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
 
                 return new GUIElement[]

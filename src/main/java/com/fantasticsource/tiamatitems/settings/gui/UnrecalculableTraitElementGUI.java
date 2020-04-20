@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
@@ -16,7 +17,6 @@ import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitEleme
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -89,28 +89,10 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     gui.editButtonToCRandomRGBMap.put(editButton, new CRandomRGB());
 
                     int index = 0;
-                    String indexString = "" + index;
-                    ArrayList<GUITextInput> namespace = gui.namespaces.get("Dye Indices");
-                    if (namespace != null)
-                    {
-                        boolean found = true;
-                        while (found)
-                        {
-                            found = false;
-                            indexString = "" + index;
-                            for (GUITextInput input : namespace)
-                            {
-                                if (input.getText().equals(indexString))
-                                {
-                                    found = true;
-                                    index++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    Namespace namespace = gui.namespaces.computeIfAbsent("Dye Indices", o -> new Namespace());
+                    while (namespace.contains("" + index)) index++;
 
-                    GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", indexString, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
+                    GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", "" + index, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
 
                     return new GUIElement[]{
                             editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()))),

@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
@@ -8,14 +9,16 @@ import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
-import com.fantasticsource.mctools.gui.element.text.GUITextInput;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 public class RecalculableTraitPoolSetsGUI extends GUIScreen
 {
@@ -60,28 +63,10 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "RPoolSet";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Recalculable Trait Pool Sets");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
+                Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Trait Pool Sets", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("RPoolSet");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Set Name: ", nameString, POOL_SET_FILTER).setNamespace("Recalculable Trait Pool Sets");
+
                 gui.nameElementToPoolSetMap.put(name, new LinkedHashSet<>());
 
                 return new GUIElement[]

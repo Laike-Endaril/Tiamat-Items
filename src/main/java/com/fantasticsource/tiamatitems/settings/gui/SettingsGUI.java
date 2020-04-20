@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
@@ -24,7 +25,6 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -109,28 +109,10 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "RTraitPool";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Recalculable Trait Pools");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
+                Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Trait Pools", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("RTraitPool");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", nameString, new FilterBlacklist("null")).setNamespace("Recalculable Trait Pools");
+
                 gui.nameElementToRecalculableTraitPoolMap.put(name, new CRecalculableTraitPool());
 
                 return new GUIElement[]
@@ -162,28 +144,10 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "UTraitPool";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Unrecalculable Trait Pools");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
+                Namespace namespace = gui.namespaces.computeIfAbsent("Unrecalculable Trait Pools", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("UTraitPool");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Name: ", nameString, new FilterBlacklist("null")).setNamespace("Unrecalculable Trait Pools");
+
                 gui.nameElementToUnrecalculableTraitPoolMap.put(name, new CUnrecalculableTraitPool());
 
                 return new GUIElement[]
@@ -215,28 +179,10 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "Rarity";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Rarities");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
+                Namespace namespace = gui.namespaces.computeIfAbsent("Rarities", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("Rarity");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Rarity Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Rarities");
+
                 gui.nameElementToRarityMap.put(name, new CRarity());
 
                 GUIText colorLabel = new GUIText(gui, " Color: ");
@@ -288,30 +234,11 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                String nameString = "Item Type";
-                ArrayList<GUITextInput> namespace = gui.namespaces.get("Item Types");
-                if (namespace != null)
-                {
-                    int i = 0;
-                    for (; i >= 0; i++)
-                    {
-                        boolean found = false;
-                        for (GUITextInput input : namespace)
-                        {
-                            if (input.getText().equals(nameString + i))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) break;
-                    }
-                    nameString += i;
-                }
-
                 GUIButton duplicate = GUIButton.newDuplicateButton(screen);
 
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Item Types");
+                Namespace namespace = gui.namespaces.computeIfAbsent("Item Types", o -> new Namespace());
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", namespace.getFirstAvailableNumberedName("Item Type"), FilterNotEmpty.INSTANCE).setNamespace("Item Types");
+
                 CItemType itemType = new CItemType();
                 gui.nameElementToItemTypeMap.put(name, itemType);
 
@@ -320,6 +247,18 @@ public class SettingsGUI extends GUIScreen
                 GUILabeledTextInput traitLevelMultiplier = new GUILabeledTextInput(gui, " Trait Level Multiplier: ", "" + itemType.traitLevelMultiplier, FilterFloat.INSTANCE);
                 GUILabeledTextInput value = new GUILabeledTextInput(gui, " Base Monetary Value: ", "" + itemType.value, FilterFloat.INSTANCE);
 
+
+                duplicate.addClickActions(() ->
+                {
+                    GUIList.Line line = addLine();
+                    GUILabeledTextInput name2 = (GUILabeledTextInput) line.getLineElement(2);
+                    name2.setText(namespace.getFirstAvailableNumberedName(name.getText() + "_Copy"));
+                    gui.nameElementToItemTypeMap.put(name, (CItemType) itemType.copy());
+
+                    ((GUIText) line.getLineElement(5)).setText(slotting.getText());
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText(traitLevelMultiplier.getText());
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(value.getText());
+                });
 
                 return new GUIElement[]
                         {
