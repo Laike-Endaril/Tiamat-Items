@@ -104,7 +104,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
             nameElement.setText(entry.getKey().name);
             gui.nameElementToRecalculableTraitMap.put(nameElement, entry.getKey());
-            ((GUILabeledTextInput) line.getLineElement(6)).setText("" + entry.getKey().addToCoreOnAssembly);
+            ((GUILabeledBoolean) line.getLineElement(6)).setValue(entry.getKey().addToCoreOnAssembly);
             ((GUILabeledTextInput) line.getLineElement(4)).setText("" + entry.getValue());
         }
 

@@ -96,7 +96,7 @@ public class RecalculableTraitListGUI extends GUIScreen
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
             nameElement.setText(trait.name);
             gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
-            ((GUILabeledTextInput) line.getLineElement(4)).setText("" + trait.addToCoreOnAssembly);
+            ((GUILabeledBoolean) line.getLineElement(4)).setValue(trait.addToCoreOnAssembly);
         }
 
 

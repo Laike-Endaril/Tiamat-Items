@@ -309,6 +309,8 @@ public class SettingsGUI extends GUIScreen
                     nameString += i;
                 }
 
+                GUIButton duplicate = GUIButton.newDuplicateButton(screen);
+
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Item Types");
                 CItemType itemType = new CItemType();
                 gui.nameElementToItemTypeMap.put(name, itemType);
@@ -321,6 +323,7 @@ public class SettingsGUI extends GUIScreen
 
                 return new GUIElement[]
                         {
+                                duplicate,
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
@@ -347,13 +350,13 @@ public class SettingsGUI extends GUIScreen
         for (CItemType itemType : gui.settings.itemTypes.values())
         {
             GUIList.Line line = itemTypes.addLine();
-            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
             name.setText(itemType.name);
             gui.nameElementToItemTypeMap.put(name, itemType);
 
-            ((GUIText) line.getLineElement(4)).setText(itemType.slotting);
-            ((GUILabeledTextInput) line.getLineElement(6)).setText("" + itemType.traitLevelMultiplier);
-            ((GUILabeledTextInput) line.getLineElement(8)).setText("" + itemType.value);
+            ((GUIText) line.getLineElement(5)).setText(itemType.slotting);
+            ((GUILabeledTextInput) line.getLineElement(7)).setText("" + itemType.traitLevelMultiplier);
+            ((GUILabeledTextInput) line.getLineElement(9)).setText("" + itemType.value);
         }
 
 
@@ -420,9 +423,9 @@ public class SettingsGUI extends GUIScreen
             //Item Types
             for (GUIList.Line line : itemTypes.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(8)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(7)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
             }
 
             //Attribute Balance Multipliers
@@ -478,12 +481,12 @@ public class SettingsGUI extends GUIScreen
             gui.settings.itemTypes.clear();
             for (GUIList.Line line : itemTypes.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
                 CItemType itemType = gui.nameElementToItemTypeMap.get(name);
                 itemType.name = name.getText();
-                itemType.slotting = ((GUIText) line.getLineElement(4)).getText();
-                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
-                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(8)).getText());
+                itemType.slotting = ((GUIText) line.getLineElement(5)).getText();
+                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(7)).getText());
+                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
 
                 gui.settings.itemTypes.put(itemType.name, itemType);
             }
@@ -528,9 +531,9 @@ public class SettingsGUI extends GUIScreen
             //Item Types
             for (GUIList.Line line : itemTypes.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(6)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(8)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(7)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
             }
 
             //Attribute Balance Multipliers
@@ -586,12 +589,12 @@ public class SettingsGUI extends GUIScreen
             gui.settings.itemTypes.clear();
             for (GUIList.Line line : itemTypes.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
                 CItemType itemType = gui.nameElementToItemTypeMap.get(name);
                 itemType.name = name.getText();
-                itemType.slotting = ((GUIText) line.getLineElement(4)).getText();
-                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(6)).getText());
-                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(8)).getText());
+                itemType.slotting = ((GUIText) line.getLineElement(5)).getText();
+                itemType.traitLevelMultiplier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(7)).getText());
+                itemType.value = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
 
                 gui.settings.itemTypes.put(itemType.name, itemType);
             }
