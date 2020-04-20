@@ -1,5 +1,3 @@
-Remove removed elements from namespace
-
 Render item layer options in layer selection GUI
 Array counts on parent GUIs
 

@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class TraitRollCountsGUI extends GUIScreen
 {
@@ -83,6 +84,15 @@ public class TraitRollCountsGUI extends GUIScreen
                         };
             }
         };
+        traitPoolSetRollCounts.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Trait Pool Sets").inputs.remove(line.getLineElement(1));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, traitPoolSetRollCounts);
         gui.root.addAll
                 (

@@ -27,6 +27,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class SettingsGUI extends GUIScreen
 {
@@ -141,6 +142,15 @@ public class SettingsGUI extends GUIScreen
                         };
             }
         };
+        recalculableTraitPools.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(line.getLineElement(3));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraitPools);
         tabView.tabViews.get(1).addAll
                 (
@@ -194,6 +204,15 @@ public class SettingsGUI extends GUIScreen
                         };
             }
         };
+        unrecalculableTraitPools.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Unrecalculable Trait Pools").inputs.remove(line.getLineElement(3));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar2 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraitPools);
         tabView.tabViews.get(2).addAll
                 (
@@ -266,6 +285,15 @@ public class SettingsGUI extends GUIScreen
                         };
             }
         };
+        rarities.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Rarities").inputs.remove(line.getLineElement(2));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar3 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, rarities);
         tabView.tabViews.get(3).addAll
                 (
@@ -341,6 +369,15 @@ public class SettingsGUI extends GUIScreen
                         };
             }
         };
+        itemTypes.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Item Types").inputs.remove(line.getLineElement(2));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar4 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, itemTypes);
         tabView.tabViews.get(4).addAll
                 (
@@ -374,6 +411,15 @@ public class SettingsGUI extends GUIScreen
                 };
             }
         };
+        attributeBalanceMultipliers.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Attribute Balance Multipliers").inputs.remove(line.getLineElement(1));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar5 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, attributeBalanceMultipliers);
         tabView.tabViews.get(5).addAll
                 (

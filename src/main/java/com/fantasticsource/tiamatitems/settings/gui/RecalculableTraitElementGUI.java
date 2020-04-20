@@ -21,6 +21,7 @@ import com.fantasticsource.tools.datastructures.Color;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
@@ -331,6 +332,15 @@ public class RecalculableTraitElementGUI extends GUIScreen
                     };
                 }
             };
+            dyes.addRemoveChildActions((Predicate<GUIElement>) element ->
+            {
+                if (element instanceof GUIList.Line)
+                {
+                    GUIList.Line line = (GUIList.Line) element;
+                    gui.namespaces.get("Dye Indices").inputs.remove(line.getLineElement(2));
+                }
+                return false;
+            });
             GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
             gui.root.addAll(dyes, scrollbar);
             for (Map.Entry<Integer, CRandomRGB> entry : skinElement.dyeChannels.entrySet())

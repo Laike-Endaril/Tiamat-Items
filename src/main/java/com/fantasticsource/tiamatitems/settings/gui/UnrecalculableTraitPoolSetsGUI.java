@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
 {
@@ -58,7 +59,7 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
 
 
         //Main
-        GUIList recalculableTraits = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
+        GUIList unrecalculableTraitPoolSets = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
             public GUIElement[] newLineDefaultElements()
@@ -93,15 +94,24 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
                         };
             }
         };
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraits);
+        unrecalculableTraitPoolSets.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Unrecalculable Trait Pool Sets").inputs.remove(line.getLineElement(2));
+            }
+            return false;
+        });
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraitPoolSets);
         gui.root.addAll
                 (
-                        recalculableTraits,
+                        unrecalculableTraitPoolSets,
                         scrollbar
                 );
         for (Map.Entry<String, LinkedHashSet<String>> entry : poolSets.entrySet())
         {
-            GUIList.Line line = recalculableTraits.addLine();
+            GUIList.Line line = unrecalculableTraitPoolSets.addLine();
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
             nameElement.setText(entry.getKey());
             gui.nameElementToPoolSetMap.put(nameElement, entry.getValue());
@@ -111,14 +121,14 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
         //Add main header actions
         cancel.addRecalcActions(() ->
         {
-            recalculableTraits.height = 1 - (cancel.y + cancel.height);
+            unrecalculableTraitPoolSets.height = 1 - (cancel.y + cancel.height);
             scrollbar.height = 1 - (cancel.y + cancel.height);
         });
         cancel.addClickActions(gui::close);
         done.addClickActions(() ->
         {
             //Validation
-            for (GUIList.Line line : recalculableTraits.getLines())
+            for (GUIList.Line line : unrecalculableTraitPoolSets.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
             }
@@ -126,7 +136,7 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
 
             //Processing
             poolSets.clear();
-            for (GUIList.Line line : recalculableTraits.getLines())
+            for (GUIList.Line line : unrecalculableTraitPoolSets.getLines())
             {
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 poolSets.put(nameElement.getText(), gui.nameElementToPoolSetMap.get(nameElement));

@@ -10,9 +10,11 @@ import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
+import com.fantasticsource.mctools.gui.element.view.GUIList.Line;
 import com.fantasticsource.tools.datastructures.Color;
 
 import java.util.LinkedHashSet;
+import java.util.function.Predicate;
 
 public class PoolListGUI extends GUIScreen
 {
@@ -57,6 +59,15 @@ public class PoolListGUI extends GUIScreen
                         };
             }
         };
+        recalculableTraits.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof Line)
+            {
+                Line line = (Line) element;
+                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(line.getLineElement(0));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, recalculableTraits);
         gui.root.addAll
                 (
@@ -79,7 +90,7 @@ public class PoolListGUI extends GUIScreen
         done.addClickActions(() ->
         {
             //Validation
-            for (GUIList.Line line : recalculableTraits.getLines())
+            for (Line line : recalculableTraits.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(0)).valid()) return;
             }
@@ -87,7 +98,7 @@ public class PoolListGUI extends GUIScreen
 
             //Processing
             poolNames.clear();
-            for (GUIList.Line line : recalculableTraits.getLines())
+            for (Line line : recalculableTraits.getLines())
             {
                 poolNames.add(((GUILabeledTextInput) line.getLineElement(0)).getText());
             }

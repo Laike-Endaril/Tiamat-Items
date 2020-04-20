@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class UnrecalculableTraitPoolGUI extends GUIScreen
 {
@@ -96,6 +97,15 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                         };
             }
         };
+        unrecalculableTraits.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                gui.namespaces.get("Unrecalculable Traits").inputs.remove(line.getLineElement(3));
+            }
+            return false;
+        });
         GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (cancel.y + cancel.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, unrecalculableTraits);
         gui.root.addAll
                 (
