@@ -61,16 +61,38 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                 Namespace namespace = gui.namespaces.computeIfAbsent("Unrecalculable Traits", o -> new Namespace());
                 String nameString = namespace.getFirstAvailableNumberedName("UTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Unrecalculable Traits");
+                GUILabeledTextInput weight = new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER);
 
                 gui.nameElementToUnrecalculableTraitMap.put(name, new CUnrecalculableTrait());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(name);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+                    nameElement.setText(nameString2);
+                    trait.name = nameString2;
+
+                    gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
+
+                    ((GUILabeledTextInput) line.getLineElement(5)).setText(weight.getText());
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> UnrecalculableTraitGUI.show(name.getText(), gui.nameElementToUnrecalculableTraitMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER),
+                                weight
                         };
             }
         };
@@ -83,10 +105,10 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
         for (Map.Entry<CUnrecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
         {
             GUIList.Line line = unrecalculableTraits.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(entry.getKey().name);
             gui.nameElementToUnrecalculableTraitMap.put(nameElement, entry.getKey());
-            ((GUILabeledTextInput) line.getLineElement(4)).setText("" + entry.getValue());
+            ((GUILabeledTextInput) line.getLineElement(5)).setText("" + entry.getValue());
         }
 
 
@@ -102,8 +124,8 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
             //Validation
             for (GUIList.Line line : unrecalculableTraits.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
             }
 
 
@@ -111,10 +133,10 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
             pool.traitGenWeights.clear();
             for (GUIList.Line line : unrecalculableTraits.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                 CUnrecalculableTrait trait = gui.nameElementToUnrecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
+                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(5)).getText()));
             }
 
 

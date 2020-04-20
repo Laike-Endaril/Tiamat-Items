@@ -59,6 +59,26 @@ public class RecalculableTraitListGUI extends GUIScreen
 
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(name);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    CRecalculableTrait trait = (CRecalculableTrait) gui.nameElementToRecalculableTraitMap.get(name).copy();
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+                    nameElement.setText(trait.name);
+                    trait.name = nameString2;
+
+                    gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
+
+                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.addToCoreOnAssembly);
+                });
+
                 return new GUIElement[]
                         {
                                 GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitGUI.show(name.getText(), gui.nameElementToRecalculableTraitMap.get(name))),
@@ -78,10 +98,10 @@ public class RecalculableTraitListGUI extends GUIScreen
         for (CRecalculableTrait trait : list.values())
         {
             GUIList.Line line = recalculableTraits.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(trait.name);
             gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
-            ((GUILabeledBoolean) line.getLineElement(4)).setValue(trait.addToCoreOnAssembly);
+            ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.addToCoreOnAssembly);
         }
 
 
@@ -97,7 +117,7 @@ public class RecalculableTraitListGUI extends GUIScreen
             //Validation
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
 
@@ -105,10 +125,10 @@ public class RecalculableTraitListGUI extends GUIScreen
             list.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(4)).getValue();
+                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(5)).getValue();
                 list.put(trait.name, trait);
             }
 

@@ -58,8 +58,27 @@ public class UnrecalculableTraitListGUI extends GUIScreen
 
                 gui.nameElementToUnrecalculableTraitMap.put(name, new CUnrecalculableTrait());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(name);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+                    nameElement.setText(trait.name);
+                    trait.name = nameString2;
+
+                    gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> UnrecalculableTraitGUI.show(name.getText(), gui.nameElementToUnrecalculableTraitMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name
@@ -75,7 +94,7 @@ public class UnrecalculableTraitListGUI extends GUIScreen
         for (CUnrecalculableTrait trait : list.values())
         {
             GUIList.Line line = unrecalculableTraits.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(trait.name);
             gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
         }
@@ -93,7 +112,7 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             //Validation
             for (GUIList.Line line : unrecalculableTraits.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
 
@@ -101,7 +120,7 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             list.clear();
             for (GUIList.Line line : unrecalculableTraits.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                 CUnrecalculableTrait trait = gui.nameElementToUnrecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
                 list.put(trait.name, trait);

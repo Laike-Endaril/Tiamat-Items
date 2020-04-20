@@ -115,8 +115,26 @@ public class SettingsGUI extends GUIScreen
 
                 gui.nameElementToRecalculableTraitPoolMap.put(name, new CRecalculableTraitPool());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    CRecalculableTraitPool pool = (CRecalculableTraitPool) gui.nameElementToRecalculableTraitPoolMap.get(name).copy();
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+
+                    pool.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    nameElement.setText(pool.name);
+
+                    gui.nameElementToRecalculableTraitPoolMap.put(nameElement, pool);
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitPoolGUI.show(name.getText(), gui.nameElementToRecalculableTraitPoolMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name
@@ -132,7 +150,7 @@ public class SettingsGUI extends GUIScreen
         for (CRecalculableTraitPool pool : gui.settings.recalcTraitPools.values())
         {
             GUIList.Line line = recalculableTraitPools.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(pool.name);
             gui.nameElementToRecalculableTraitPoolMap.put(nameElement, pool);
         }
@@ -150,8 +168,26 @@ public class SettingsGUI extends GUIScreen
 
                 gui.nameElementToUnrecalculableTraitPoolMap.put(name, new CUnrecalculableTraitPool());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    CUnrecalculableTraitPool pool = (CUnrecalculableTraitPool) gui.nameElementToUnrecalculableTraitPoolMap.get(name).copy();
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+
+                    pool.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    nameElement.setText(pool.name);
+
+                    gui.nameElementToUnrecalculableTraitPoolMap.put(nameElement, pool);
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> UnrecalculableTraitPoolGUI.show(name.getText(), gui.nameElementToUnrecalculableTraitPoolMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name
@@ -167,7 +203,7 @@ public class SettingsGUI extends GUIScreen
         for (CUnrecalculableTraitPool pool : gui.settings.unrecalcTraitPools.values())
         {
             GUIList.Line line = unrecalculableTraitPools.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(pool.name);
             gui.nameElementToUnrecalculableTraitPoolMap.put(nameElement, pool);
         }
@@ -192,9 +228,30 @@ public class SettingsGUI extends GUIScreen
                 GUILabeledTextInput itemLevelModifier = new GUILabeledTextInput(gui, " Item Level Modifier: ", "" + new CRarity().itemLevelModifier, FilterFloat.INSTANCE);
                 GUITextButton traitRollCounts = new GUITextButton(gui, "Trait Pool Set Roll Counts");
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    CRarity rarity = (CRarity) gui.nameElementToRarityMap.get(name).copy();
+                    rarity.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                    nameElement.setText(rarity.name);
+
+                    gui.nameElementToRarityMap.put(nameElement, rarity);
+
+                    ((GUIColor) line.getLineElement(5)).setValue(rarity.color);
+                    ((GUIText) line.getLineElement(8)).setText(rarity.textColor + rarity.textColor.name());
+                    ((GUILabeledTextInput) line.getLineElement(10)).setText("" + rarity.itemLevelModifier);
+                });
 
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
@@ -218,13 +275,13 @@ public class SettingsGUI extends GUIScreen
         for (CRarity rarity : gui.settings.rarities.values())
         {
             GUIList.Line line = rarities.addLine();
-            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+            GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
             name.setText(rarity.name);
             gui.nameElementToRarityMap.put(name, rarity);
 
-            ((GUIColor) line.getLineElement(4)).setValue(rarity.color);
-            ((GUIText) line.getLineElement(7)).setText(rarity.textColor + rarity.textColor.name());
-            ((GUILabeledTextInput) line.getLineElement(9)).setText("" + rarity.itemLevelModifier);
+            ((GUIColor) line.getLineElement(5)).setValue(rarity.color);
+            ((GUIText) line.getLineElement(8)).setText(rarity.textColor + rarity.textColor.name());
+            ((GUILabeledTextInput) line.getLineElement(10)).setText("" + rarity.itemLevelModifier);
         }
 
 
@@ -234,8 +291,6 @@ public class SettingsGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIButton duplicate = GUIButton.newDuplicateButton(screen);
-
                 Namespace namespace = gui.namespaces.computeIfAbsent("Item Types", o -> new Namespace());
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Item Type Name: ", namespace.getFirstAvailableNumberedName("Item Type"), FilterNotEmpty.INSTANCE).setNamespace("Item Types");
 
@@ -247,26 +302,28 @@ public class SettingsGUI extends GUIScreen
                 GUILabeledTextInput traitLevelMultiplier = new GUILabeledTextInput(gui, " Trait Level Multiplier: ", "" + itemType.traitLevelMultiplier, FilterFloat.INSTANCE);
                 GUILabeledTextInput value = new GUILabeledTextInput(gui, " Base Monetary Value: ", "" + itemType.value, FilterFloat.INSTANCE);
 
-
-                duplicate.addClickActions(() ->
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
                 {
                     int index = getLineIndexContaining(name);
                     if (index == -1) index = lineCount() - 1;
                     index++;
-
                     GUIList.Line line = addLine(index);
+
                     GUILabeledTextInput name2 = (GUILabeledTextInput) line.getLineElement(2);
                     name2.setText(namespace.getFirstAvailableNumberedName(name.getText() + "_Copy"));
-                    gui.nameElementToItemTypeMap.put(name2, (CItemType) gui.nameElementToItemTypeMap.get(name).copy());
 
-                    ((GUIText) line.getLineElement(5)).setText(slotting.getText());
-                    ((GUILabeledTextInput) line.getLineElement(7)).setText(traitLevelMultiplier.getText());
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText(value.getText());
+                    CItemType itemType2 = (CItemType) gui.nameElementToItemTypeMap.get(name).copy();
+                    gui.nameElementToItemTypeMap.put(name2, itemType2);
+
+                    ((GUIText) line.getLineElement(5)).setText("" + itemType2.slotting);
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText("" + itemType2.traitLevelMultiplier);
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + itemType2.value);
                 });
 
                 return new GUIElement[]
                         {
-                                duplicate,
+                                duplicateButton,
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
@@ -347,20 +404,20 @@ public class SettingsGUI extends GUIScreen
             //Recalculable Trait Pools
             for (GUIList.Line line : recalculableTraitPools.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
             //Unrecalculable Trait Pools
             for (GUIList.Line line : unrecalculableTraitPools.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
             //Rarities
             for (GUIList.Line line : rarities.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(10)).valid()) return;
             }
 
             //Item Types
@@ -390,7 +447,7 @@ public class SettingsGUI extends GUIScreen
             gui.settings.recalcTraitPools.clear();
             for (GUIList.Line line : recalculableTraitPools.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(3);
                 CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(name);
                 pool.name = name.getText();
                 gui.settings.recalcTraitPools.put(name.getText(), pool);
@@ -400,7 +457,7 @@ public class SettingsGUI extends GUIScreen
             gui.settings.unrecalcTraitPools.clear();
             for (GUIList.Line line : unrecalculableTraitPools.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(3);
                 CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(name);
                 pool.name = name.getText();
                 gui.settings.unrecalcTraitPools.put(name.getText(), pool);
@@ -410,12 +467,12 @@ public class SettingsGUI extends GUIScreen
             gui.settings.rarities.clear();
             for (GUIList.Line line : rarities.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
                 CRarity rarity = gui.nameElementToRarityMap.get(name);
                 rarity.name = name.getText();
-                rarity.color = ((GUIColor) line.getLineElement(4)).getValue();
-                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(7)).getText()));
-                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
+                rarity.color = ((GUIColor) line.getLineElement(5)).getValue();
+                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(8)).getText()));
+                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(10)).getText());
 
                 gui.settings.rarities.put(rarity.name, rarity);
             }
@@ -455,20 +512,20 @@ public class SettingsGUI extends GUIScreen
             //Recalculable Trait Pools
             for (GUIList.Line line : recalculableTraitPools.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
             //Unrecalculable Trait Pools
             for (GUIList.Line line : unrecalculableTraitPools.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
             //Rarities
             for (GUIList.Line line : rarities.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(10)).valid()) return;
             }
 
             //Item Types
@@ -498,7 +555,7 @@ public class SettingsGUI extends GUIScreen
             gui.settings.recalcTraitPools.clear();
             for (GUIList.Line line : recalculableTraitPools.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(3);
                 CRecalculableTraitPool pool = gui.nameElementToRecalculableTraitPoolMap.get(name);
                 pool.name = name.getText();
                 gui.settings.recalcTraitPools.put(name.getText(), pool);
@@ -508,7 +565,7 @@ public class SettingsGUI extends GUIScreen
             gui.settings.unrecalcTraitPools.clear();
             for (GUIList.Line line : unrecalculableTraitPools.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(3);
                 CUnrecalculableTraitPool pool = gui.nameElementToUnrecalculableTraitPoolMap.get(name);
                 pool.name = name.getText();
                 gui.settings.unrecalcTraitPools.put(name.getText(), pool);
@@ -518,12 +575,12 @@ public class SettingsGUI extends GUIScreen
             gui.settings.rarities.clear();
             for (GUIList.Line line : rarities.getLines())
             {
-                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(1);
+                GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
                 CRarity rarity = gui.nameElementToRarityMap.get(name);
                 rarity.name = name.getText();
-                rarity.color = ((GUIColor) line.getLineElement(4)).getValue();
-                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(7)).getText()));
-                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
+                rarity.color = ((GUIColor) line.getLineElement(5)).getValue();
+                rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(8)).getText()));
+                rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(10)).getText());
 
                 gui.settings.rarities.put(rarity.name, rarity);
             }

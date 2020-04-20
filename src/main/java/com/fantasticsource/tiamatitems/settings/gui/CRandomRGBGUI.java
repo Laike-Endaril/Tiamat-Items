@@ -125,6 +125,21 @@ public class CRandomRGBGUI extends GUIScreen
 
                 GUIText description = new GUIText(gui, function.description());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(type);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    CRGBFunction function2 = (CRGBFunction) gui.editButtonToCRGBFunctionMap.get(editButton).copy();
+                    gui.editButtonToCRGBFunctionMap.put((GUIButton) line.getLineElement(1), function2);
+
+                    ((GUIText) line.getLineElement(3)).setText(type.getText());
+                    ((GUIText) line.getLineElement(5)).setText(function2.description());
+                });
+
                 Runnable action = () -> CRGBFunctionGUI.show(gui.editButtonToCRGBFunctionMap.get(editButton)).addOnClosedActions(() -> description.setText(gui.editButtonToCRGBFunctionMap.get(editButton).description()));
                 return new GUIElement[]
                         {
@@ -157,7 +172,7 @@ public class CRandomRGBGUI extends GUIScreen
         for (CRGBFunction function : randomRGB.functions)
         {
             GUIList.Line line = functions.addLine();
-            GUIButton editButton = (GUIButton) line.getLineElement(0);
+            GUIButton editButton = (GUIButton) line.getLineElement(1);
             gui.editButtonToCRGBFunctionMap.put(editButton, function);
 
             String typeString = null;
@@ -169,8 +184,8 @@ public class CRandomRGBGUI extends GUIScreen
                     break;
                 }
             }
-            ((GUIText) line.getLineElement(2)).setText(typeString);
-            ((GUIText) line.getLineElement(4)).setText(function.description());
+            ((GUIText) line.getLineElement(3)).setText(typeString);
+            ((GUIText) line.getLineElement(5)).setText(function.description());
         }
 
 
@@ -198,7 +213,7 @@ public class CRandomRGBGUI extends GUIScreen
             randomRGB.functions.clear();
             for (GUIList.Line line : functions.getLines())
             {
-                GUIButton editButton = (GUIButton) line.getLineElement(0);
+                GUIButton editButton = (GUIButton) line.getLineElement(1);
                 CRGBFunction function = gui.editButtonToCRGBFunctionMap.get(editButton);
                 if (function == null) continue;
 

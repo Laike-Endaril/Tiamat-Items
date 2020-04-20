@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
@@ -46,9 +47,13 @@ public class PoolListGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
+                Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Trait Pools", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("PoolName");
+                GUILabeledTextInput input = new GUILabeledTextInput(gui, " Pool Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Trait Pools");
+
                 return new GUIElement[]
                         {
-                                new GUILabeledTextInput(gui, " Pool Name: ", "PoolName", FilterNotEmpty.INSTANCE).setNamespace("Recalculable Trait Pools")
+                                input
                         };
             }
         };

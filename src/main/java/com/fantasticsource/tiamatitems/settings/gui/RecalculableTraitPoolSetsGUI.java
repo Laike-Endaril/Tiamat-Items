@@ -69,8 +69,25 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
 
                 gui.nameElementToPoolSetMap.put(name, new LinkedHashSet<>());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                    nameElement.setText(nameString2);
+
+                    gui.nameElementToPoolSetMap.put(nameElement, (LinkedHashSet<String>) gui.nameElementToPoolSetMap.get(name).clone());
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> PoolListGUI.show(name.getText() + " (Random Recalculable Pool Set)", gui.nameElementToPoolSetMap.get(name))),
                                 name
                         };
@@ -85,7 +102,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
         for (Map.Entry<String, LinkedHashSet<String>> entry : poolSets.entrySet())
         {
             GUIList.Line line = recalculableTraits.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(1);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
             nameElement.setText(entry.getKey());
             gui.nameElementToPoolSetMap.put(nameElement, entry.getValue());
         }
@@ -103,7 +120,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
             //Validation
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
             }
 
 
@@ -111,7 +128,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
             poolSets.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(1);
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
                 poolSets.put(nameElement.getText(), gui.nameElementToPoolSetMap.get(nameElement));
             }
 

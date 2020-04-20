@@ -62,18 +62,42 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Traits", o -> new Namespace());
                 String nameString = namespace.getFirstAvailableNumberedName("RTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Traits");
+                GUILabeledTextInput weight = new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER);
+                GUILabeledBoolean addToCore = new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly);
 
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(name);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+                    CRecalculableTrait trait = (CRecalculableTrait) gui.nameElementToRecalculableTraitMap.get(name).copy();
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
+                    nameElement.setText(nameString2);
+                    trait.name = nameString2;
+
+                    gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
+
+                    ((GUILabeledTextInput) line.getLineElement(5)).setText(weight.getText());
+                    ((GUILabeledBoolean) line.getLineElement(7)).setValue(trait.addToCoreOnAssembly);
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> RecalculableTraitGUI.show(name.getText(), gui.nameElementToRecalculableTraitMap.get(name))),
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER),
+                                weight,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly)
+                                addToCore
                         };
             }
         };
@@ -86,11 +110,11 @@ public class RecalculableTraitPoolGUI extends GUIScreen
         for (Map.Entry<CRecalculableTrait, Integer> entry : pool.traitGenWeights.entrySet())
         {
             GUIList.Line line = recalculableTraits.addLine();
-            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(entry.getKey().name);
             gui.nameElementToRecalculableTraitMap.put(nameElement, entry.getKey());
-            ((GUILabeledBoolean) line.getLineElement(6)).setValue(entry.getKey().addToCoreOnAssembly);
-            ((GUILabeledTextInput) line.getLineElement(4)).setText("" + entry.getValue());
+            ((GUILabeledTextInput) line.getLineElement(5)).setText("" + entry.getValue());
+            ((GUILabeledBoolean) line.getLineElement(7)).setValue(entry.getKey().addToCoreOnAssembly);
         }
 
 
@@ -106,8 +130,8 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             //Validation
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
-                if (!((GUILabeledTextInput) line.getLineElement(4)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(5)).valid()) return;
             }
 
 
@@ -115,11 +139,11 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             pool.traitGenWeights.clear();
             for (GUIList.Line line : recalculableTraits.getLines())
             {
-                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                 CRecalculableTrait trait = gui.nameElementToRecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
-                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(6)).getValue();
-                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(4)).getText()));
+                pool.traitGenWeights.put(trait, WEIGHT_FILTER.parse(((GUILabeledTextInput) line.getLineElement(5)).getText()));
+                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(7)).getValue();
             }
 
 

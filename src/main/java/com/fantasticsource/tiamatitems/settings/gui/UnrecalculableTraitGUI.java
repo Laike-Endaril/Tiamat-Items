@@ -10,6 +10,7 @@ import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
@@ -74,8 +75,25 @@ public class UnrecalculableTraitGUI extends GUIScreen
                     }
                 };
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(type);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    GUIText typeElement = (GUIText) line.getLineElement(3);
+                    typeElement.setText(type.getText());
+
+                    CUnrecalculableTraitElement element = (CUnrecalculableTraitElement) gui.typeElementToUnrecalculableTraitElementMap.get(type).copy();
+                    gui.typeElementToUnrecalculableTraitElementMap.put(typeElement, element);
+                    ((GUIText) line.getLineElement(5)).setText(" " + element.getDescription());
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newEditButton(gui).addClickActions(action),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (U. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
@@ -122,13 +140,13 @@ public class UnrecalculableTraitGUI extends GUIScreen
             {
                 if (traitElement.getClass() == entry.getValue())
                 {
-                    GUIText typeElement = (GUIText) line.getLineElement(2);
+                    GUIText typeElement = (GUIText) line.getLineElement(3);
                     typeElement.setText(entry.getKey());
                     gui.typeElementToUnrecalculableTraitElementMap.put(typeElement, traitElement);
                     break;
                 }
             }
-            ((GUIText) line.getLineElement(4)).setText(" " + traitElement.getDescription());
+            ((GUIText) line.getLineElement(5)).setText(" " + traitElement.getDescription());
         }
 
 
@@ -145,7 +163,7 @@ public class UnrecalculableTraitGUI extends GUIScreen
             trait.elements.clear();
             for (GUIList.Line line : unrecalculableTraitElements.getLines())
             {
-                GUIText typeElement = (GUIText) line.getLineElement(2);
+                GUIText typeElement = (GUIText) line.getLineElement(3);
                 if (typeElement.getText().equals(" Select Type...")) continue;
 
                 trait.elements.add(gui.typeElementToUnrecalculableTraitElementMap.get(typeElement));

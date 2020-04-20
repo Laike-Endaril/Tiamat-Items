@@ -1,10 +1,11 @@
-Dropdown for attribute selections
-Array counts on parent GUIs
-Duplicate button
-Copy/paste of components
+Remove removed elements from namespace
+
 Render item layer options in layer selection GUI
+Array counts on parent GUIs
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken
+
+Dropdown for attribute selections?
 
 
 

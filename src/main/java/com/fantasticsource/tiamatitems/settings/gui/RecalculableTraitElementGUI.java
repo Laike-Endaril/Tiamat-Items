@@ -308,7 +308,24 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
                     GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", "" + index, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
 
+                    GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                    duplicateButton.addClickActions(() ->
+                    {
+                        int lineIndex = getLineIndexContaining(dyeIndex);
+                        if (lineIndex == -1) lineIndex = lineCount() - 1;
+                        lineIndex++;
+                        GUIList.Line line = addLine(lineIndex);
+
+                        GUIButton editButton2 = (GUIButton) line.getLineElement(1);
+                        gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());
+
+                        int index2 = 0;
+                        while (namespace.contains("" + index2)) index2++;
+                        ((GUILabeledTextInput) line.getLineElement(2)).setText("" + index2);
+                    });
+
                     return new GUIElement[]{
+                            duplicateButton,
                             editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()))),
                             dyeIndex
                     };
@@ -319,10 +336,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
             for (Map.Entry<Integer, CRandomRGB> entry : skinElement.dyeChannels.entrySet())
             {
                 GUIList.Line line = dyes.addLine();
-                GUIButton editButton = (GUIButton) line.getLineElement(0);
+                GUIButton editButton = (GUIButton) line.getLineElement(1);
                 gui.editButtonToCRandomRGBMap.put(editButton, entry.getValue());
 
-                ((GUILabeledTextInput) line.getLineElement(1)).setText("" + entry.getKey());
+                ((GUILabeledTextInput) line.getLineElement(2)).setText("" + entry.getKey());
             }
 
 
@@ -338,7 +355,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 if (!libraryFileOrFolder.valid() || !skinType.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
                 for (GUIList.Line line : dyes.getLines())
                 {
-                    if (!((GUILabeledTextInput) line.getLineElement(1)).valid()) return;
+                    if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 }
 
 
@@ -351,8 +368,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 skinElement.dyeChannels.clear();
                 for (GUIList.Line line : dyes.getLines())
                 {
-                    GUIButton editButton = (GUIButton) line.getLineElement(0);
-                    GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(1);
+                    GUIButton editButton = (GUIButton) line.getLineElement(1);
+                    GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(2);
                     skinElement.dyeChannels.put(AW_DYE_INDEX_FILTER.parse(index.getText()), gui.editButtonToCRandomRGBMap.get(editButton));
                 }
 

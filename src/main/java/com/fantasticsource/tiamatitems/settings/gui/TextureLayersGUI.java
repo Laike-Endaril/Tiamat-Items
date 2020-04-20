@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIColor;
@@ -96,8 +97,26 @@ public class TextureLayersGUI extends GUIScreen
                         layer.setLayer(text);
                     }
                 });
+
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(layer);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    ((GUIItemLayer) line.getLineElement(1)).setLayer(layer.getLayer());
+                    GUIView view2 = (GUIView) line.getLineElement(2);
+                    GUIText texture2 = (GUIText) view2.get(1);
+                    texture2.setText(texture.getText());
+                    GUIColor color2 = (GUIColor) view2.get(4);
+                    color2.setValue(color.getValue().copy());
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 layer,
                                 view
                         };
@@ -121,8 +140,8 @@ public class TextureLayersGUI extends GUIScreen
                 if (tokens.length != 3 || !FilterNotEmpty.INSTANCE.acceptable(tokens[0]) || !FILTER_POSITIVE.acceptable(tokens[1]) || !FilterColor.INSTANCE.acceptable(tokens[2])) continue;
 
                 GUIList.Line line = layers.addLine();
-                ((GUIItemLayer) line.getLineElement(0)).setLayer(layerString);
-                GUIView view = (GUIView) line.getLineElement(1);
+                ((GUIItemLayer) line.getLineElement(1)).setLayer(layerString);
+                GUIView view = (GUIView) line.getLineElement(2);
                 GUIText texture = (GUIText) view.get(1);
                 texture.setText(tokens[0] + ":" + tokens[1]);
                 GUIColor color = (GUIColor) view.get(4);
@@ -144,7 +163,7 @@ public class TextureLayersGUI extends GUIScreen
             ArrayList<String> layerGroup = new ArrayList<>();
             for (GUIList.Line line : layers.getLines())
             {
-                layerGroup.add(((GUIItemLayer) line.getLineElement(0)).getLayer());
+                layerGroup.add(((GUIItemLayer) line.getLineElement(1)).getLayer());
             }
             traitElement.layerGroups.put(state, layerGroup);
 

@@ -82,8 +82,25 @@ public class RecalculableTraitGUI extends GUIScreen
                     }
                 };
 
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int lineIndex = getLineIndexContaining(type);
+                    if (lineIndex == -1) lineIndex = lineCount() - 1;
+                    lineIndex++;
+                    GUIList.Line line = addLine(lineIndex);
+
+                    GUIText typeElement = (GUIText) line.getLineElement(3);
+                    typeElement.setText(type.getText());
+
+                    CRecalculableTraitElement element = (CRecalculableTraitElement) gui.typeElementToRecalculableTraitElementMap.get(type).copy();
+                    gui.typeElementToRecalculableTraitElementMap.put(typeElement, element);
+                    ((GUIText) line.getLineElement(5)).setText(" " + element.getDescription());
+                });
+
                 return new GUIElement[]
                         {
+                                duplicateButton,
                                 GUIButton.newEditButton(gui).addClickActions(action),
                                 new GUIElement(gui, 1, 0),
                                 type.addClickActions(() -> new TextSelectionGUI(type, " (R. Trait Element Type)", OPTIONS.keySet().toArray(new String[0])).addOnClosedActions(() ->
@@ -130,13 +147,13 @@ public class RecalculableTraitGUI extends GUIScreen
             {
                 if (traitElement.getClass() == entry.getValue())
                 {
-                    GUIText typeElement = (GUIText) line.getLineElement(2);
+                    GUIText typeElement = (GUIText) line.getLineElement(3);
                     typeElement.setText(entry.getKey());
                     gui.typeElementToRecalculableTraitElementMap.put(typeElement, traitElement);
                     break;
                 }
             }
-            ((GUIText) line.getLineElement(4)).setText(" " + traitElement.getDescription());
+            ((GUIText) line.getLineElement(5)).setText(" " + traitElement.getDescription());
         }
 
 
@@ -153,7 +170,7 @@ public class RecalculableTraitGUI extends GUIScreen
             trait.elements.clear();
             for (GUIList.Line line : recalculableTraitElements.getLines())
             {
-                GUIText typeElement = (GUIText) line.getLineElement(2);
+                GUIText typeElement = (GUIText) line.getLineElement(3);
                 if (typeElement.getText().equals(" Select Type...")) continue;
 
                 trait.elements.add(gui.typeElementToRecalculableTraitElementMap.get(typeElement));
