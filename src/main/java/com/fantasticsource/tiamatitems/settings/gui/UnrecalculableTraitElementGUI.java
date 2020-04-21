@@ -123,7 +123,8 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                 if (element instanceof GUIList.Line)
                 {
                     GUIList.Line line = (GUIList.Line) element;
-                    gui.namespaces.get("Dye Indices").inputs.remove(line.getLineElement(2));
+                    GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                    gui.namespaces.get("Dye Indices").inputs.remove(labeledTextInput.input);
                 }
                 return false;
             });

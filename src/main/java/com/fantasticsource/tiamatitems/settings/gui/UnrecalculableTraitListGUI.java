@@ -91,7 +91,8 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Unrecalculable Traits").inputs.remove(line.getLineElement(3));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(3);
+                gui.namespaces.get("Unrecalculable Traits").inputs.remove(labeledTextInput.input);
             }
             return false;
         });

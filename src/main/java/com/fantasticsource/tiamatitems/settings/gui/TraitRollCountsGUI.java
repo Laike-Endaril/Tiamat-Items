@@ -89,7 +89,8 @@ public class TraitRollCountsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Trait Pool Sets").inputs.remove(line.getLineElement(1));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(1);
+                gui.namespaces.get("Trait Pool Sets").inputs.remove(labeledTextInput.input);
             }
             return false;
         });

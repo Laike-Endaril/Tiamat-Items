@@ -64,7 +64,8 @@ public class PoolListGUI extends GUIScreen
             if (element instanceof Line)
             {
                 Line line = (Line) element;
-                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(line.getLineElement(0));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(0);
+                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(labeledTextInput.input);
             }
             return false;
         });

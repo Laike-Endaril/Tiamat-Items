@@ -99,7 +99,8 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Unrecalculable Trait Pool Sets").inputs.remove(line.getLineElement(2));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                gui.namespaces.get("Unrecalculable Trait Pool Sets").inputs.remove(labeledTextInput.input);
             }
             return false;
         });

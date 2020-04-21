@@ -147,7 +147,8 @@ public class SettingsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(line.getLineElement(3));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(3);
+                gui.namespaces.get("Recalculable Trait Pools").inputs.remove(labeledTextInput.input);
             }
             return false;
         });
@@ -209,7 +210,8 @@ public class SettingsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Unrecalculable Trait Pools").inputs.remove(line.getLineElement(3));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(3);
+                gui.namespaces.get("Unrecalculable Trait Pools").inputs.remove(labeledTextInput.input);
             }
             return false;
         });
@@ -290,7 +292,8 @@ public class SettingsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Rarities").inputs.remove(line.getLineElement(2));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                gui.namespaces.get("Rarities").inputs.remove(labeledTextInput.input);
             }
             return false;
         });
@@ -374,7 +377,8 @@ public class SettingsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Item Types").inputs.remove(line.getLineElement(2));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                gui.namespaces.get("Item Types").inputs.remove(labeledTextInput.input);
             }
             return false;
         });
@@ -416,7 +420,8 @@ public class SettingsGUI extends GUIScreen
             if (element instanceof GUIList.Line)
             {
                 GUIList.Line line = (GUIList.Line) element;
-                gui.namespaces.get("Attribute Balance Multipliers").inputs.remove(line.getLineElement(1));
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(1);
+                gui.namespaces.get("Attribute Balance Multipliers").inputs.remove(labeledTextInput.input);
             }
             return false;
         });
