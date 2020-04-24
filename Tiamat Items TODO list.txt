@@ -1,13 +1,11 @@
 Render item layer options in layer selection GUI
-Array counts on parent GUIs
+
+Add max stack count setting
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken
 
+Array counts on parent GUIs?
 Dropdown for attribute selections?
-
-
-
-Test conditional rendering of skin parts added with render modes as part of unrecalculable skin trait
 
 
 

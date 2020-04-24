@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.PlayerData;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
@@ -13,10 +14,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 import static net.minecraft.util.text.TextFormatting.AQUA;
@@ -54,7 +52,7 @@ public class Commands extends CommandBase
     {
         if (sender.canUseCommand(2, getName()))
         {
-            return AQUA + "/" + getName() + " generate <itemType> <level> <rarity>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment");
+            return AQUA + "/" + getName() + " generate <itemType> <level> <rarity> [playername]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment");
         }
 
         return I18n.translateToLocalFormatted("commands.generic.permission");
@@ -107,6 +105,15 @@ public class Commands extends CommandBase
                     break;
             }
         }
+        else if (args.length == 5)
+        {
+            switch (args[0])
+            {
+                case "generate":
+                    result.addAll(Arrays.asList(server.getPlayerList().getOnlinePlayerNames()));
+                    break;
+            }
+        }
 
         if (partial.length() != 0) result.removeIf(k -> partial.length() > k.length() || !k.substring(0, partial.length()).equalsIgnoreCase(partial));
         return result;
@@ -125,19 +132,21 @@ public class Commands extends CommandBase
         switch (cmd)
         {
             case "generate":
-                if (!(sender instanceof EntityPlayerMP))
-                {
-                    notifyCommandListener(sender, this, MODID + ".error.notPlayer");
-                    return;
-                }
-                if (args.length != 4)
+                if (args.length < 4 || args.length > 5)
                 {
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
+                if (args.length == 4 && !(sender instanceof EntityPlayerMP))
+                {
+                    notifyCommandListener(sender, this, MODID + ".error.notPlayer");
+                    return;
+                }
+
                 CItemType gen = CSettings.SETTINGS.itemTypes.get(args[1].replaceAll("_", " "));
                 CRarity rarity = CSettings.SETTINGS.rarities.get(args[3]);
-                if (gen == null || rarity == null)
+                EntityPlayerMP target = args.length == 4 ? (EntityPlayerMP) sender : (EntityPlayerMP) PlayerData.getEntity(args[4]);
+                if (gen == null || rarity == null || target == null)
                 {
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
@@ -152,9 +161,11 @@ public class Commands extends CommandBase
                     notifyCommandListener(sender, this, getUsage(sender));
                     return;
                 }
-                MCTools.give((EntityPlayerMP) sender, gen.generateItem(level, rarity));
+
+                MCTools.give(target, gen.generateItem(level, rarity));
 
                 break;
+
 
             default:
                 notifyCommandListener(sender, this, getUsage(sender));
