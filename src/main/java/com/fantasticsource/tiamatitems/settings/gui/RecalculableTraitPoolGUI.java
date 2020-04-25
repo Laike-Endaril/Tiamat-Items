@@ -76,12 +76,11 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                     lineIndex++;
                     GUIList.Line line = addLine(lineIndex);
 
-                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
                     CRecalculableTrait trait = (CRecalculableTrait) gui.nameElementToRecalculableTraitMap.get(name).copy();
+                    trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
 
                     GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
-                    nameElement.setText(nameString2);
-                    trait.name = nameString2;
+                    nameElement.setText(trait.name);
 
                     gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
 

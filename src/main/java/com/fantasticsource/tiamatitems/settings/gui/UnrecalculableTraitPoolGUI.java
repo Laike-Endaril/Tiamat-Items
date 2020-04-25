@@ -74,12 +74,11 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                     lineIndex++;
                     GUIList.Line line = addLine(lineIndex);
 
-                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
                     CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
+                    trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
 
                     GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
-                    nameElement.setText(nameString2);
-                    trait.name = nameString2;
+                    nameElement.setText(trait.name);
 
                     gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
 

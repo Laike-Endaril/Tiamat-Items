@@ -67,12 +67,11 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                     lineIndex++;
                     GUIList.Line line = addLine(lineIndex);
 
-                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
                     CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
+                    trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
 
                     GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                     nameElement.setText(trait.name);
-                    trait.name = nameString2;
 
                     gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
                 });

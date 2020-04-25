@@ -343,10 +343,12 @@ public class SettingsGUI extends GUIScreen
                     index++;
                     GUIList.Line line = addLine(index);
 
-                    GUILabeledTextInput name2 = (GUILabeledTextInput) line.getLineElement(2);
-                    name2.setText(namespace.getFirstAvailableNumberedName(name.getText() + "_Copy"));
-
                     CItemType itemType2 = (CItemType) gui.nameElementToItemTypeMap.get(name).copy();
+                    itemType2.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+
+                    GUILabeledTextInput name2 = (GUILabeledTextInput) line.getLineElement(2);
+                    name2.setText(itemType2.name);
+
                     gui.nameElementToItemTypeMap.put(name2, itemType2);
 
                     ((GUIText) line.getLineElement(5)).setText("" + itemType2.slotting);
