@@ -13,6 +13,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
+import com.fantasticsource.mctools.gui.element.view.GUIList.Line;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
@@ -315,14 +316,10 @@ public class RecalculableTraitElementGUI extends GUIScreen
                         int lineIndex = getLineIndexContaining(dyeIndex);
                         if (lineIndex == -1) lineIndex = lineCount() - 1;
                         lineIndex++;
-                        GUIList.Line line = addLine(lineIndex);
+                        Line line = addLine(lineIndex);
 
                         GUIButton editButton2 = (GUIButton) line.getLineElement(1);
                         gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());
-
-                        int index2 = 0;
-                        while (namespace.contains("" + index2)) index2++;
-                        ((GUILabeledTextInput) line.getLineElement(2)).setText("" + index2);
                     });
 
                     return new GUIElement[]{
@@ -334,9 +331,9 @@ public class RecalculableTraitElementGUI extends GUIScreen
             };
             dyes.addRemoveChildActions((Predicate<GUIElement>) element ->
             {
-                if (element instanceof GUIList.Line)
+                if (element instanceof Line)
                 {
-                    GUIList.Line line = (GUIList.Line) element;
+                    Line line = (Line) element;
                     GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
                     gui.namespaces.get("Dye Indices").inputs.remove(labeledTextInput.input);
                 }
@@ -346,7 +343,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             gui.root.addAll(dyes, scrollbar);
             for (Map.Entry<Integer, CRandomRGB> entry : skinElement.dyeChannels.entrySet())
             {
-                GUIList.Line line = dyes.addLine();
+                Line line = dyes.addLine();
                 GUIButton editButton = (GUIButton) line.getLineElement(1);
                 gui.editButtonToCRandomRGBMap.put(editButton, entry.getValue());
 
@@ -364,7 +361,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
             {
                 //Validation
                 if (!libraryFileOrFolder.valid() || !skinType.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
-                for (GUIList.Line line : dyes.getLines())
+                for (Line line : dyes.getLines())
                 {
                     if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 }
@@ -377,7 +374,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 skinElement.isTransient = isTransient.getValue();
                 skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
                 skinElement.dyeChannels.clear();
-                for (GUIList.Line line : dyes.getLines())
+                for (Line line : dyes.getLines())
                 {
                     GUIButton editButton = (GUIButton) line.getLineElement(1);
                     GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(2);

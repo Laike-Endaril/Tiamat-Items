@@ -105,10 +105,6 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
                         GUIButton editButton2 = (GUIButton) line.getLineElement(1);
                         gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());
-
-                        int index2 = 0;
-                        while (namespace.contains("" + index2)) index2++;
-                        ((GUILabeledTextInput) line.getLineElement(2)).setText("" + index2);
                     });
 
                     return new GUIElement[]{
