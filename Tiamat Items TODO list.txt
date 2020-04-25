@@ -7,6 +7,10 @@ Dropdown for attribute selections?
 
 
 
+Fix items rendering their transient skins *onto your body* when holding them in-hand
+
+
+
 Name generation...
 When calculating a name due to assembly, generation, or recalculation of stats, use 2 highest attributes on item to determine name, using this comparison method:
 head : always 5-10  roll 8
@@ -21,8 +25,6 @@ roll minus min = 33
 * Item Editor GUI
 
 Completely rework
-
-Add texture previews to texture selection GUI
 
 
 
