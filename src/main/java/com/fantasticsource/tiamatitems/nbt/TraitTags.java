@@ -18,7 +18,7 @@ public class TraitTags
     //OR
     //<poolSetName>:<poolName>:<traitName>:<wholeNumberPercentage>
 
-    public static void addTraitTag(ItemStack stack, String poolSetName, CRecalculableTraitPool pool, CRecalculableTrait trait, ArrayList<Integer> baseArgs)
+    public static void addTraitTag(ItemStack stack, String poolSetName, CRecalculableTraitPool pool, CRecalculableTrait trait, int... baseArgs)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();

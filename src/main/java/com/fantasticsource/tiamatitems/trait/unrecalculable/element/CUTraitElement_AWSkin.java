@@ -18,8 +18,10 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 {
@@ -48,7 +50,13 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     }
 
     @Override
-    public String getDescription()
+    public int requiredArgumentCount()
+    {
+        return 1;
+    }
+
+    @Override
+    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
         if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
@@ -68,7 +76,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     }
 
     @Override
-    public double applyToItem(ItemStack stack, double itemTypeAndLevelMultiplier)
+    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         //Dyes
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
@@ -77,23 +85,37 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
 
         //Skin file(s)
         File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder));
-        if (file == null) return -1;
+        if (file == null) return;
 
 
+        String fileOrFolder = libraryFileOrFolder;
         if (isRandomFromFolder)
         {
-            if (!file.isDirectory()) return -1;
+            if (!file.isDirectory()) return;
 
             File[] files = file.listFiles();
-            if (files == null || files.length == 0) return -1;
+            if (files == null || files.length == 0) return;
+
+            File[] limitedFiles = new File[Tools.min(Tools.max((int) (files.length * multipliedArgs[0]), 1), files.length)];
+            System.arraycopy(files, 0, limitedFiles, 0, limitedFiles.length);
+
+            File chosen = Tools.choose(limitedFiles);
+            StringBuilder shortName = new StringBuilder(chosen.getName());
+            if (!chosen.isDirectory())
+            {
+                String[] tokens = Tools.fixedSplit(shortName.toString(), Pattern.quote("."));
+                shortName = new StringBuilder(tokens[0]);
+                for (int i = 1; i < tokens.length - 1; i++) shortName.append(".").append(tokens[i]);
+            }
+
+            fileOrFolder = libraryFileOrFolder + File.separator + shortName;
         }
 
 
         //At this point, "file" is either a skin file, or a folder (either way, it exists)
-        ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
+        ItemStack skinStack = AWSkinGenerator.generate(fileOrFolder, skinType, dyes);
         if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
         else setAWSkin(stack, skinStack);
-        return 1;
     }
 
     @Override

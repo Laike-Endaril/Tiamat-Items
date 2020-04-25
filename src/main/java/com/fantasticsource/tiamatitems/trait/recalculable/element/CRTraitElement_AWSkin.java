@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class CRTraitElement_AWSkin extends CRecalculableTraitElement
 {
@@ -51,7 +52,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public int requiredArgumentCount()
     {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -87,17 +88,32 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         if (file == null) return;
 
 
+        String fileOrFolder = libraryFileOrFolder;
         if (isRandomFromFolder)
         {
             if (!file.isDirectory()) return;
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) return;
+
+            File[] limitedFiles = new File[Tools.min(Tools.max((int) (files.length * multipliedArgs[0]), 1), files.length)];
+            System.arraycopy(files, 0, limitedFiles, 0, limitedFiles.length);
+
+            File chosen = Tools.choose(limitedFiles);
+            StringBuilder shortName = new StringBuilder(chosen.getName());
+            if (!chosen.isDirectory())
+            {
+                String[] tokens = Tools.fixedSplit(shortName.toString(), Pattern.quote("."));
+                shortName = new StringBuilder(tokens[0]);
+                for (int i = 1; i < tokens.length - 1; i++) shortName.append(".").append(tokens[i]);
+            }
+
+            fileOrFolder = libraryFileOrFolder + File.separator + shortName;
         }
 
 
         //At this point, "file" is either a skin file, or a folder (either way, it exists)
-        ItemStack skinStack = AWSkinGenerator.generate(libraryFileOrFolder, skinType, dyes);
+        ItemStack skinStack = AWSkinGenerator.generate(fileOrFolder, skinType, dyes);
         if (isTransient) TransientAWSkinHandler.addTransientAWSkin(stack, skinType, indexWithinSkinTypeIfTransient, skinStack);
         else setAWSkin(stack, skinStack);
     }

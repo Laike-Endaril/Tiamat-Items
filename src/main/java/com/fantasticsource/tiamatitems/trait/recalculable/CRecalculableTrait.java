@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
@@ -27,38 +26,43 @@ public final class CRecalculableTrait extends CTrait
      */
     public double generateNBT(ItemStack stack, String poolSetName, CRecalculableTraitPool pool, double itemTypeAndLevelMultiplier, int... baseArgs)
     {
-        ArrayList<Integer> baseArguments = new ArrayList<>();
-        for (int base : baseArgs) baseArguments.add(base);
-
-
         int requiredArgumentCount = 0;
         for (CRecalculableTraitElement element : elements)
         {
             requiredArgumentCount = Tools.max(requiredArgumentCount, element.requiredArgumentCount());
         }
-        while (baseArguments.size() < requiredArgumentCount)
+
+
+        int[] baseArguments = new int[requiredArgumentCount];
+        double[] multipliedArgs = new double[requiredArgumentCount];
+        System.arraycopy(baseArgs, 0, baseArguments, 0, Tools.min(baseArgs.length, requiredArgumentCount));
+        for (int i = baseArgs.length; i < requiredArgumentCount; i++) baseArguments[i] = Tools.random(Integer.MAX_VALUE);
+        for (int i = 0; i < requiredArgumentCount; i++)
         {
-            baseArguments.add(Tools.random(Integer.MAX_VALUE));
+            multipliedArgs[i] = (double) baseArguments[i] / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier;
         }
 
 
         TraitTags.addTraitTag(stack, poolSetName, pool, this, baseArguments);
 
 
-        double multipliedTotal = 0;
-        double[] multipliedArgs = new double[baseArguments.size()];
-        int i = 0;
-        for (int base : baseArguments)
+        double averagedRoll = 0, rollUsageCount = 0;
+        for (CRecalculableTraitElement element : elements)
         {
-            double multiplied = ((double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier);
-            multipliedArgs[i++] = multiplied;
-            multipliedTotal += multiplied;
+            element.applyToItem(stack, baseArguments, multipliedArgs);
+
+            for (int i = 0; i < element.requiredArgumentCount(); i++)
+            {
+                averagedRoll += multipliedArgs[i];
+                rollUsageCount++;
+            }
         }
 
 
-        if (multipliedArgs.length == 0) return (minValue + maxValue) / 2;
+        if (requiredArgumentCount == 0) return (minValue + maxValue) / 2;
 
-        return minValue + (maxValue - minValue) * multipliedTotal / multipliedArgs.length / (Integer.MAX_VALUE - 1);
+        averagedRoll /= rollUsageCount;
+        return minValue + (maxValue - minValue) * averagedRoll;
     }
 
 

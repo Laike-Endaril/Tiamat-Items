@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.trait.unrecalculable;
 
 import com.fantasticsource.tiamatitems.trait.CTrait;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -19,21 +20,40 @@ public class CUnrecalculableTrait extends CTrait
      */
     public double applyToItem(ItemStack stack, double itemTypeAndLevelMultiplier)
     {
-        int count = 0;
-        double result, totalResult = 0;
+        int requiredArgumentCount = 0;
         for (CUnrecalculableTraitElement element : elements)
         {
-            result = element.applyToItem(stack, itemTypeAndLevelMultiplier);
-            if (result == -1) continue;
-
-            totalResult += result;
-            count++;
+            requiredArgumentCount = Tools.max(requiredArgumentCount, element.requiredArgumentCount());
         }
 
 
-        if (count == 0) return (minValue + maxValue) / 2;
+        int[] baseArguments = new int[requiredArgumentCount];
+        double[] multipliedArgs = new double[requiredArgumentCount];
+        for (int i = 0; i < requiredArgumentCount; i++)
+        {
+            int base = Tools.random(Integer.MAX_VALUE);
+            baseArguments[i] = base;
+            multipliedArgs[i] = (double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier;
+        }
 
-        return minValue + (maxValue - minValue) * totalResult / count;
+
+        double averagedRoll = 0, rollUsageCount = 0;
+        for (CUnrecalculableTraitElement element : elements)
+        {
+            element.applyToItem(stack, baseArguments, multipliedArgs);
+
+            for (int i = 0; i < element.requiredArgumentCount(); i++)
+            {
+                averagedRoll += multipliedArgs[i];
+                rollUsageCount++;
+            }
+        }
+
+
+        if (requiredArgumentCount == 0) return (minValue + maxValue) / 2;
+
+        averagedRoll /= rollUsageCount;
+        return minValue + (maxValue - minValue) * averagedRoll;
     }
 
 
