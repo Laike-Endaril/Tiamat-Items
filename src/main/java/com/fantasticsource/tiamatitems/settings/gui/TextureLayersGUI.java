@@ -13,8 +13,9 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
-import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.tiamatitems.TextureCache;
+import com.fantasticsource.tiamatitems.gui.LayerSelectionGUI;
 import com.fantasticsource.tiamatitems.itemeditor.GUIItemLayer;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.CRTraitElement_TextureLayers;
 import com.fantasticsource.tools.Tools;
@@ -52,7 +53,6 @@ public class TextureLayersGUI extends GUIScreen
 
 
         //Main
-        String[] uncoloredTextures = Tools.sort(TextureCache.getUncoloredTextureNames());
         GUIList layers = new GUIList(gui, true, 0.98, 1 - (cancel.y + cancel.height))
         {
             @Override
@@ -73,30 +73,22 @@ public class TextureLayersGUI extends GUIScreen
                 String[] tokens = Tools.fixedSplit(layer.getLayer(), ":");
                 GUIText texture = new GUIText(screen, tokens[0] + ":" + tokens[1]).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
                 GUIColor color = new GUIColor(screen);
+
                 view.addAll
                         (
-                                new GUIText(screen, "Texture: "),
-                                texture.addClickActions(() -> new TextSelectionGUI(texture, "Texture", uncoloredTextures)),
+                                new GUIText(screen, "Texture: ").addClickActions(texture::click),
+                                texture.addClickActions(layer::click),
                                 new GUIElement(screen, 1, 0),
                                 new GUIText(screen, "Color: ").addClickActions(color::click),
-                                color
+                                color.addClickActions(() -> new ColorSelectionGUI(color).addOnClosedActions(() ->
+                                {
+                                    String text = texture.getText() + ":" + color.getText();
+                                    if (!layer.getLayer().equals(text))
+                                    {
+                                        layer.setLayer(text);
+                                    }
+                                }))
                         );
-                texture.addRecalcActions(() ->
-                {
-                    String text = texture.getText() + ":" + color.getText();
-                    if (!layer.getLayer().equals(text))
-                    {
-                        layer.setLayer(text);
-                    }
-                });
-                color.addRecalcActions(() ->
-                {
-                    String text = texture.getText() + ":" + color.getText();
-                    if (!layer.getLayer().equals(text))
-                    {
-                        layer.setLayer(text);
-                    }
-                });
 
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
@@ -117,7 +109,12 @@ public class TextureLayersGUI extends GUIScreen
                 return new GUIElement[]
                         {
                                 duplicateButton,
-                                layer,
+                                layer.addClickActions(() -> new LayerSelectionGUI(layer).addOnClosedActions(() ->
+                                {
+                                    String[] tokens2 = Tools.fixedSplit(layer.getLayer(), ":");
+                                    texture.setText(tokens2[0] + ":" + tokens2[1]);
+                                    layer.setLayer(texture.getText() + ":" + color.getText());
+                                })),
                                 view
                         };
             }

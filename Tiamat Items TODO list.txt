@@ -1,5 +1,3 @@
-Render item layer options in layer selection GUI
-
 Add max stack count setting
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken

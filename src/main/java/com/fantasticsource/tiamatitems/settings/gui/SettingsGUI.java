@@ -14,6 +14,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
+import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -276,9 +277,10 @@ public class SettingsGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                colorLabel, color,
+                                colorLabel.addClickActions(color::click),
+                                color.addClickActions(() -> new ColorSelectionGUI(color)),
                                 new GUIElement(gui, 1, 0),
-                                textColorLabel.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
+                                textColorLabel.addClickActions(textColor::click),
                                 textColor.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
                                 new GUIElement(gui, 1, 0),
                                 itemLevelModifier,
