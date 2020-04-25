@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.trait;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
@@ -39,12 +40,18 @@ public class CItemType extends Component
 
     public ItemStack generateItem(int level, CRarity rarity)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity, false);
     }
 
 
     public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity, boolean recursive)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         //See whether this is the first time we're generating or not
         boolean firstGeneration = MiscTags.getItemGenVersion(stack) == -1;
 

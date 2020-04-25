@@ -19,6 +19,9 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> assemble(ItemStack core, ItemStack... parts)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+        
         ArrayList<ItemStack> result = new ArrayList<>();
         for (ItemStack part : parts) result.addAll(putPartInEmptySlot(core, part));
         return result;
@@ -54,6 +57,9 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged, int level)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part))
         {
             ArrayList<ItemStack> result = new ArrayList<>();
@@ -110,6 +116,9 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         ArrayList<ItemStack> result = new ArrayList<>();
         if (slot < 0 || core.isEmpty())
         {
@@ -176,6 +185,9 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> removePartFromSlot(ItemStack core, int slot, boolean recalcIfChanged, int level)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
         if (slot > partSlots.size()) return new ArrayList<>();
 
@@ -208,6 +220,9 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> recalc(ItemStack stack, boolean recursive)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         ArrayList<ItemStack> result = new ArrayList<>();
 
 
@@ -358,6 +373,9 @@ public class ItemAssembly
      */
     private static boolean recalcEmptyPartTraits(ItemStack stack, boolean recursive)
     {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
         //Validate itemtype/rarity
         CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
         if (itemType == null) return false;
