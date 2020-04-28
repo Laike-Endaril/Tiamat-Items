@@ -253,6 +253,9 @@ public class TiamatItems
     @SubscribeEvent
     public static void test2(TickEvent.PlayerTickEvent event)
     {
+        //TODO Remove all this
+        if (!MCTools.devEnv()) return;
+
         EntityLivingBase livingBase = event.player;
         if (livingBase.world.isRemote) return;
 

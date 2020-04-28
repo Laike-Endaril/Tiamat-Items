@@ -13,6 +13,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWDyeChannelOverride;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
@@ -164,6 +165,101 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     GUIButton editButton = (GUIButton) line.getLineElement(1);
                     GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(2);
                     skinElement.dyeChannels.put(AW_DYE_INDEX_FILTER.parse(index.getText()), gui.editButtonToCRandomRGBMap.get(editButton));
+                }
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CUTraitElement_AWDyeChannelOverride.class)
+        {
+            CUTraitElement_AWDyeChannelOverride dyeOverrideElement = (CUTraitElement_AWDyeChannelOverride) traitElement;
+
+            GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    new GUIText(gui, " Dyes...", Color.YELLOW),
+                    separator
+            );
+
+            GUIList dyes = new GUIList(gui, true, 0.98, 1 - (separator.y + separator.height))
+            {
+                @Override
+                public GUIElement[] newLineDefaultElements()
+                {
+                    GUIButton editButton = GUIButton.newEditButton(gui);
+                    gui.editButtonToCRandomRGBMap.put(editButton, new CRandomRGB());
+
+                    int index = 0;
+                    Namespace namespace = gui.namespaces.computeIfAbsent("Dye Indices", o -> new Namespace());
+                    while (namespace.contains("" + index)) index++;
+
+                    GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", "" + index, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
+
+                    GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                    duplicateButton.addClickActions(() ->
+                    {
+                        int lineIndex = getLineIndexContaining(dyeIndex);
+                        if (lineIndex == -1) lineIndex = lineCount() - 1;
+                        lineIndex++;
+                        GUIList.Line line = addLine(lineIndex);
+
+                        GUIButton editButton2 = (GUIButton) line.getLineElement(1);
+                        gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());
+                    });
+
+                    return new GUIElement[]{
+                            duplicateButton,
+                            editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()))),
+                            dyeIndex
+                    };
+                }
+            };
+            dyes.addRemoveChildActions((Predicate<GUIElement>) element ->
+            {
+                if (element instanceof GUIList.Line)
+                {
+                    GUIList.Line line = (GUIList.Line) element;
+                    GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                    gui.namespaces.get("Dye Indices").inputs.remove(labeledTextInput.input);
+                }
+                return false;
+            });
+            GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
+            gui.root.addAll(dyes, scrollbar);
+            for (Map.Entry<Integer, CRandomRGB> entry : dyeOverrideElement.dyeChannels.entrySet())
+            {
+                GUIList.Line line = dyes.addLine();
+                GUIButton editButton = (GUIButton) line.getLineElement(1);
+                gui.editButtonToCRandomRGBMap.put(editButton, entry.getValue());
+
+                ((GUILabeledTextInput) line.getLineElement(2)).setText("" + entry.getKey());
+            }
+
+
+            //Add main header actions
+            separator.addRecalcActions(() ->
+            {
+                dyes.height = 1 - (separator.y + separator.height);
+                scrollbar.height = 1 - (separator.y + separator.height);
+            });
+            done.addClickActions(() ->
+            {
+                //Validation
+                for (GUIList.Line line : dyes.getLines())
+                {
+                    if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+                }
+
+
+                //Processing
+                dyeOverrideElement.dyeChannels.clear();
+                for (GUIList.Line line : dyes.getLines())
+                {
+                    GUIButton editButton = (GUIButton) line.getLineElement(1);
+                    GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(2);
+                    dyeOverrideElement.dyeChannels.put(AW_DYE_INDEX_FILTER.parse(index.getText()), gui.editButtonToCRandomRGBMap.get(editButton));
                 }
 
 
