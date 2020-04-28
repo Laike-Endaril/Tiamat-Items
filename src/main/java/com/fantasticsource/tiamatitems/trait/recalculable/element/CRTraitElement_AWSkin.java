@@ -52,7 +52,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public int requiredArgumentCount()
     {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
             File[] limitedFiles = new File[Tools.min(Tools.max((int) (files.length * multipliedArgs[0]), 1), files.length)];
             System.arraycopy(files, 0, limitedFiles, 0, limitedFiles.length);
 
-            File chosen = Tools.choose(limitedFiles);
+            File chosen = limitedFiles[(int) ((double) baseArgs[1] / Integer.MAX_VALUE * limitedFiles.length)];
             StringBuilder shortName = new StringBuilder(chosen.getName());
             if (!chosen.isDirectory())
             {
