@@ -3,8 +3,9 @@ package com.fantasticsource.tiamatitems.trait.recalculable.element;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
+import com.fantasticsource.tiamatitems.dyes.CRandomRGB;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
-import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
@@ -82,6 +83,12 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
         for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet()) dyes.put(entry.getKey(), entry.getValue().generate());
 
+        //Dye Overrides, if they (already) exist
+        LinkedHashMap<Integer, Color> dyeOverrides = MiscTags.getDyeOverrides(stack);
+        if (dyeOverrides != null)
+        {
+            for (Map.Entry<Integer, Color> entry : dyeOverrides.entrySet()) dyes.put(entry.getKey(), entry.getValue());
+        }
 
         //Skin file(s)
         File file = getSkinOrFolder(AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder));

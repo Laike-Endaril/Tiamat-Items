@@ -14,7 +14,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
-import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
+import com.fantasticsource.tiamatitems.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 
 import java.util.LinkedHashMap;

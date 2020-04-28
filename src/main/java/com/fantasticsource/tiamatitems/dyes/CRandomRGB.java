@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes;
+package com.fantasticsource.tiamatitems.dyes;
 
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;

@@ -2,9 +2,13 @@ package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
@@ -431,6 +435,80 @@ public class MiscTags
         if (!compound.hasKey("durability")) return;
 
         compound.removeTag("durability");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
+
+    public static void setDyeOverrides(ItemStack stack, LinkedHashMap<Integer, Color> dyes)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        if (!compound.hasKey("dyeOverrides")) compound.setTag("dyeOverrides", new NBTTagCompound());
+        compound = compound.getCompoundTag("dyeOverrides");
+
+        for (Map.Entry<Integer, Color> entry : dyes.entrySet())
+        {
+            Color color = entry.getValue();
+            NBTTagCompound dye = new NBTTagCompound();
+            dye.setByte("r", (byte) color.r());
+            dye.setByte("g", (byte) color.g());
+            dye.setByte("b", (byte) color.b());
+            dye.setByte("t", (byte) color.a());
+
+            compound.setTag("" + entry.getKey(), dye);
+        }
+    }
+
+    public static LinkedHashMap<Integer, Color> getDyeOverrides(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return null;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("dyeOverrides")) return null;
+
+        compound = compound.getCompoundTag("dyeOverrides");
+        LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
+        int channel;
+        for (String key : compound.getKeySet())
+        {
+            try
+            {
+                channel = Integer.parseInt(key);
+            }
+            catch (NumberFormatException e)
+            {
+                continue;
+            }
+
+            NBTTagCompound dye = compound.getCompoundTag(key);
+            dyes.put(channel, new Color(dye.getByte("r"), dye.getByte("g"), dye.getByte("b"), dye.getByte("t")));
+        }
+
+        return dyes;
+    }
+
+    public static void clearDyeOverrides(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("dyeOverrides")) return;
+
+        compound.removeTag("dyeOverrides");
         if (compound.hasNoTags())
         {
             mainTag.removeTag(DOMAIN);
