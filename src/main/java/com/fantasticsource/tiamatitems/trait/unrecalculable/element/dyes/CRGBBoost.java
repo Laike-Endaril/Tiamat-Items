@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatitems.dyes;
+package com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes;
 
 import com.fantasticsource.tools.component.CInt;
 import io.netty.buffer.ByteBuf;

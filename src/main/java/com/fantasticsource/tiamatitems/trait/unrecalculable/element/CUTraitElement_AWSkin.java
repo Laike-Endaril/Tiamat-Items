@@ -3,7 +3,7 @@ package com.fantasticsource.tiamatitems.trait.unrecalculable.element;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.tiamatitems.dyes.CRandomRGB;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tools.Tools;

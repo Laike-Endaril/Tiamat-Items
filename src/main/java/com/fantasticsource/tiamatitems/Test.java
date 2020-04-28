@@ -9,9 +9,9 @@ import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
-import com.fantasticsource.tiamatitems.dyes.CRGBBoost;
-import com.fantasticsource.tiamatitems.dyes.CRGBGrayscale;
-import com.fantasticsource.tiamatitems.dyes.CRandomRGB;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBGrayscale;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 

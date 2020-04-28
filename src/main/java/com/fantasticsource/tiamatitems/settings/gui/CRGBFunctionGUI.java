@@ -5,9 +5,9 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
-import com.fantasticsource.tiamatitems.dyes.CRGBBoost;
-import com.fantasticsource.tiamatitems.dyes.CRGBFunction;
-import com.fantasticsource.tiamatitems.dyes.CRGBGrayscale;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBBoost;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBFunction;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRGBGrayscale;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class CRGBFunctionGUI extends GUIScreen

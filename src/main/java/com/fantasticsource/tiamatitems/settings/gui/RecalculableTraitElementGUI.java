@@ -17,7 +17,7 @@ import com.fantasticsource.mctools.gui.element.view.GUIList.Line;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
-import com.fantasticsource.tiamatitems.dyes.CRandomRGB;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
 
 import java.util.LinkedHashMap;
