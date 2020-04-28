@@ -492,7 +492,7 @@ public class MiscTags
             }
 
             NBTTagCompound dye = compound.getCompoundTag(key);
-            dyes.put(channel, new Color(dye.getByte("r"), dye.getByte("g"), dye.getByte("b"), dye.getByte("t")));
+            dyes.put(channel, new Color(dye.getByte("r") & 0xff, dye.getByte("g") & 0xff, dye.getByte("b") & 0xff, dye.getByte("t") & 0xff));
         }
 
         return dyes;

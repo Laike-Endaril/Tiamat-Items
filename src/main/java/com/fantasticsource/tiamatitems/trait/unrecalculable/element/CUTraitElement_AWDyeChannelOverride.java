@@ -41,7 +41,7 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
 
         MiscTags.setDyeOverrides(stack, dyes);
 
-        String stackString = stack.serializeNBT().toString();
+        String stackString = stack.getTagCompound().toString();
         for (Map.Entry<Integer, Color> entry : dyes.entrySet())
         {
             int channel = entry.getKey();
