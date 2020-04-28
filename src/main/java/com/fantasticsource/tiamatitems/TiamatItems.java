@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
@@ -13,6 +14,7 @@ import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,7 +49,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.io.IOException;
 import java.util.List;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.034k,);required-after:tiamatactions@[1.12.2.000,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.034l,);required-after:tiamatactions@[1.12.2.000,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -245,5 +248,14 @@ public class TiamatItems
 
         //Assembly test
 //        ItemAssembly.assemble(player.inventory.getStackInSlot(0), player.inventory.getStackInSlot(1), player.inventory.getStackInSlot(2), player.inventory.getStackInSlot(3));
+    }
+
+    @SubscribeEvent
+    public static void test2(TickEvent.PlayerTickEvent event)
+    {
+        EntityLivingBase livingBase = event.player;
+        if (livingBase.world.isRemote) return;
+
+        RenderModes.setRenderMode(livingBase, "DayNight", livingBase.world.isDaytime() ? "Day" : "Night");
     }
 }
