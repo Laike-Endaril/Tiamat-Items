@@ -1,13 +1,10 @@
+Fix items rendering their transient skins *onto your body* when holding them in-hand
+
+
+
 Add max stack count setting
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken
-
-Array counts on parent GUIs?
-Dropdown for attribute selections?
-
-
-
-Fix items rendering their transient skins *onto your body* when holding them in-hand
 
 
 
@@ -32,7 +29,7 @@ Completely rework
 
 Rarity border render
 
-Lock symbol for soulbound
+Lock symbol for soulbound?
 
 Improve render via back-to-front voxel ordering...
 ...get current center-of-screen and use distances?
