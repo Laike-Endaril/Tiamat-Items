@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
-import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
+import static com.fantasticsource.tiamatitems.api.TiamatItemsAPI.DOMAIN;
 
 public class AssemblyTags
 {

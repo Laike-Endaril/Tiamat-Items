@@ -20,6 +20,7 @@ import com.fantasticsource.tiamatactions.gui.GUIAction;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TextureCache;
 import com.fantasticsource.tiamatitems.TiamatItems;
+import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import com.fantasticsource.tiamatitems.gui.LayerSelectionGUI;
 import com.fantasticsource.tiamatitems.nbt.*;
 import com.fantasticsource.tools.Tools;
@@ -68,7 +69,7 @@ public class ItemEditorGUI extends GUIScreen
 
         //General tab
         GUILabeledTextInput name = new GUILabeledTextInput(gui, "Name: ", stack.getDisplayName(), FilterNotEmpty.INSTANCE);
-        GUIText slotting = new GUIText(gui, MiscTags.getItemSlotting(stack)).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
+        GUIText slotting = new GUIText(gui, TiamatItemsAPI.getItemSlotting(stack)).setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
         GUILabeledTextInput level = new GUILabeledTextInput(gui, "Level: ", "" + MiscTags.getItemLevel(stack), FilterInt.INSTANCE);
         GUILabeledTextInput levelReq = new GUILabeledTextInput(gui, "Level Requirement: ", "" + MiscTags.getItemLevelReq(stack), FilterInt.INSTANCE);
         GUILabeledTextInput value = new GUILabeledTextInput(gui, "Value: ", "" + MiscTags.getItemValue(stack), FilterInt.INSTANCE);
@@ -384,7 +385,7 @@ public class ItemEditorGUI extends GUIScreen
 
             //General
             stack.setStackDisplayName(name.getText());
-            MiscTags.setItemSlotting(stack, slotting.getText());
+            TiamatItemsAPI.setItemSlotting(stack, slotting.getText());
             MiscTags.setItemLevel(stack, FilterInt.INSTANCE.parse(level.getText()));
             MiscTags.setItemLevelReq(stack, FilterInt.INSTANCE.parse(levelReq.getText()));
             MiscTags.setItemValue(stack, FilterInt.INSTANCE.parse(value.getText()));

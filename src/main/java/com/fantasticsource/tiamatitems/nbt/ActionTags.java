@@ -3,7 +3,7 @@ package com.fantasticsource.tiamatitems.nbt;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
+import static com.fantasticsource.tiamatitems.api.TiamatItemsAPI.DOMAIN;
 
 public class ActionTags
 {
