@@ -1,7 +1,3 @@
-Fix items rendering their transient skins *onto your body* when holding them in-hand
-
-
-
 Add max stack count setting
 
 Durability; what counts as broken, and a "broken" state if any required parts are broken
