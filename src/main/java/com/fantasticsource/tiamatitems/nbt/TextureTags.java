@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 
-import static com.fantasticsource.tiamatitems.api.TiamatItemsAPI.DOMAIN;
+import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class TextureTags
 {

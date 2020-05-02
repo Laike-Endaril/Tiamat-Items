@@ -2,7 +2,6 @@ package com.fantasticsource.tiamatitems.trait;
 
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.TiamatItems;
-import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TraitTags;
@@ -68,7 +67,7 @@ public class CItemType extends Component
         MiscTags.setItemLevel(stack, level);
         MiscTags.setItemLevelReq(stack, level);
         MiscTags.setItemRarity(stack, rarity);
-        TiamatItemsAPI.setItemSlotting(stack, slotting);
+        MiscTags.setItemSlotting(stack, slotting);
 
 
         //Prep generation vars

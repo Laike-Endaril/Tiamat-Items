@@ -4,8 +4,8 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.Slottings;
-import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import com.fantasticsource.tiamatitems.compat.Compat;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -123,7 +123,7 @@ public class TransientAttributeModEvent extends PlayerEvent
 
     private static void handleGenericModsForSlot(EntityPlayerMP player, int slot, int slotOffset, String slotType, ItemStack stack)
     {
-        if (!Slottings.slotValidForSlotting(TiamatItemsAPI.getItemSlotting(stack), slot + slotOffset, player)) return;
+        if (!Slottings.slotValidForSlotting(MiscTags.getItemSlotting(stack), slot + slotOffset, player)) return;
 
 
         for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
