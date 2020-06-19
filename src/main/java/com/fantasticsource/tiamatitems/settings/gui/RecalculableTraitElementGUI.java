@@ -437,6 +437,35 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
+        else if (traitElement.getClass() == CRTraitElement_InventorySlots.class)
+        {
+            CRTraitElement_InventorySlots inventorySlotsElement = (CRTraitElement_InventorySlots) traitElement;
+
+            GUILabeledTextInput minCount = new GUILabeledTextInput(gui, " Min Count: ", "" + inventorySlotsElement.minCount, FilterInt.INSTANCE);
+            GUILabeledTextInput maxCount = new GUILabeledTextInput(gui, " Max Count: ", "" + inventorySlotsElement.maxCount, FilterInt.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    minCount,
+                    new GUITextSpacer(gui),
+                    maxCount
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!minCount.valid() || !maxCount.valid()) return;
+
+
+                //Processing
+                inventorySlotsElement.minCount = FilterInt.INSTANCE.parse(minCount.getText());
+                inventorySlotsElement.maxCount = FilterInt.INSTANCE.parse(maxCount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
         else
         {
             gui.root.add(new GUIText(gui, "UNKNOWN TRAIT ELEMENT CLASS: " + traitElement.getClass()));
