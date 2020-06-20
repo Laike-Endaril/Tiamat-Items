@@ -7,6 +7,7 @@ import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
+import com.fantasticsource.tiamatitems.nbt.DropTransformationTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.BlockSettings;
 import com.fantasticsource.tiamatitems.settings.CSettings;
@@ -93,6 +94,7 @@ public class TiamatItems
         Network.init();
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
         MinecraftForge.EVENT_BUS.register(TransientAttributeModEvent.class);
+        MinecraftForge.EVENT_BUS.register(DropTransformationTags.class);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {

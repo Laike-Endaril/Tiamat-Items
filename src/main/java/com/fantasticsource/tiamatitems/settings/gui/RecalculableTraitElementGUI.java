@@ -19,6 +19,7 @@ import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElem
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -373,6 +374,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 skinElement.skinType = skinType.getText();
                 skinElement.isTransient = isTransient.getValue();
                 skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
+
                 skinElement.dyeChannels.clear();
                 for (Line line : dyes.getLines())
                 {
@@ -460,6 +462,76 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 //Processing
                 inventorySlotsElement.minCount = FilterInt.INSTANCE.parse(minCount.getText());
                 inventorySlotsElement.maxCount = FilterInt.INSTANCE.parse(maxCount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CRTraitElement_TransformItemOnDrop.class)
+        {
+            CRTraitElement_TransformItemOnDrop dropTransformElement = (CRTraitElement_TransformItemOnDrop) traitElement;
+
+            GUILabeledTextInput rarity = new GUILabeledTextInput(gui, " Rarity: ", "" + dropTransformElement.rarity, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput minLevel = new GUILabeledTextInput(gui, " Min Level: ", "" + dropTransformElement.minLevel, FilterInt.INSTANCE);
+            GUILabeledTextInput maxLevel = new GUILabeledTextInput(gui, " Max Level: ", "" + dropTransformElement.maxLevel, FilterInt.INSTANCE);
+            GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    rarity,
+                    new GUITextSpacer(gui),
+                    minLevel,
+                    new GUITextSpacer(gui),
+                    maxLevel,
+                    new GUITextSpacer(gui),
+                    new GUIText(gui, TextFormatting.YELLOW + "Item Types..."),
+                    separator
+            );
+
+            GUIList itemTypes = new GUIList(gui, true, 0.98, 1 - (separator.y + separator.height))
+            {
+                @Override
+                public GUIElement[] newLineDefaultElements()
+                {
+                    return new GUIElement[]{new GUILabeledTextInput(gui, "Item Type: ", "", FilterNotEmpty.INSTANCE)};
+                }
+            };
+            GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, itemTypes);
+            gui.root.addAll(itemTypes, scrollbar);
+            for (String itemType : dropTransformElement.itemTypes)
+            {
+                Line line = itemTypes.addLine();
+                ((GUILabeledTextInput) line.getLineElement(0)).setText(itemType);
+            }
+
+
+            //Add main header actions
+            separator.addRecalcActions(() ->
+            {
+                itemTypes.height = 1 - (separator.y + separator.height);
+                scrollbar.height = 1 - (separator.y + separator.height);
+            });
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!rarity.valid() || !minLevel.valid() || !maxLevel.valid()) return;
+                for (Line line : itemTypes.getLines())
+                {
+                    if (!((GUILabeledTextInput) line.getLineElement(0)).valid()) return;
+                }
+
+
+                //Processing
+                dropTransformElement.rarity = rarity.getText();
+                dropTransformElement.minLevel = FilterInt.INSTANCE.parse(minLevel.getText());
+                dropTransformElement.maxLevel = FilterInt.INSTANCE.parse(maxLevel.getText());
+
+                dropTransformElement.itemTypes.clear();
+                for (Line line : itemTypes.getLines())
+                {
+                    GUILabeledTextInput itemType = (GUILabeledTextInput) line.getLineElement(0);
+                    dropTransformElement.itemTypes.add(itemType.getText());
+                }
 
 
                 //Close GUI
