@@ -53,7 +53,7 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            list = CAction.allActions.keySet().toArray(new String[0]);
+            list = CAction.ALL_ACTIONS.keySet().toArray(new String[0]);
             buf.writeInt(list.length);
             for (String s : list) ByteBufUtils.writeUTF8String(buf, s);
         }
