@@ -102,7 +102,7 @@ public class TransientAttributeModEvent extends PlayerEvent
             }
 
             //Tiamat slots
-            if (Compat.tiamatrpg)
+            if (Compat.tiamatinventory)
             {
                 int slot = 0;
                 for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))

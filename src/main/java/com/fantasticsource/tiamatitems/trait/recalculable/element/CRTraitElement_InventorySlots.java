@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class CRTraitElement_InventorySlots extends CRecalculableTraitElement
 {
-    protected static final String TRPG_MODID = "tiamatrpg";
+    protected static final String TIAMAT_INVENTORY_MODID = "tiamatinventory";
 
     public int minCount = 0, maxCount = 1;
 
@@ -44,27 +44,27 @@ public class CRTraitElement_InventorySlots extends CRecalculableTraitElement
         int count = minCount + (int) ((double) baseArgs[0] / Integer.MAX_VALUE * (maxCount - minCount + 1));
 
 
-        //From Tiamat RPG ... SlotDataTags class
+        //From Tiamat Inventory ... SlotDataTags class
         if (count == 0)
         {
             if (!stack.hasTagCompound()) return;
 
             NBTTagCompound mainTag = stack.getTagCompound();
-            if (!mainTag.hasKey(TRPG_MODID)) return;
+            if (!mainTag.hasKey(TIAMAT_INVENTORY_MODID)) return;
 
-            NBTTagCompound compound = mainTag.getCompoundTag(TRPG_MODID);
+            NBTTagCompound compound = mainTag.getCompoundTag(TIAMAT_INVENTORY_MODID);
             if (!compound.hasKey("invSlotCount")) return;
 
             compound.removeTag("invSlotCount");
-            if (compound.hasNoTags()) mainTag.removeTag(TRPG_MODID);
+            if (compound.hasNoTags()) mainTag.removeTag(TIAMAT_INVENTORY_MODID);
             return;
         }
 
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey(TRPG_MODID)) compound.setTag(TRPG_MODID, new NBTTagCompound());
-        compound = compound.getCompoundTag(TRPG_MODID);
+        if (!compound.hasKey(TIAMAT_INVENTORY_MODID)) compound.setTag(TIAMAT_INVENTORY_MODID, new NBTTagCompound());
+        compound = compound.getCompoundTag(TIAMAT_INVENTORY_MODID);
 
         compound.setInteger("invSlotCount", count);
     }

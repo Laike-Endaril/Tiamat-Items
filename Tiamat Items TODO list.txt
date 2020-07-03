@@ -1,6 +1,8 @@
-Add max stack count setting
+Set definitions
 
-Durability; what counts as broken, and a "broken" state if any required parts are broken
+
+
+Add max stack count setting
 
 
 

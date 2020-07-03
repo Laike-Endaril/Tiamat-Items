@@ -50,7 +50,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.io.IOException;
 import java.util.List;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.034n,);required-after:tiamatactions@[1.12.2.000,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.034zr,);required-after:tiamatactions@[1.12.2.000o,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -106,7 +106,7 @@ public class TiamatItems
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event)
     {
-        Compat.tiamatrpg = Loader.isModLoaded("tiamatrpg");
+        Compat.tiamatinventory = Loader.isModLoaded("tiamatinventory");
         Compat.baubles = Loader.isModLoaded("baubles");
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
