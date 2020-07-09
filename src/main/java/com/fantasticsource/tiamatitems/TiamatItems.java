@@ -55,7 +55,7 @@ public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
     public static final String NAME = "Tiamat Items";
-    public static final String VERSION = "1.12.2.000t";
+    public static final String VERSION = "1.12.2.000u";
     public static final String DOMAIN = "tiamatrpg";
 
 
