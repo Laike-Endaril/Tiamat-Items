@@ -1,13 +1,16 @@
 package com.fantasticsource.tiamatitems;
 
+import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.PlayerData;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -27,6 +30,7 @@ public class Commands extends CommandBase
     static
     {
         subcommands.put("generate", 2);
+        subcommands.put("setvalue", 2);
     }
 
 
@@ -52,7 +56,8 @@ public class Commands extends CommandBase
     {
         if (sender.canUseCommand(2, getName()))
         {
-            return AQUA + "/" + getName() + " generate <itemType> <level> <rarity> [playername]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment");
+            return AQUA + "/" + getName() + " generate <itemType> <level> <rarity> [playername]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment")
+                    + "\n" + AQUA + "/" + getName() + " setvalue <value>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvalue.comment");
         }
 
         return I18n.translateToLocalFormatted("commands.generic.permission");
@@ -163,6 +168,41 @@ public class Commands extends CommandBase
                 }
 
                 MCTools.give(target, gen.generateItem(level, rarity));
+
+                break;
+
+
+            case "setvalue":
+                if (!(sender instanceof EntityPlayerMP))
+                {
+                    notifyCommandListener(sender, this, MODID + ".error.notPlayer");
+                    return;
+                }
+                if (args.length != 2)
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                int value;
+                try
+                {
+                    value = Integer.parseInt(args[1]);
+                }
+                catch (NumberFormatException e)
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                ItemStack stack = GlobalInventory.getVanillaMainhandItem((EntityPlayerMP) sender);
+                if (stack.isEmpty())
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                MiscTags.setItemValue(stack, value);
 
                 break;
 
