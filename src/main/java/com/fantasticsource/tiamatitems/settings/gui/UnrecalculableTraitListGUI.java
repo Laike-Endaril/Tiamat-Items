@@ -6,9 +6,12 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
+import com.fantasticsource.mctools.gui.element.text.GUILabeledBoolean;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
@@ -74,6 +77,11 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                     nameElement.setText(trait.name);
 
                     gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
+
+                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.isGood);
+
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
                 });
 
                 return new GUIElement[]
@@ -81,7 +89,13 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                                 duplicateButton,
                                 GUIButton.newListButton(gui).addClickActions(() -> UnrecalculableTraitGUI.show(name.getText(), gui.nameElementToUnrecalculableTraitMap.get(name))),
                                 new GUIElement(gui, 1, 0),
-                                name
+                                name,
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledBoolean(gui, " Is Good: ", new CUnrecalculableTrait().isGood),
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledTextInput(gui, " Min Value: ", "" + new CUnrecalculableTrait().minValue, FilterFloat.INSTANCE),
+                                new GUIElement(gui, 1, 0),
+                                new GUILabeledTextInput(gui, " Max Value: ", "" + new CUnrecalculableTrait().maxValue, FilterFloat.INSTANCE),
                         };
             }
         };
@@ -107,6 +121,9 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
             nameElement.setText(trait.name);
             gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
+            ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.isGood);
+            ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
+            ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
         }
 
 
@@ -123,6 +140,8 @@ public class UnrecalculableTraitListGUI extends GUIScreen
             for (GUIList.Line line : unrecalculableTraits.getLines())
             {
                 if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(7)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(9)).valid()) return;
             }
 
 
@@ -133,6 +152,9 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                 GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
                 CUnrecalculableTrait trait = gui.nameElementToUnrecalculableTraitMap.get(nameElement);
                 trait.name = nameElement.getText();
+                trait.isGood = ((GUILabeledBoolean) line.getLineElement(5)).getValue();
+                trait.minValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(7)).getText());
+                trait.maxValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
                 list.put(trait.name, trait);
             }
 

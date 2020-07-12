@@ -16,7 +16,6 @@ import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
-    public String name = "";
     public boolean addToCoreOnAssembly = true;
     public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
 
