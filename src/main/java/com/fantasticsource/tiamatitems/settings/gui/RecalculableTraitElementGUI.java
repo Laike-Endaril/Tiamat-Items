@@ -468,6 +468,39 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
+        else if (traitElement.getClass() == CRTraitElement_GenericDouble.class)
+        {
+            CRTraitElement_GenericDouble genericDoubleElement = (CRTraitElement_GenericDouble) traitElement;
+
+            GUILabeledTextInput name = new GUILabeledTextInput(gui, " Name: ", genericDoubleElement.name, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + genericDoubleElement.minAmount, FilterInt.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + genericDoubleElement.maxAmount, FilterInt.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    name,
+                    new GUITextSpacer(gui),
+                    minAmount,
+                    new GUITextSpacer(gui),
+                    maxAmount
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!name.valid() || !minAmount.valid() || !maxAmount.valid()) return;
+
+
+                //Processing
+                genericDoubleElement.name = FilterNotEmpty.INSTANCE.parse(name.getText());
+                genericDoubleElement.minAmount = FilterInt.INSTANCE.parse(minAmount.getText());
+                genericDoubleElement.maxAmount = FilterInt.INSTANCE.parse(maxAmount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
         else if (traitElement.getClass() == CRTraitElement_TransformItemOnDrop.class)
         {
             CRTraitElement_TransformItemOnDrop dropTransformElement = (CRTraitElement_TransformItemOnDrop) traitElement;

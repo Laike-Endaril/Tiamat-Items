@@ -35,6 +35,7 @@ public class RecalculableTraitGUI extends GUIScreen
         OPTIONS.put(" Forced AW Skin Type Override", CRTraitElement_ForcedAWSkinTypeOverride.class);
         OPTIONS.put(" Durability", CRTraitElement_Durability.class);
         OPTIONS.put(" Inventory Slots", CRTraitElement_InventorySlots.class);
+        OPTIONS.put(" Generid Double", CRTraitElement_GenericDouble.class);
         OPTIONS.put(" Transform On Drop", CRTraitElement_TransformItemOnDrop.class);
     }
 

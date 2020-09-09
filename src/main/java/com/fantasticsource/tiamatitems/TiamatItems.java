@@ -50,7 +50,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.io.IOException;
 import java.util.List;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036g,);required-after:tiamatactions@[1.12.2.000s,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036y,);required-after:tiamatactions@[1.12.2.000s,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
