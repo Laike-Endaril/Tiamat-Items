@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
@@ -25,20 +26,20 @@ public class AssemblyTags
 
     public static int getState(ItemStack stack)
     {
-        ArrayList<PartSlot> partSlots = getPartSlots(stack);
+        ArrayList<IPartSlot> partSlots = getPartSlots(stack);
         if (partSlots.size() == 0) return STATE_FULL;
 
 
         boolean empty = true, full = true, usable = true;
         ItemStack part;
         int state = STATE_FULL;
-        for (PartSlot partSlot : partSlots)
+        for (IPartSlot partSlot : partSlots)
         {
-            part = partSlot.part;
+            part = partSlot.getPart();
             if (part.isEmpty())
             {
                 full = false;
-                if (partSlot.required) usable = false;
+                if (partSlot.getRequired()) usable = false;
             }
             else
             {
@@ -148,9 +149,9 @@ public class AssemblyTags
     }
 
 
-    public static ArrayList<PartSlot> getPartSlots(ItemStack stack)
+    public static ArrayList<IPartSlot> getPartSlots(ItemStack stack)
     {
-        ArrayList<PartSlot> result = new ArrayList<>();
+        ArrayList<IPartSlot> result = new ArrayList<>();
 
         if (!stack.hasTagCompound()) return result;
 
@@ -166,8 +167,8 @@ public class AssemblyTags
             compound = list.getCompoundTagAt(i);
 
             PartSlot slot = new PartSlot(compound.getString("type"));
-            slot.required = compound.getBoolean("required");
-            slot.part = new ItemStack(compound.getCompoundTag("part"));
+            slot.setRequired(compound.getBoolean("required"));
+            slot.setPart(new ItemStack(compound.getCompoundTag("part")));
 
             result.add(slot);
         }
@@ -175,7 +176,7 @@ public class AssemblyTags
         return result;
     }
 
-    public static void setPartSlots(ItemStack stack, ArrayList<PartSlot> partSlots)
+    public static void setPartSlots(ItemStack stack, ArrayList<IPartSlot> partSlots)
     {
         if (partSlots.size() == 0)
         {
@@ -192,12 +193,12 @@ public class AssemblyTags
         compound = compound.getCompoundTag(DOMAIN);
 
         NBTTagList list = new NBTTagList();
-        for (PartSlot partSlot : partSlots)
+        for (IPartSlot partSlot : partSlots)
         {
             NBTTagCompound partCompound = new NBTTagCompound();
-            partCompound.setString("type", partSlot.slotType);
-            if (partSlot.required) partCompound.setBoolean("required", true);
-            if (!partSlot.part.isEmpty()) partCompound.setTag("part", partSlot.part.serializeNBT());
+            partCompound.setString("type", partSlot.getSlotType());
+            if (partSlot.getRequired()) partCompound.setBoolean("required", true);
+            if (!partSlot.getPart().isEmpty()) partCompound.setTag("part", partSlot.getPart().serializeNBT());
 
             list.appendTag(partCompound);
         }

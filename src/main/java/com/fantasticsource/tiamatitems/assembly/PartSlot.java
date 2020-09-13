@@ -1,19 +1,20 @@
 package com.fantasticsource.tiamatitems.assembly;
 
+import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-public class PartSlot
+public class PartSlot implements IPartSlot
 {
     public static LinkedHashMap<String, HashSet<String>> validItemTypes = new LinkedHashMap<>();
 
 
-    public String slotType;
-    public boolean required;
-    public ItemStack part;
+    protected String slotType;
+    protected boolean required;
+    protected ItemStack part;
 
 
     public PartSlot(String slotType)
@@ -47,5 +48,42 @@ public class PartSlot
     public boolean partIsValidForSlot(ItemStack part)
     {
         return getValidItemTypes().contains(MiscTags.getItemTypeName(part));
+    }
+
+
+    @Override
+    public String getSlotType()
+    {
+        return slotType;
+    }
+
+    @Override
+    public void setSlotType(String slotType)
+    {
+        this.slotType = slotType;
+    }
+
+    @Override
+    public boolean getRequired()
+    {
+        return required;
+    }
+
+    @Override
+    public void setRequired(boolean required)
+    {
+        this.required = required;
+    }
+
+    @Override
+    public ItemStack getPart()
+    {
+        return part;
+    }
+
+    @Override
+    public void setPart(ItemStack part)
+    {
+        this.part = part;
     }
 }

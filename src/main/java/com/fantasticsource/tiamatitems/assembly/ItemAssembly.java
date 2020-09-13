@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -69,11 +70,11 @@ public class ItemAssembly
 
 
         int i = 0, optional = -1;
-        for (PartSlot slot : AssemblyTags.getPartSlots(core))
+        for (IPartSlot slot : AssemblyTags.getPartSlots(core))
         {
-            if (slot.part.isEmpty() && slot.partIsValidForSlot(part))
+            if (slot.getPart().isEmpty() && slot.partIsValidForSlot(part))
             {
-                if (slot.required) return putPartInSlot(core, i, part, recalcIfChanged, level);
+                if (slot.getRequired()) return putPartInSlot(core, i, part, recalcIfChanged, level);
                 else if (optional == -1) optional = i;
             }
             i++;
@@ -130,14 +131,14 @@ public class ItemAssembly
         if (part.isEmpty()) return removePartFromSlot(core, slot, recalcIfChanged, level);
 
 
-        ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(core);
         if (slot >= partSlots.size())
         {
             result.add(part);
             return result;
         }
 
-        PartSlot partSlot = partSlots.get(slot);
+        PartSlot partSlot = (PartSlot) partSlots.get(slot);
         if (!partSlot.partIsValidForSlot(part))
         {
             result.add(part);
@@ -188,10 +189,10 @@ public class ItemAssembly
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
-        ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(core);
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(core);
         if (slot > partSlots.size()) return new ArrayList<>();
 
-        PartSlot partSlot = partSlots.get(slot);
+        PartSlot partSlot = (PartSlot) partSlots.get(slot);
         ItemStack part = partSlot.part;
         if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part)) return new ArrayList<>();
 
@@ -227,11 +228,11 @@ public class ItemAssembly
 
 
         //Recalc parts, and if they still exist, count and queue them
-        ArrayList<PartSlot> partSlots = AssemblyTags.getPartSlots(stack), oldPartSlots = new ArrayList<>();
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(stack), oldPartSlots = new ArrayList<>();
         int partCount = 0;
-        for (PartSlot partSlot : partSlots)
+        for (IPartSlot partSlot : partSlots)
         {
-            ItemStack part = partSlot.part;
+            ItemStack part = partSlot.getPart();
             result.addAll(recalc(part, true));
             if (part.isEmpty()) continue;
 
@@ -248,7 +249,7 @@ public class ItemAssembly
             stack.setTagCompound(null);
             stack.setCount(0);
 
-            for (PartSlot partSlot : oldPartSlots) result.add(partSlot.part);
+            for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
             return result;
         }
 
@@ -260,7 +261,7 @@ public class ItemAssembly
             stack.setTagCompound(null);
             stack.setCount(0);
 
-            for (PartSlot partSlot : oldPartSlots) result.add(partSlot.part);
+            for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
             return result;
         }
 
@@ -285,13 +286,13 @@ public class ItemAssembly
         {
             ItemStack part = oldPartSlot.part;
 
-            for (PartSlot newPartSlot : partSlots)
+            for (IPartSlot newPartSlot : partSlots)
             {
-                if (!newPartSlot.part.isEmpty()) continue;
+                if (!newPartSlot.getPart().isEmpty()) continue;
 
-                if (newPartSlot.slotType.equals(oldPartSlot.slotType) && newPartSlot.required == oldPartSlot.required && newPartSlot.partIsValidForSlot(part))
+                if (newPartSlot.getSlotType().equals(oldPartSlot.slotType) && newPartSlot.getRequired() == oldPartSlot.required && newPartSlot.partIsValidForSlot(part))
                 {
-                    newPartSlot.part = part;
+                    newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
                 }
@@ -303,13 +304,13 @@ public class ItemAssembly
         {
             ItemStack part = oldPartSlot.part;
 
-            for (PartSlot newPartSlot : partSlots)
+            for (IPartSlot newPartSlot : partSlots)
             {
-                if (!newPartSlot.part.isEmpty()) continue;
+                if (!newPartSlot.getPart().isEmpty()) continue;
 
-                if (newPartSlot.slotType.equals(oldPartSlot.slotType) && newPartSlot.partIsValidForSlot(part))
+                if (newPartSlot.getSlotType().equals(oldPartSlot.slotType) && newPartSlot.partIsValidForSlot(part))
                 {
-                    newPartSlot.part = part;
+                    newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
                 }
@@ -321,13 +322,13 @@ public class ItemAssembly
         {
             ItemStack part = oldPartSlot.part;
 
-            for (PartSlot newPartSlot : partSlots)
+            for (IPartSlot newPartSlot : partSlots)
             {
-                if (!newPartSlot.part.isEmpty()) continue;
+                if (!newPartSlot.getPart().isEmpty()) continue;
 
                 if (newPartSlot.partIsValidForSlot(part))
                 {
-                    newPartSlot.part = part;
+                    newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
                 }
@@ -335,9 +336,9 @@ public class ItemAssembly
         }
 
         //Add remaining parts to list of resulting leftovers
-        for (PartSlot oldPartSlot : oldPartSlots)
+        for (IPartSlot oldPartSlot : oldPartSlots)
         {
-            result.add(oldPartSlot.part);
+            result.add(oldPartSlot.getPart());
         }
 
 
@@ -345,9 +346,9 @@ public class ItemAssembly
         if (!core.hasTagCompound()) core.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = core.getTagCompound();
         int value = MiscTags.getItemValue(core);
-        for (PartSlot partSlot : partSlots)
+        for (IPartSlot partSlot : partSlots)
         {
-            ItemStack part = partSlot.part;
+            ItemStack part = partSlot.getPart();
             MCTools.mergeNBT(compound, false, part.getTagCompound());
             value += MiscTags.getItemValue(part);
         }
