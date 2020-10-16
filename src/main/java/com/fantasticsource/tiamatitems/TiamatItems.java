@@ -1,7 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
@@ -15,11 +14,9 @@ import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -30,7 +27,6 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -40,7 +36,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -233,34 +228,5 @@ public class TiamatItems
                 ClientData.badStackToGoodStack.remove(stack);
             }
         }
-    }
-
-
-    @SubscribeEvent
-    public static void test(PlayerInteractEvent.EntityInteractSpecific event)
-    {
-        //TODO Remove all this
-        if (!MCTools.devEnv()) return;
-        if (event.getSide() == Side.CLIENT || event.getHand() == EnumHand.OFF_HAND) return;
-
-        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-
-        //Durability test
-        player.inventory.getStackInSlot(0).damageItem(1, player);
-
-        //Assembly test
-//        ItemAssembly.assemble(player.inventory.getStackInSlot(0), player.inventory.getStackInSlot(1), player.inventory.getStackInSlot(2), player.inventory.getStackInSlot(3));
-    }
-
-    @SubscribeEvent
-    public static void test2(TickEvent.PlayerTickEvent event)
-    {
-        //TODO Remove all this
-        if (!MCTools.devEnv()) return;
-
-        EntityLivingBase livingBase = event.player;
-        if (livingBase.world.isRemote) return;
-
-        RenderModes.setRenderMode(livingBase, "DayNight", livingBase.world.isDaytime() ? "Day" : "Night");
     }
 }
