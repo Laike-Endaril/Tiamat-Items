@@ -1,3 +1,14 @@
+Fix recalc traits being applied twice
+CItemType.applyItemType()
+...trait.generateNBT()
+......element.applyToItem()
+...trait.applyToItem()
+......element.applyToItem()
+
+Fix part slot validity checks (allow setting of multiple possible item types in GUI)
+
+
+
 Add max stack count setting
 
 
