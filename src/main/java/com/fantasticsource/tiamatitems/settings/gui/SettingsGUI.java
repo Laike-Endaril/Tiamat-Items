@@ -454,7 +454,7 @@ public class SettingsGUI extends GUIScreen
             {
                 Namespace namespace = gui.namespaces.computeIfAbsent("Slot Types", o -> new Namespace());
                 String nameString = namespace.getFirstAvailableNumberedName("SlotType");
-                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Set Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Slot Types");
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Slot Type Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Slot Types");
 
                 gui.nameElementToSlotTypeMap.put(name, new LinkedHashSet<>());
 
