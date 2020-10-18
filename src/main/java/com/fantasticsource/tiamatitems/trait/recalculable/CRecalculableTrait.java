@@ -48,8 +48,6 @@ public final class CRecalculableTrait extends CTrait
         double averagedRoll = 0, rollUsageCount = 0;
         for (CRecalculableTraitElement element : elements)
         {
-            element.applyToItem(stack, baseArguments, multipliedArgs);
-
             for (int i = 0; i < element.requiredArgumentCount(); i++)
             {
                 averagedRoll += multipliedArgs[i];
