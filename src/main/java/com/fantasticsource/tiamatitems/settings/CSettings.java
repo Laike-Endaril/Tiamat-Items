@@ -17,7 +17,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -30,13 +32,12 @@ public class CSettings extends Component
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
     public int itemGenConfigVersion = 0;
     public int maxItemLevel = 20;
-    public double
-            baseMultiplier = 1,
-            multiplierBonusPerLevel = 1;
+    public double baseMultiplier = 1, multiplierBonusPerLevel = 1;
     public LinkedHashMap<String, CRecalculableTraitPool> recalcTraitPools = new LinkedHashMap<>();
     public LinkedHashMap<String, CUnrecalculableTraitPool> unrecalcTraitPools = new LinkedHashMap<>();
     public LinkedHashMap<String, CRarity> rarities = new LinkedHashMap<>();
     public LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
+    public LinkedHashMap<String, LinkedHashSet<String>> slotTypes = new LinkedHashMap<>();
 
     public static long getVersion()
     {
@@ -132,6 +133,19 @@ public class CSettings extends Component
             buf.writeDouble(entry.getValue());
         }
 
+
+        buf.writeInt(slotTypes.size());
+        for (Map.Entry<String, LinkedHashSet<String>> entry : slotTypes.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            buf.writeInt(entry.getValue().size());
+            for (String itemType : entry.getValue())
+            {
+                ByteBufUtils.writeUTF8String(buf, itemType);
+            }
+        }
+
+
         return this;
     }
 
@@ -177,6 +191,20 @@ public class CSettings extends Component
         {
             attributeBalanceMultipliers.put(ByteBufUtils.readUTF8String(buf), buf.readDouble());
         }
+
+
+        slotTypes.clear();
+        for (int i = buf.readInt(); i > 0; i--)
+        {
+            String slotType = ByteBufUtils.readUTF8String(buf);
+            LinkedHashSet<String> itemTypes = new LinkedHashSet<>();
+            for (int i2 = buf.readInt(); i2 > 0; i2--)
+            {
+                itemTypes.add(ByteBufUtils.readUTF8String(buf));
+            }
+            slotTypes.put(slotType, itemTypes);
+        }
+
 
         return this;
     }
@@ -225,6 +253,19 @@ public class CSettings extends Component
             cs.set(entry.getKey()).save(stream);
             cd.set(entry.getValue()).save(stream);
         }
+
+
+        ci.set(slotTypes.size()).save(stream);
+        for (Map.Entry<String, LinkedHashSet<String>> entry : slotTypes.entrySet())
+        {
+            cs.set(entry.getKey()).save(stream);
+            ci.set(entry.getValue().size()).save(stream);
+            for (String itemType : entry.getValue())
+            {
+                cs.set(itemType).save(stream);
+            }
+        }
+
 
         return this;
     }
@@ -276,6 +317,20 @@ public class CSettings extends Component
         {
             attributeBalanceMultipliers.put(cs.load(stream).value, cd.load(stream).value);
         }
+
+
+        slotTypes.clear();
+        for (int i = ci.load(stream).value; i > 0; i--)
+        {
+            String slotType = cs.load(stream).value;
+            LinkedHashSet<String> itemTypes = new LinkedHashSet<>();
+            for (int i2 = ci.load(stream).value; i2 > 0; i2--)
+            {
+                itemTypes.add(cs.load(stream).value);
+            }
+            slotTypes.put(slotType, itemTypes);
+        }
+
 
         return this;
     }

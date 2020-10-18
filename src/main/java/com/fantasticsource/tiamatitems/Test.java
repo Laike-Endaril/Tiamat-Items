@@ -1,6 +1,5 @@
 package com.fantasticsource.tiamatitems;
 
-import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
@@ -16,7 +15,6 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.*;
@@ -62,10 +60,10 @@ public class Test
 
     public static void createSocketPool()
     {
-        HashSet<String> validItemTypes = new HashSet<>();
+        LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Gem");
         validItemTypes.add("Rune");
-        PartSlot.validItemTypes.put("Socket", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("Socket", validItemTypes);
 
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "Sockets";
@@ -141,9 +139,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        HashSet<String> validItemTypes = new HashSet<>();
+        LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axehead");
-        PartSlot.validItemTypes.put("2H Axehead", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("2H Axehead", validItemTypes);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
@@ -158,9 +156,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        validItemTypes = new HashSet<>();
+        validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axe Handle");
-        PartSlot.validItemTypes.put("2H Axe Handle", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("2H Axe Handle", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
@@ -175,9 +173,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        validItemTypes = new HashSet<>();
+        validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axe Skin");
-        PartSlot.validItemTypes.put("2H Axe Skin", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("2H Axe Skin", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
@@ -384,9 +382,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        HashSet<String> validItemTypes = new HashSet<>();
+        LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Plates");
-        PartSlot.validItemTypes.put("Chestplate Plates", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("Chestplate Plates", validItemTypes);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Plates";
@@ -401,9 +399,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        validItemTypes = new HashSet<>();
+        validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Straps");
-        PartSlot.validItemTypes.put("Chestplate Straps", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("Chestplate Straps", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Straps";
@@ -418,9 +416,9 @@ public class Test
         itemType.staticRecalculableTraits.put(trait.name, trait);
 
 
-        validItemTypes = new HashSet<>();
+        validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Skin");
-        PartSlot.validItemTypes.put("Chestplate Skin", validItemTypes);
+        CSettings.SETTINGS.slotTypes.put("Chestplate Skin", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Skin";

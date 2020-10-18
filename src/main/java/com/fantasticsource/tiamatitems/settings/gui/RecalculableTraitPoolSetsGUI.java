@@ -12,6 +12,7 @@ import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
+import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
@@ -89,7 +90,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
                 return new GUIElement[]
                         {
                                 duplicateButton,
-                                GUIButton.newListButton(gui).addClickActions(() -> PoolListGUI.show(name.getText() + " (Random Recalculable Pool Set)", gui.nameElementToPoolSetMap.get(name))),
+                                GUIButton.newListButton(gui).addClickActions(() -> StringListGUI.show(name.getText() + " (Random Recalculable Pool Set)", " Pool Name: ", "PoolName", gui.nameElementToPoolSetMap.get(name))),
                                 name
                         };
             }

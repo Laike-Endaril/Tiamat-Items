@@ -45,7 +45,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.io.IOException;
 import java.util.List;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036y,);required-after:tiamatactions@[1.12.2.000s,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.038i,);required-after:tiamatactions@[1.12.2.000s,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -170,20 +170,20 @@ public class TiamatItems
 
         if (MCTools.devEnv())
         {
-            Test.createGeneralPool();
-            Test.createSocketPool();
-
-            Test.createRarity();
-
-            Test.create2HAxeItemType();
-            Test.create2HAxeheadItemType();
-            Test.create2HAxeHandleItemType();
-            Test.create2HAxeSkinItemType();
-
-            Test.createChestplateItemType();
-            Test.createChestplatePlatesItemType();
-            Test.createChestplateStrapsItemType();
-            Test.createChestplateSkinItemType();
+//            Test.createGeneralPool();
+//            Test.createSocketPool();
+//
+//            Test.createRarity();
+//
+//            Test.create2HAxeItemType();
+//            Test.create2HAxeheadItemType();
+//            Test.create2HAxeHandleItemType();
+//            Test.create2HAxeSkinItemType();
+//
+//            Test.createChestplateItemType();
+//            Test.createChestplatePlatesItemType();
+//            Test.createChestplateStrapsItemType();
+//            Test.createChestplateSkinItemType();
         }
     }
 

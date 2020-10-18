@@ -2,16 +2,14 @@ package com.fantasticsource.tiamatitems.assembly;
 
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.settings.CSettings;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class PartSlot implements IPartSlot
 {
-    public static LinkedHashMap<String, HashSet<String>> validItemTypes = new LinkedHashMap<>();
-
-
     protected String slotType;
     protected boolean required;
     protected ItemStack part;
@@ -42,7 +40,7 @@ public class PartSlot implements IPartSlot
 
     public HashSet<String> getValidItemTypes()
     {
-        return validItemTypes.getOrDefault(slotType, new HashSet<>());
+        return CSettings.SETTINGS.slotTypes.getOrDefault(slotType, new LinkedHashSet<>());
     }
 
     public boolean partIsValidForSlot(ItemStack part)

@@ -15,6 +15,7 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
+import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -27,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -59,6 +61,7 @@ public class SettingsGUI extends GUIScreen
     protected LinkedHashMap<GUILabeledTextInput, CUnrecalculableTraitPool> nameElementToUnrecalculableTraitPoolMap = new LinkedHashMap<>();
     protected LinkedHashMap<GUILabeledTextInput, CRarity> nameElementToRarityMap = new LinkedHashMap<>();
     protected LinkedHashMap<GUILabeledTextInput, CItemType> nameElementToItemTypeMap = new LinkedHashMap<>();
+    protected LinkedHashMap<GUILabeledTextInput, LinkedHashSet<String>> nameElementToSlotTypeMap = new LinkedHashMap<>();
 
     protected SettingsGUI(CSettings settings)
     {
@@ -84,7 +87,7 @@ public class SettingsGUI extends GUIScreen
 
 
         //Main
-        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Trait Pools (Recalculable)", "Trait Pools (Unrecalculable)", "Rarities", "Item Types", "Attribute Balance Multipliers");
+        GUITabView tabView = new GUITabView(gui, 1, 1 - (cancel.y + cancel.height), "General", "Trait Pools (Recalculable)", "Trait Pools (Unrecalculable)", "Rarities", "Item Types", "Attribute Balance Multipliers", "Slot Types");
         gui.root.add(tabView);
 
 
@@ -443,6 +446,67 @@ public class SettingsGUI extends GUIScreen
         }
 
 
+        //Slot Types tab
+        GUIList slotTypes = new GUIList(gui, true, 0.98, 1)
+        {
+            @Override
+            public GUIElement[] newLineDefaultElements()
+            {
+                Namespace namespace = gui.namespaces.computeIfAbsent("Slot Types", o -> new Namespace());
+                String nameString = namespace.getFirstAvailableNumberedName("SlotType");
+                GUILabeledTextInput name = new GUILabeledTextInput(gui, " Pool Set Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Slot Types");
+
+                gui.nameElementToSlotTypeMap.put(name, new LinkedHashSet<>());
+
+                GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
+                duplicateButton.addClickActions(() ->
+                {
+                    int index = getLineIndexContaining(name);
+                    if (index == -1) index = lineCount() - 1;
+                    index++;
+                    GUIList.Line line = addLine(index);
+
+                    String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
+
+                    GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                    nameElement.setText(nameString2);
+
+                    gui.nameElementToSlotTypeMap.put(nameElement, (LinkedHashSet<String>) gui.nameElementToSlotTypeMap.get(name).clone());
+                });
+
+                return new GUIElement[]
+                        {
+                                duplicateButton,
+                                GUIButton.newListButton(gui).addClickActions(() -> StringListGUI.show(name.getText() + " (Slot Type)", " Item Type: ", "ItemType", gui.nameElementToSlotTypeMap.get(name))),
+                                name
+                        };
+            }
+        };
+        slotTypes.addRemoveChildActions((Predicate<GUIElement>) element ->
+        {
+            if (element instanceof GUIList.Line)
+            {
+                GUIList.Line line = (GUIList.Line) element;
+                GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
+                gui.namespaces.get("Slot Types").inputs.remove(labeledTextInput.input);
+            }
+            return false;
+        });
+        GUIVerticalScrollbar scrollbar6 = new GUIVerticalScrollbar(gui, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, slotTypes);
+        tabView.tabViews.get(6).addAll
+                (
+                        slotTypes,
+                        scrollbar6
+                );
+        for (Map.Entry<String, LinkedHashSet<String>> entry : gui.settings.slotTypes.entrySet())
+        {
+            GUIList.Line line = slotTypes.addLine();
+            GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+            nameElement.setText(entry.getKey());
+            gui.nameElementToSlotTypeMap.put(nameElement, entry.getValue());
+        }
+
+
         //Insert new tabs here
 
 
@@ -490,6 +554,12 @@ public class SettingsGUI extends GUIScreen
                 if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
+            //Slot Types
+            for (GUIList.Line line : slotTypes.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
 
             //Processing
 
@@ -551,6 +621,14 @@ public class SettingsGUI extends GUIScreen
             for (GUIList.Line line : attributeBalanceMultipliers.getLines())
             {
                 CSettings.attributeBalanceMultipliers.put(((GUILabeledTextInput) line.getLineElement(1)).getText(), (double) FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(3)).getText()));
+            }
+
+            //Slot Types
+            gui.settings.slotTypes.clear();
+            for (GUIList.Line line : slotTypes.getLines())
+            {
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                gui.settings.slotTypes.put(nameElement.getText(), gui.nameElementToSlotTypeMap.get(nameElement));
             }
 
 
@@ -598,6 +676,12 @@ public class SettingsGUI extends GUIScreen
                 if (!((GUILabeledTextInput) line.getLineElement(3)).valid()) return;
             }
 
+            //Slot Types
+            for (GUIList.Line line : slotTypes.getLines())
+            {
+                if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
+            }
+
 
             //Processing
 
@@ -659,6 +743,14 @@ public class SettingsGUI extends GUIScreen
             for (GUIList.Line line : attributeBalanceMultipliers.getLines())
             {
                 CSettings.attributeBalanceMultipliers.put(((GUILabeledTextInput) line.getLineElement(1)).getText(), (double) FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(3)).getText()));
+            }
+
+            //Slot Types
+            gui.settings.slotTypes.clear();
+            for (GUIList.Line line : slotTypes.getLines())
+            {
+                GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(2);
+                gui.settings.slotTypes.put(nameElement.getText(), gui.nameElementToSlotTypeMap.get(nameElement));
             }
 
 
