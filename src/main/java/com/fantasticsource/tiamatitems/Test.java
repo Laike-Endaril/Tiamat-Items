@@ -383,16 +383,16 @@ public class Test
 
 
         LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
-        validItemTypes.add("Chestplate Plates");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Plates", validItemTypes);
+        validItemTypes.add("Chestplate Soul");
+        CSettings.SETTINGS.slotTypes.put("Chestplate Soul", validItemTypes);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
-        partSlot.partSlotType = "Chestplate Plates";
+        partSlot.partSlotType = "Chestplate Soul";
         partSlot.required = true;
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "Chestplate Plates Slot";
+        trait.name = "Chestplate Soul Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -400,16 +400,16 @@ public class Test
 
 
         validItemTypes = new LinkedHashSet<>();
-        validItemTypes.add("Chestplate Straps");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Straps", validItemTypes);
+        validItemTypes.add("Chestplate Core");
+        CSettings.SETTINGS.slotTypes.put("Chestplate Core", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
-        partSlot.partSlotType = "Chestplate Straps";
+        partSlot.partSlotType = "Chestplate Core";
         partSlot.required = true;
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "Chestplate Straps Slot";
+        trait.name = "Chestplate Core Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -417,16 +417,16 @@ public class Test
 
 
         validItemTypes = new LinkedHashSet<>();
-        validItemTypes.add("Chestplate Skin");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Skin", validItemTypes);
+        validItemTypes.add("Chestplate Trim");
+        CSettings.SETTINGS.slotTypes.put("Chestplate Trim", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
-        partSlot.partSlotType = "Chestplate Skin";
+        partSlot.partSlotType = "Chestplate Trim";
         partSlot.required = true;
         partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
-        trait.name = "Chestplate Skin Slot";
+        trait.name = "Chestplate Trim Slot";
         trait.elements.add(partSlot);
         trait.minValue = 0;
         trait.maxValue = 0;
@@ -464,11 +464,11 @@ public class Test
         CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
-    public static void createChestplatePlatesItemType()
+    public static void createChestplateSoulItemType()
     {
         //Item type
         CItemType itemType = new CItemType();
-        itemType.name = "Chestplate Plates";
+        itemType.name = "Chestplate Soul";
         itemType.traitLevelMultiplier = 2;
 
 
@@ -512,11 +512,11 @@ public class Test
         CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
-    public static void createChestplateStrapsItemType()
+    public static void createChestplateCoreItemType()
     {
         //Item type
         CItemType itemType = new CItemType();
-        itemType.name = "Chestplate Straps";
+        itemType.name = "Chestplate Core";
         itemType.traitLevelMultiplier = 2;
 
 
@@ -560,11 +560,11 @@ public class Test
         CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
-    public static void createChestplateSkinItemType()
+    public static void createChestplateTrimItemType()
     {
         //Item type
         CItemType itemType = new CItemType();
-        itemType.name = "Chestplate Skin";
+        itemType.name = "Chestplate Trim";
         itemType.traitLevelMultiplier = 2;
 
 

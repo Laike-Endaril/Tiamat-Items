@@ -168,22 +168,22 @@ public class TiamatItems
 
         CSettings.loadAll(event);
 
-        if (MCTools.devEnv())
+        if (MCTools.devEnv() && CSettings.SETTINGS.itemTypes.size() == 0)
         {
-//            Test.createGeneralPool();
-//            Test.createSocketPool();
-//
-//            Test.createRarity();
-//
-//            Test.create2HAxeItemType();
-//            Test.create2HAxeheadItemType();
-//            Test.create2HAxeHandleItemType();
-//            Test.create2HAxeSkinItemType();
-//
-//            Test.createChestplateItemType();
-//            Test.createChestplatePlatesItemType();
-//            Test.createChestplateStrapsItemType();
-//            Test.createChestplateSkinItemType();
+            Test.createGeneralPool();
+            Test.createSocketPool();
+
+            Test.createRarity();
+
+            Test.create2HAxeItemType();
+            Test.create2HAxeheadItemType();
+            Test.create2HAxeHandleItemType();
+            Test.create2HAxeSkinItemType();
+
+            Test.createChestplateItemType();
+            Test.createChestplateSoulItemType();
+            Test.createChestplateCoreItemType();
+            Test.createChestplateTrimItemType();
         }
     }
 
