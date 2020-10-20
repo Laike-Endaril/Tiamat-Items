@@ -22,9 +22,25 @@ public class ItemAssembly
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
-        
+
         ArrayList<ItemStack> result = new ArrayList<>();
-        for (ItemStack part : parts) result.addAll(putPartInEmptySlot(core, part));
+        for (ItemStack part : parts) result.addAll(putPartInEmptySlot(core, part, false));
+        result.addAll(recalc(core));
+        return result;
+    }
+
+    /**
+     * @return All removed parts, if any
+     */
+    public static ArrayList<ItemStack> disassemble(ItemStack assembly)
+    {
+        if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
+
+
+        ArrayList<ItemStack> result = new ArrayList<>();
+        int size = AssemblyTags.getPartSlots(assembly).size();
+        for (int i = 0; i < size; i++) result.addAll(removePartFromSlot(assembly, i, false));
+        result.addAll(recalc(assembly));
         return result;
     }
 
@@ -176,29 +192,37 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any
      */
-    public static ArrayList<ItemStack> removePartFromSlot(ItemStack core, int slot, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> removePartFromSlot(ItemStack assembly, int slot)
     {
-        return removePartFromSlot(core, slot, recalcIfChanged, Integer.MAX_VALUE);
+        return removePartFromSlot(assembly, slot, true);
     }
 
     /**
      * @return All removed parts, if any
      */
-    public static ArrayList<ItemStack> removePartFromSlot(ItemStack core, int slot, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> removePartFromSlot(ItemStack assembly, int slot, boolean recalcIfChanged)
+    {
+        return removePartFromSlot(assembly, slot, recalcIfChanged, Integer.MAX_VALUE);
+    }
+
+    /**
+     * @return All removed parts, if any
+     */
+    public static ArrayList<ItemStack> removePartFromSlot(ItemStack assembly, int slot, boolean recalcIfChanged, int level)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
-        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(core);
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(assembly);
         if (slot > partSlots.size()) return new ArrayList<>();
 
         PartSlot partSlot = (PartSlot) partSlots.get(slot);
         ItemStack part = partSlot.part;
-        if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part)) return new ArrayList<>();
+        if (part.isEmpty() || level < MiscTags.getItemLevelReq(assembly) + MiscTags.getItemLevelReq(part)) return new ArrayList<>();
 
 
         partSlot.part = ItemStack.EMPTY;
-        ArrayList<ItemStack> result = recalcIfChanged ? recalc(core) : new ArrayList<>();
+        ArrayList<ItemStack> result = recalcIfChanged ? recalc(assembly) : new ArrayList<>();
         result.add(part);
         return result;
     }
