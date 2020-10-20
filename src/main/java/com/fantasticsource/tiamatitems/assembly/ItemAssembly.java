@@ -212,7 +212,6 @@ public class ItemAssembly
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
-
         ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(assembly);
         if (slot > partSlots.size()) return new ArrayList<>();
 
@@ -220,8 +219,9 @@ public class ItemAssembly
         ItemStack part = partSlot.part;
         if (part.isEmpty() || level < MiscTags.getItemLevelReq(assembly) + MiscTags.getItemLevelReq(part)) return new ArrayList<>();
 
-
         partSlot.part = ItemStack.EMPTY;
+        AssemblyTags.setPartSlots(assembly, partSlots);
+
         ArrayList<ItemStack> result = recalcIfChanged ? recalc(assembly) : new ArrayList<>();
         result.add(part);
         return result;
