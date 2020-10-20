@@ -214,11 +214,8 @@ public class AssemblyTags
 
     public static boolean saveInternalCore(ItemStack stack, ItemStack core)
     {
-        if (core.isEmpty())
-        {
-            removeInternalCore(stack);
-            return true;
-        }
+        removeInternalCore(stack);
+        if (core.isEmpty()) return true;
 
 
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
