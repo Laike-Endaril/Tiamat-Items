@@ -265,9 +265,9 @@ public class ItemAssembly
         }
 
 
-        //Get internal core (version of item with all trait NBT, but without recalculable traits applied yet)
-        ItemStack core = AssemblyTags.getInternalCore(stack);
-        if (core.isEmpty())
+        //Get internal core (version of item with all its own trait NBT, but without recalculable traits applied and without NBT from parts)
+        ItemStack assembly = AssemblyTags.getInternalCore(stack);
+        if (assembly.isEmpty())
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
@@ -279,7 +279,7 @@ public class ItemAssembly
 
 
         //Validate native traits on core and recalculate them if necessary, applying recalculable traits
-        if (!recalcEmptyPartTraits(core, recursive))
+        if (!recalcEmptyPartTraits(assembly, recursive))
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
@@ -290,10 +290,14 @@ public class ItemAssembly
         }
 
 
+        //Copy new core from assembly
+        ItemStack core = AssemblyTags.getInternalCore(assembly);
+
+
         //If there were no parts on the given stack, we can return now
         if (partCount == 0)
         {
-            stack.setTagCompound(core.getTagCompound());
+            stack.setTagCompound(assembly.getTagCompound());
             return result;
         }
 
@@ -301,7 +305,7 @@ public class ItemAssembly
         //We have parts to apply
 
         //Reinsert all parts into fully matching slots if possible
-        partSlots = AssemblyTags.getPartSlots(core);
+        partSlots = AssemblyTags.getPartSlots(assembly);
         for (PartSlot oldPartSlot : oldPartSlots.toArray(new PartSlot[0]))
         {
             ItemStack part = oldPartSlot.part;
@@ -363,24 +367,28 @@ public class ItemAssembly
 
 
         //Apply NBT and value from parts to core
-        if (!core.hasTagCompound()) core.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = core.getTagCompound();
-        int value = MiscTags.getItemValue(core);
+        if (!assembly.hasTagCompound()) assembly.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = assembly.getTagCompound();
+        int value = MiscTags.getItemValue(assembly);
         for (IPartSlot partSlot : partSlots)
         {
             ItemStack part = partSlot.getPart();
             MCTools.mergeNBT(compound, false, part.getTagCompound());
             value += MiscTags.getItemValue(part);
         }
-        MiscTags.setItemValue(core, value);
+        MiscTags.setItemValue(assembly, value);
+
+
+        //Reset core to saved one from before (NBT merge above corrupts it)
+        AssemblyTags.saveInternalCore(assembly, core);
 
 
         //Set part tags
-        AssemblyTags.setPartSlots(core, partSlots);
+        AssemblyTags.setPartSlots(assembly, partSlots);
 
 
         //Set current stack to new calculated one
-        stack.setTagCompound(core.getTagCompound());
+        stack.setTagCompound(assembly.getTagCompound());
 
 
         //Return removed parts

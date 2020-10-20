@@ -244,7 +244,7 @@ public class AssemblyTags
         if (!compound.hasKey(DOMAIN)) return ItemStack.EMPTY;
         compound = compound.getCompoundTag(DOMAIN);
 
-        return new ItemStack(compound.getCompoundTag("core"));
+        return new ItemStack(compound.getCompoundTag("core").copy());
     }
 
     public static void removeInternalCore(ItemStack stack)
