@@ -290,10 +290,6 @@ public class ItemAssembly
         }
 
 
-        //At this point, we have our new core, so save it
-        AssemblyTags.saveInternalCore(core);
-
-
         //If there were no parts on the given stack, we can return now
         if (partCount == 0)
         {

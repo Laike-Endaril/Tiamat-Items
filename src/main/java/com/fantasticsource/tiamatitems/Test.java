@@ -52,7 +52,7 @@ public class Test
         rarity.traitPoolSetRollCounts.put("ActLC", 1); //1x left click action
         rarity.traitPoolSetRollCounts.put("ActRC", 1); //1x right click action
         rarity.traitPoolSetRollCounts.put("Gen", 1); //1x general trait
-        rarity.traitPoolSetRollCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
+//        rarity.traitPoolSetRollCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
 
         CSettings.SETTINGS.rarities.put(rarity.name, rarity);
     }
