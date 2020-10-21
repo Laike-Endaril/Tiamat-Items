@@ -16,7 +16,7 @@ import java.util.HashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
-    public boolean addToCoreOnAssembly = true;
+    public boolean addToAssemblyFromPart = true;
     public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
 
 
@@ -93,7 +93,7 @@ public final class CRecalculableTrait extends CTrait
 
         ByteBufUtils.writeUTF8String(buf, name);
 
-        buf.writeBoolean(addToCoreOnAssembly);
+        buf.writeBoolean(addToAssemblyFromPart);
 
         buf.writeInt(elements.size());
         for (CRecalculableTraitElement element : elements) writeMarked(buf, element);
@@ -108,7 +108,7 @@ public final class CRecalculableTrait extends CTrait
 
         name = ByteBufUtils.readUTF8String(buf);
 
-        addToCoreOnAssembly = buf.readBoolean();
+        addToAssemblyFromPart = buf.readBoolean();
 
         elements.clear();
         for (int i = buf.readInt(); i > 0; i--) elements.add((CRecalculableTraitElement) readMarked(buf));
@@ -123,7 +123,7 @@ public final class CRecalculableTrait extends CTrait
 
         new CStringUTF8().set(name).save(stream);
 
-        new CBoolean().set(addToCoreOnAssembly).save(stream);
+        new CBoolean().set(addToAssemblyFromPart).save(stream);
 
         new CInt().set(elements.size()).save(stream);
         for (CRecalculableTraitElement element : elements) saveMarked(stream, element);
@@ -138,7 +138,7 @@ public final class CRecalculableTrait extends CTrait
 
         name = new CStringUTF8().load(stream).value;
 
-        addToCoreOnAssembly = new CBoolean().load(stream).value;
+        addToAssemblyFromPart = new CBoolean().load(stream).value;
 
         CInt ci = new CInt();
 

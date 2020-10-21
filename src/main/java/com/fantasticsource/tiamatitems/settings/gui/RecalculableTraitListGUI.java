@@ -11,7 +11,6 @@ import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
@@ -83,7 +82,7 @@ public class RecalculableTraitListGUI extends GUIScreen
                     ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
                     ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
 
-                    ((GUILabeledBoolean) line.getLineElement(11)).setValue(trait.addToCoreOnAssembly);
+                    ((GUILabeledBoolean) line.getLineElement(11)).setValue(trait.addToAssemblyFromPart);
                 });
 
                 return new GUIElement[]
@@ -99,7 +98,7 @@ public class RecalculableTraitListGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE),
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly)
+                                new GUILabeledBoolean(gui, " Add to Assembly from Part: ", new CRecalculableTrait().addToAssemblyFromPart)
                         };
             }
         };
@@ -128,7 +127,7 @@ public class RecalculableTraitListGUI extends GUIScreen
             ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.isGood);
             ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
             ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
-            ((GUILabeledBoolean) line.getLineElement(11)).setValue(trait.addToCoreOnAssembly);
+            ((GUILabeledBoolean) line.getLineElement(11)).setValue(trait.addToAssemblyFromPart);
         }
 
 
@@ -160,7 +159,7 @@ public class RecalculableTraitListGUI extends GUIScreen
                 trait.isGood = ((GUILabeledBoolean) line.getLineElement(5)).getValue();
                 trait.minValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(7)).getText());
                 trait.maxValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
-                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(11)).getValue();
+                trait.addToAssemblyFromPart = ((GUILabeledBoolean) line.getLineElement(11)).getValue();
                 list.put(trait.name, trait);
             }
 

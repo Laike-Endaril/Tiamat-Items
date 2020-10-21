@@ -4,9 +4,11 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
+import com.fantasticsource.tiamatitems.nbt.TraitTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
+import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,14 +20,14 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any, and/or the parts passed in if they cannot be placed in a slot
      */
-    public static ArrayList<ItemStack> assemble(ItemStack core, ItemStack... parts)
+    public static ArrayList<ItemStack> assemble(ItemStack mainPart, ItemStack... otherParts)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
         ArrayList<ItemStack> result = new ArrayList<>();
-        for (ItemStack part : parts) result.addAll(putPartInEmptySlot(core, part, false));
-        result.addAll(recalc(core));
+        for (ItemStack part : otherParts) result.addAll(putPartInEmptySlot(mainPart, part, false));
+        result.addAll(recalc(mainPart));
         return result;
     }
 
@@ -48,58 +50,58 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
-    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part)
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack mainPart, ItemStack otherPart)
     {
-        return putPartInEmptySlot(core, part, true);
+        return putPartInEmptySlot(mainPart, otherPart, true);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
-    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack mainPart, ItemStack otherPart, boolean recalcIfChanged)
     {
-        return putPartInEmptySlot(core, part, recalcIfChanged, Integer.MAX_VALUE);
+        return putPartInEmptySlot(mainPart, otherPart, recalcIfChanged, Integer.MAX_VALUE);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
-    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, int level)
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack mainPart, ItemStack otherPart, int level)
     {
-        return putPartInEmptySlot(core, part, true, level);
+        return putPartInEmptySlot(mainPart, otherPart, true, level);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in a slot
      */
-    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack core, ItemStack part, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> putPartInEmptySlot(ItemStack mainPart, ItemStack otherPart, boolean recalcIfChanged, int level)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
-        if (part.isEmpty() || level < MiscTags.getItemLevelReq(core) + MiscTags.getItemLevelReq(part))
+        if (otherPart.isEmpty() || level < MiscTags.getItemLevelReq(mainPart) + MiscTags.getItemLevelReq(otherPart))
         {
             ArrayList<ItemStack> result = new ArrayList<>();
-            result.add(part);
+            result.add(otherPart);
             return result;
         }
 
 
         int i = 0, optional = -1;
-        for (IPartSlot slot : AssemblyTags.getPartSlots(core))
+        for (IPartSlot slot : AssemblyTags.getPartSlots(mainPart))
         {
-            if (slot.getPart().isEmpty() && slot.partIsValidForSlot(part))
+            if (slot.getPart().isEmpty() && slot.partIsValidForSlot(otherPart))
             {
-                if (slot.getRequired()) return putPartInSlot(core, i, part, recalcIfChanged, level);
+                if (slot.getRequired()) return putPartInSlot(mainPart, i, otherPart, recalcIfChanged, level);
                 else if (optional == -1) optional = i;
             }
             i++;
         }
 
-        if (optional != -1) return putPartInSlot(core, optional, part, recalcIfChanged, level);
+        if (optional != -1) return putPartInSlot(mainPart, optional, otherPart, recalcIfChanged, level);
 
         ArrayList<ItemStack> result = new ArrayList<>();
-        result.add(part);
+        result.add(otherPart);
         return result;
     }
 
@@ -107,82 +109,82 @@ public class ItemAssembly
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack mainPart, int slot, ItemStack otherPart)
     {
-        return putPartInSlot(core, slot, part, true);
+        return putPartInSlot(mainPart, slot, otherPart, true);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack mainPart, int slot, ItemStack otherPart, boolean recalcIfChanged)
     {
-        return putPartInSlot(core, slot, part, recalcIfChanged, Integer.MAX_VALUE);
+        return putPartInSlot(mainPart, slot, otherPart, recalcIfChanged, Integer.MAX_VALUE);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, int level)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack mainPart, int slot, ItemStack otherPart, int level)
     {
-        return putPartInSlot(core, slot, part, true, level);
+        return putPartInSlot(mainPart, slot, otherPart, true, level);
     }
 
     /**
      * @return All removed parts, if any, and/or the part passed in if it cannot be placed in the slot
      */
-    public static ArrayList<ItemStack> putPartInSlot(ItemStack core, int slot, ItemStack part, boolean recalcIfChanged, int level)
+    public static ArrayList<ItemStack> putPartInSlot(ItemStack mainPart, int slot, ItemStack otherPart, boolean recalcIfChanged, int level)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
         ArrayList<ItemStack> result = new ArrayList<>();
-        if (slot < 0 || core.isEmpty())
+        if (slot < 0 || mainPart.isEmpty())
         {
-            result.add(part);
+            result.add(otherPart);
             return result;
         }
 
 
-        if (part.isEmpty()) return removePartFromSlot(core, slot, recalcIfChanged, level);
+        if (otherPart.isEmpty()) return removePartFromSlot(mainPart, slot, recalcIfChanged, level);
 
 
-        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(core);
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(mainPart);
         if (slot >= partSlots.size())
         {
-            result.add(part);
+            result.add(otherPart);
             return result;
         }
 
         PartSlot partSlot = (PartSlot) partSlots.get(slot);
-        if (!partSlot.partIsValidForSlot(part))
+        if (!partSlot.partIsValidForSlot(otherPart))
         {
-            result.add(part);
+            result.add(otherPart);
             return result;
         }
 
         ItemStack oldPart = partSlot.part;
-        int coreLevel = MiscTags.getItemLevelReq(core);
-        if (level < coreLevel + Tools.max(MiscTags.getItemLevelReq(part), MiscTags.getItemLevelReq(oldPart)))
+        int mainLevel = MiscTags.getItemLevelReq(mainPart);
+        if (level < mainLevel + Tools.max(MiscTags.getItemLevelReq(otherPart), MiscTags.getItemLevelReq(oldPart)))
         {
-            result.add(part);
+            result.add(otherPart);
             return result;
         }
 
 
         //Put part into transient data, then save that data to tag
-        partSlot.part = part;
-        AssemblyTags.setPartSlots(core, partSlots);
+        partSlot.part = otherPart;
+        AssemblyTags.setPartSlots(mainPart, partSlots);
 
         //Disassociate the original part's tag from the original part stack, then delete the original part stack by setting its count to 0
-        part.setTagCompound(null);
-        part.setCount(0);
+        otherPart.setTagCompound(null);
+        otherPart.setCount(0);
 
 
         if (!oldPart.isEmpty()) result.add(oldPart);
 
 
-        if (recalcIfChanged) result.addAll(recalc(core));
+        if (recalcIfChanged) result.addAll(recalc(mainPart));
 
 
         return result;
@@ -235,16 +237,6 @@ public class ItemAssembly
      */
     public static ArrayList<ItemStack> recalc(ItemStack stack)
     {
-        return recalc(stack, false);
-    }
-
-    /**
-     * Completely recalculates an item (recursively)
-     *
-     * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
-     */
-    public static ArrayList<ItemStack> recalc(ItemStack stack, boolean recursive)
-    {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
 
@@ -257,7 +249,7 @@ public class ItemAssembly
         for (IPartSlot partSlot : partSlots)
         {
             ItemStack part = partSlot.getPart();
-            result.addAll(recalc(part, true));
+            result.addAll(recalc(part));
             if (part.isEmpty()) continue;
 
             partCount++;
@@ -279,7 +271,7 @@ public class ItemAssembly
 
 
         //Validate native traits on core and recalculate them if necessary, applying recalculable traits
-        if (!recalcEmptyPartTraits(assembly, recursive))
+        if (!recalcEmptyPartTraits(assembly))
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
@@ -366,14 +358,54 @@ public class ItemAssembly
         }
 
 
-        //Apply NBT and value from parts to core
+        //Apply recalculable traits from parts
         if (!assembly.hasTagCompound()) assembly.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = assembly.getTagCompound();
         int value = MiscTags.getItemValue(assembly);
         for (IPartSlot partSlot : partSlots)
         {
             ItemStack part = partSlot.getPart();
-            MCTools.mergeNBT(compound, false, part.getTagCompound());
+            if (part.isEmpty()) continue;
+
+            CItemType partItemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(part));
+            CRarity partRarity = MiscTags.getItemRarity(part);
+            if (partItemType == null || partRarity == null) continue;
+
+            double itemTypeAndLevelMultiplier = partItemType.traitLevelMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * partRarity.itemLevelModifier + MiscTags.getItemLevel(part)));
+
+            for (String traitString : TraitTags.getTraitStrings(part))
+            {
+                String[] tokens = Tools.fixedSplit(traitString, ":");
+                if (tokens[0].equals("Static"))
+                {
+                    CRecalculableTrait trait = partItemType.staticRecalculableTraits.get(tokens[1]);
+                    if (!trait.addToAssemblyFromPart) continue;
+
+                    int[] baseArgs = new int[tokens.length - 2];
+                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
+
+                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                }
+                else
+                {
+                    CRecalculableTrait trait = null;
+                    for (CRecalculableTrait trait2 : CSettings.SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
+                    {
+                        if (trait2.name.equals(tokens[2]))
+                        {
+                            trait = trait2;
+                            break;
+                        }
+                    }
+
+                    if (trait == null || !trait.addToAssemblyFromPart) continue;
+
+
+                    int[] baseArgs = new int[tokens.length - 3];
+                    for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 3]);
+
+                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                }
+            }
             value += MiscTags.getItemValue(part);
         }
         MiscTags.setItemValue(assembly, value);
@@ -400,7 +432,7 @@ public class ItemAssembly
      * Validates and recalculates the traits of an *empty part*
      * Returns false if the part itself should be deleted (eg. if its item type no longer exists)
      */
-    private static boolean recalcEmptyPartTraits(ItemStack stack, boolean recursive)
+    private static boolean recalcEmptyPartTraits(ItemStack stack)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
@@ -414,7 +446,7 @@ public class ItemAssembly
 
 
         //Re-apply item type and return
-        itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity, recursive);
+        itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity);
         return true;
     }
 }

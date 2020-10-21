@@ -16,7 +16,6 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
-import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
@@ -66,7 +65,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 String nameString = namespace.getFirstAvailableNumberedName("RTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Traits");
                 GUILabeledTextInput weight = new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER);
-                GUILabeledBoolean addToCore = new GUILabeledBoolean(gui, " Add to Core on Assembly: ", new CRecalculableTrait().addToCoreOnAssembly);
+                GUILabeledBoolean addToAssembly = new GUILabeledBoolean(gui, " Add to Assembly from Part: ", new CRecalculableTrait().addToAssemblyFromPart);
 
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
 
@@ -93,7 +92,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                     ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.minValue);
                     ((GUILabeledTextInput) line.getLineElement(11)).setText("" + trait.maxValue);
 
-                    ((GUILabeledBoolean) line.getLineElement(13)).setValue(trait.addToCoreOnAssembly);
+                    ((GUILabeledBoolean) line.getLineElement(13)).setValue(trait.addToAssemblyFromPart);
                 });
 
                 return new GUIElement[]
@@ -111,7 +110,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE),
                                 new GUIElement(gui, 1, 0),
-                                addToCore
+                                addToAssembly
                         };
             }
         };
@@ -142,7 +141,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
             ((GUILabeledBoolean) line.getLineElement(7)).setValue(trait.isGood);
             ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.minValue);
             ((GUILabeledTextInput) line.getLineElement(11)).setText("" + trait.maxValue);
-            ((GUILabeledBoolean) line.getLineElement(13)).setValue(trait.addToCoreOnAssembly);
+            ((GUILabeledBoolean) line.getLineElement(13)).setValue(trait.addToAssemblyFromPart);
         }
 
 
@@ -176,7 +175,7 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 trait.isGood = ((GUILabeledBoolean) line.getLineElement(7)).getValue();
                 trait.minValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(9)).getText());
                 trait.maxValue = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(11)).getText());
-                trait.addToCoreOnAssembly = ((GUILabeledBoolean) line.getLineElement(13)).getValue();
+                trait.addToAssemblyFromPart = ((GUILabeledBoolean) line.getLineElement(13)).getValue();
             }
 
 

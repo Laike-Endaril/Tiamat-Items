@@ -204,7 +204,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 
@@ -264,7 +264,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 
@@ -312,7 +312,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 
@@ -447,7 +447,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 
@@ -499,7 +499,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 
@@ -547,7 +547,7 @@ public class Test
             trait.elements.add(textureElement);
             trait.minValue = 0;
             trait.maxValue = 0;
-            trait.addToCoreOnAssembly = false;
+            trait.addToAssemblyFromPart = false;
             itemType.staticRecalculableTraits.put(trait.name, trait);
         }
 

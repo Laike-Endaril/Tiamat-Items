@@ -42,12 +42,11 @@ public class CItemType extends Component
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
-
-        return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity, false);
+        return applyItemType(new ItemStack(TiamatItems.tiamatItem), level, rarity);
     }
 
 
-    public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity, boolean recursive)
+    public ItemStack applyItemType(ItemStack stack, int level, CRarity rarity)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
@@ -292,14 +291,13 @@ public class CItemType extends Component
         AssemblyTags.saveInternalCore(stack);
 
 
-        //Apply static and random recalculable traits, but if this is recursive, then only the traits with addToCoreOnAssembly set to true
+        //Apply static and random recalculable traits
         for (String traitString : TraitTags.getTraitStrings(stack))
         {
             String[] tokens = Tools.fixedSplit(traitString, ":");
             if (tokens[0].equals("Static"))
             {
                 CRecalculableTrait trait = staticRecalculableTraits.get(tokens[1]);
-                if (recursive && !trait.addToCoreOnAssembly) continue;
 
                 int[] baseArgs = new int[tokens.length - 2];
                 for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
@@ -318,7 +316,7 @@ public class CItemType extends Component
                     }
                 }
 
-                if (trait == null || (recursive && !trait.addToCoreOnAssembly)) continue;
+                if (trait == null) continue;
 
 
                 int[] baseArgs = new int[tokens.length - 3];
