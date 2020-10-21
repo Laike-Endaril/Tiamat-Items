@@ -282,9 +282,9 @@ public class CItemType extends Component
         MiscTags.setItemValue(stack, (int) totalValue);
 
 
-        //Generate name
+        //Generate core name
         stack.setStackDisplayName(rarity.textColor + name);
-        //TODO Generate affixes
+        //TODO Generate core affixes
 
 
         //Save internal core

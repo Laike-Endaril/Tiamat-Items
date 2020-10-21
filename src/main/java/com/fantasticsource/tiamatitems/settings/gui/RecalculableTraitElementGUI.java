@@ -410,6 +410,28 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 gui.close();
             });
         }
+        else if (traitElement.getClass() == CRTraitElement_AssemblyName.class)
+        {
+            CRTraitElement_AssemblyName nameElement = (CRTraitElement_AssemblyName) traitElement;
+            GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Assembly Name: ", nameElement.assemblyName, FilterNotEmpty.INSTANCE);
+            gui.root.addAll(new GUITextSpacer(gui), skinType);
+
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!skinType.valid()) return;
+
+
+                //Processing
+                nameElement.assemblyName = skinType.getText();
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
         else if (traitElement.getClass() == CRTraitElement_Durability.class)
         {
             CRTraitElement_Durability durabilityElement = (CRTraitElement_Durability) traitElement;

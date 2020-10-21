@@ -1,3 +1,7 @@
+Are all tiamat items being corrupted on change of generator settings?
+
+
+
 Add max stack count setting
 
 

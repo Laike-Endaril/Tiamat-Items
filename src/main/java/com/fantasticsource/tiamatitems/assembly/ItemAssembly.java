@@ -379,7 +379,6 @@ public class ItemAssembly
                 {
                     CRecalculableTrait trait = partItemType.staticRecalculableTraits.get(tokens[1]);
                     if (!trait.addToAssemblyFromPart) continue;
-                    System.out.println(assembly.getDisplayName() + ", " + traitString);
 
                     int[] baseArgs = new int[tokens.length - 2];
                     for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
@@ -399,7 +398,6 @@ public class ItemAssembly
                     }
 
                     if (trait == null || !trait.addToAssemblyFromPart) continue;
-                    System.out.println(assembly.getDisplayName() + ", " + traitString);
 
 
                     int[] baseArgs = new int[tokens.length - 3];
@@ -423,6 +421,22 @@ public class ItemAssembly
 
         //Set current stack to new calculated one
         stack.setTagCompound(assembly.getTagCompound());
+
+
+        //Set assembly name
+        String name = AssemblyTags.getState(stack) >= AssemblyTags.STATE_USABLE ? MiscTags.getAssemblyNameOverride(stack) : null;
+        if (name == null)
+        {
+            CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
+            if (itemType != null) name = itemType.name;
+        }
+
+        if (name != null)
+        {
+            CRarity rarity = MiscTags.getItemRarity(stack);
+            stack.setStackDisplayName(rarity != null ? rarity.textColor + name : name);
+        }
+        //TODO generate assembly affixes
 
 
         //Return removed parts

@@ -6,18 +6,14 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.settings.CRarity;
-import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
-import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -26,25 +22,7 @@ public class TraitRollCountsGUI extends GUIScreen
     public static final FilterBlacklist TRAIT_POOL_SET_FILTER = new FilterBlacklist("Static");
     public static final FilterRangedInt TRAIT_POOL_SET_ROLL_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE);
 
-    public static final LinkedHashMap<String, Class<? extends CRecalculableTraitElement>> OPTIONS = new LinkedHashMap<>();
-
-    static
-    {
-        OPTIONS.put(" Left Click Action", CRTraitElement_LeftClickAction.class);
-        OPTIONS.put(" Right Click Action", CRTraitElement_RightClickAction.class);
-        OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
-        OPTIONS.put(" Passive Attribute Modifier", CRTraitElement_PassiveAttributeMod.class);
-        OPTIONS.put(" Part Slot", CRTraitElement_PartSlot.class);
-        OPTIONS.put(" Texture Layers", CRTraitElement_TextureLayers.class);
-        OPTIONS.put(" AW Skin", CRTraitElement_AWSkin.class);
-        OPTIONS.put(" Forced AW Skin Type Override", CRTraitElement_ForcedAWSkinTypeOverride.class);
-        OPTIONS.put(" Durability", CRTraitElement_Durability.class);
-    }
-
-
     protected String rarityName;
-
-    protected LinkedHashMap<GUIText, CRecalculableTraitElement> typeElementToRecalculableTraitElementMap = new LinkedHashMap<>();
 
     protected TraitRollCountsGUI(String rarityName)
     {

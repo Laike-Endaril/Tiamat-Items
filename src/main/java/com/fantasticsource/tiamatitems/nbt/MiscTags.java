@@ -564,4 +564,53 @@ public class MiscTags
             if (mainTag.hasNoTags()) stack.setTagCompound(null);
         }
     }
+
+
+    public static void setAssemblyNameOverride(ItemStack stack, String name)
+    {
+        if (name == null || name.equals(""))
+        {
+            clearAssemblyNameOverride(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setString("assemblyName", name);
+    }
+
+    public static String getAssemblyNameOverride(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return null;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("assemblyName")) return null;
+
+        return compound.getString("assemblyName");
+    }
+
+    public static void clearAssemblyNameOverride(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("assemblyName")) return;
+
+        compound.removeTag("assemblyName");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
 }
