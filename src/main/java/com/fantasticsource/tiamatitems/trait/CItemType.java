@@ -72,7 +72,7 @@ public class CItemType extends Component
 
         //Prep generation vars
         double itemTypeAndLevelMultiplier = traitLevelMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
-        double totalValue = value;
+        double totalValue = value + MiscTags.getItemValueMod(stack);
 
 
         //Grab trait NBT, then clear it from item
@@ -208,10 +208,11 @@ public class CItemType extends Component
 
         if (firstGeneration)
         {
+            double valueMod = 0;
             //Apply and generate value for static unrecalculable traits
             for (CUnrecalculableTrait trait : staticUnrecalculableTraits.values())
             {
-                totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+                valueMod += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
             }
 
 
@@ -264,7 +265,7 @@ public class CItemType extends Component
                     ArrayList<CUnrecalculableTrait> list = traitPools.get(pool);
                     CUnrecalculableTrait trait = Tools.choose(list);
 
-                    totalValue += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
+                    valueMod += trait.applyToItem(stack, itemTypeAndLevelMultiplier);
 
                     while (list.remove(trait))
                     {
@@ -272,6 +273,9 @@ public class CItemType extends Component
                     }
                 }
             }
+
+            MiscTags.setItemValueMod(stack, (int) valueMod);
+            totalValue += valueMod;
         }
 
 
