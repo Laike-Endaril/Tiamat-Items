@@ -379,11 +379,12 @@ public class ItemAssembly
                 {
                     CRecalculableTrait trait = partItemType.staticRecalculableTraits.get(tokens[1]);
                     if (!trait.addToAssemblyFromPart) continue;
+                    System.out.println(assembly.getDisplayName() + ", " + traitString);
 
                     int[] baseArgs = new int[tokens.length - 2];
                     for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 2]);
 
-                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                    trait.applyToItem(assembly, itemTypeAndLevelMultiplier, baseArgs);
                 }
                 else
                 {
@@ -398,12 +399,13 @@ public class ItemAssembly
                     }
 
                     if (trait == null || !trait.addToAssemblyFromPart) continue;
+                    System.out.println(assembly.getDisplayName() + ", " + traitString);
 
 
                     int[] baseArgs = new int[tokens.length - 3];
                     for (int i = 0; i < baseArgs.length; i++) baseArgs[i] = Integer.parseInt(tokens[i + 3]);
 
-                    trait.applyToItem(stack, itemTypeAndLevelMultiplier, baseArgs);
+                    trait.applyToItem(assembly, itemTypeAndLevelMultiplier, baseArgs);
                 }
             }
             value += MiscTags.getItemValue(part);

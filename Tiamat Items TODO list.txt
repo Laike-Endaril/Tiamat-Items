@@ -1,6 +1,3 @@
-Bug: recalc traits from parts are not applied to assembly?
-
-
 Add max stack count setting
 
 
