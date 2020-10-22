@@ -223,28 +223,7 @@ public class TiamatItems
 
         List<String> tooltip = event.getToolTip();
         tooltip.add("");
-        tooltip.add(TextFormatting.RED + "WARNING: This item's tooltip may not be accurate!  Requesting accurate data from server...");
+        tooltip.add(TextFormatting.RED + "WARNING: This item's tooltip is out of date!  This should only happen if another mod uses client-side-only items!");
         tooltip.add("");
-
-
-        int id;
-        if (!ClientData.idToBadStack.containsValue(stack))
-        {
-            id = ClientData.nextID++;
-            ClientData.idToBadStack.put(id, stack);
-
-            Network.WRAPPER.sendToServer(new Network.RequestItemStackUpdatePacket(stack, id));
-        }
-        else
-        {
-            ItemStack goodStack = ClientData.badStackToGoodStack.get(stack);
-            if (goodStack != null)
-            {
-                stack.setTagCompound(goodStack.getTagCompound());
-
-                ClientData.idToBadStack.entrySet().removeIf(entry -> entry.getValue() == stack);
-                ClientData.badStackToGoodStack.remove(stack);
-            }
-        }
     }
 }
