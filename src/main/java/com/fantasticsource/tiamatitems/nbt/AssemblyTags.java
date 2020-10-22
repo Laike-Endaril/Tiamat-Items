@@ -236,6 +236,17 @@ public class AssemblyTags
         }
     }
 
+    public static boolean hasInternalCore(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) return false;
+        compound = compound.getCompoundTag(DOMAIN);
+
+        return compound.hasKey("core");
+    }
+
     public static ItemStack getInternalCore(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return ItemStack.EMPTY;

@@ -239,7 +239,6 @@ public class ItemAssembly
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
-
         ArrayList<ItemStack> result = new ArrayList<>();
 
 
@@ -249,6 +248,8 @@ public class ItemAssembly
         for (IPartSlot partSlot : partSlots)
         {
             ItemStack part = partSlot.getPart();
+            if (part.isEmpty()) continue;
+
             result.addAll(recalc(part));
             if (part.isEmpty()) continue;
 
@@ -258,7 +259,7 @@ public class ItemAssembly
 
 
         //Get internal core (version of item with all its own trait NBT, but without recalculable traits applied and without NBT from parts)
-        ItemStack assembly = AssemblyTags.getInternalCore(stack);
+        ItemStack assembly = AssemblyTags.hasInternalCore(stack) ? AssemblyTags.getInternalCore(stack) : stack;
         if (assembly.isEmpty())
         {
             //If the core itself is invalid, empty the stack and return all old parts that were on it
