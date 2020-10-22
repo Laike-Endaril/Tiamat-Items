@@ -60,7 +60,7 @@ public class CItemType extends Component
 
 
         //Apply and/or overwrite most main data
-        MiscTags.setItemGenVersion(stack, CSettings.getVersion());
+        MiscTags.setItemGenVersion(stack, CSettings.SETTINGS.getVersion());
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);

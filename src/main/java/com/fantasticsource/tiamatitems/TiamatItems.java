@@ -157,7 +157,7 @@ public class TiamatItems
     @SubscribeEvent
     public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CSettings.getVersion()), (EntityPlayerMP) event.player);
+        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CSettings.SETTINGS.getVersion()), (EntityPlayerMP) event.player);
     }
 
 
@@ -200,7 +200,7 @@ public class TiamatItems
         if (itemTypeName.equals("")) return;
 
         long version = MiscTags.getItemGenVersion(stack);
-        if (version == Long.MAX_VALUE || version == CSettings.getVersion()) return;
+        if (version == Long.MAX_VALUE || version == CSettings.SETTINGS.getVersion()) return;
 
 
         ItemAssembly.recalc(stack);

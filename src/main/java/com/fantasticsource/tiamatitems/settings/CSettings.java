@@ -1,7 +1,6 @@
 package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
@@ -11,13 +10,13 @@ import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.*;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class CSettings extends Component
 {
     public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
-    public static CSettings SETTINGS = new CSettings();
+    public static CSettings SETTINGS = new CSettings(), EDITED_SETTINGS = new CSettings();
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
     public int itemGenConfigVersion = 0;
     public int maxItemLevel = 20;
@@ -39,21 +38,12 @@ public class CSettings extends Component
     public LinkedHashMap<String, CItemType> itemTypes = new LinkedHashMap<>();
     public LinkedHashMap<String, LinkedHashSet<String>> slotTypes = new LinkedHashMap<>();
 
-    public static long getVersion()
+    public long getVersion()
     {
-        return (((long) ITEM_GEN_CODE_VERSION) << 32) | SETTINGS.itemGenConfigVersion;
+        return (((long) ITEM_GEN_CODE_VERSION) << 32) | itemGenConfigVersion;
     }
 
     public static void updateVersionAndSave(EntityPlayerMP player)
-    {
-        SETTINGS.itemGenConfigVersion++;
-
-        saveAll(player);
-        Network.WRAPPER.sendToAll(new Network.ItemgenVersionPacket(getVersion()));
-    }
-
-
-    protected static void saveAll(EntityPlayerMP player)
     {
         System.out.println("Saving changes to Tiamat Items settings" + (player == null ? "" : " (" + player.getName() + ")"));
         File file = new File(MCTools.getConfigDir() + FILENAME);
@@ -64,11 +54,15 @@ public class CSettings extends Component
         try
         {
             FileOutputStream stream = new FileOutputStream(file);
-            SETTINGS.save(stream);
+            EDITED_SETTINGS.save(stream);
             stream.close();
+            System.out.println(TextFormatting.GREEN + "Saved settings; they will be applied next server restart");
+            player.sendMessage(new TextComponentString(TextFormatting.GREEN + "Saved settings; they will be applied next server restart"));
         }
         catch (IOException e)
         {
+            System.err.println(TextFormatting.RED + "Failed to save settings");
+            player.sendMessage(new TextComponentString(TextFormatting.RED + "Failed to save settings (see server log for details)"));
             e.printStackTrace();
         }
     }
@@ -81,6 +75,7 @@ public class CSettings extends Component
 
         FileInputStream stream = new FileInputStream(file);
         SETTINGS = new CSettings().load(stream);
+        EDITED_SETTINGS = (CSettings) SETTINGS.copy();
         stream.close();
     }
 

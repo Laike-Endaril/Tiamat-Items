@@ -139,7 +139,7 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            CSettings.SETTINGS.write(buf);
+            CSettings.EDITED_SETTINGS.write(buf);
         }
 
         @Override
@@ -199,10 +199,9 @@ public class Network
             {
                 if (MCTools.isOP(player))
                 {
-                    //Swap current version into incoming settings, just in case multiple people edited settings at once
-                    int itemGenConfigVersion = CSettings.SETTINGS.itemGenConfigVersion;
-                    CSettings.SETTINGS = packet.settings;
-                    CSettings.SETTINGS.itemGenConfigVersion = itemGenConfigVersion;
+                    //Set edited version 1 higher than current
+                    CSettings.EDITED_SETTINGS = packet.settings;
+                    CSettings.EDITED_SETTINGS.itemGenConfigVersion = CSettings.SETTINGS.itemGenConfigVersion + 1;
 
                     CSettings.updateVersionAndSave(ctx.getServerHandler().player);
                 }

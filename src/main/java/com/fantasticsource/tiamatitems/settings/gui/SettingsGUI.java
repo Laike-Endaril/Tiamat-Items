@@ -98,7 +98,9 @@ public class SettingsGUI extends GUIScreen
         tabView.tabViews.get(0).addAll
                 (
                         new GUITextSpacer(gui),
-                        new GUIText(gui, " Current Version: " + CSettings.getVersion()),
+                        new GUIText(gui, " Current Version: " + CSettings.SETTINGS.getVersion()),
+                        new GUIElement(gui, 1, 0),
+                        new GUIText(gui, " Pending Version: " + packet.settings.getVersion()),
                         new GUITextSpacer(gui),
                         maxItemLevel,
                         new GUITextSpacer(gui),
