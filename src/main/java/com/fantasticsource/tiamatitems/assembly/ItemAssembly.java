@@ -258,6 +258,19 @@ public class ItemAssembly
         }
 
 
+        //Check for valid item type and rarity
+        CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
+        CRarity rarity = MiscTags.getItemRarity(stack);
+        if (itemType == null || rarity == null)
+        {
+            stack.setTagCompound(null);
+            stack.setCount(0);
+
+            for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
+            return result;
+        }
+
+
         //Get internal core (version of item with all its own trait NBT, but without recalculable traits applied and without NBT from parts)
         ItemStack assembly = AssemblyTags.hasInternalCore(stack) ? AssemblyTags.getInternalCore(stack) : stack;
         if (assembly.isEmpty())
@@ -424,19 +437,19 @@ public class ItemAssembly
         stack.setTagCompound(assembly.getTagCompound());
 
 
+        //Set assembly rarity
+        for (IPartSlot partSlot : partSlots)
+        {
+            CRarity partRarity = MiscTags.getItemRarity(partSlot.getPart());
+            if (partRarity != null && partRarity.itemLevelModifier > rarity.itemLevelModifier) rarity = partRarity;
+        }
+        MiscTags.setItemRarity(stack, rarity);
+
+
         //Set assembly name
         String name = AssemblyTags.getState(stack) >= AssemblyTags.STATE_USABLE ? MiscTags.getAssemblyNameOverride(stack) : null;
-        if (name == null)
-        {
-            CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
-            if (itemType != null) name = itemType.name;
-        }
-
-        if (name != null)
-        {
-            CRarity rarity = MiscTags.getItemRarity(stack);
-            stack.setStackDisplayName(rarity != null ? rarity.textColor + name : name);
-        }
+        if (name == null) name = itemType.name;
+        stack.setStackDisplayName(rarity.textColor + name);
         //TODO generate assembly affixes
 
 
