@@ -14,11 +14,12 @@ import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CRarity extends Component
+public class CRarity extends Component implements Comparable<CRarity>
 {
     public String name = "";
     public Color color = Color.WHITE;
     public TextFormatting textColor = TextFormatting.WHITE;
+    public int ordering = 0;
 
     public double itemLevelModifier;
 
@@ -31,6 +32,7 @@ public class CRarity extends Component
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeInt(color.color());
         buf.writeInt(textColor.getColorIndex());
+        buf.writeInt(ordering);
 
         buf.writeDouble(itemLevelModifier);
 
@@ -50,6 +52,7 @@ public class CRarity extends Component
         name = ByteBufUtils.readUTF8String(buf);
         color = new Color(buf.readInt());
         textColor = TextFormatting.fromColorIndex(buf.readInt());
+        ordering = buf.readInt();
 
         itemLevelModifier = buf.readDouble();
 
@@ -63,7 +66,7 @@ public class CRarity extends Component
     public CRarity save(OutputStream stream)
     {
         CStringUTF8 cs = new CStringUTF8().set(name).save(stream);
-        CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream);
+        CInt ci = new CInt().set(color.color()).save(stream).set(textColor.getColorIndex()).save(stream).set(ordering).save(stream);
 
         new CDouble().set(itemLevelModifier).save(stream);
 
@@ -86,6 +89,7 @@ public class CRarity extends Component
         name = cs.load(stream).value;
         color = new Color(ci.load(stream).value);
         textColor = TextFormatting.fromColorIndex(ci.load(stream).value);
+        ordering = ci.load(stream).value;
 
         itemLevelModifier = new CDouble().load(stream).value;
 
@@ -93,5 +97,11 @@ public class CRarity extends Component
         for (int i = ci.load(stream).value; i > 0; i--) traitPoolSetRollCounts.put(cs.load(stream).value, ci.load(stream).value);
 
         return this;
+    }
+
+    @Override
+    public int compareTo(CRarity other)
+    {
+        return ordering - other.ordering;
     }
 }

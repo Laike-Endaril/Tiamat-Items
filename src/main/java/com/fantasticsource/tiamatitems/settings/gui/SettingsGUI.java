@@ -8,10 +8,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterBlacklist;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
+import com.fantasticsource.mctools.gui.element.text.filter.*;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
@@ -27,9 +24,7 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class SettingsGUI extends GUIScreen
@@ -253,6 +248,7 @@ public class SettingsGUI extends GUIScreen
                 GUIText textColorLabel = new GUIText(gui, " Text Color: ");
                 GUIText textColor = new GUIText(gui, TEXT_COLOR_OPTIONS[0]);
                 GUILabeledTextInput itemLevelModifier = new GUILabeledTextInput(gui, " Item Level Modifier: ", "" + new CRarity().itemLevelModifier, FilterFloat.INSTANCE);
+                GUILabeledTextInput ordering = new GUILabeledTextInput(gui, " Ordering: ", "" + new CRarity().ordering, FilterInt.INSTANCE);
                 GUITextButton traitRollCounts = new GUITextButton(gui, "Trait Pool Set Roll Counts");
 
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
@@ -274,6 +270,7 @@ public class SettingsGUI extends GUIScreen
                     ((GUIColor) line.getLineElement(5)).setValue(rarity.color);
                     ((GUIText) line.getLineElement(8)).setText(rarity.textColor + rarity.textColor.name());
                     ((GUILabeledTextInput) line.getLineElement(10)).setText("" + rarity.itemLevelModifier);
+                    ((GUILabeledTextInput) line.getLineElement(12)).setText("" + rarity.ordering);
                 });
 
                 return new GUIElement[]
@@ -289,6 +286,8 @@ public class SettingsGUI extends GUIScreen
                                 textColor.addClickActions(() -> new TextSelectionGUI(textColor, "Rarity Text Color (" + name.getText() + ")", TEXT_COLOR_OPTIONS)),
                                 new GUIElement(gui, 1, 0),
                                 itemLevelModifier,
+                                new GUIElement(gui, 1, 0),
+                                ordering,
                                 new GUIElement(gui, 1, 0),
                                 traitRollCounts.addClickActions(() -> TraitRollCountsGUI.show(name.getText(), gui.nameElementToRarityMap.get(name)))
                         };
@@ -310,7 +309,9 @@ public class SettingsGUI extends GUIScreen
                         rarities,
                         scrollbar3
                 );
-        for (CRarity rarity : gui.settings.rarities.values())
+        ArrayList<CRarity> orderedRarities = new ArrayList<>(gui.settings.rarities.values());
+        Collections.sort(orderedRarities);
+        for (CRarity rarity : orderedRarities)
         {
             GUIList.Line line = rarities.addLine();
             GUILabeledTextInput name = (GUILabeledTextInput) line.getLineElement(2);
@@ -320,6 +321,7 @@ public class SettingsGUI extends GUIScreen
             ((GUIColor) line.getLineElement(5)).setValue(rarity.color);
             ((GUIText) line.getLineElement(8)).setText(rarity.textColor + rarity.textColor.name());
             ((GUILabeledTextInput) line.getLineElement(10)).setText("" + rarity.itemLevelModifier);
+            ((GUILabeledTextInput) line.getLineElement(12)).setText("" + rarity.ordering);
         }
 
 
@@ -539,6 +541,7 @@ public class SettingsGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 if (!((GUILabeledTextInput) line.getLineElement(10)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(12)).valid()) return;
             }
 
             //Item Types
@@ -600,6 +603,7 @@ public class SettingsGUI extends GUIScreen
                 rarity.color = ((GUIColor) line.getLineElement(5)).getValue();
                 rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(8)).getText()));
                 rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(10)).getText());
+                rarity.ordering = FilterInt.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(12)).getText());
 
                 gui.settings.rarities.put(rarity.name, rarity);
             }
@@ -661,6 +665,7 @@ public class SettingsGUI extends GUIScreen
             {
                 if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
                 if (!((GUILabeledTextInput) line.getLineElement(10)).valid()) return;
+                if (!((GUILabeledTextInput) line.getLineElement(12)).valid()) return;
             }
 
             //Item Types
@@ -722,6 +727,7 @@ public class SettingsGUI extends GUIScreen
                 rarity.color = ((GUIColor) line.getLineElement(5)).getValue();
                 rarity.textColor = TextFormatting.getValueByName(TextFormatting.getTextWithoutFormattingCodes(((GUIText) line.getLineElement(8)).getText()));
                 rarity.itemLevelModifier = FilterFloat.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(10)).getText());
+                rarity.ordering = FilterInt.INSTANCE.parse(((GUILabeledTextInput) line.getLineElement(12)).getText());
 
                 gui.settings.rarities.put(rarity.name, rarity);
             }

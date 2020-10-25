@@ -441,7 +441,7 @@ public class ItemAssembly
         for (IPartSlot partSlot : partSlots)
         {
             CRarity partRarity = MiscTags.getItemRarity(partSlot.getPart());
-            if (partRarity != null && partRarity.itemLevelModifier > rarity.itemLevelModifier) rarity = partRarity;
+            if (partRarity != null && partRarity.ordering > rarity.ordering) rarity = partRarity;
         }
         MiscTags.setItemRarity(stack, rarity);
 
