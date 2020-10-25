@@ -170,6 +170,8 @@ public class TiamatItems
 
         if (MCTools.devEnv() && CSettings.SETTINGS.itemTypes.size() == 0)
         {
+            System.out.println(TextFormatting.AQUA + "Adding test configs");
+            
             Test.createGeneralPool();
             Test.createSocketPool();
 
@@ -184,6 +186,8 @@ public class TiamatItems
             Test.createChestplateSoulItemType();
             Test.createChestplateCoreItemType();
             Test.createChestplateTrimItemType();
+
+            CSettings.EDITED_SETTINGS = (CSettings) CSettings.SETTINGS.copy();
         }
     }
 
