@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 {
     public String partSlotType = "";
-    public int minCount = 0, maxCount = 1;
-    public boolean required = false;
+    public int minCount = 1, maxCount = 1;
+    public boolean required = true;
 
 
     @Override
