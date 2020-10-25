@@ -71,6 +71,8 @@ public class Test
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
+        partSlot.minCount = 0;
+        partSlot.required = false;
 
         CRecalculableTrait trait;
         for (int i = 0; i < 10; i++)
@@ -145,8 +147,6 @@ public class Test
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axehead Slot";
@@ -162,8 +162,6 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axe Handle Slot";
@@ -179,8 +177,6 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axe Skin Slot";
@@ -388,8 +384,6 @@ public class Test
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Soul";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Soul Slot";
@@ -405,8 +399,6 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Core";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Core Slot";
@@ -422,8 +414,6 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Trim";
-        partSlot.required = true;
-        partSlot.minCount = 1;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Trim Slot";
