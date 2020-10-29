@@ -93,17 +93,13 @@ public class TextureLayersGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(layer);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(layer) + 1);
 
                     ((GUIItemLayer) line.getLineElement(1)).setLayer(layer.getLayer());
+
                     GUIView view2 = (GUIView) line.getLineElement(2);
-                    GUIText texture2 = (GUIText) view2.get(1);
-                    texture2.setText(texture.getText());
-                    GUIColor color2 = (GUIColor) view2.get(4);
-                    color2.setValue(color.getValue().copy());
+                    ((GUIText) view2.get(1)).setText(texture.getText());
+                    ((GUIColor) view2.get(4)).setValue(color.getValue().copy());
                 });
 
                 return new GUIElement[]

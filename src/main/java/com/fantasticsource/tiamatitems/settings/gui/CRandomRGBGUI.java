@@ -128,10 +128,7 @@ public class CRandomRGBGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(type);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(type) + 1);
 
                     CRGBFunction function2 = (CRGBFunction) gui.editButtonToCRGBFunctionMap.get(editButton).copy();
                     gui.editButtonToCRGBFunctionMap.put((GUIButton) line.getLineElement(0), function2);

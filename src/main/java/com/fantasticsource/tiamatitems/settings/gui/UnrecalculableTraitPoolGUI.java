@@ -65,16 +65,16 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                 String nameString = namespace.getFirstAvailableNumberedName("UTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Unrecalculable Traits");
                 GUILabeledTextInput weight = new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER);
+                GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good: ", new CUnrecalculableTrait().isGood);
+                GUILabeledTextInput minValue = new GUILabeledTextInput(gui, " Min Value: ", "" + new CUnrecalculableTrait().minValue, FilterFloat.INSTANCE);
+                GUILabeledTextInput maxValue = new GUILabeledTextInput(gui, " Max Value: ", "" + new CUnrecalculableTrait().maxValue, FilterFloat.INSTANCE);
 
                 gui.nameElementToUnrecalculableTraitMap.put(name, new CUnrecalculableTrait());
 
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int lineIndex = getLineIndexContaining(name);
-                    if (lineIndex == -1) lineIndex = lineCount() - 1;
-                    lineIndex++;
-                    GUIList.Line line = addLine(lineIndex);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
                     trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
@@ -85,11 +85,9 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                     gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
 
                     ((GUILabeledTextInput) line.getLineElement(5)).setText(weight.getText());
-
-                    ((GUILabeledBoolean) line.getLineElement(7)).setValue(trait.isGood);
-
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.minValue);
-                    ((GUILabeledTextInput) line.getLineElement(11)).setText("" + trait.maxValue);
+                    ((GUILabeledBoolean) line.getLineElement(7)).setValue(isGood.getValue());
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(minValue.getText());
+                    ((GUILabeledTextInput) line.getLineElement(11)).setText(maxValue.getText());
                 });
 
                 return new GUIElement[]
@@ -101,11 +99,11 @@ public class UnrecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 weight,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Is Good: ", new CUnrecalculableTrait().isGood),
+                                isGood,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Min Value: ", "" + new CUnrecalculableTrait().minValue, FilterFloat.INSTANCE),
+                                minValue,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Max Value: ", "" + new CUnrecalculableTrait().maxValue, FilterFloat.INSTANCE),
+                                maxValue,
                         };
             }
         };

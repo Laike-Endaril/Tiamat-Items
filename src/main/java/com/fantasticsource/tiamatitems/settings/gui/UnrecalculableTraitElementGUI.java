@@ -99,10 +99,7 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                     duplicateButton.addClickActions(() ->
                     {
-                        int lineIndex = getLineIndexContaining(dyeIndex);
-                        if (lineIndex == -1) lineIndex = lineCount() - 1;
-                        lineIndex++;
-                        GUIList.Line line = addLine(lineIndex);
+                        GUIList.Line line = addLine(getLineIndexContaining(dyeIndex) + 1);
 
                         GUIButton editButton2 = (GUIButton) line.getLineElement(1);
                         gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());

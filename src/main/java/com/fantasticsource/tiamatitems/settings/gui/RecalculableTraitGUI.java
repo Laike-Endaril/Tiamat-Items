@@ -89,16 +89,14 @@ public class RecalculableTraitGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int lineIndex = getLineIndexContaining(type);
-                    if (lineIndex == -1) lineIndex = lineCount() - 1;
-                    lineIndex++;
-                    GUIList.Line line = addLine(lineIndex);
+                    GUIList.Line line = addLine(getLineIndexContaining(type) + 1);
 
                     GUIText typeElement = (GUIText) line.getLineElement(3);
                     typeElement.setText(type.getText());
 
                     CRecalculableTraitElement element = (CRecalculableTraitElement) gui.typeElementToRecalculableTraitElementMap.get(type).copy();
                     gui.typeElementToRecalculableTraitElementMap.put(typeElement, element);
+
                     ((GUIText) line.getLineElement(5)).setText(" " + element.getDescription());
                 });
 

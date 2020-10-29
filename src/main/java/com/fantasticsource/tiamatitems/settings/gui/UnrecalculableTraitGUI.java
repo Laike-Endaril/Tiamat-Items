@@ -79,16 +79,14 @@ public class UnrecalculableTraitGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int lineIndex = getLineIndexContaining(type);
-                    if (lineIndex == -1) lineIndex = lineCount() - 1;
-                    lineIndex++;
-                    GUIList.Line line = addLine(lineIndex);
+                    GUIList.Line line = addLine(getLineIndexContaining(type) + 1);
 
                     GUIText typeElement = (GUIText) line.getLineElement(3);
                     typeElement.setText(type.getText());
 
                     CUnrecalculableTraitElement element = (CUnrecalculableTraitElement) gui.typeElementToUnrecalculableTraitElementMap.get(type).copy();
                     gui.typeElementToUnrecalculableTraitElementMap.put(typeElement, element);
+
                     ((GUIText) line.getLineElement(5)).setText(" " + element.getDescription());
                 });
 

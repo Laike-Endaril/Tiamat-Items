@@ -122,10 +122,7 @@ public class SettingsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CRecalculableTraitPool pool = (CRecalculableTraitPool) gui.nameElementToRecalculableTraitPoolMap.get(name).copy();
                     GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
@@ -185,10 +182,7 @@ public class SettingsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CUnrecalculableTraitPool pool = (CUnrecalculableTraitPool) gui.nameElementToUnrecalculableTraitPoolMap.get(name).copy();
                     GUILabeledTextInput nameElement = (GUILabeledTextInput) line.getLineElement(3);
@@ -256,10 +250,7 @@ public class SettingsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CRarity rarity = (CRarity) gui.nameElementToRarityMap.get(name).copy();
                     rarity.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
@@ -269,10 +260,10 @@ public class SettingsGUI extends GUIScreen
 
                     gui.nameElementToRarityMap.put(nameElement, rarity);
 
-                    ((GUIColor) line.getLineElement(5)).setValue(rarity.color);
-                    ((GUIText) line.getLineElement(8)).setText(rarity.textColor + rarity.textColor.name());
-                    ((GUILabeledTextInput) line.getLineElement(10)).setText("" + rarity.itemLevelModifier);
-                    ((GUILabeledTextInput) line.getLineElement(12)).setText("" + rarity.ordering);
+                    ((GUIColor) line.getLineElement(5)).setValue(color.getValue().copy());
+                    ((GUIText) line.getLineElement(8)).setText(textColor.getText());
+                    ((GUILabeledTextInput) line.getLineElement(10)).setText(itemLevelModifier.getText());
+                    ((GUILabeledTextInput) line.getLineElement(12)).setText(ordering.getText());
                 });
 
                 return new GUIElement[]
@@ -347,10 +338,7 @@ public class SettingsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CItemType itemType2 = (CItemType) gui.nameElementToItemTypeMap.get(name).copy();
                     itemType2.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
@@ -360,9 +348,9 @@ public class SettingsGUI extends GUIScreen
 
                     gui.nameElementToItemTypeMap.put(name2, itemType2);
 
-                    ((GUIText) line.getLineElement(5)).setText("" + itemType2.slotting);
-                    ((GUILabeledTextInput) line.getLineElement(7)).setText("" + itemType2.traitLevelMultiplier);
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + itemType2.value);
+                    ((GUIText) line.getLineElement(5)).setText(slotting.getText());
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText(traitLevelMultiplier.getText());
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(value.getText());
                 });
 
                 return new GUIElement[]
@@ -467,10 +455,7 @@ public class SettingsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
 

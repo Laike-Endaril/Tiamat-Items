@@ -58,16 +58,17 @@ public class RecalculableTraitListGUI extends GUIScreen
                 Namespace namespace = gui.namespaces.computeIfAbsent("Recalculable Traits", o -> new Namespace());
                 String nameString = namespace.getFirstAvailableNumberedName("RTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Traits");
+                GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good: ", new CRecalculableTrait().isGood);
+                GUILabeledTextInput minValue = new GUILabeledTextInput(gui, " Min Value: ", "" + new CRecalculableTrait().minValue, FilterFloat.INSTANCE);
+                GUILabeledTextInput maxValue = new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE);
+                GUILabeledBoolean addToAssembly = new GUILabeledBoolean(gui, " Add to Assembly from Part: ", new CRecalculableTrait().addToAssemblyFromPart);
 
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
 
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int lineIndex = getLineIndexContaining(name);
-                    if (lineIndex == -1) lineIndex = lineCount() - 1;
-                    lineIndex++;
-                    GUIList.Line line = addLine(lineIndex);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CRecalculableTrait trait = (CRecalculableTrait) gui.nameElementToRecalculableTraitMap.get(name).copy();
                     trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
@@ -77,12 +78,12 @@ public class RecalculableTraitListGUI extends GUIScreen
 
                     gui.nameElementToRecalculableTraitMap.put(nameElement, trait);
 
-                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.isGood);
+                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(isGood.getValue());
 
-                    ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText(minValue.getText());
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(maxValue.getText());
 
-                    ((GUILabeledBoolean) line.getLineElement(11)).setValue(trait.addToAssemblyFromPart);
+                    ((GUILabeledBoolean) line.getLineElement(11)).setValue(addToAssembly.getValue());
                 });
 
                 return new GUIElement[]
@@ -92,13 +93,13 @@ public class RecalculableTraitListGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Is Good: ", new CRecalculableTrait().isGood),
+                                isGood,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Min Value: ", "" + new CRecalculableTrait().minValue, FilterFloat.INSTANCE),
+                                minValue,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE),
+                                maxValue,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Add to Assembly from Part: ", new CRecalculableTrait().addToAssemblyFromPart)
+                                addToAssembly
                         };
             }
         };

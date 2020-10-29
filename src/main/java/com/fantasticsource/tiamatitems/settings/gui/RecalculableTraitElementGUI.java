@@ -314,10 +314,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
                     GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                     duplicateButton.addClickActions(() ->
                     {
-                        int lineIndex = getLineIndexContaining(dyeIndex);
-                        if (lineIndex == -1) lineIndex = lineCount() - 1;
-                        lineIndex++;
-                        Line line = addLine(lineIndex);
+                        Line line = addLine(getLineIndexContaining(dyeIndex) + 1);
 
                         GUIButton editButton2 = (GUIButton) line.getLineElement(1);
                         gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());

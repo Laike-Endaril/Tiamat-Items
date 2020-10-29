@@ -74,10 +74,7 @@ public class RecalculableTraitPoolSetsGUI extends GUIScreen
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int index = getLineIndexContaining(name);
-                    if (index == -1) index = lineCount() - 1;
-                    index++;
-                    GUIList.Line line = addLine(index);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     String nameString2 = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
 

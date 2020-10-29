@@ -65,6 +65,9 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                 String nameString = namespace.getFirstAvailableNumberedName("RTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Recalculable Traits");
                 GUILabeledTextInput weight = new GUILabeledTextInput(gui, " Trait Weight: ", "1", WEIGHT_FILTER);
+                GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good: ", new CRecalculableTrait().isGood);
+                GUILabeledTextInput minValue = new GUILabeledTextInput(gui, " Min Value: ", "" + new CRecalculableTrait().minValue, FilterFloat.INSTANCE);
+                GUILabeledTextInput maxValue = new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE);
                 GUILabeledBoolean addToAssembly = new GUILabeledBoolean(gui, " Add to Assembly from Part: ", new CRecalculableTrait().addToAssemblyFromPart);
 
                 gui.nameElementToRecalculableTraitMap.put(name, new CRecalculableTrait());
@@ -87,12 +90,12 @@ public class RecalculableTraitPoolGUI extends GUIScreen
 
                     ((GUILabeledTextInput) line.getLineElement(5)).setText(weight.getText());
 
-                    ((GUILabeledBoolean) line.getLineElement(7)).setValue(trait.isGood);
+                    ((GUILabeledBoolean) line.getLineElement(7)).setValue(isGood.getValue());
 
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.minValue);
-                    ((GUILabeledTextInput) line.getLineElement(11)).setText("" + trait.maxValue);
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(minValue.getText());
+                    ((GUILabeledTextInput) line.getLineElement(11)).setText(maxValue.getText());
 
-                    ((GUILabeledBoolean) line.getLineElement(13)).setValue(trait.addToAssemblyFromPart);
+                    ((GUILabeledBoolean) line.getLineElement(13)).setValue(addToAssembly.getValue());
                 });
 
                 return new GUIElement[]
@@ -104,11 +107,11 @@ public class RecalculableTraitPoolGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 weight,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Is Good: ", new CRecalculableTrait().isGood),
+                                isGood,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Min Value: ", "" + new CRecalculableTrait().minValue, FilterFloat.INSTANCE),
+                                minValue,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Max Value: ", "" + new CRecalculableTrait().maxValue, FilterFloat.INSTANCE),
+                                maxValue,
                                 new GUIElement(gui, 1, 0),
                                 addToAssembly
                         };

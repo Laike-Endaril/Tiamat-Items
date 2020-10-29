@@ -11,7 +11,6 @@ import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTrait;
@@ -59,16 +58,16 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                 Namespace namespace = gui.namespaces.computeIfAbsent("Unrecalculable Traits", o -> new Namespace());
                 String nameString = namespace.getFirstAvailableNumberedName("UTrait");
                 GUILabeledTextInput name = new GUILabeledTextInput(gui, " Trait Name: ", nameString, FilterNotEmpty.INSTANCE).setNamespace("Unrecalculable Traits");
+                GUILabeledBoolean isGood = new GUILabeledBoolean(gui, " Is Good: ", new CUnrecalculableTrait().isGood);
+                GUILabeledTextInput minValue = new GUILabeledTextInput(gui, " Min Value: ", "" + new CUnrecalculableTrait().minValue, FilterFloat.INSTANCE);
+                GUILabeledTextInput maxValue = new GUILabeledTextInput(gui, " Max Value: ", "" + new CUnrecalculableTrait().maxValue, FilterFloat.INSTANCE);
 
                 gui.nameElementToUnrecalculableTraitMap.put(name, new CUnrecalculableTrait());
 
                 GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
                 duplicateButton.addClickActions(() ->
                 {
-                    int lineIndex = getLineIndexContaining(name);
-                    if (lineIndex == -1) lineIndex = lineCount() - 1;
-                    lineIndex++;
-                    GUIList.Line line = addLine(lineIndex);
+                    GUIList.Line line = addLine(getLineIndexContaining(name) + 1);
 
                     CUnrecalculableTrait trait = (CUnrecalculableTrait) gui.nameElementToUnrecalculableTraitMap.get(name).copy();
                     trait.name = namespace.getFirstAvailableNumberedName(name.getText() + "_Copy");
@@ -78,10 +77,10 @@ public class UnrecalculableTraitListGUI extends GUIScreen
 
                     gui.nameElementToUnrecalculableTraitMap.put(nameElement, trait);
 
-                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(trait.isGood);
+                    ((GUILabeledBoolean) line.getLineElement(5)).setValue(isGood.getValue());
 
-                    ((GUILabeledTextInput) line.getLineElement(7)).setText("" + trait.minValue);
-                    ((GUILabeledTextInput) line.getLineElement(9)).setText("" + trait.maxValue);
+                    ((GUILabeledTextInput) line.getLineElement(7)).setText(minValue.getText());
+                    ((GUILabeledTextInput) line.getLineElement(9)).setText(maxValue.getText());
                 });
 
                 return new GUIElement[]
@@ -91,11 +90,11 @@ public class UnrecalculableTraitListGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledBoolean(gui, " Is Good: ", new CUnrecalculableTrait().isGood),
+                                isGood,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Min Value: ", "" + new CUnrecalculableTrait().minValue, FilterFloat.INSTANCE),
+                                minValue,
                                 new GUIElement(gui, 1, 0),
-                                new GUILabeledTextInput(gui, " Max Value: ", "" + new CUnrecalculableTrait().maxValue, FilterFloat.INSTANCE),
+                                maxValue
                         };
             }
         };
