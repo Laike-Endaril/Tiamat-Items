@@ -14,6 +14,7 @@ import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.tiamatitems.ClientData;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
@@ -90,12 +91,13 @@ public class SettingsGUI extends GUIScreen
         GUILabeledTextInput maxItemLevel = new GUILabeledTextInput(gui, " Max Item Level: ", "" + gui.settings.maxItemLevel, MAX_ITEM_LEVEL_FILTER);
         GUILabeledTextInput baseMultiplier = new GUILabeledTextInput(gui, " Base Trait Multiplier: ", "" + gui.settings.baseMultiplier, FilterFloat.INSTANCE);
         GUILabeledTextInput multiplierBonusPerLevel = new GUILabeledTextInput(gui, " Trait Multiplier Bonus Per Item Level: ", "" + gui.settings.multiplierBonusPerLevel, FilterFloat.INSTANCE);
+        GUIText pendingVersion = new GUIText(gui, " Pending Version: " + packet.settings.getVersion());
         tabView.tabViews.get(0).addAll
                 (
                         new GUITextSpacer(gui),
-                        new GUIText(gui, " Current Version: " + CSettings.SETTINGS.getVersion()),
+                        new GUIText(gui, " Current Version: " + ClientData.serverItemGenConfigVersion),
                         new GUIElement(gui, 1, 0),
-                        new GUIText(gui, " Pending Version: " + packet.settings.getVersion()),
+                        pendingVersion,
                         new GUITextSpacer(gui),
                         maxItemLevel,
                         new GUITextSpacer(gui),
@@ -638,8 +640,9 @@ public class SettingsGUI extends GUIScreen
             }
 
 
-            //Send to server
+            //Send to server and update pending version
             Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket(gui.settings));
+            pendingVersion.setText(" Pending Version: " + (ClientData.serverItemGenConfigVersion + 1));
         });
         saveAndClose.addClickActions(() ->
         {
