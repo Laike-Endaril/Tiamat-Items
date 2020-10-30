@@ -12,7 +12,50 @@ import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class ActiveAttributeModTags
 {
-    //ALSO SEE ATTRIBUTES CLASS
+    //Also see TransientAttributeModEvent
+
+    public static boolean isActive(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return false;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("active")) return false;
+
+        return compound.getBoolean("active");
+    }
+
+    public static void activate(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setBoolean("active", true);
+    }
+
+    public static void deactivate(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("active")) return;
+
+        compound.removeTag("active");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
 
     public static ArrayList<String> getActiveMods(ItemStack stack)
     {

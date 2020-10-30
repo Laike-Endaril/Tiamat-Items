@@ -5,6 +5,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.tiamatitems.compat.Compat;
+import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tools.Tools;
@@ -87,7 +88,7 @@ public class TransientAttributeModEvent extends PlayerEvent
             for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
             {
                 ItemStack stack = player.inventory.getStackInSlot(slot);
-                handleGenericModsForSlot(player, slot, 0, "Vanilla", stack);
+                handleTransientModsForSlot(player, slot, 0, "Vanilla", stack);
             }
 
             //Baubles slots
@@ -97,7 +98,7 @@ public class TransientAttributeModEvent extends PlayerEvent
                 for (int slot = 0; slot < inventory.getSlots(); slot++)
                 {
                     ItemStack stack = inventory.getStackInSlot(slot);
-                    handleGenericModsForSlot(player, slot, Slottings.BAUBLES_OFFSET, "Baubles", stack);
+                    handleTransientModsForSlot(player, slot, Slottings.BAUBLES_OFFSET, "Baubles", stack);
                 }
             }
 
@@ -107,7 +108,7 @@ public class TransientAttributeModEvent extends PlayerEvent
                 int slot = 0;
                 for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
                 {
-                    handleGenericModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
+                    handleTransientModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
                 }
             }
 
@@ -121,11 +122,12 @@ public class TransientAttributeModEvent extends PlayerEvent
     }
 
 
-    private static void handleGenericModsForSlot(EntityPlayerMP player, int slot, int slotOffset, String slotType, ItemStack stack)
+    private static void handleTransientModsForSlot(EntityPlayerMP player, int slot, int slotOffset, String slotType, ItemStack stack)
     {
         if (!Slottings.slotValidForSlotting(MiscTags.getItemSlotting(stack), slot + slotOffset, player)) return;
 
 
+        //Passive mods
         for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
         {
             String[] tokens = Tools.fixedSplit(modString, ";");
@@ -162,6 +164,51 @@ public class TransientAttributeModEvent extends PlayerEvent
 
 
             applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
+        }
+
+
+        //Active mods
+        if (ActiveAttributeModTags.isActive(stack))
+        {
+            System.out.println("1");
+            for (String modString : ActiveAttributeModTags.getActiveMods(stack))
+            {
+                String[] tokens = Tools.fixedSplit(modString, ";");
+                if (tokens.length != 3)
+                {
+                    System.err.println("Wrong number of arguments for attribute modifier string: " + modString);
+                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    continue;
+                }
+
+                double amount;
+                try
+                {
+                    amount = Double.parseDouble(tokens[1]);
+                }
+                catch (NumberFormatException e)
+                {
+                    System.err.println("Amount (2nd argument) was not a double: " + modString);
+                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    continue;
+                }
+
+                int operation;
+                try
+                {
+                    operation = Integer.parseInt(tokens[2]);
+                }
+                catch (NumberFormatException e)
+                {
+                    System.err.println("Operation (3nd argument) was not an integer: " + modString);
+                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    continue;
+                }
+
+
+                System.out.println("2");
+                applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
+            }
         }
     }
 
