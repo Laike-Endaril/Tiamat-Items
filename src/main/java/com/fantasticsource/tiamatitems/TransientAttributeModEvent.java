@@ -170,7 +170,6 @@ public class TransientAttributeModEvent extends PlayerEvent
         //Active mods
         if (ActiveAttributeModTags.isActive(stack))
         {
-            System.out.println("1");
             for (String modString : ActiveAttributeModTags.getActiveMods(stack))
             {
                 String[] tokens = Tools.fixedSplit(modString, ";");
@@ -206,7 +205,6 @@ public class TransientAttributeModEvent extends PlayerEvent
                 }
 
 
-                System.out.println("2");
                 applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
             }
         }
