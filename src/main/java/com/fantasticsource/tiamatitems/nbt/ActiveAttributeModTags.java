@@ -18,10 +18,10 @@ public class ActiveAttributeModTags
     {
         if (!stack.hasTagCompound()) return false;
 
-        NBTTagCompound mainTag = stack.getTagCompound();
-        if (!mainTag.hasKey(DOMAIN)) return false;
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return false;
 
-        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("active")) return false;
 
         return compound.getBoolean("active");
