@@ -4,11 +4,13 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.Slottings;
+import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -20,7 +22,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
 
@@ -62,60 +63,59 @@ public class TransientAttributeModEvent extends PlayerEvent
 
 
     @SubscribeEvent
-    public static void handleTransientMods(TickEvent.ServerTickEvent event)
+    public static void handleTransientMods(InventoryChangedEvent event)
     {
-        if (event.phase != TickEvent.Phase.START) return;
-
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EntityPlayerMP)) return;
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-
         server.profiler.startSection(MODID + " - transient modifiers");
 
 
-        for (EntityPlayerMP player : server.getPlayerList().getPlayers())
+        EntityPlayerMP player = (EntityPlayerMP) entity;
+
+
+        //Remove transient mods from last tick
+        for (IAttributeInstance attributeInstance : player.getAttributeMap().getAllAttributes().toArray(new IAttributeInstance[0]))
         {
-            //Remove transient mods from last tick
-            for (IAttributeInstance attributeInstance : player.getAttributeMap().getAllAttributes().toArray(new IAttributeInstance[0]))
+            for (AttributeModifier modifier : attributeInstance.getModifiers().toArray(new AttributeModifier[0]))
             {
-                for (AttributeModifier modifier : attributeInstance.getModifiers().toArray(new AttributeModifier[0]))
-                {
-                    if (modifier.getName().contains(TRANSIENT_MOD_PREFIX)) attributeInstance.removeModifier(modifier);
-                }
+                if (modifier.getName().contains(TRANSIENT_MOD_PREFIX)) attributeInstance.removeModifier(modifier);
             }
-
-
-            //Vanilla slots
-            for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
-            {
-                ItemStack stack = player.inventory.getStackInSlot(slot);
-                handleTransientModsForSlot(player, slot, 0, "Vanilla", stack);
-            }
-
-            //Baubles slots
-            if (Compat.baubles)
-            {
-                IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
-                for (int slot = 0; slot < inventory.getSlots(); slot++)
-                {
-                    ItemStack stack = inventory.getStackInSlot(slot);
-                    handleTransientModsForSlot(player, slot, Slottings.BAUBLES_OFFSET, "Baubles", stack);
-                }
-            }
-
-            //Tiamat slots
-            if (Compat.tiamatinventory)
-            {
-                int slot = 0;
-                for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
-                {
-                    handleTransientModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
-                }
-            }
-
-
-            //Fire event
-            MinecraftForge.EVENT_BUS.post(new TransientAttributeModEvent(player));
         }
+
+
+        //Vanilla slots
+        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
+        {
+            ItemStack stack = player.inventory.getStackInSlot(slot);
+            handleTransientModsForSlot(player, slot, 0, "Vanilla", stack);
+        }
+
+        //Baubles slots
+        if (Compat.baubles)
+        {
+            IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
+            for (int slot = 0; slot < inventory.getSlots(); slot++)
+            {
+                ItemStack stack = inventory.getStackInSlot(slot);
+                handleTransientModsForSlot(player, slot, Slottings.BAUBLES_OFFSET, "Baubles", stack);
+            }
+        }
+
+        //Tiamat slots
+        if (Compat.tiamatinventory)
+        {
+            int slot = 0;
+            for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
+            {
+                handleTransientModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
+            }
+        }
+
+
+        //Fire event
+        MinecraftForge.EVENT_BUS.post(new TransientAttributeModEvent(player));
 
 
         server.profiler.endSection();
