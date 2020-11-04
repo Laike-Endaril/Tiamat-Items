@@ -53,7 +53,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         if (multipliedArgs.length == 0)
         {
@@ -77,7 +77,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
         if (amount == 0) return;
@@ -93,6 +93,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     @Override
     public CRTraitElement_ActiveAttributeMod write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, attributeName);
         buf.writeDouble(minAmount);
         buf.writeDouble(maxAmount);
@@ -105,6 +107,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     @Override
     public CRTraitElement_ActiveAttributeMod read(ByteBuf buf)
     {
+        super.read(buf);
+
         attributeName = ByteBufUtils.readUTF8String(buf);
         minAmount = buf.readDouble();
         maxAmount = buf.readDouble();
@@ -117,6 +121,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     @Override
     public CRTraitElement_ActiveAttributeMod save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(attributeName).save(stream);
         new CDouble().set(minAmount).save(stream).set(maxAmount).save(stream);
         new CBoolean().set(isGood).save(stream);
@@ -128,6 +134,8 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
     @Override
     public CRTraitElement_ActiveAttributeMod load(InputStream stream)
     {
+        super.load(stream);
+
         CDouble cd = new CDouble();
         attributeName = new CStringUTF8().load(stream).value;
         minAmount = cd.load(stream).value;

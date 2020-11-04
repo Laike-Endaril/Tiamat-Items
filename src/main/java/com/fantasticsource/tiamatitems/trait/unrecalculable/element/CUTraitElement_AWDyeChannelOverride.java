@@ -29,13 +29,13 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     }
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "AW Dye Channel Override";
     }
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         //Dyes
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
@@ -130,6 +130,8 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     @Override
     public CUTraitElement_AWDyeChannelOverride write(ByteBuf buf)
     {
+        super.write(buf);
+
         buf.writeInt(dyeChannels.size());
         for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet())
         {
@@ -143,6 +145,8 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     @Override
     public CUTraitElement_AWDyeChannelOverride read(ByteBuf buf)
     {
+        super.read(buf);
+
         dyeChannels.clear();
         for (int i = buf.readInt(); i > 0; i--) dyeChannels.put(buf.readInt(), new CRandomRGB().read(buf));
 
@@ -152,6 +156,8 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     @Override
     public CUTraitElement_AWDyeChannelOverride save(OutputStream stream)
     {
+        super.save(stream);
+
         CInt ci = new CInt();
         ci.set(dyeChannels.size()).save(stream);
         for (Map.Entry<Integer, CRandomRGB> entry : dyeChannels.entrySet())
@@ -166,6 +172,8 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     @Override
     public CUTraitElement_AWDyeChannelOverride load(InputStream stream)
     {
+        super.load(stream);
+
         CInt ci = new CInt();
         dyeChannels.clear();
         for (int i = ci.load(stream).value; i > 0; i--) dyeChannels.put(ci.load(stream).value, new CRandomRGB().load(stream));

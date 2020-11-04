@@ -24,14 +24,14 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Right Click: " + (actionName.equals("") ? "(Do Nothing)" : actionName);
     }
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         ActionTags.setRightClickAction(stack, actionName);
     }
@@ -40,6 +40,8 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
     @Override
     public CRTraitElement_RightClickAction write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, actionName);
 
         return this;
@@ -48,6 +50,8 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
     @Override
     public CRTraitElement_RightClickAction read(ByteBuf buf)
     {
+        super.read(buf);
+
         actionName = ByteBufUtils.readUTF8String(buf);
 
         return this;
@@ -56,6 +60,8 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
     @Override
     public CRTraitElement_RightClickAction save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(actionName).save(stream);
 
         return this;
@@ -64,6 +70,8 @@ public class CRTraitElement_RightClickAction extends CRecalculableTraitElement
     @Override
     public CRTraitElement_RightClickAction load(InputStream stream)
     {
+        super.load(stream);
+
         actionName = new CStringUTF8().load(stream).value;
 
         return this;

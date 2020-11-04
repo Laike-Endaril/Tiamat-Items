@@ -24,14 +24,14 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Assembled Item Name: " + assemblyName;
     }
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         MiscTags.setAssemblyNameOverride(stack, assemblyName);
     }
@@ -40,6 +40,8 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AssemblyName write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, assemblyName);
 
         return this;
@@ -48,6 +50,8 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AssemblyName read(ByteBuf buf)
     {
+        super.read(buf);
+
         assemblyName = ByteBufUtils.readUTF8String(buf);
 
         return this;
@@ -56,6 +60,8 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AssemblyName save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(assemblyName).save(stream);
 
         return this;
@@ -64,6 +70,8 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AssemblyName load(InputStream stream)
     {
+        super.load(stream);
+
         assemblyName = new CStringUTF8().load(stream).value;
 
         return this;

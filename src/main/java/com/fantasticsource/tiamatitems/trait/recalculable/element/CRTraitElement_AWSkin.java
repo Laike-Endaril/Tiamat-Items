@@ -3,9 +3,9 @@ package com.fantasticsource.tiamatitems.trait.recalculable.element;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.aw.AWSkinGenerator;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
+import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
@@ -57,7 +57,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     }
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
         if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
@@ -77,7 +77,7 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     }
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         //Dyes
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
@@ -128,6 +128,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AWSkin write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, libraryFileOrFolder);
         ByteBufUtils.writeUTF8String(buf, skinType);
         buf.writeBoolean(isRandomFromFolder);
@@ -147,6 +149,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AWSkin read(ByteBuf buf)
     {
+        super.read(buf);
+
         libraryFileOrFolder = ByteBufUtils.readUTF8String(buf);
         skinType = ByteBufUtils.readUTF8String(buf);
         isRandomFromFolder = buf.readBoolean();
@@ -162,6 +166,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AWSkin save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(libraryFileOrFolder).save(stream).set(skinType).save(stream);
         new CBoolean().set(isRandomFromFolder).save(stream).set(isTransient).save(stream);
         CInt ci = new CInt().set(indexWithinSkinTypeIfTransient).save(stream);
@@ -179,6 +185,8 @@ public class CRTraitElement_AWSkin extends CRecalculableTraitElement
     @Override
     public CRTraitElement_AWSkin load(InputStream stream)
     {
+        super.load(stream);
+
         CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt();
         CBoolean cb = new CBoolean();

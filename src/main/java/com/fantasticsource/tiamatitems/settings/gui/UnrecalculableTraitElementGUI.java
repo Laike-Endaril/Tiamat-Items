@@ -56,6 +56,9 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
 
         //Main
+        GUILabeledBoolean ignoreMultipliers = new GUILabeledBoolean(gui, " Ignore Multipliers: ", traitElement.ignoreMultipliers);
+        gui.root.addAll(new GUITextSpacer(gui), ignoreMultipliers);
+
         if (traitElement.getClass() == CUTraitElement_AWSkin.class)
         {
             CUTraitElement_AWSkin skinElement = (CUTraitElement_AWSkin) traitElement;
@@ -151,6 +154,8 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
                 skinElement.isRandomFromFolder = isRandomFromFolder.getValue();
                 skinElement.skinType = skinType.getText();
@@ -251,6 +256,8 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 dyeOverrideElement.dyeChannels.clear();
                 for (GUIList.Line line : dyes.getLines())
                 {

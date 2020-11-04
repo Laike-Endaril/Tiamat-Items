@@ -28,7 +28,7 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     }
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         if (cacheLayers) TextureTags.addItemLayerCacheTag(stack);
         else TextureTags.removeItemLayerCacheTag(stack);
@@ -47,7 +47,7 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     }
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Adds textures to the itemstack";
     }
@@ -56,6 +56,8 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers write(ByteBuf buf)
     {
+        super.write(buf);
+
         buf.writeBoolean(cacheLayers);
         buf.writeBoolean(cacheTextures);
 
@@ -74,6 +76,8 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers read(ByteBuf buf)
     {
+        super.read(buf);
+
         cacheLayers = buf.readBoolean();
         cacheTextures = buf.readBoolean();
 
@@ -92,6 +96,8 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers save(OutputStream stream)
     {
+        super.save(stream);
+
         new CBoolean().set(cacheLayers).save(stream).set(cacheTextures).save(stream);
 
         CStringUTF8 cs = new CStringUTF8();
@@ -108,6 +114,8 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     @Override
     public CRTraitElement_TextureLayers load(InputStream stream)
     {
+        super.load(stream);
+
         CBoolean cb = new CBoolean();
         cacheLayers = cb.load(stream).value;
         cacheTextures = cb.load(stream).value;

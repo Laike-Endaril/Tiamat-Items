@@ -24,14 +24,14 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         return "Forced AW Skin Type Override: " + (skinType.equals("") ? "No skin type selected" : skinType);
     }
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         ForcedAWSkinOverrides.setForcedAWSkinType(stack, skinType);
     }
@@ -40,6 +40,8 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
     @Override
     public CRTraitElement_ForcedAWSkinTypeOverride write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, skinType);
 
         return this;
@@ -48,6 +50,8 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
     @Override
     public CRTraitElement_ForcedAWSkinTypeOverride read(ByteBuf buf)
     {
+        super.read(buf);
+
         skinType = ByteBufUtils.readUTF8String(buf);
 
         return this;
@@ -56,6 +60,8 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
     @Override
     public CRTraitElement_ForcedAWSkinTypeOverride save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(skinType).save(stream);
 
         return this;
@@ -64,6 +70,8 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
     @Override
     public CRTraitElement_ForcedAWSkinTypeOverride load(InputStream stream)
     {
+        super.load(stream);
+
         skinType = new CStringUTF8().load(stream).value;
 
         return this;

@@ -36,7 +36,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         if (multipliedArgs.length == 0)
         {
@@ -50,7 +50,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         int amount = (int) (minAmount + (maxAmount - minAmount) * multipliedArgs[0]);
         if (amount == 0) return;
@@ -62,6 +62,8 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
     @Override
     public CRTraitElement_Durability write(ByteBuf buf)
     {
+        super.write(buf);
+
         buf.writeDouble(minAmount);
         buf.writeDouble(maxAmount);
 
@@ -71,6 +73,8 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
     @Override
     public CRTraitElement_Durability read(ByteBuf buf)
     {
+        super.read(buf);
+
         minAmount = buf.readDouble();
         maxAmount = buf.readDouble();
 
@@ -80,6 +84,8 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
     @Override
     public CRTraitElement_Durability save(OutputStream stream)
     {
+        super.save(stream);
+
         new CDouble().set(minAmount).save(stream).set(maxAmount).save(stream);
 
         return this;
@@ -88,6 +94,8 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
     @Override
     public CRTraitElement_Durability load(InputStream stream)
     {
+        super.load(stream);
+
         CDouble cd = new CDouble();
         minAmount = cd.load(stream).value;
         maxAmount = cd.load(stream).value;

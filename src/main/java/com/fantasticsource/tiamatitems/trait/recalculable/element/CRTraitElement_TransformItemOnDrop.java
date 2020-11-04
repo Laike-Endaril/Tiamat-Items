@@ -27,7 +27,7 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         StringBuilder result = new StringBuilder("When dropped, transform this item into a level " + minLevel + " - " + maxLevel + " " + rarity + " item (" + (itemTypes.size() == 0 ? "no item types selected" : itemTypes.get(0)));
         for (int i = 1; i < itemTypes.size(); i++) result.append(", ").append(itemTypes.get(i));
@@ -36,7 +36,7 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         if (itemTypes.size() == 0) return;
 
@@ -47,6 +47,8 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
     @Override
     public CRTraitElement_TransformItemOnDrop write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, rarity);
         buf.writeInt(minLevel);
         buf.writeInt(maxLevel);
@@ -60,6 +62,8 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
     @Override
     public CRTraitElement_TransformItemOnDrop read(ByteBuf buf)
     {
+        super.read(buf);
+
         rarity = ByteBufUtils.readUTF8String(buf);
         minLevel = buf.readInt();
         maxLevel = buf.readInt();
@@ -73,6 +77,8 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
     @Override
     public CRTraitElement_TransformItemOnDrop save(OutputStream stream)
     {
+        super.save(stream);
+
         CStringUTF8 cs = new CStringUTF8().set(rarity).save(stream);
         new CInt().set(minLevel).save(stream).set(maxLevel).save(stream).set(itemTypes.size()).save(stream);
         for (String itemType : itemTypes) cs.set(itemType).save(stream);
@@ -83,6 +89,8 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
     @Override
     public CRTraitElement_TransformItemOnDrop load(InputStream stream)
     {
+        super.load(stream);
+
         CStringUTF8 cs = new CStringUTF8();
         CInt ci = new CInt();
 

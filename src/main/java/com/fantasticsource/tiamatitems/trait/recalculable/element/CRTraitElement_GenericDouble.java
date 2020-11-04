@@ -30,7 +30,7 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         if (baseArgs.size() == 0)
         {
@@ -43,7 +43,7 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -56,6 +56,8 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
     @Override
     public CRTraitElement_GenericDouble write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeDouble(minAmount);
         buf.writeDouble(maxAmount);
@@ -66,6 +68,8 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
     @Override
     public CRTraitElement_GenericDouble read(ByteBuf buf)
     {
+        super.read(buf);
+
         name = ByteBufUtils.readUTF8String(buf);
         minAmount = buf.readDouble();
         maxAmount = buf.readDouble();
@@ -76,6 +80,8 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
     @Override
     public CRTraitElement_GenericDouble save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(name).save(stream);
         new CDouble().set(minAmount).save(stream).set(maxAmount).save(stream);
 
@@ -85,6 +91,8 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
     @Override
     public CRTraitElement_GenericDouble load(InputStream stream)
     {
+        super.load(stream);
+
         CDouble cd = new CDouble();
 
         name = new CStringUTF8().load(stream).value;

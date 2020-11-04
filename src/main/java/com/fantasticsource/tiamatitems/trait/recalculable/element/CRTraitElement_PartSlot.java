@@ -29,7 +29,7 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
     {
         if (baseArgs.size() == 0)
         {
@@ -42,7 +42,7 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 
 
     @Override
-    public void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
     {
         int count = minCount + (int) ((double) baseArgs[0] / Integer.MAX_VALUE * (maxCount - minCount + 1));
         for (; count > 0; count--) AssemblyTags.addPartSlot(stack, partSlotType, required);
@@ -52,6 +52,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     @Override
     public CRTraitElement_PartSlot write(ByteBuf buf)
     {
+        super.write(buf);
+
         ByteBufUtils.writeUTF8String(buf, partSlotType);
         buf.writeInt(minCount);
         buf.writeInt(maxCount);
@@ -63,6 +65,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     @Override
     public CRTraitElement_PartSlot read(ByteBuf buf)
     {
+        super.read(buf);
+
         partSlotType = ByteBufUtils.readUTF8String(buf);
         minCount = buf.readInt();
         maxCount = buf.readInt();
@@ -74,6 +78,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     @Override
     public CRTraitElement_PartSlot save(OutputStream stream)
     {
+        super.save(stream);
+
         new CStringUTF8().set(partSlotType).save(stream);
         new CInt().set(minCount).save(stream).set(maxCount).save(stream);
         new CBoolean().set(required).save(stream);
@@ -84,6 +90,8 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
     @Override
     public CRTraitElement_PartSlot load(InputStream stream)
     {
+        super.load(stream);
+
         CInt ci = new CInt();
 
         partSlotType = new CStringUTF8().load(stream).value;

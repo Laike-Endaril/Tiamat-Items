@@ -61,6 +61,9 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
         //Main
+        GUILabeledBoolean ignoreMultipliers = new GUILabeledBoolean(gui, " Ignore Multipliers: ", traitElement.ignoreMultipliers);
+        gui.root.addAll(new GUITextSpacer(gui), ignoreMultipliers);
+
         if (traitElement.getClass() == CRTraitElement_LeftClickAction.class)
         {
             CRTraitElement_LeftClickAction actionElement = (CRTraitElement_LeftClickAction) traitElement;
@@ -76,6 +79,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 actionElement.actionName = action.getText();
 
 
@@ -98,6 +103,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 actionElement.actionName = action.getText();
 
 
@@ -136,6 +143,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 attributeElement.attributeName = attribute.getText();
                 attributeElement.isGood = isGood.getValue();
                 attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
@@ -178,6 +187,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 attributeElement.attributeName = attribute.getText();
                 attributeElement.isGood = isGood.getValue();
                 attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
@@ -216,6 +227,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 partSlotElement.partSlotType = partSlotType.getText();
                 partSlotElement.required = required.getValue();
                 partSlotElement.minCount = PART_SLOT_COUNT_FILTER.parse(minCount.getText());
@@ -263,6 +276,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 textureElement.cacheLayers = cacheLayers.getValue();
                 textureElement.cacheTextures = cacheTextures.getValue();
 
@@ -366,6 +381,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
                 skinElement.isRandomFromFolder = isRandomFromFolder.getValue();
                 skinElement.skinType = skinType.getText();
@@ -400,6 +417,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 overrideElement.skinType = skinType.getText();
 
 
@@ -422,6 +441,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 nameElement.assemblyName = skinType.getText();
 
 
@@ -450,6 +471,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 durabilityElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
                 durabilityElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
 
@@ -479,6 +502,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 inventorySlotsElement.minCount = FilterInt.INSTANCE.parse(minCount.getText());
                 inventorySlotsElement.maxCount = FilterInt.INSTANCE.parse(maxCount.getText());
 
@@ -511,6 +536,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 genericDoubleElement.name = FilterNotEmpty.INSTANCE.parse(name.getText());
                 genericDoubleElement.minAmount = FilterInt.INSTANCE.parse(minAmount.getText());
                 genericDoubleElement.maxAmount = FilterInt.INSTANCE.parse(maxAmount.getText());
@@ -574,6 +601,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
 
                 //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
                 dropTransformElement.rarity = rarity.getText();
                 dropTransformElement.minLevel = FilterInt.INSTANCE.parse(minLevel.getText());
                 dropTransformElement.maxLevel = FilterInt.INSTANCE.parse(maxLevel.getText());
