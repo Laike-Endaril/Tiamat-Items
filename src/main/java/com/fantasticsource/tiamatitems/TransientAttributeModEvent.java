@@ -124,7 +124,7 @@ public class TransientAttributeModEvent extends PlayerEvent
 
     private static void handleTransientModsForSlot(EntityPlayerMP player, int slot, int slotOffset, String slotType, ItemStack stack)
     {
-        if (!Slottings.slotValidForSlotting(MiscTags.getItemSlotting(stack), slot + slotOffset, player)) return;
+        if (!Slottings.slotValidForSlotting(Slottings.getItemSlotting(stack), slot + slotOffset, player)) return;
 
 
         //Passive mods
