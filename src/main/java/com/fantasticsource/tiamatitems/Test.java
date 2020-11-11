@@ -95,12 +95,13 @@ public class Test
         CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
 
 
-        CRTraitElement_LeftClickAction leftClickAction = new CRTraitElement_LeftClickAction();
-        leftClickAction.actionName = "2HAxeAttack1";
+        CRTraitElement_GenericString genericStringTag = new CRTraitElement_GenericString();
+        genericStringTag.name = "actionLC";
+        genericStringTag.value = "2HAxeAttack1";
 
         CRecalculableTrait trait = new CRecalculableTrait();
         trait.name = "2HAxeAttack1";
-        trait.elements.add(leftClickAction);
+        trait.elements.add(genericStringTag);
         trait.minValue = 3;
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);
@@ -112,12 +113,13 @@ public class Test
         CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
 
 
-        CRTraitElement_RightClickAction rightClickAction = new CRTraitElement_RightClickAction();
-        rightClickAction.actionName = "2HAxeAttack2";
+        genericStringTag = new CRTraitElement_GenericString();
+        genericStringTag.name = "actionRC";
+        genericStringTag.value = "2HAxeAttack2";
 
         trait = new CRecalculableTrait();
         trait.name = "2HAxeAttack2";
-        trait.elements.add(rightClickAction);
+        trait.elements.add(genericStringTag);
         trait.minValue = 3;
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);

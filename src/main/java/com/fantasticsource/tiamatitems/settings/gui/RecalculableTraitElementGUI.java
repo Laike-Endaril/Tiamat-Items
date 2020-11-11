@@ -8,10 +8,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.*;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterFloat;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
+import com.fantasticsource.mctools.gui.element.text.filter.*;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.element.view.GUIList.Line;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
@@ -64,55 +61,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
         GUILabeledBoolean ignoreMultipliers = new GUILabeledBoolean(gui, " Ignore Multipliers: ", traitElement.ignoreMultipliers);
         gui.root.addAll(new GUITextSpacer(gui), ignoreMultipliers);
 
-        if (traitElement.getClass() == CRTraitElement_LeftClickAction.class)
-        {
-            CRTraitElement_LeftClickAction actionElement = (CRTraitElement_LeftClickAction) traitElement;
-
-            GUILabeledTextInput action = new GUILabeledTextInput(gui, " Action Name: ", actionElement.actionName.equals("") ? "ActionName" : actionElement.actionName, FilterNotEmpty.INSTANCE);
-            gui.root.addAll(new GUITextSpacer(gui), action);
-
-            //Add main header actions
-            done.addClickActions(() ->
-            {
-                //Validation
-                if (!action.valid()) return;
-
-
-                //Processing
-                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
-
-                actionElement.actionName = action.getText();
-
-
-                //Close GUI
-                gui.close();
-            });
-        }
-        else if (traitElement.getClass() == CRTraitElement_RightClickAction.class)
-        {
-            CRTraitElement_RightClickAction actionElement = (CRTraitElement_RightClickAction) traitElement;
-
-            GUILabeledTextInput action = new GUILabeledTextInput(gui, " Action Name: ", actionElement.actionName.equals("") ? "ActionName" : actionElement.actionName, FilterNotEmpty.INSTANCE);
-            gui.root.addAll(new GUITextSpacer(gui), action);
-
-            //Add main header actions
-            done.addClickActions(() ->
-            {
-                //Validation
-                if (!action.valid()) return;
-
-
-                //Processing
-                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
-
-                actionElement.actionName = action.getText();
-
-
-                //Close GUI
-                gui.close();
-            });
-        }
-        else if (traitElement.getClass() == CRTraitElement_ActiveAttributeMod.class)
+        if (traitElement.getClass() == CRTraitElement_ActiveAttributeMod.class)
         {
             CRTraitElement_ActiveAttributeMod attributeElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 
@@ -541,6 +490,37 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 genericDoubleElement.name = FilterNotEmpty.INSTANCE.parse(name.getText());
                 genericDoubleElement.minAmount = FilterInt.INSTANCE.parse(minAmount.getText());
                 genericDoubleElement.maxAmount = FilterInt.INSTANCE.parse(maxAmount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CRTraitElement_GenericString.class)
+        {
+            CRTraitElement_GenericString genericStringElement = (CRTraitElement_GenericString) traitElement;
+
+            GUILabeledTextInput name = new GUILabeledTextInput(gui, " Name: ", genericStringElement.name, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput value = new GUILabeledTextInput(gui, " Value: ", "" + genericStringElement.value, FilterNone.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    name,
+                    new GUITextSpacer(gui),
+                    value
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!name.valid() || !value.valid()) return;
+
+
+                //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
+                genericStringElement.name = FilterNotEmpty.INSTANCE.parse(name.getText());
+                genericStringElement.value = FilterNone.INSTANCE.parse(value.getText());
 
 
                 //Close GUI

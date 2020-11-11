@@ -25,8 +25,6 @@ public class RecalculableTraitGUI extends GUIScreen
 
     static
     {
-        OPTIONS.put(" Left Click Action", CRTraitElement_LeftClickAction.class);
-        OPTIONS.put(" Right Click Action", CRTraitElement_RightClickAction.class);
         OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
         OPTIONS.put(" Passive Attribute Modifier", CRTraitElement_PassiveAttributeMod.class);
         OPTIONS.put(" Part Slot", CRTraitElement_PartSlot.class);
@@ -37,6 +35,7 @@ public class RecalculableTraitGUI extends GUIScreen
         OPTIONS.put(" Durability", CRTraitElement_Durability.class);
         OPTIONS.put(" Inventory Slots", CRTraitElement_InventorySlots.class);
         OPTIONS.put(" Generid Double", CRTraitElement_GenericDouble.class);
+        OPTIONS.put(" Generic String", CRTraitElement_GenericString.class);
         OPTIONS.put(" Transform On Drop", CRTraitElement_TransformItemOnDrop.class);
     }
 
