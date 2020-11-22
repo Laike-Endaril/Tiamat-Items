@@ -19,7 +19,7 @@ public class CRGBBoost extends CRGBFunction
     @Override
     public String description()
     {
-        return "Boost RGB by (" + toAdd[0] + ", " + toAdd[1] + ", " + toAdd[2] + ")" + (endIfExecuted ? " and end" : "") + " (" + (int) (chance * 100) + "% chance)";
+        return "Boost RGB by (" + toAdd[0] + ", " + toAdd[1] + ", " + toAdd[2] + ")" + (endIfExecuted ? " and end" : "") + " (" + Math.round(chance * 100) + "% chance)";
     }
 
     @Override
