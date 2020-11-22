@@ -79,19 +79,19 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
                         switch (dyeLetter)
                         {
                             case "r":
-                                newStackString.append((byte) color.r());
+                                newStackString.append((byte) color.r()).append("b");
                                 break;
 
                             case "g":
-                                newStackString.append((byte) color.g());
+                                newStackString.append((byte) color.g()).append("b");
                                 break;
 
                             case "b":
-                                newStackString.append((byte) color.b());
+                                newStackString.append((byte) color.b()).append("b");
                                 break;
 
                             case "t":
-                                newStackString.append((byte) color.a());
+                                newStackString.append((byte) color.a()).append("b");
                                 break;
                         }
                     }
@@ -101,11 +101,11 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
                 {
                     int dyeChannel = entry.getKey();
                     Color color = entry.getValue();
-                    newStackString.append(started ? ",dye" : "dye").append(dyeChannel).append("r:").append((byte) color.r());
+                    newStackString.append(started ? ",dye" : "dye").append(dyeChannel).append("r:").append((byte) color.r()).append("b");
                     started = true;
-                    newStackString.append(",dye").append(dyeChannel).append("g:").append((byte) color.g());
-                    newStackString.append(",dye").append(dyeChannel).append("b:").append((byte) color.b());
-                    newStackString.append(",dye").append(dyeChannel).append("t:").append((byte) color.a());
+                    newStackString.append(",dye").append(dyeChannel).append("g:").append((byte) color.g()).append("b");
+                    newStackString.append(",dye").append(dyeChannel).append("b:").append((byte) color.b()).append("b");
+                    newStackString.append(",dye").append(dyeChannel).append("t:").append((byte) color.a()).append("b");
                 }
 
                 newStackString.append("}");
