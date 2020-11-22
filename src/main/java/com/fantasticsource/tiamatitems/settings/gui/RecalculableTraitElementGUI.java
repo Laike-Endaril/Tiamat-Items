@@ -466,8 +466,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
             CRTraitElement_GenericDouble genericDoubleElement = (CRTraitElement_GenericDouble) traitElement;
 
             GUILabeledTextInput name = new GUILabeledTextInput(gui, " Name: ", genericDoubleElement.name, FilterNotEmpty.INSTANCE);
-            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + genericDoubleElement.minAmount, FilterInt.INSTANCE);
-            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + genericDoubleElement.maxAmount, FilterInt.INSTANCE);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + genericDoubleElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + genericDoubleElement.maxAmount, FilterFloat.INSTANCE);
             gui.root.addAll(
                     new GUITextSpacer(gui),
                     name,
