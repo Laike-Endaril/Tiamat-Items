@@ -22,7 +22,9 @@ import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
 import com.fantasticsource.tools.datastructures.Color;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.*;
@@ -625,8 +627,8 @@ public class SettingsGUI extends GUIScreen
             }
 
 
-            //Send to server and update pending version
-            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket(gui.settings));
+            //Send to server and update pending version in current GUI
+            saveToServer(gui.settings);
             pendingVersion.setText(" Pending Version: " + (ClientData.serverItemGenConfigVersion + 1));
         });
         saveAndClose.addClickActions(() ->
@@ -750,11 +752,8 @@ public class SettingsGUI extends GUIScreen
             }
 
 
-            //Send to server
-            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacket(gui.settings));
-
-
-            //Close GUI
+            //Send to server and close GUI
+            saveToServer(gui.settings);
             gui.close();
         });
     }
@@ -763,5 +762,28 @@ public class SettingsGUI extends GUIScreen
     public String title()
     {
         return "Settings";
+    }
+
+
+    protected static void saveToServer(CSettings settings)
+    {
+        UUID groupID = UUID.randomUUID();
+
+        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        settings.write(buffer);
+
+        byte[] bytes = buffer.array();
+        int count = bytes.length / 32000;
+        int lastSize = bytes.length % 32000;
+        if (lastSize != 0) count++;
+        else lastSize = 32000;
+
+        for (int i = 0; i < count; i++)
+        {
+            int size = i < count - 1 ? 32000 : lastSize;
+            byte[] partBytes = new byte[size];
+            System.arraycopy(bytes, i * 32000, partBytes, 0, size);
+            Network.WRAPPER.sendToServer(new Network.SaveSettingsPacketPart(groupID, i, count, partBytes));
+        }
     }
 }

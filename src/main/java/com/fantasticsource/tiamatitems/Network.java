@@ -7,10 +7,12 @@ import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -21,19 +23,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class Network
 {
     public static final SimpleNetworkWrapper WRAPPER = new SimpleNetworkWrapper(MODID);
     private static int discriminator = 0;
+    protected static final HashMap<UUID, SaveSettingsPacketPart[]> SAVE_SETTINGS_PACKET_PARTS = new HashMap<>();
 
     public static void init()
     {
         WRAPPER.registerMessage(OpenItemEditorPacketHandler.class, OpenItemEditorPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(OpenSettingsPacketHandler.class, OpenSettingsPacket.class, discriminator++, Side.CLIENT);
-        WRAPPER.registerMessage(SaveSettingsPacketHandler.class, SaveSettingsPacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(SaveSettingsPacketPartHandler.class, SaveSettingsPacketPart.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
     }
 
@@ -158,46 +164,93 @@ public class Network
     }
 
 
-    public static class SaveSettingsPacket implements IMessage
+    public static class SaveSettingsPacketPart implements IMessage
     {
-        public CSettings settings;
+        UUID groupID;
+        int partIndex, partCount;
+        byte[] bytes;
 
-        public SaveSettingsPacket()
+        public SaveSettingsPacketPart()
         {
             //Required
         }
 
-        public SaveSettingsPacket(CSettings settings)
+        public SaveSettingsPacketPart(UUID groupID, int partIndex, int partCount, byte[] bytes)
         {
-            this.settings = settings;
+            this.groupID = groupID;
+            this.partIndex = partIndex;
+            this.partCount = partCount;
+            this.bytes = bytes;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            settings.write(buf);
+            buf.writeLong(groupID.getMostSignificantBits());
+            buf.writeLong(groupID.getLeastSignificantBits());
+            buf.writeInt(partIndex);
+            buf.writeInt(partCount);
+            buf.writeInt(bytes.length);
+            buf.writeBytes(bytes);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            settings = new CSettings().read(buf);
+            groupID = new UUID(buf.readLong(), buf.readLong());
+            partIndex = buf.readInt();
+            partCount = buf.readInt();
+            bytes = new byte[buf.readInt()];
+            buf.readBytes(bytes);
         }
     }
 
-    public static class SaveSettingsPacketHandler implements IMessageHandler<SaveSettingsPacket, IMessage>
+    public static class SaveSettingsPacketPartHandler implements IMessageHandler<SaveSettingsPacketPart, IMessage>
     {
         @Override
-        public IMessage onMessage(SaveSettingsPacket packet, MessageContext ctx)
+        public IMessage onMessage(SaveSettingsPacketPart packet, MessageContext ctx)
         {
             EntityPlayerMP player = ctx.getServerHandler().player;
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             server.addScheduledTask(() ->
             {
-                if (MCTools.isOP(player))
+                if (!MCTools.isOP(player)) return;
+
+
+                System.out.println(packet.partIndex + 1 + " / " + packet.partCount);
+                SaveSettingsPacketPart[] parts;
+                if (packet.partIndex == 0)
                 {
+                    parts = new SaveSettingsPacketPart[packet.partCount];
+                    SAVE_SETTINGS_PACKET_PARTS.put(packet.groupID, parts);
+                    parts[0] = packet;
+                }
+                else
+                {
+                    parts = SAVE_SETTINGS_PACKET_PARTS.get(packet.groupID);
+                    parts[packet.partIndex] = packet;
+                }
+
+                if (packet.partIndex == packet.partCount - 1)
+                {
+                    int totalSize = 0;
+                    for (SaveSettingsPacketPart part : parts)
+                    {
+                        totalSize += part.bytes.length;
+                    }
+
+                    byte[] bytes = new byte[totalSize];
+                    int i = 0;
+                    for (SaveSettingsPacketPart part : parts)
+                    {
+                        System.arraycopy(part.bytes, 0, bytes, i++ * 32000, part.bytes.length);
+                    }
+
+                    PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                    buffer.writeBytes(bytes);
+
                     //Set edited version 1 higher than current
-                    CSettings.EDITED_SETTINGS = packet.settings;
+                    CSettings.EDITED_SETTINGS = new CSettings().read(buffer);
                     CSettings.EDITED_SETTINGS.itemGenConfigVersion = CSettings.SETTINGS.itemGenConfigVersion + 1;
 
                     CSettings.updateVersionAndSave(ctx.getServerHandler().player);
