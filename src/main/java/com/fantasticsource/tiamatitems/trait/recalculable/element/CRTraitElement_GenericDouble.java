@@ -18,7 +18,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
 {
-    public String name;
+    public String name = "";
     public double minAmount = 0, maxAmount = 1;
 
 

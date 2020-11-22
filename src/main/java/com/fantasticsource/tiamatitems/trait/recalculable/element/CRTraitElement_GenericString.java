@@ -17,7 +17,7 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class CRTraitElement_GenericString extends CRecalculableTraitElement
 {
-    public String name, value;
+    public String name = "", value = "";
 
 
     @Override
