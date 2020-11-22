@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.Slottings;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_FULL;
+import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_USABLE;
 
 public class TiamatItem extends Item
 {
@@ -44,6 +46,8 @@ public class TiamatItem extends Item
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
+        if (AssemblyTags.getState(stack) < STATE_USABLE) return false;
+
         String slotting = Slottings.getItemSlotting(stack);
         if (slotting.equals("Any")) return true;
 
