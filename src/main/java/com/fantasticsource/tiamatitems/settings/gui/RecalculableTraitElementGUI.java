@@ -33,6 +33,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
     public static final FilterRangedInt
             OPERATION_FILTER = FilterRangedInt.get(0, 2),
+            STACK_SIZE_LIMIT_FILTER = FilterRangedInt.get(1, 64),
             PART_SLOT_COUNT_FILTER = FilterRangedInt.get(0, Integer.MAX_VALUE),
             AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9),
             AW_DYE_INDEX_FILTER = FilterRangedInt.get(0, 7);
@@ -150,6 +151,33 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 attributeElement.operation = FilterInt.INSTANCE.parse(operation.getText());
                 attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
                 attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CRTraitElement_StackLimit.class)
+        {
+            CRTraitElement_StackLimit partSlotElement = (CRTraitElement_StackLimit) traitElement;
+
+            GUILabeledTextInput limit = new GUILabeledTextInput(gui, " Limit: ", "" + partSlotElement.limit, STACK_SIZE_LIMIT_FILTER);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    limit
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!limit.valid()) return;
+
+
+                //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
+                partSlotElement.limit = STACK_SIZE_LIMIT_FILTER.parse(limit.getText());
 
 
                 //Close GUI

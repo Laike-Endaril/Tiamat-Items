@@ -27,6 +27,7 @@ public class RecalculableTraitGUI extends GUIScreen
     {
         OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
         OPTIONS.put(" Passive Attribute Modifier", CRTraitElement_PassiveAttributeMod.class);
+        OPTIONS.put(" Stack Size Limit", CRTraitElement_StackLimit.class);
         OPTIONS.put(" Part Slot", CRTraitElement_PartSlot.class);
         OPTIONS.put(" Texture Layers", CRTraitElement_TextureLayers.class);
         OPTIONS.put(" AW Skin", CRTraitElement_AWSkin.class);
