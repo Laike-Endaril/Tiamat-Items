@@ -374,21 +374,23 @@ public class RecalculableTraitElementGUI extends GUIScreen
         else if (traitElement.getClass() == CRTraitElement_ForcedAWSkinTypeOverride.class)
         {
             CRTraitElement_ForcedAWSkinTypeOverride overrideElement = (CRTraitElement_ForcedAWSkinTypeOverride) traitElement;
-            GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", overrideElement.skinType.equals("") ? "SkinType" : overrideElement.skinType, FilterNotEmpty.INSTANCE);
-            gui.root.addAll(new GUITextSpacer(gui), skinType);
+
+            String[] skinTypes = new String[]{"(None)", "sword", "shield", "bow", "pickaxe", "axe", "shovel", "hoe", "item"};
+            GUIText skinTypeLabel = new GUIText(gui, " Skin Type: ").setColor(WHITES[0], WHITES[1], WHITES[2]);
+            GUIText skinType = new GUIText(gui, overrideElement.skinType.equals("") ? "(None)" : overrideElement.skinType).setColor(WHITES[0], WHITES[1], WHITES[2]);
+            skinTypeLabel.addClickActions(skinType::click).linkMouseActivity(skinType);
+            skinType.addClickActions(() -> new TextSelectionGUI(skinType, "Select AW Skin Type", skinTypes)).linkMouseActivity(skinTypeLabel);
+
+            gui.root.addAll(new GUITextSpacer(gui), skinTypeLabel, skinType);
 
 
             //Add main header actions
             done.addClickActions(() ->
             {
-                //Validation
-                if (!skinType.valid()) return;
-
-
                 //Processing
                 traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
 
-                overrideElement.skinType = skinType.getText();
+                overrideElement.skinType = skinType.getText().equals("(None)") ? "" : skinType.getText();
 
 
                 //Close GUI

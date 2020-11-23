@@ -1,4 +1,4 @@
-Add max stack count setting
+Add max stack count trait element vis MiscTags.setTiamatItemStackLimit()
 
 
 
