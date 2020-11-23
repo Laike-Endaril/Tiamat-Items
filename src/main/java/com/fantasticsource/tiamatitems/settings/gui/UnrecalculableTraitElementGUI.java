@@ -12,18 +12,26 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
+import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitElement;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWDyeChannelOverride;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.CUTraitElement_AWSkin;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
+import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
+import moe.plushie.armourers_workshop.api.common.skin.type.ISkinType;
+import moe.plushie.armourers_workshop.api.common.skin.type.ISkinTypeRegistry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public class UnrecalculableTraitElementGUI extends GUIScreen
 {
+    public static Color WHITES[] = new Color[]{getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE};
+
     public static final FilterRangedInt
             AW_SLOT_INDEX_FILTER = FilterRangedInt.get(0, 9),
             AW_DYE_INDEX_FILTER = FilterRangedInt.get(0, 7);
@@ -65,7 +73,20 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
             GUILabeledTextInput libraryFileOrFolder = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFileOrFolder.equals("") ? "LibraryFileOrFolder" : skinElement.libraryFileOrFolder), FilterNotEmpty.INSTANCE);
             GUILabeledBoolean isRandomFromFolder = new GUILabeledBoolean(gui, " Is Random From Folder: ", skinElement.isRandomFromFolder);
-            GUILabeledTextInput skinType = new GUILabeledTextInput(gui, " Skin Type: ", (skinElement.skinType.equals("") ? "SkinType" : skinElement.skinType), FilterNotEmpty.INSTANCE);
+
+            ArrayList<String> skinTypeArray = new ArrayList<>();
+            skinTypeArray.add("(None)");
+            ISkinTypeRegistry skinTypeRegistry = ArmourersWorkshopApi.getSkinTypeRegistry();
+            if (skinTypeRegistry != null)
+            {
+                for (ISkinType skinType : skinTypeRegistry.getRegisteredSkinTypes()) skinTypeArray.add(skinType.getRegistryName());
+            }
+            String[] skinTypes = skinTypeArray.toArray(new String[0]);
+            GUIText skinTypeLabel = new GUIText(gui, " Skin Type: ").setColor(WHITES[0], WHITES[1], WHITES[2]);
+            GUIText skinType = new GUIText(gui, skinElement.skinType.equals("") ? "(None)" : skinElement.skinType).setColor(WHITES[0], WHITES[1], WHITES[2]);
+            skinTypeLabel.addClickActions(skinType::click).linkMouseActivity(skinType);
+            skinType.addClickActions(() -> new TextSelectionGUI(skinType, "Select AW Skin Type", skinTypes)).linkMouseActivity(skinTypeLabel);
+
             GUILabeledBoolean isTransient = new GUILabeledBoolean(gui, " Transient: ", skinElement.isTransient);
             GUILabeledTextInput indexWithinSkinTypeIfTransient = new GUILabeledTextInput(gui, " Wardrobe Slot Index Within Skin Type (if Transient): ", "" + skinElement.indexWithinSkinTypeIfTransient, AW_SLOT_INDEX_FILTER);
             GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
@@ -75,7 +96,7 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
                     new GUITextSpacer(gui),
                     isRandomFromFolder,
                     new GUITextSpacer(gui),
-                    skinType,
+                    skinTypeLabel, skinType,
                     new GUITextSpacer(gui),
                     isTransient,
                     new GUITextSpacer(gui),
@@ -146,7 +167,7 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
             done.addClickActions(() ->
             {
                 //Validation
-                if (!libraryFileOrFolder.valid() || !skinType.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
+                if (!libraryFileOrFolder.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
                 for (GUIList.Line line : dyes.getLines())
                 {
                     if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
@@ -158,7 +179,7 @@ public class UnrecalculableTraitElementGUI extends GUIScreen
 
                 skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
                 skinElement.isRandomFromFolder = isRandomFromFolder.getValue();
-                skinElement.skinType = skinType.getText();
+                skinElement.skinType = skinType.getText().equals("(None)") ? "" : skinType.getText();
                 skinElement.isTransient = isTransient.getValue();
                 skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
                 skinElement.dyeChannels.clear();
