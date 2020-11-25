@@ -14,6 +14,7 @@ import com.fantasticsource.mctools.gui.element.view.GUITabView;
 import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
+import com.fantasticsource.mctools.gui.screen.YesNoGUI;
 import com.fantasticsource.tiamatitems.ClientData;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -505,7 +506,7 @@ public class SettingsGUI extends GUIScreen
 
         //Add main header actions
         cancel.addRecalcActions(() -> tabView.height = 1 - (cancel.y + cancel.height));
-        cancel.addClickActions(gui::close);
+        cancel.addClickActions(gui::tryClose);
         saveWithoutClosing.addClickActions(() ->
         {
             //Validation
@@ -764,7 +765,6 @@ public class SettingsGUI extends GUIScreen
         return "Settings";
     }
 
-
     protected static void saveToServer(CSettings settings)
     {
         UUID groupID = UUID.randomUUID();
@@ -785,5 +785,22 @@ public class SettingsGUI extends GUIScreen
             System.arraycopy(bytes, i * 32000, partBytes, 0, size);
             Network.WRAPPER.sendToServer(new Network.SaveSettingsPacketPart(groupID, i, count, partBytes));
         }
+    }
+
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode)
+    {
+        if (keyCode == 1) tryClose();
+        root.keyTyped(typedChar, keyCode);
+    }
+
+    protected void tryClose()
+    {
+        YesNoGUI yesNoGUI = new YesNoGUI("Confirmation", "Are you sure you want to close without saving?");
+        yesNoGUI.addOnClosedActions(() ->
+        {
+            if (yesNoGUI.pressedYes) SCREEN_STACK.pop();
+        });
     }
 }
