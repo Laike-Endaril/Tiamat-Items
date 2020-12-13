@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 {
@@ -53,9 +52,9 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        if (multipliedArgs.length == 0)
+        if (args == null)
         {
             if (operation == 0) return (getColorAndSign(minAmount, operation) + Math.abs(minAmount) + TextFormatting.RESET + " to " + getColorAndSign(maxAmount, operation) + Math.abs(maxAmount) + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
             if (operation == 1) return (getColorAndSign(minAmount, operation) + (Math.abs(minAmount) * 100) + "%" + TextFormatting.RESET + " to " + getColorAndSign(maxAmount, operation) + (Math.abs(maxAmount) * 100) + "%" + TextFormatting.RESET + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
@@ -65,7 +64,7 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
         }
 
 
-        double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         amount *= CSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
 
         if (operation == 0) return (getColorAndSign(amount, operation) + Math.abs(amount) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
@@ -77,11 +76,9 @@ public class CRTraitElement_ActiveAttributeMod extends CRecalculableTraitElement
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
-        if (amount == 0) return;
-
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         amount *= CSettings.attributeBalanceMultipliers.getOrDefault(attributeName, 1d);
         if (amount == 0) return;
 

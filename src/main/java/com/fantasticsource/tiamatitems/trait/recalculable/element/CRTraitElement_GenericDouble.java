@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
@@ -30,25 +29,25 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        if (baseArgs.size() == 0)
+        if (args == null)
         {
             return I18n.translateToLocalFormatted(MODID + ".generic." + name + ".description", minAmount, maxAmount);
         }
 
-        double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         return I18n.translateToLocalFormatted(MODID + ".generic." + name, amount);
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
-        double amount = minAmount + (maxAmount - minAmount) * multipliedArgs[0];
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         MCTools.getOrGenerateSubCompound(compound, MODID, "generic").setDouble(name, amount);
     }
 

@@ -33,12 +33,12 @@ public final class CRecalculableTrait extends CTrait
 
 
         int[] baseArguments = new int[requiredArgumentCount];
-        double[] multipliedArgs = new double[requiredArgumentCount];
+        double[] decimalArgs = new double[requiredArgumentCount];
         System.arraycopy(baseArgs, 0, baseArguments, 0, Tools.min(baseArgs.length, requiredArgumentCount));
         for (int i = baseArgs.length; i < requiredArgumentCount; i++) baseArguments[i] = Tools.random(Integer.MAX_VALUE);
         for (int i = 0; i < requiredArgumentCount; i++)
         {
-            multipliedArgs[i] = (double) baseArguments[i] / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier;
+            decimalArgs[i] = (double) baseArguments[i] / (Integer.MAX_VALUE - 1);
         }
 
 
@@ -50,16 +50,16 @@ public final class CRecalculableTrait extends CTrait
         {
             for (int i = 0; i < element.requiredArgumentCount(); i++)
             {
-                averagedRoll += multipliedArgs[i];
+                averagedRoll += element.ignoreMultipliers ? 1 : decimalArgs[i];
                 rollUsageCount++;
             }
         }
 
 
-        if (requiredArgumentCount == 0) return (minValue + maxValue) / 2;
+        if (requiredArgumentCount == 0) return (minValue + maxValue) * 0.5 * itemTypeAndLevelMultiplier;
 
         averagedRoll /= rollUsageCount;
-        return minValue + (maxValue - minValue) * averagedRoll;
+        return (minValue + (maxValue - minValue) * averagedRoll) * itemTypeAndLevelMultiplier;
     }
 
 
@@ -73,15 +73,7 @@ public final class CRecalculableTrait extends CTrait
         if (baseArguments.length < requiredArgumentCount) throw new IllegalStateException("Tried to apply recalculable trait without enough arguments: " + name + " (" + baseArguments.length + "/" + requiredArgumentCount + ")");
 
 
-        double[] multipliedArgs = new double[baseArguments.length];
-        int i = 0;
-        for (int base : baseArguments)
-        {
-            multipliedArgs[i++] = ((double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier);
-        }
-
-
-        for (CRecalculableTraitElement element : elements) element.applyToItem(stack, baseArguments, multipliedArgs);
+        for (CRecalculableTraitElement element : elements) element.applyToItem(stack, baseArguments, itemTypeAndLevelMultiplier);
     }
 
 

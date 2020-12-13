@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_InventorySlots extends CRecalculableTraitElement
 {
@@ -26,23 +25,22 @@ public class CRTraitElement_InventorySlots extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        if (baseArgs.size() == 0)
+        if (args == null)
         {
             return "Add " + Tools.max(0, minCount) + " to " + Tools.max(0, maxCount) + " inventory slots";
         }
 
-        int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        int count = getStandardCount(args, 0, minCount, maxCount, itemTypeAndLevelMultiplier);
         return "Add " + count + " inventory slots";
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        int count = minCount + (int) ((double) baseArgs[0] / Integer.MAX_VALUE * (maxCount - minCount + 1));
-
+        int count = getStandardCount(args, 0, minCount, maxCount, itemTypeAndLevelMultiplier);
 
         //From Tiamat Inventory ... SlotDataTags class
         if (count == 0)

@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public abstract class CTraitElement extends Component
 {
@@ -15,51 +14,36 @@ public abstract class CTraitElement extends Component
 
     public abstract int requiredArgumentCount();
 
-    public final void applyToItem(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public final double getStandardAmount(int[] args, int argIndex, double minAmount, double maxAmount, double itemTypeAndLevelMultiplier)
     {
-        if (ignoreMultipliers)
-        {
-            double[] mArgs = new double[baseArgs.length];
-            int i = 0;
-            for (int base : baseArgs)
-            {
-                multipliedArgs[i++] = ((double) base / (Integer.MAX_VALUE - 1));
-            }
-            applyToItemInternal(stack, baseArgs, mArgs);
-        }
-        else applyToItemInternal(stack, baseArgs, multipliedArgs);
+        double amount = minAmount + (maxAmount - minAmount) * args[argIndex] / (Integer.MAX_VALUE - 1);
+        if (!ignoreMultipliers) amount *= itemTypeAndLevelMultiplier;
+        return amount;
+    }
+
+    public final int getStandardCount(int[] args, int argIndex, int minCount, int maxCount, double itemTypeAndLevelMultiplier)
+    {
+        return (int) getStandardAmount(args, argIndex, minCount, maxCount, itemTypeAndLevelMultiplier);
     }
 
     /**
-     * @param stack          The ItemStack we're applying the trait element to
-     * @param baseArgs       A list of random integers ranging from 0 to (Integer.MAX_VALUE - 1).  Use these for absolute ranges, eg. choosing 1 of 3 different effects
-     * @param multipliedArgs A list of random doubles ranging from 0 to 1 *and possibly beyond due to multipliers*.  Use these for relative ranges, eg. an amount for an attribute bonus
+     * @param stack                      The ItemStack we're applying the trait element to
+     * @param args                       A list of random integers ranging from 0 to (Integer.MAX_VALUE - 1).  Use these for absolute ranges, eg. choosing 1 of 3 different effects
+     * @param itemTypeAndLevelMultiplier The combined multiplier for item type and item level (including contributions from rarity).  Use this in combination with baseArgs for relative ranges, eg. attribute modifiers
      */
-    protected abstract void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs);
+    public abstract void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier);
 
-
-    public final String getDescription(ArrayList<Integer> baseArgs, double[] multipliedArgs)
-    {
-        if (ignoreMultipliers)
-        {
-            double[] mArgs = new double[baseArgs.size()];
-            for (int i = 0; i < baseArgs.size(); i++) mArgs[i] = baseArgs.get(i);
-            return getDescriptionInternal(baseArgs, mArgs);
-        }
-
-        return getDescriptionInternal(baseArgs, multipliedArgs);
-    }
-
-    /**
-     * @param baseArgs       A list of random integers ranging from 0 to (Integer.MAX_VALUE - 1).  Use these for absolute ranges, eg. choosing 1 of 3 different effects
-     * @param multipliedArgs A list of random doubles ranging from 0 to 1 *and possibly beyond due to multipliers*.  Use these for relative ranges, eg. an amount for an attribute bonus
-     */
-    public abstract String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs);
 
     public final String getDescription()
     {
-        return getDescription(new ArrayList<>(), new double[0]);
+        return getDescription(null, null, 1);
     }
+
+    /**
+     * @param args                       A list of random integers ranging from 0 to (Integer.MAX_VALUE - 1).  Use these for absolute ranges, eg. choosing 1 of 3 different effects
+     * @param itemTypeAndLevelMultiplier The combined multiplier for item type and item level (including contributions from rarity).  Use this in combination with baseArgs for relative ranges, eg. attribute modifiers
+     */
+    public abstract String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier);
 
 
     @Override

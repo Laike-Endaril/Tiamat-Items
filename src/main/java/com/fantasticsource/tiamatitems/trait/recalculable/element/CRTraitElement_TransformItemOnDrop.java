@@ -27,7 +27,7 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         StringBuilder result = new StringBuilder("When dropped, transform this item into a level " + minLevel + " - " + maxLevel + " " + rarity + " item (" + (itemTypes.size() == 0 ? "no item types selected" : itemTypes.get(0)));
         for (int i = 1; i < itemTypes.size(); i++) result.append(", ").append(itemTypes.get(i));
@@ -36,7 +36,7 @@ public class CRTraitElement_TransformItemOnDrop extends CRecalculableTraitElemen
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         if (itemTypes.size() == 0) return;
 

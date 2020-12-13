@@ -23,14 +23,14 @@ public class CRTraitElement_StackLimit extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         return "Set the item stack size limit to " + limit;
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         MiscTags.setTiamatItemStackLimit(stack, limit);
     }

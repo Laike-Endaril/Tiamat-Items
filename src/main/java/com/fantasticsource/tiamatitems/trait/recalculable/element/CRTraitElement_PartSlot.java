@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 {
@@ -29,22 +28,22 @@ public class CRTraitElement_PartSlot extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        if (baseArgs.size() == 0)
+        if (args == null)
         {
             return "Add " + Tools.max(0, minCount) + " to " + Tools.max(0, maxCount) + (required ? " required " : " optional ") + (partSlotType.equals("") ? "(undefined type)" : partSlotType) + " slots";
         }
 
-        int count = minCount + (int) ((double) baseArgs.get(0) / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        int count = getStandardCount(args, 0, minCount, maxCount, itemTypeAndLevelMultiplier);
         return "Add " + count + (required ? " required " : " optional ") + partSlotType + " slots";
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        int count = minCount + (int) ((double) baseArgs[0] / Integer.MAX_VALUE * (maxCount - minCount + 1));
+        int count = getStandardCount(args, 0, minCount, maxCount, itemTypeAndLevelMultiplier);
         for (; count > 0; count--) AssemblyTags.addPartSlot(stack, partSlotType, required);
     }
 

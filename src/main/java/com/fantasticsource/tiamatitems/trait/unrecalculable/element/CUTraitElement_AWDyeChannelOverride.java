@@ -29,13 +29,13 @@ public class CUTraitElement_AWDyeChannelOverride extends CUnrecalculableTraitEle
     }
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         return "AW Dye Channel Override";
     }
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         //Dyes
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();

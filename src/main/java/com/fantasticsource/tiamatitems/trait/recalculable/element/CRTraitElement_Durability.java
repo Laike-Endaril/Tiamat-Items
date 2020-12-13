@@ -9,7 +9,6 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_Durability extends CRecalculableTraitElement
 {
@@ -36,26 +35,25 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        if (multipliedArgs.length == 0)
+        if (args == null)
         {
             return (getColorAndSign(minAmount) + Math.abs(minAmount) + TextFormatting.RESET + " to " + getColorAndSign(maxAmount) + Math.abs(maxAmount) + TextFormatting.RESET + " Durability");
         }
 
-
-        int amount = (int) (minAmount + (maxAmount - minAmount) * multipliedArgs[0]);
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         return (getColorAndSign(amount) + Math.abs(amount) + " Durability");
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
-        int amount = (int) (minAmount + (maxAmount - minAmount) * multipliedArgs[0]);
+        double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         if (amount == 0) return;
 
-        MiscTags.setItemDurability(stack, amount);
+        MiscTags.setItemDurability(stack, (int) amount);
     }
 
 

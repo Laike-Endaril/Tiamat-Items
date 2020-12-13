@@ -28,7 +28,7 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     }
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         if (cacheLayers) TextureTags.addItemLayerCacheTag(stack);
         else TextureTags.removeItemLayerCacheTag(stack);
@@ -47,7 +47,7 @@ public class CRTraitElement_TextureLayers extends CRecalculableTraitElement
     }
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         return "Adds textures to the itemstack";
     }

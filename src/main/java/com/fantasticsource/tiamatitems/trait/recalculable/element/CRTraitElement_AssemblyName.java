@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
 {
@@ -24,14 +23,14 @@ public class CRTraitElement_AssemblyName extends CRecalculableTraitElement
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         return "Assembled Item Name: " + assemblyName;
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         MiscTags.setAssemblyNameOverride(stack, assemblyName);
     }

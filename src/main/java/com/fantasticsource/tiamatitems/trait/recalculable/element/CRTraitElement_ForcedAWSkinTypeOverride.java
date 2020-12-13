@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitElement
 {
@@ -24,14 +23,14 @@ public class CRTraitElement_ForcedAWSkinTypeOverride extends CRecalculableTraitE
 
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         return "Forced AW Skin Type Override: " + (skinType.equals("") ? "No skin type selected" : skinType);
     }
 
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         ForcedAWSkinOverrides.setForcedAWSkinType(stack, skinType);
     }

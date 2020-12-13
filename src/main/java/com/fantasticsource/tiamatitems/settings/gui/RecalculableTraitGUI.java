@@ -30,7 +30,6 @@ public class RecalculableTraitGUI extends GUIScreen
         OPTIONS.put(" Stack Size Limit", CRTraitElement_StackLimit.class);
         OPTIONS.put(" Part Slot", CRTraitElement_PartSlot.class);
         OPTIONS.put(" Texture Layers", CRTraitElement_TextureLayers.class);
-        OPTIONS.put(" AW Skin", CRTraitElement_AWSkin.class);
         OPTIONS.put(" Forced AW Skin Type Override", CRTraitElement_ForcedAWSkinTypeOverride.class);
         OPTIONS.put(" Assembly Name", CRTraitElement_AssemblyName.class);
         OPTIONS.put(" Durability", CRTraitElement_Durability.class);

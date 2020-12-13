@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -53,11 +52,11 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     @Override
     public int requiredArgumentCount()
     {
-        return 2;
+        return 1;
     }
 
     @Override
-    public String getDescriptionInternal(ArrayList<Integer> baseArgs, double[] multipliedArgs)
+    public String getDescription(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         String folderString = AW_SKIN_LIBRARY_DIR + Tools.fixFileSeparators(libraryFileOrFolder);
         if (isRandomFromFolder) return isTransient ? "Random transient AW skin(s) from folder: " + folderString : "Random AW skin(s) from folder: " + folderString;
@@ -77,7 +76,7 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
     }
 
     @Override
-    public void applyToItemInternal(ItemStack stack, int[] baseArgs, double[] multipliedArgs)
+    public void applyToItem(ItemStack stack, int[] args, double itemTypeAndLevelMultiplier)
     {
         //Dyes
         LinkedHashMap<Integer, Color> dyes = new LinkedHashMap<>();
@@ -103,10 +102,10 @@ public class CUTraitElement_AWSkin extends CUnrecalculableTraitElement
             File[] files = file.listFiles();
             if (files == null || files.length == 0) return;
 
-            File[] limitedFiles = new File[Tools.min(Tools.max((int) (files.length * multipliedArgs[0]), 1), files.length)];
+            File[] limitedFiles = new File[Tools.min(Tools.max((int) (files.length * (ignoreMultipliers ? 1 : itemTypeAndLevelMultiplier)), 1), files.length)];
             System.arraycopy(files, 0, limitedFiles, 0, limitedFiles.length);
 
-            File chosen = limitedFiles[(int) ((double) baseArgs[1] / Integer.MAX_VALUE * limitedFiles.length)];
+            File chosen = limitedFiles[(int) ((double) args[0] / Integer.MAX_VALUE * limitedFiles.length)];
             StringBuilder shortName = new StringBuilder(chosen.getName());
             if (!chosen.isDirectory())
             {

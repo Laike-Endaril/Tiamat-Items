@@ -28,32 +28,32 @@ public class CUnrecalculableTrait extends CTrait
 
 
         int[] baseArguments = new int[requiredArgumentCount];
-        double[] multipliedArgs = new double[requiredArgumentCount];
+        double[] decimalArgs = new double[requiredArgumentCount];
         for (int i = 0; i < requiredArgumentCount; i++)
         {
             int base = Tools.random(Integer.MAX_VALUE);
             baseArguments[i] = base;
-            multipliedArgs[i] = (double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier;
+            decimalArgs[i] = (double) base / (Integer.MAX_VALUE - 1);
         }
 
 
         double averagedRoll = 0, rollUsageCount = 0;
         for (CUnrecalculableTraitElement element : elements)
         {
-            element.applyToItem(stack, baseArguments, multipliedArgs);
+            element.applyToItem(stack, baseArguments, itemTypeAndLevelMultiplier);
 
             for (int i = 0; i < element.requiredArgumentCount(); i++)
             {
-                averagedRoll += multipliedArgs[i];
+                averagedRoll += element.ignoreMultipliers ? 1 : decimalArgs[i];
                 rollUsageCount++;
             }
         }
 
 
-        if (requiredArgumentCount == 0) return (minValue + maxValue) / 2;
+        if (requiredArgumentCount == 0) return (minValue + maxValue) * 0.5 * itemTypeAndLevelMultiplier;
 
         averagedRoll /= rollUsageCount;
-        return minValue + (maxValue - minValue) * averagedRoll;
+        return (minValue + (maxValue - minValue) * averagedRoll) * itemTypeAndLevelMultiplier;
     }
 
 

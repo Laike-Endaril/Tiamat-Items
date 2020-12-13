@@ -1,7 +1,6 @@
 package com.fantasticsource.tiamatitems.settings.gui;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
@@ -17,15 +16,9 @@ import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElem
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.element.dyes.CRandomRGB;
 import com.fantasticsource.tools.datastructures.Color;
-import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
-import moe.plushie.armourers_workshop.api.common.skin.type.ISkinType;
-import moe.plushie.armourers_workshop.api.common.skin.type.ISkinTypeRegistry;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
@@ -264,135 +257,6 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
                 textureElement.cacheLayers = cacheLayers.getValue();
                 textureElement.cacheTextures = cacheTextures.getValue();
-
-
-                //Close GUI
-                gui.close();
-            });
-        }
-        else if (traitElement.getClass() == CRTraitElement_AWSkin.class)
-        {
-            CRTraitElement_AWSkin skinElement = (CRTraitElement_AWSkin) traitElement;
-
-            GUILabeledTextInput libraryFileOrFolder = new GUILabeledTextInput(gui, " Library File: ", (skinElement.libraryFileOrFolder.equals("") ? "LibraryFileOrFolder" : skinElement.libraryFileOrFolder), FilterNotEmpty.INSTANCE);
-            GUILabeledBoolean isRandomFromFolder = new GUILabeledBoolean(gui, " Is Random From Folder: ", skinElement.isRandomFromFolder);
-
-            ArrayList<String> skinTypeArray = new ArrayList<>();
-            skinTypeArray.add("(None)");
-            ISkinTypeRegistry skinTypeRegistry = ArmourersWorkshopApi.getSkinTypeRegistry();
-            if (skinTypeRegistry != null)
-            {
-                for (ISkinType skinType : skinTypeRegistry.getRegisteredSkinTypes()) skinTypeArray.add(skinType.getRegistryName());
-            }
-            String[] skinTypes = skinTypeArray.toArray(new String[0]);
-            GUIText skinTypeLabel = new GUIText(gui, " Skin Type: ").setColor(WHITES[0], WHITES[1], WHITES[2]);
-            GUIText skinType = new GUIText(gui, skinElement.skinType.equals("") ? "(None)" : skinElement.skinType).setColor(WHITES[0], WHITES[1], WHITES[2]);
-            skinTypeLabel.addClickActions(skinType::click).linkMouseActivity(skinType);
-            skinType.addClickActions(() -> new TextSelectionGUI(skinType, "Select AW Skin Type", skinTypes)).linkMouseActivity(skinTypeLabel);
-
-            GUILabeledBoolean isTransient = new GUILabeledBoolean(gui, " Transient: ", skinElement.isTransient);
-            GUILabeledTextInput indexWithinSkinTypeIfTransient = new GUILabeledTextInput(gui, " Wardrobe Slot Index Within Skin Type (if Transient): ", "" + skinElement.indexWithinSkinTypeIfTransient, AW_SLOT_INDEX_FILTER);
-            GUIGradientBorder separator = new GUIGradientBorder(gui, 1, 0.02, 0.3, Color.WHITE, Color.BLANK);
-            gui.root.addAll(
-                    new GUITextSpacer(gui),
-                    libraryFileOrFolder,
-                    new GUITextSpacer(gui),
-                    isRandomFromFolder,
-                    new GUITextSpacer(gui),
-                    skinTypeLabel, skinType,
-                    new GUITextSpacer(gui),
-                    isTransient,
-                    new GUITextSpacer(gui),
-                    indexWithinSkinTypeIfTransient,
-                    new GUITextSpacer(gui),
-                    new GUIText(gui, " Dyes...", Color.YELLOW),
-                    separator
-            );
-
-            GUIList dyes = new GUIList(gui, true, 0.98, 1 - (separator.y + separator.height))
-            {
-                @Override
-                public GUIElement[] newLineDefaultElements()
-                {
-                    GUIButton editButton = GUIButton.newEditButton(gui);
-                    gui.editButtonToCRandomRGBMap.put(editButton, new CRandomRGB());
-
-                    Namespace namespace = gui.namespaces.computeIfAbsent("Dye Indices", o -> new Namespace());
-                    int index = 0;
-                    while (namespace.contains("" + index)) index++;
-
-                    GUILabeledTextInput dyeIndex = new GUILabeledTextInput(gui, " Dye Index: ", "" + index, AW_DYE_INDEX_FILTER).setNamespace("Dye Indices");
-
-                    GUIButton duplicateButton = GUIButton.newDuplicateButton(screen);
-                    duplicateButton.addClickActions(() ->
-                    {
-                        Line line = addLine(getLineIndexContaining(dyeIndex) + 1);
-
-                        GUIButton editButton2 = (GUIButton) line.getLineElement(1);
-                        gui.editButtonToCRandomRGBMap.put(editButton2, (CRandomRGB) gui.editButtonToCRandomRGBMap.get(editButton).copy());
-                    });
-
-                    return new GUIElement[]{
-                            duplicateButton,
-                            editButton.addClickActions(() -> CRandomRGBGUI.show(gui.editButtonToCRandomRGBMap.get(editButton), FilterInt.INSTANCE.parse(dyeIndex.getText()))),
-                            dyeIndex
-                    };
-                }
-            };
-            dyes.addRemoveChildActions((Predicate<GUIElement>) element ->
-            {
-                if (element instanceof Line)
-                {
-                    Line line = (Line) element;
-                    GUILabeledTextInput labeledTextInput = (GUILabeledTextInput) line.getLineElement(2);
-                    gui.namespaces.get("Dye Indices").inputs.remove(labeledTextInput.input);
-                }
-                return false;
-            });
-            GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(gui, 0.02, 1 - (separator.y + separator.height), Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, dyes);
-            gui.root.addAll(dyes, scrollbar);
-            for (Map.Entry<Integer, CRandomRGB> entry : skinElement.dyeChannels.entrySet())
-            {
-                Line line = dyes.addLine();
-                GUIButton editButton = (GUIButton) line.getLineElement(1);
-                gui.editButtonToCRandomRGBMap.put(editButton, entry.getValue());
-
-                ((GUILabeledTextInput) line.getLineElement(2)).setText("" + entry.getKey());
-            }
-
-
-            //Add main header actions
-            separator.addRecalcActions(() ->
-            {
-                dyes.height = 1 - (separator.y + separator.height);
-                scrollbar.height = 1 - (separator.y + separator.height);
-            });
-            done.addClickActions(() ->
-            {
-                //Validation
-                if (!libraryFileOrFolder.valid() || !indexWithinSkinTypeIfTransient.valid()) return;
-                for (Line line : dyes.getLines())
-                {
-                    if (!((GUILabeledTextInput) line.getLineElement(2)).valid()) return;
-                }
-
-
-                //Processing
-                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
-
-                skinElement.libraryFileOrFolder = libraryFileOrFolder.getText();
-                skinElement.isRandomFromFolder = isRandomFromFolder.getValue();
-                skinElement.skinType = skinType.getText().equals("(None)") ? "" : skinType.getText();
-                skinElement.isTransient = isTransient.getValue();
-                skinElement.indexWithinSkinTypeIfTransient = AW_SLOT_INDEX_FILTER.parse(indexWithinSkinTypeIfTransient.getText());
-
-                skinElement.dyeChannels.clear();
-                for (Line line : dyes.getLines())
-                {
-                    GUIButton editButton = (GUIButton) line.getLineElement(1);
-                    GUILabeledTextInput index = (GUILabeledTextInput) line.getLineElement(2);
-                    skinElement.dyeChannels.put(AW_DYE_INDEX_FILTER.parse(index.getText()), gui.editButtonToCRandomRGBMap.get(editButton));
-                }
 
 
                 //Close GUI
