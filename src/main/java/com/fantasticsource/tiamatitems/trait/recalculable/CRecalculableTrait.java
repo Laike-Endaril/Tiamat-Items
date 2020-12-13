@@ -77,8 +77,7 @@ public final class CRecalculableTrait extends CTrait
         int i = 0;
         for (int base : baseArguments)
         {
-            double multiplied = ((double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier);
-            multipliedArgs[i++] = multiplied;
+            multipliedArgs[i++] = ((double) base / (Integer.MAX_VALUE - 1) * itemTypeAndLevelMultiplier);
         }
 
 

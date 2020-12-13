@@ -20,7 +20,11 @@ public abstract class CTraitElement extends Component
         if (ignoreMultipliers)
         {
             double[] mArgs = new double[baseArgs.length];
-            for (int i = 0; i < baseArgs.length; i++) mArgs[i] = baseArgs[i];
+            int i = 0;
+            for (int base : baseArgs)
+            {
+                multipliedArgs[i++] = ((double) base / (Integer.MAX_VALUE - 1));
+            }
             applyToItemInternal(stack, baseArgs, mArgs);
         }
         else applyToItemInternal(stack, baseArgs, multipliedArgs);
