@@ -538,8 +538,8 @@ public class RecalculableTraitElementGUI extends GUIScreen
                 traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
 
                 genericDoubleElement.name = FilterNotEmpty.INSTANCE.parse(name.getText());
-                genericDoubleElement.minAmount = FilterInt.INSTANCE.parse(minAmount.getText());
-                genericDoubleElement.maxAmount = FilterInt.INSTANCE.parse(maxAmount.getText());
+                genericDoubleElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                genericDoubleElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
 
 
                 //Close GUI
