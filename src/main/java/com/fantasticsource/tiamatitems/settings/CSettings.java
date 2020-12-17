@@ -84,7 +84,6 @@ public class CSettings extends Component
     public CSettings write(ByteBuf buf)
     {
         buf.writeInt(itemGenConfigVersion);
-        System.out.println(itemGenConfigVersion);
 
 
         buf.writeInt(maxItemLevel);
@@ -149,7 +148,6 @@ public class CSettings extends Component
     public CSettings read(ByteBuf buf)
     {
         itemGenConfigVersion = buf.readInt();
-        System.out.println(itemGenConfigVersion);
 
 
         (maxItemLevel) = buf.readInt();

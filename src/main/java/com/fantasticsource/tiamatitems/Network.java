@@ -217,7 +217,6 @@ public class Network
                 if (!MCTools.isOP(player)) return;
 
 
-                System.out.println(packet.partIndex + 1 + " / " + packet.partCount);
                 SaveSettingsPacketPart[] parts;
                 if (packet.partIndex == 0)
                 {
