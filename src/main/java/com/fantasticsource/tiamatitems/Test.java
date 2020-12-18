@@ -464,7 +464,7 @@ public class Test
         itemType.traitLevelMultiplier = 2;
 
 
-        CRTraitElement_ActiveAttributeMod element = new CRTraitElement_ActiveAttributeMod();
+        CRTraitElement_PassiveAttributeMod element = new CRTraitElement_PassiveAttributeMod();
         element.attributeName = "generic.armor";
         element.minAmount = 1;
         element.maxAmount = 3;
@@ -512,7 +512,7 @@ public class Test
         itemType.traitLevelMultiplier = 2;
 
 
-        CRTraitElement_ActiveAttributeMod attributeElement = new CRTraitElement_ActiveAttributeMod();
+        CRTraitElement_PassiveAttributeMod attributeElement = new CRTraitElement_PassiveAttributeMod();
         attributeElement.attributeName = "generic.armorToughness";
         attributeElement.minAmount = 0;
         attributeElement.maxAmount = 1;
