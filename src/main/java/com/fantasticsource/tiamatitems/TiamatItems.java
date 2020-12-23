@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -207,6 +209,13 @@ public class TiamatItems
     {
         for (ItemStack stack : event.newInventory.allNonSkin) ItemAssembly.validate(stack);
     }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void openedContainer(PlayerContainerEvent.Open event)
+    {
+        for (Slot slot : event.getContainer().inventorySlots) ItemAssembly.validate(slot.getStack());
+    }
+
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
