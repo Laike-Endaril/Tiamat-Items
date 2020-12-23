@@ -8,7 +8,6 @@ import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.DropTransformationTags;
-import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.BlockSettings;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.ItemSettings;
@@ -28,7 +27,6 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -43,11 +41,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.io.IOException;
-import java.util.List;
 
 @Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.039h,);required-after:tiamatactions@[1.12.2.000zo,)")
 public class TiamatItems
@@ -99,6 +95,7 @@ public class TiamatItems
         {
             //Physical client
             MinecraftForge.EVENT_BUS.register(ClientInit.class);
+            MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
         }
     }
 
@@ -214,27 +211,5 @@ public class TiamatItems
     public static void openedContainer(PlayerContainerEvent.Open event)
     {
         for (Slot slot : event.getContainer().inventorySlots) ItemAssembly.validate(slot.getStack());
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void tooltip(ItemTooltipEvent event)
-    {
-        if (ClientData.serverItemGenConfigVersion == -1) return;
-
-        ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || !stack.hasTagCompound()) return;
-
-        String itemTypeName = MiscTags.getItemTypeName(stack);
-        if (itemTypeName.equals("")) return;
-
-        if (MiscTags.getItemGenVersion(stack) == ClientData.serverItemGenConfigVersion) return;
-
-
-        List<String> tooltip = event.getToolTip();
-        tooltip.add("");
-        tooltip.add(TextFormatting.RED + "WARNING: This item's tooltip is out of date!  This should only happen if another mod uses client-side-only items!");
-        tooltip.add("");
     }
 }

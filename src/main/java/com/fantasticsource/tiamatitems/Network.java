@@ -3,7 +3,9 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
+import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +16,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -41,6 +44,8 @@ public class Network
         WRAPPER.registerMessage(OpenSettingsPacketHandler.class, OpenSettingsPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(SaveSettingsPacketPartHandler.class, SaveSettingsPacketPart.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(RequestTooltipUpdatePacketHandler.class, RequestTooltipUpdatePacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(UpdatedTooltipPacketHandler.class, UpdatedTooltipPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -294,6 +299,103 @@ public class Network
         public IMessage onMessage(ItemgenVersionPacket packet, MessageContext ctx)
         {
             Minecraft.getMinecraft().addScheduledTask(() -> ClientData.serverItemGenConfigVersion = packet.version);
+            return null;
+        }
+    }
+
+
+    public static class RequestTooltipUpdatePacket implements IMessage
+    {
+        public ItemStack stack;
+        public int id;
+
+        public RequestTooltipUpdatePacket()
+        {
+            //Required
+        }
+
+        public RequestTooltipUpdatePacket(ItemStack stack, int id)
+        {
+            this.stack = stack;
+            this.id = id;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            new CItemStack().set(stack).write(buf);
+            buf.writeInt(id);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            stack = new CItemStack().read(buf).value;
+            id = buf.readInt();
+        }
+    }
+
+    public static class RequestTooltipUpdatePacketHandler implements IMessageHandler<RequestTooltipUpdatePacket, IMessage>
+    {
+        @Override
+        public IMessage onMessage(RequestTooltipUpdatePacket packet, MessageContext ctx)
+        {
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
+            {
+                ItemStack stack = packet.stack;
+                long versionBefore = MiscTags.getItemGenVersion(stack);
+                ItemAssembly.validate(stack);
+                if (MiscTags.getItemGenVersion(stack) == versionBefore) System.err.println(TextFormatting.RED + ctx.getServerHandler().player.getName() + " seems to have requested validation of an already valid itemstack");
+                Network.WRAPPER.sendTo(new UpdatedTooltipPacket(stack, packet.id), ctx.getServerHandler().player);
+            });
+            return null;
+        }
+    }
+
+
+    public static class UpdatedTooltipPacket implements IMessage
+    {
+        public ItemStack stack;
+        public int id;
+
+        public UpdatedTooltipPacket()
+        {
+            //Required
+        }
+
+        public UpdatedTooltipPacket(ItemStack stack, int id)
+        {
+            this.stack = stack;
+            this.id = id;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            new CItemStack().set(stack).write(buf);
+            buf.writeInt(id);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            stack = new CItemStack().read(buf).value;
+            id = buf.readInt();
+        }
+    }
+
+    public static class UpdatedTooltipPacketHandler implements IMessageHandler<UpdatedTooltipPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(UpdatedTooltipPacket packet, MessageContext ctx)
+        {
+            Minecraft.getMinecraft().addScheduledTask(() ->
+            {
+                int id = packet.id;
+                TooltipFixer.UPDATED_TOOLTIPS.put(TooltipFixer.PENDING_TOOLTIP_UPDATES_REVERSED.get(id), packet.stack);
+                TooltipFixer.PENDING_TOOLTIP_UPDATES.remove(TooltipFixer.PENDING_TOOLTIP_UPDATES_REVERSED.remove(id));
+            });
             return null;
         }
     }
