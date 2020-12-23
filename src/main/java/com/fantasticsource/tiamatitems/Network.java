@@ -3,9 +3,7 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
-import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
-import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
 import io.netty.buffer.ByteBuf;
@@ -16,7 +14,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -342,13 +339,8 @@ public class Network
         {
             FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
             {
-                ItemStack stack = packet.stack;
-                if (MiscTags.getItemGenVersion(stack) == CSettings.SETTINGS.getVersion()) System.err.println(TextFormatting.RED + ctx.getServerHandler().player.getName() + " seems to have requested validation of an already valid itemstack.  Not responding to request.");
-                else
-                {
-                    ItemAssembly.validate(stack);
-                    Network.WRAPPER.sendTo(new UpdatedTooltipPacket(stack, packet.id), ctx.getServerHandler().player);
-                }
+                //When the request packet is received, the itemstack in it is automatically validated on creation, so no further action is necessary
+                Network.WRAPPER.sendTo(new UpdatedTooltipPacket(packet.stack, packet.id), ctx.getServerHandler().player);
             });
             return null;
         }
