@@ -61,12 +61,16 @@ public class TooltipFixer
             }
             else tooltip.addAll(newTooltipStack.getTooltip(event.getEntityPlayer(), event.getFlags()));
         }
-        else if (!REQUESTED_TOOLTIP_UPDATES.containsKey(stack))
+        else
         {
             tooltip.add(TextFormatting.DARK_AQUA + "Loading...");
-            REQUESTED_TOOLTIP_UPDATES.put(stack, nextID);
-            REQUESTED_TOOLTIP_UPDATES_REVERSED.put(nextID, stack);
-            Network.WRAPPER.sendToServer(new Network.RequestTooltipUpdatePacket(stack, nextID++));
+
+            if (!REQUESTED_TOOLTIP_UPDATES.containsKey(stack))
+            {
+                REQUESTED_TOOLTIP_UPDATES.put(stack, nextID);
+                REQUESTED_TOOLTIP_UPDATES_REVERSED.put(nextID, stack);
+                Network.WRAPPER.sendToServer(new Network.RequestTooltipUpdatePacket(stack, nextID++));
+            }
         }
     }
 
