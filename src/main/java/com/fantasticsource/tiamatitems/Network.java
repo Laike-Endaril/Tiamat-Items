@@ -395,8 +395,7 @@ public class Network
             Minecraft.getMinecraft().addScheduledTask(() ->
             {
                 int id = packet.id;
-                TooltipFixer.UPDATED_TOOLTIPS.put(TooltipFixer.PENDING_TOOLTIP_UPDATES_REVERSED.get(id), packet.stack);
-                TooltipFixer.PENDING_TOOLTIP_UPDATES.remove(TooltipFixer.PENDING_TOOLTIP_UPDATES_REVERSED.remove(id));
+                TooltipFixer.UPDATED_TOOLTIPS.put(TooltipFixer.REQUESTED_TOOLTIP_UPDATES_REVERSED.get(id), packet.stack);
             });
             return null;
         }
