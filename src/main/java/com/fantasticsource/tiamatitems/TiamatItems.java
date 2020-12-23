@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedInt;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.compat.Compat;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -171,7 +173,7 @@ public class TiamatItems
         if (MCTools.devEnv() && CSettings.SETTINGS.itemTypes.size() == 0)
         {
             System.out.println(TextFormatting.AQUA + "Adding test configs");
-            
+
             Test.createGeneralPool();
             Test.createSocketPool();
 
@@ -192,22 +194,18 @@ public class TiamatItems
     }
 
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void itemStackConstruction(AttachCapabilitiesEvent<ItemStack> event)
     {
         if (!MCTools.hosting()) return; //Logical server side only
 
-        ItemStack stack = event.getObject();
-        if (stack.isEmpty() || !stack.hasTagCompound()) return;
+        ItemAssembly.validate(event.getObject());
+    }
 
-        String itemTypeName = MiscTags.getItemTypeName(stack);
-        if (itemTypeName.equals("")) return;
-
-        long version = MiscTags.getItemGenVersion(stack);
-        if (version == Long.MAX_VALUE || version == CSettings.SETTINGS.getVersion()) return;
-
-
-        ItemAssembly.recalc(stack);
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void inventoryChanged(InventoryChangedEvent event)
+    {
+        for (ItemStack stack : event.newInventory.allNonSkin) ItemAssembly.validate(stack);
     }
 
     @SideOnly(Side.CLIENT)

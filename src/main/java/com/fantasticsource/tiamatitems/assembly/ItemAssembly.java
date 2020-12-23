@@ -10,6 +10,7 @@ import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -227,6 +228,30 @@ public class ItemAssembly
         ArrayList<ItemStack> result = recalcIfChanged ? recalc(assembly) : new ArrayList<>();
         result.add(part);
         return result;
+    }
+
+
+    public static void validate(EntityPlayerMP player, ItemStack stack, boolean returnPartsIfValid)
+    {
+        if (!returnPartsIfValid) validate(stack);
+        else for (ItemStack stack1 : validate(stack)) MCTools.give(player, stack1);
+    }
+
+
+    public static ArrayList<ItemStack> validate(ItemStack stack)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        if (stack.isEmpty() || !stack.hasTagCompound()) return result;
+
+        String itemTypeName = MiscTags.getItemTypeName(stack);
+        if (itemTypeName.equals("")) return result;
+
+        long version = MiscTags.getItemGenVersion(stack);
+        if (version == Long.MAX_VALUE || version == CSettings.SETTINGS.getVersion()) return result;
+
+
+        return recalc(stack);
     }
 
 
