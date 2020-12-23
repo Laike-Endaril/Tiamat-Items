@@ -343,10 +343,12 @@ public class Network
             FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
             {
                 ItemStack stack = packet.stack;
-                long versionBefore = MiscTags.getItemGenVersion(stack);
-                ItemAssembly.validate(stack);
-                if (MiscTags.getItemGenVersion(stack) == versionBefore) System.err.println(TextFormatting.RED + ctx.getServerHandler().player.getName() + " seems to have requested validation of an already valid itemstack");
-                Network.WRAPPER.sendTo(new UpdatedTooltipPacket(stack, packet.id), ctx.getServerHandler().player);
+                if (MiscTags.getItemGenVersion(stack) == CSettings.SETTINGS.getVersion()) System.err.println(TextFormatting.RED + ctx.getServerHandler().player.getName() + " seems to have requested validation of an already valid itemstack.  Not responding to request.");
+                else
+                {
+                    ItemAssembly.validate(stack);
+                    Network.WRAPPER.sendTo(new UpdatedTooltipPacket(stack, packet.id), ctx.getServerHandler().player);
+                }
             });
             return null;
         }

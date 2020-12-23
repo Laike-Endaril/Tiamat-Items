@@ -247,8 +247,7 @@ public class ItemAssembly
         String itemTypeName = MiscTags.getItemTypeName(stack);
         if (itemTypeName.equals("")) return result;
 
-        long version = MiscTags.getItemGenVersion(stack);
-        if (version == Long.MAX_VALUE || version == CSettings.SETTINGS.getVersion()) return result;
+        if (MiscTags.getItemGenVersion(stack) == CSettings.SETTINGS.getVersion()) return result;
 
 
         return recalc(stack);
