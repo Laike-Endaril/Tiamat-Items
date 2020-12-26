@@ -31,6 +31,7 @@ public class Commands extends CommandBase
     {
         subcommands.put("generate", 2);
         subcommands.put("setvalue", 2);
+        subcommands.put("setvaluelock", 2);
     }
 
 
@@ -57,7 +58,8 @@ public class Commands extends CommandBase
         if (sender.canUseCommand(2, getName()))
         {
             return AQUA + "/" + getName() + " generate <itemType> <level> <rarity> [playername]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment")
-                    + "\n" + AQUA + "/" + getName() + " setvalue <value>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvalue.comment");
+                    + "\n" + AQUA + "/" + getName() + " setvalue <value>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvalue.comment")
+                    + "\n" + AQUA + "/" + getName() + " setvaluelock <boolean>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvaluelock.comment");
         }
 
         return I18n.translateToLocalFormatted("commands.generic.permission");
@@ -87,6 +89,11 @@ public class Commands extends CommandBase
             {
                 case "generate":
                     for (String itemType : CSettings.SETTINGS.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
+                    break;
+
+                case "setvaluelock":
+                    result.add("true");
+                    result.add("false");
                     break;
             }
         }
@@ -134,6 +141,7 @@ public class Commands extends CommandBase
             return;
         }
 
+        ItemStack stack;
         switch (cmd)
         {
             case "generate":
@@ -195,7 +203,7 @@ public class Commands extends CommandBase
                     return;
                 }
 
-                ItemStack stack = GlobalInventory.getVanillaMainhandItem((EntityPlayerMP) sender);
+                stack = GlobalInventory.getVanillaMainhandItem((EntityPlayerMP) sender);
                 if (stack.isEmpty())
                 {
                     notifyCommandListener(sender, this, getUsage(sender));
@@ -203,6 +211,31 @@ public class Commands extends CommandBase
                 }
 
                 MiscTags.setItemValue(stack, value);
+
+                break;
+
+
+            case "setvaluelock":
+                if (!(sender instanceof EntityPlayerMP))
+                {
+                    notifyCommandListener(sender, this, MODID + ".error.notPlayer");
+                    return;
+                }
+                if (args.length != 2)
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                stack = GlobalInventory.getVanillaMainhandItem((EntityPlayerMP) sender);
+                if (stack.isEmpty())
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                if (Boolean.parseBoolean(args[1])) MiscTags.lockItemValue(stack);
+                else MiscTags.unlockItemValue(stack);
 
                 break;
 

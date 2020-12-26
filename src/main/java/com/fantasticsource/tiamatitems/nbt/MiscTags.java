@@ -188,6 +188,9 @@ public class MiscTags
 
     public static void setItemValue(ItemStack stack, int value)
     {
+        if (itemValueIsLocked(stack)) return;
+
+
         if (value == 0)
         {
             clearItemValue(stack);
@@ -218,6 +221,9 @@ public class MiscTags
 
     public static void clearItemValue(ItemStack stack)
     {
+        if (itemValueIsLocked(stack)) return;
+
+
         if (!stack.hasTagCompound()) return;
 
         NBTTagCompound mainTag = stack.getTagCompound();
@@ -227,6 +233,49 @@ public class MiscTags
         if (!compound.hasKey("value")) return;
 
         compound.removeTag("value");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
+
+    public static void lockItemValue(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setBoolean("valueLock", true);
+    }
+
+    public static boolean itemValueIsLocked(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return false;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("valueLock")) return false;
+
+        return compound.getBoolean("valueLock");
+    }
+
+    public static void unlockItemValue(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("valueLock")) return;
+
+        compound.removeTag("valueLock");
         if (compound.hasNoTags())
         {
             mainTag.removeTag(DOMAIN);
