@@ -95,7 +95,7 @@ public class TiamatItems
         {
             //Physical client
             MinecraftForge.EVENT_BUS.register(ClientInit.class);
-            MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
+            MinecraftForge.EVENT_BUS.register(ClientItemStackFixer.class);
         }
     }
 
