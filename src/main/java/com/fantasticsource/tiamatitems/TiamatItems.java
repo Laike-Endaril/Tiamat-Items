@@ -14,6 +14,8 @@ import com.fantasticsource.tiamatitems.settings.ItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -27,6 +29,8 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -211,5 +215,20 @@ public class TiamatItems
     public static void openedContainer(PlayerContainerEvent.Open event)
     {
         for (Slot slot : event.getContainer().inventorySlots) ItemAssembly.validate(slot.getStack());
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void itemJoinWorld(EntityJoinWorldEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (event.getWorld().isRemote || !(entity instanceof EntityItem)) return;
+
+        ItemAssembly.validate(((EntityItem) entity).getItem());
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void itemPickup(EntityItemPickupEvent event)
+    {
+        ItemAssembly.validate(event.getItem().getItem());
     }
 }
