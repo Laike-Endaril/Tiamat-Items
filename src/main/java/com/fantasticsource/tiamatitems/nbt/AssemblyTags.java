@@ -209,10 +209,10 @@ public class AssemblyTags
 
     public static void saveInternalCore(ItemStack core)
     {
-        saveInternalCore(core, core);
+        setInternalCore(core, core);
     }
 
-    public static boolean saveInternalCore(ItemStack stack, ItemStack core)
+    public static boolean setInternalCore(ItemStack stack, ItemStack core)
     {
         removeInternalCore(stack);
         if (core.isEmpty()) return true;

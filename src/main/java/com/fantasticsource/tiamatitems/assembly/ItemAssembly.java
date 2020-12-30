@@ -450,7 +450,7 @@ public class ItemAssembly
 
 
         //Reset core to saved one from before (NBT merge above corrupts it)
-        AssemblyTags.saveInternalCore(assembly, core);
+        AssemblyTags.setInternalCore(assembly, core);
 
 
         //Set part tags

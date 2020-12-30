@@ -3,6 +3,7 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.PlayerData;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
@@ -210,6 +211,14 @@ public class Commands extends CommandBase
                     return;
                 }
 
+
+                if (AssemblyTags.hasInternalCore(stack))
+                {
+                    ItemStack core = AssemblyTags.getInternalCore(stack);
+                    MiscTags.setItemValue(core, value);
+                    AssemblyTags.setInternalCore(stack, core);
+                }
+
                 MiscTags.setItemValue(stack, value);
 
                 break;
@@ -234,8 +243,17 @@ public class Commands extends CommandBase
                     return;
                 }
 
-                if (Boolean.parseBoolean(args[1])) MiscTags.lockItemValue(stack);
-                else MiscTags.unlockItemValue(stack);
+
+                boolean lock = Boolean.parseBoolean(args[1]);
+
+                if (AssemblyTags.hasInternalCore(stack))
+                {
+                    ItemStack core = AssemblyTags.getInternalCore(stack);
+                    MiscTags.setItemValueLock(core, lock);
+                    AssemblyTags.setInternalCore(stack, core);
+                }
+
+                MiscTags.setItemValueLock(stack, lock);
 
                 break;
 

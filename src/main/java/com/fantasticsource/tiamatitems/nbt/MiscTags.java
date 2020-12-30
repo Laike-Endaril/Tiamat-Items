@@ -241,6 +241,12 @@ public class MiscTags
     }
 
 
+    public static void setItemValueLock(ItemStack stack, boolean lock)
+    {
+        if (lock) lockItemValue(stack);
+        else unlockItemValue(stack);
+    }
+
     public static void lockItemValue(ItemStack stack)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
