@@ -259,7 +259,7 @@ public class ItemAssembly
      *
      * @return Any parts that can no longer be on the item due to part slot changes or the item being invalid
      */
-    public static ArrayList<ItemStack> recalc(ItemStack stack)
+    protected static ArrayList<ItemStack> recalc(ItemStack stack)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
@@ -486,7 +486,7 @@ public class ItemAssembly
      * Validates and recalculates the traits of an *empty part*
      * Returns false if the part itself should be deleted (eg. if its item type no longer exists)
      */
-    private static boolean recalcEmptyPartTraits(ItemStack stack)
+    protected static boolean recalcEmptyPartTraits(ItemStack stack)
     {
         if (!MCTools.hosting()) throw new IllegalStateException("This method should not be run without a server running!");
 
