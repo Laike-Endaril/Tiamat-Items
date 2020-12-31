@@ -10,6 +10,8 @@ tile.tiamatitems:settings.name=Tiamat Items Settings Editor
 tiamatitems.cmd.generate.comment=Generate an item, given of the given item type, level, and rarity (item type and rarity definitions must first be created if none exist)
 tiamatitems.cmd.setvalue.comment=Set the value of the item in your main hand
 tiamatitems.cmd.setvaluelock.comment=Lock or unlock the value of the item in your main hand (to keep it from changing when items recalculate)
+tiamatitems.cmd.assemble.comment=Assemble the currently held item (putting as many parts as possible into its part slots)
+tiamatitems.cmd.disassemble.comment=Disassemble the currently held item
 
 tiamatitems.error.notPlayer=§cOnly players can do this!
 tiamatitems.error.noMainhandItem=§cNo item in main hand!
