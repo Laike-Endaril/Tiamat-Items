@@ -362,7 +362,7 @@ public class SettingsGUI extends GUIScreen
                                 new GUIElement(gui, 1, 0),
                                 name,
                                 new GUIElement(gui, 1, 0),
-                                slottingLabel, slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting Selection", Slottings.availableSlottings())),
+                                slottingLabel, slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting Selection", Slottings.availableSlottings().toArray(new String[0]))),
                                 new GUIElement(gui, 1, 0),
                                 traitLevelMultiplier,
                                 new GUIElement(gui, 1, 0),

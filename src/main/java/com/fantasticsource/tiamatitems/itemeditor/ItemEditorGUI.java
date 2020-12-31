@@ -92,7 +92,7 @@ public class ItemEditorGUI extends GUIScreen
                         name,
                         new GUITextSpacer(gui),
                         new GUIText(gui, "Slotting: "),
-                        slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting", Slottings.availableSlottings())),
+                        slotting.addClickActions(() -> new TextSelectionGUI(slotting, "Slotting", Slottings.availableSlottings().toArray(new String[0]))),
                         new GUITextSpacer(gui),
                         level,
                         new GUIElement(gui, 1, 0),

@@ -1,25 +1,19 @@
 package com.fantasticsource.tiamatitems;
 
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.mctools.GlobalInventory;
-import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
-import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.nbt.ActiveAttributeModTags;
-import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -27,7 +21,7 @@ import javax.annotation.Nullable;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
-public class TransientAttributeModEvent extends PlayerEvent
+public class TransientAttributeModEvent extends LivingEvent
 {
     //ALSO SEE ATTRIBUTETAGS CLASS
 
@@ -35,26 +29,31 @@ public class TransientAttributeModEvent extends PlayerEvent
 
 
     /**
-     * @param player The player this event correlates to
-     *               <p>
-     *               This event is strictly meant for timing purposes, for the correct timing to apply/reapply transient attribute modifiers, and should therefore never be fired from anywhere except within this class
-     *               Call this event's applyTransientModifier() method to apply an attribute modifier which will last from now until the next TransientAttributeModEvent (once per server tick)
+     * @param livingBase The EntityLivingBase this event correlates to
+     *                   <p>
+     *                   This event has strict timing, and should therefore never be fired from anywhere except within this class
+     *                   Call this event's applyTransientModifier() method to apply an attribute modifier which will last from now until the next TransientAttributeModEvent (once per server tick)
      */
-    public TransientAttributeModEvent(EntityPlayer player)
+    public TransientAttributeModEvent(EntityLivingBase livingBase)
     {
-        super(player);
+        super(livingBase);
     }
 
 
-    public static void applyTransientModifier(EntityPlayerMP player, @Nullable String modName, String attributeName, int operation, double amount)
+    public void applyTransientModifier(@Nullable String description, String attributeName, int operation, double amount)
     {
-        AbstractAttributeMap attributeMap = player.getAttributeMap();
+        applyTransientModifier(getEntityLiving(), description, attributeName, operation, amount);
+    }
+
+    public static void applyTransientModifier(EntityLivingBase livingBase, @Nullable String modName, String attributeName, int operation, double amount)
+    {
+        AbstractAttributeMap attributeMap = livingBase.getAttributeMap();
 
         IAttributeInstance attributeInstance = attributeMap.getAttributeInstanceByName(attributeName);
         if (attributeInstance == null)
         {
-            System.err.println("Attribute for transient modifier not found on player!");
-            System.err.println("Player: " + player.getName() + ", Attribute name: " + attributeName);
+            System.err.println("Attribute for transient modifier not found!");
+            System.err.println("Entity: " + livingBase.getName() + ", Attribute name: " + attributeName);
             return;
         }
 
@@ -66,17 +65,17 @@ public class TransientAttributeModEvent extends PlayerEvent
     public static void handleTransientMods(InventoryChangedEvent event)
     {
         Entity entity = event.getEntity();
-        if (!(entity instanceof EntityPlayerMP)) return;
+        if (!(entity instanceof EntityLivingBase)) return;
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         server.profiler.startSection(MODID + " - transient modifiers");
 
 
-        EntityPlayerMP player = (EntityPlayerMP) entity;
+        EntityLivingBase livingBase = (EntityLivingBase) entity;
 
 
         //Remove transient mods from last tick
-        for (IAttributeInstance attributeInstance : player.getAttributeMap().getAllAttributes().toArray(new IAttributeInstance[0]))
+        for (IAttributeInstance attributeInstance : livingBase.getAttributeMap().getAllAttributes().toArray(new IAttributeInstance[0]))
         {
             for (AttributeModifier modifier : attributeInstance.getModifiers().toArray(new AttributeModifier[0]))
             {
@@ -85,48 +84,22 @@ public class TransientAttributeModEvent extends PlayerEvent
         }
 
 
-        //Vanilla slots
-        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
+        for (ItemStack stack : GlobalInventory.getValidEquippedItems(entity))
         {
-            ItemStack stack = player.inventory.getStackInSlot(slot);
-            handleTransientModsForSlot(player, slot, 0, "Vanilla", stack);
-        }
-
-        //Baubles slots
-        if (Compat.baubles)
-        {
-            IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
-            for (int slot = 0; slot < inventory.getSlots(); slot++)
-            {
-                ItemStack stack = inventory.getStackInSlot(slot);
-                handleTransientModsForSlot(player, slot, Slottings.BAUBLES_OFFSET, "Baubles", stack);
-            }
-        }
-
-        //Tiamat slots
-        if (Compat.tiamatinventory)
-        {
-            int slot = 0;
-            for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
-            {
-                handleTransientModsForSlot(player, slot++, Slottings.TIAMAT_OFFSET, "Tiamat", stack);
-            }
+            handleTransientModsForSlot(livingBase, stack);
         }
 
 
         //Fire event
-        MinecraftForge.EVENT_BUS.post(new TransientAttributeModEvent(player));
+        MinecraftForge.EVENT_BUS.post(new TransientAttributeModEvent(livingBase));
 
 
         server.profiler.endSection();
     }
 
 
-    private static void handleTransientModsForSlot(EntityPlayerMP player, int slot, int slotOffset, String slotType, ItemStack stack)
+    private static void handleTransientModsForSlot(EntityLivingBase livingBase, ItemStack stack)
     {
-        if (!Slottings.slotValidForSlotting(Slottings.getItemSlotting(stack), slot + slotOffset, player)) return;
-
-
         //Passive mods
         for (String modString : PassiveAttributeModTags.getPassiveMods(stack))
         {
@@ -134,7 +107,7 @@ public class TransientAttributeModEvent extends PlayerEvent
             if (tokens.length != 3)
             {
                 System.err.println("Wrong number of arguments for attribute modifier string: " + modString);
-                System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                 continue;
             }
 
@@ -146,7 +119,7 @@ public class TransientAttributeModEvent extends PlayerEvent
             catch (NumberFormatException e)
             {
                 System.err.println("Amount (2nd argument) was not a double: " + modString);
-                System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                 continue;
             }
 
@@ -158,12 +131,12 @@ public class TransientAttributeModEvent extends PlayerEvent
             catch (NumberFormatException e)
             {
                 System.err.println("Operation (3nd argument) was not an integer: " + modString);
-                System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                 continue;
             }
 
 
-            applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
+            applyTransientModifier(livingBase, stack.getDisplayName(), tokens[0], operation, amount);
         }
 
 
@@ -176,7 +149,7 @@ public class TransientAttributeModEvent extends PlayerEvent
                 if (tokens.length != 3)
                 {
                     System.err.println("Wrong number of arguments for attribute modifier string: " + modString);
-                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                     continue;
                 }
 
@@ -188,7 +161,7 @@ public class TransientAttributeModEvent extends PlayerEvent
                 catch (NumberFormatException e)
                 {
                     System.err.println("Amount (2nd argument) was not a double: " + modString);
-                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                     continue;
                 }
 
@@ -200,19 +173,13 @@ public class TransientAttributeModEvent extends PlayerEvent
                 catch (NumberFormatException e)
                 {
                     System.err.println("Operation (3nd argument) was not an integer: " + modString);
-                    System.err.println("Player: " + player.getName() + ", Item name: " + stack.getDisplayName() + ", " + slotType + " slot: " + slot);
+                    System.err.println("Entity: " + livingBase.getName() + ", Item name: " + stack.getDisplayName());
                     continue;
                 }
 
 
-                applyTransientModifier(player, stack.getDisplayName(), tokens[0], operation, amount);
+                applyTransientModifier(livingBase, stack.getDisplayName(), tokens[0], operation, amount);
             }
         }
-    }
-
-
-    public void applyTransientModifier(@Nullable String description, String attributeName, int operation, double amount)
-    {
-        applyTransientModifier((EntityPlayerMP) getEntityPlayer(), description, attributeName, operation, amount);
     }
 }
