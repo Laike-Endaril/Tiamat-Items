@@ -45,33 +45,39 @@ public class DropTransformationTags
 
         for (EntityItem entityItem : event.getDrops())
         {
-            ItemStack stack = entityItem.getItem();
-
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound == null || !compound.hasKey(DOMAIN)) return;
-
-            compound = compound.getCompoundTag(DOMAIN);
-            if (!compound.hasKey("dropTransform")) return;
-
-            compound = compound.getCompoundTag("dropTransform");
-
-            int minLevel = compound.getInteger("minLevel");
-            int level = minLevel + Tools.random(compound.getInteger("maxLevel") - minLevel);
-
-            CRarity rarity = CSettings.SETTINGS.rarities.get(compound.getString("rarity"));
-            if (rarity == null) return;
-
-
-            NBTTagList list = compound.getTagList("itemTypes", Constants.NBT.TAG_STRING);
-            CItemType itemType = CSettings.SETTINGS.itemTypes.get(list.getStringTagAt(Tools.random(list.tagCount())));
-            if (itemType == null) return;
-
-
-            ItemStack generated = itemType.generateItem(level, rarity);
-            if (generated == null || generated.isEmpty()) return;
-
-
-            stack.setTagCompound(generated.getTagCompound());
+            while (tryTransformItem(entityItem.getItem()))
+            {
+            }
         }
+    }
+
+    public static boolean tryTransformItem(ItemStack stack)
+    {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null || !compound.hasKey(DOMAIN)) return false;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("dropTransform")) return false;
+
+        compound = compound.getCompoundTag("dropTransform");
+
+        int minLevel = compound.getInteger("minLevel");
+        int level = minLevel + Tools.random(compound.getInteger("maxLevel") - minLevel);
+
+        CRarity rarity = CSettings.SETTINGS.rarities.get(compound.getString("rarity"));
+        if (rarity == null) return false;
+
+
+        NBTTagList list = compound.getTagList("itemTypes", Constants.NBT.TAG_STRING);
+        CItemType itemType = CSettings.SETTINGS.itemTypes.get(list.getStringTagAt(Tools.random(list.tagCount())));
+        if (itemType == null) return false;
+
+
+        ItemStack generated = itemType.generateItem(level, rarity);
+        if (generated == null || generated.isEmpty()) return false;
+
+
+        stack.setTagCompound(generated.getTagCompound());
+        return true;
     }
 }
