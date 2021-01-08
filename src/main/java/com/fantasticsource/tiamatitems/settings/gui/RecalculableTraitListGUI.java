@@ -15,25 +15,21 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTrait;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.Minecraft;
 
 import java.util.LinkedHashMap;
 import java.util.function.Predicate;
 
 public class RecalculableTraitListGUI extends GUIScreen
 {
-    protected String itemType;
-
     protected LinkedHashMap<GUILabeledTextInput, CRecalculableTrait> nameElementToRecalculableTraitMap = new LinkedHashMap<>();
 
-    protected RecalculableTraitListGUI(String itemType)
+    protected RecalculableTraitListGUI()
     {
-        this.itemType = itemType;
     }
 
-    public static void show(String itemType, LinkedHashMap<String, CRecalculableTrait> list)
+    public static void show(LinkedHashMap<String, CRecalculableTrait> list)
     {
-        RecalculableTraitListGUI gui = new RecalculableTraitListGUI(itemType);
+        RecalculableTraitListGUI gui = new RecalculableTraitListGUI();
         showStacked(gui);
         gui.drawStack = false;
 
@@ -173,6 +169,6 @@ public class RecalculableTraitListGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Static R. Traits)" : itemType;
+        return "Static R. Traits";
     }
 }

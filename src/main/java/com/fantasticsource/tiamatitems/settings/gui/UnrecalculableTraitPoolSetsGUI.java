@@ -14,7 +14,6 @@ import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.Minecraft;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,18 +25,15 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
 {
     public static final FilterBlacklist POOL_SET_FILTER = new FilterBlacklist("Static");
 
-    protected String itemType;
-
     protected LinkedHashMap<GUILabeledTextInput, LinkedHashSet<String>> nameElementToPoolSetMap = new LinkedHashMap<>();
 
-    protected UnrecalculableTraitPoolSetsGUI(String itemType)
+    protected UnrecalculableTraitPoolSetsGUI()
     {
-        this.itemType = itemType;
     }
 
-    public static void show(String itemType, LinkedHashMap<String, LinkedHashSet<String>> poolSets, Collection<String> otherPoolSetNames)
+    public static void show(LinkedHashMap<String, LinkedHashSet<String>> poolSets, Collection<String> otherPoolSetNames)
     {
-        UnrecalculableTraitPoolSetsGUI gui = new UnrecalculableTraitPoolSetsGUI(itemType);
+        UnrecalculableTraitPoolSetsGUI gui = new UnrecalculableTraitPoolSetsGUI();
         showStacked(gui);
         gui.drawStack = false;
 
@@ -150,6 +146,6 @@ public class UnrecalculableTraitPoolSetsGUI extends GUIScreen
     @Override
     public String title()
     {
-        return Minecraft.getMinecraft().currentScreen == this ? itemType + " (Random Unrecalculable Pool Sets)" : itemType;
+        return "Random U. Pool Sets";
     }
 }
