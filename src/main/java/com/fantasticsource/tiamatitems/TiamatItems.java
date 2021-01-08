@@ -49,7 +49,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 import java.io.IOException;
 
-@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.044m,);required-after:tiamatactions@[1.12.2.000zo,)")
+@Mod(modid = TiamatItems.MODID, name = TiamatItems.NAME, version = TiamatItems.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.044q,);required-after:tiamatactions@[1.12.2.000zo,)")
 public class TiamatItems
 {
     public static final String MODID = "tiamatitems";
@@ -94,6 +94,7 @@ public class TiamatItems
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
         MinecraftForge.EVENT_BUS.register(TransientAttributeModEvent.class);
         MinecraftForge.EVENT_BUS.register(DropTransformationTags.class);
+        InventoryChangedEvent.watchedClasses.add(EntityPlayerMP.class);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
