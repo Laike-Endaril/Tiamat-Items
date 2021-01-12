@@ -3,7 +3,9 @@ package com.fantasticsource.tiamatitems;
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -124,12 +126,24 @@ public class TiamatItemRenderer implements IItemRenderer
                 {
                     //Get raw ("white") layer (may not actually be grayscale)
                     String[] tokens = Tools.fixedSplit(key, ":");
-                    Texture whiteLayer = TextureCache.textures.get(tokens[0] + ":" + tokens[1] + ":ffffffff");
+                    Texture whiteLayer = TextureCache.textures.get(tokens[0] + ":" + tokens[1]);
                     if (whiteLayer == null) return;
 
 
                     //Get blend color
-                    Color blendColor = new Color(tokens[2].trim());
+                    Color blendColor;
+                    if (tokens.length < 3) blendColor = Color.WHITE;
+                    else
+                    {
+                        String c = tokens[2];
+                        if (c.equals("00000000"))
+                        {
+                            CRarity rarity = MiscTags.getItemRarity(stack);
+                            if (rarity != null) blendColor = rarity.color;
+                            else blendColor = new Color(tokens[2].trim());
+                        }
+                        else blendColor = new Color(tokens[2].trim());
+                    }
 
 
                     //Generate layer

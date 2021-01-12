@@ -72,7 +72,7 @@ public class TextureCache
             int i = 0;
             for (Texture texture : textures)
             {
-                String textureName = relativeFilename.substring(0, relativeFilename.length() - 4) + ":" + i++ + ":ffffffff";
+                String textureName = relativeFilename.substring(0, relativeFilename.length() - 4) + ":" + i++;
                 TextureCache.rawTextures.add(textureName);
                 TextureCache.textures.put(textureName, texture);
             }

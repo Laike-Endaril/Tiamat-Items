@@ -194,7 +194,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/axe:0:ffffffff");
+            layerGroup.add("equipment/axe:0");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -254,7 +254,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/axe:2:ffffffff");
+            layerGroup.add("equipment/axe:2");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -302,7 +302,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/axe:1:ffffffff");
+            layerGroup.add("equipment/axe:1");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -431,7 +431,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/metalarmor:2:ffffffff");
+            layerGroup.add("equipment/metalarmor:2");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -483,7 +483,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/shield:1:ffffffff");
+            layerGroup.add("equipment/shield:1");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
@@ -531,7 +531,7 @@ public class Test
         {
             textureElement = new CRTraitElement_TextureLayers();
             layerGroup = new ArrayList<>();
-            layerGroup.add("equipment/shield:2:ffffffff");
+            layerGroup.add("equipment/shield:2");
             textureElement.layerGroups.put(state, layerGroup);
 
             trait = new CRecalculableTrait();
