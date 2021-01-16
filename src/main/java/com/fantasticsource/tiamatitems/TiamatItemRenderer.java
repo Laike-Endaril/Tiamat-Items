@@ -108,6 +108,18 @@ public class TiamatItemRenderer implements IItemRenderer
         if (layerKeys.size() == 0) return;
 
 
+        //Transform keys with color 00000000 to rarity color
+        CRarity rarity = MiscTags.getItemRarity(stack);
+        if (rarity != null)
+        {
+            String rarityColor = rarity.color.hex8();
+            for (int i = 0; i < layerKeys.size(); i++)
+            {
+                layerKeys.set(i, layerKeys.get(i).replaceAll("00000000", rarityColor));
+            }
+        }
+
+
         //Check and load/generate/cache texture
         StringBuilder combinedReference = new StringBuilder(layerKeys.get(0));
         for (int i = 1; i < layerKeys.size(); i++) combinedReference.append("|").append(layerKeys.get(i));
@@ -133,17 +145,7 @@ public class TiamatItemRenderer implements IItemRenderer
                     //Get blend color
                     Color blendColor;
                     if (tokens.length < 3) blendColor = Color.WHITE;
-                    else
-                    {
-                        String c = tokens[2];
-                        if (c.equals("00000000"))
-                        {
-                            CRarity rarity = MiscTags.getItemRarity(stack);
-                            if (rarity != null) blendColor = rarity.color;
-                            else blendColor = new Color(tokens[2].trim());
-                        }
-                        else blendColor = new Color(tokens[2].trim());
-                    }
+                    else blendColor = new Color(tokens[2].trim());
 
 
                     //Generate layer
