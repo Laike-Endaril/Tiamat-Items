@@ -110,7 +110,7 @@ public class TiamatItemRenderer implements IItemRenderer
 
         //Transform keys with color 00000000 to rarity color
         CRarity rarity = MiscTags.getItemRarity(stack);
-        System.out.println(rarity);
+        if (rarity == null && RarityData.rarities != null && RarityData.rarities.size() > 0) rarity = RarityData.rarities.values().iterator().next();
         if (rarity != null)
         {
             String rarityColor = rarity.color.hex8();
