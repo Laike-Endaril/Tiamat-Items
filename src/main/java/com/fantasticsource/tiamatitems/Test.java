@@ -38,7 +38,7 @@ public class Test
         trait.maxValue = 3;
         pool.traitGenWeights.put(trait, 1);
 
-        CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
+        CSettings.LOCAL_SETTINGS.recalcTraitPools.put(pool.name, pool);
     }
 
 
@@ -54,7 +54,7 @@ public class Test
         rarity.traitPoolSetRollCounts.put("Gen", 1); //1x general trait
 //        rarity.traitPoolSetRollCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
 
-        CSettings.SETTINGS.rarities.put(rarity.name, rarity);
+        CSettings.LOCAL_SETTINGS.rarities.put(rarity.name, rarity);
     }
 
 
@@ -63,11 +63,11 @@ public class Test
         LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Gem");
         validItemTypes.add("Rune");
-        CSettings.SETTINGS.slotTypes.put("Socket", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("Socket", validItemTypes);
 
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "Sockets";
-        CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
+        CSettings.LOCAL_SETTINGS.recalcTraitPools.put(pool.name, pool);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Socket";
@@ -92,7 +92,7 @@ public class Test
         //Main action traits
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActLC";
-        CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
+        CSettings.LOCAL_SETTINGS.recalcTraitPools.put(pool.name, pool);
 
 
         CRTraitElement_GenericString genericStringTag = new CRTraitElement_GenericString();
@@ -110,7 +110,7 @@ public class Test
         //Sub action traits
         pool = new CRecalculableTraitPool();
         pool.name = "2HAxeActRC";
-        CSettings.SETTINGS.recalcTraitPools.put(pool.name, pool);
+        CSettings.LOCAL_SETTINGS.recalcTraitPools.put(pool.name, pool);
 
 
         genericStringTag = new CRTraitElement_GenericString();
@@ -145,7 +145,7 @@ public class Test
 
         LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axehead");
-        CSettings.SETTINGS.slotTypes.put("2H Axehead", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("2H Axehead", validItemTypes);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
@@ -160,7 +160,7 @@ public class Test
 
         validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axe Handle");
-        CSettings.SETTINGS.slotTypes.put("2H Axe Handle", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("2H Axe Handle", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
@@ -175,7 +175,7 @@ public class Test
 
         validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("2H Axe Skin");
-        CSettings.SETTINGS.slotTypes.put("2H Axe Skin", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("2H Axe Skin", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
@@ -224,7 +224,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeheadItemType()
@@ -272,7 +272,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeHandleItemType()
@@ -320,7 +320,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void create2HAxeSkinItemType()
@@ -356,7 +356,7 @@ public class Test
         itemType.staticUnrecalculableTraits.put(trait.name, trait);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
 
@@ -382,7 +382,7 @@ public class Test
 
         LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Soul");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Soul", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("Chestplate Soul", validItemTypes);
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Soul";
@@ -397,7 +397,7 @@ public class Test
 
         validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Core");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Core", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("Chestplate Core", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Core";
@@ -412,7 +412,7 @@ public class Test
 
         validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Chestplate Trim");
-        CSettings.SETTINGS.slotTypes.put("Chestplate Trim", validItemTypes);
+        CSettings.LOCAL_SETTINGS.slotTypes.put("Chestplate Trim", validItemTypes);
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Trim";
@@ -453,7 +453,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplateSoulItemType()
@@ -501,7 +501,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplateCoreItemType()
@@ -549,7 +549,7 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 
     public static void createChestplateTrimItemType()
@@ -587,6 +587,6 @@ public class Test
         itemType.staticUnrecalculableTraits.put(trait.name, trait);
 
 
-        CSettings.SETTINGS.itemTypes.put(itemType.name, itemType);
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
     }
 }

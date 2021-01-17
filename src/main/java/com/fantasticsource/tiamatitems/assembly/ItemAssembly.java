@@ -247,7 +247,7 @@ public class ItemAssembly
         String itemTypeName = MiscTags.getItemTypeName(stack);
         if (itemTypeName.equals("")) return result;
 
-        if (MiscTags.getItemGenVersion(stack) == CSettings.SETTINGS.getVersion()) return result;
+        if (MiscTags.getItemGenVersion(stack) == CSettings.LOCAL_SETTINGS.getVersion()) return result;
 
 
         return recalc(stack);
@@ -283,7 +283,7 @@ public class ItemAssembly
 
 
         //Check for valid item type and rarity
-        CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
+        CItemType itemType = CSettings.LOCAL_SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
         CRarity rarity = MiscTags.getItemRarity(stack);
         if (itemType == null || rarity == null)
         {
@@ -404,11 +404,11 @@ public class ItemAssembly
             ItemStack part = partSlot.getPart();
             if (part.isEmpty()) continue;
 
-            CItemType partItemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(part));
+            CItemType partItemType = CSettings.LOCAL_SETTINGS.itemTypes.get(MiscTags.getItemTypeName(part));
             CRarity partRarity = MiscTags.getItemRarity(part);
             if (partItemType == null || partRarity == null) continue;
 
-            double itemTypeAndLevelMultiplier = partItemType.traitLevelMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * partRarity.itemLevelModifier + MiscTags.getItemLevel(part)));
+            double itemTypeAndLevelMultiplier = partItemType.traitLevelMultiplier * (CSettings.LOCAL_SETTINGS.baseMultiplier + (CSettings.LOCAL_SETTINGS.multiplierBonusPerLevel * partRarity.itemLevelModifier + MiscTags.getItemLevel(part)));
 
             for (String traitString : TraitTags.getTraitStrings(part))
             {
@@ -426,7 +426,7 @@ public class ItemAssembly
                 else
                 {
                     CRecalculableTrait trait = null;
-                    for (CRecalculableTrait trait2 : CSettings.SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
+                    for (CRecalculableTrait trait2 : CSettings.LOCAL_SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
                     {
                         if (trait2.name.equals(tokens[2]))
                         {
@@ -492,7 +492,7 @@ public class ItemAssembly
 
 
         //Validate itemtype/rarity
-        CItemType itemType = CSettings.SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
+        CItemType itemType = CSettings.LOCAL_SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
         if (itemType == null) return false;
 
         CRarity rarity = MiscTags.getItemRarity(stack);

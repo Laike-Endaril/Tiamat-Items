@@ -158,12 +158,13 @@ public class TiamatItems
     {
         TextureCache.clear(event);
         ClientData.clear();
+        RarityData.rarities = CSettings.LOCAL_SETTINGS.rarities;
     }
 
     @SubscribeEvent
     public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        Network.WRAPPER.sendTo(new Network.ItemgenVersionPacket(CSettings.SETTINGS.getVersion()), (EntityPlayerMP) event.player);
+        Network.WRAPPER.sendTo(new Network.ClientDataPacket(CSettings.LOCAL_SETTINGS.getVersion()), (EntityPlayerMP) event.player);
     }
 
 
@@ -174,7 +175,7 @@ public class TiamatItems
 
         CSettings.loadAll(event);
 
-        if (MCTools.devEnv() && CSettings.SETTINGS.itemTypes.size() == 0)
+        if (MCTools.devEnv() && CSettings.LOCAL_SETTINGS.itemTypes.size() == 0)
         {
             System.out.println(TextFormatting.AQUA + "Adding test configs");
 
@@ -193,7 +194,7 @@ public class TiamatItems
             Test.createChestplateCoreItemType();
             Test.createChestplateTrimItemType();
 
-            CSettings.EDITED_SETTINGS = (CSettings) CSettings.SETTINGS.copy();
+            CSettings.PENDING_LOCAL_SETTINGS = (CSettings) CSettings.LOCAL_SETTINGS.copy();
         }
     }
 

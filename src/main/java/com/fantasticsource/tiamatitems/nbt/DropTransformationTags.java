@@ -64,12 +64,12 @@ public class DropTransformationTags
         int minLevel = compound.getInteger("minLevel");
         int level = minLevel + Tools.random(compound.getInteger("maxLevel") - minLevel);
 
-        CRarity rarity = CSettings.SETTINGS.rarities.get(compound.getString("rarity"));
+        CRarity rarity = CSettings.LOCAL_SETTINGS.rarities.get(compound.getString("rarity"));
         if (rarity == null) return false;
 
 
         NBTTagList list = compound.getTagList("itemTypes", Constants.NBT.TAG_STRING);
-        CItemType itemType = CSettings.SETTINGS.itemTypes.get(list.getStringTagAt(Tools.random(list.tagCount())));
+        CItemType itemType = CSettings.LOCAL_SETTINGS.itemTypes.get(list.getStringTagAt(Tools.random(list.tagCount())));
         if (itemType == null) return false;
 
 

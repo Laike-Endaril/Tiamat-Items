@@ -93,7 +93,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    for (String itemType : CSettings.SETTINGS.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
+                    for (String itemType : CSettings.LOCAL_SETTINGS.itemTypes.keySet()) result.add(itemType.replaceAll(" ", "_"));
                     break;
 
                 case "setvaluelock":
@@ -118,7 +118,7 @@ public class Commands extends CommandBase
             switch (args[0])
             {
                 case "generate":
-                    result.addAll(CSettings.SETTINGS.rarities.keySet());
+                    result.addAll(CSettings.LOCAL_SETTINGS.rarities.keySet());
                     break;
             }
         }
@@ -162,8 +162,8 @@ public class Commands extends CommandBase
                     return;
                 }
 
-                CItemType gen = CSettings.SETTINGS.itemTypes.get(args[1].replaceAll("_", " "));
-                CRarity rarity = CSettings.SETTINGS.rarities.get(args[3]);
+                CItemType gen = CSettings.LOCAL_SETTINGS.itemTypes.get(args[1].replaceAll("_", " "));
+                CRarity rarity = CSettings.LOCAL_SETTINGS.rarities.get(args[3]);
                 EntityPlayerMP target = args.length == 4 ? (EntityPlayerMP) sender : (EntityPlayerMP) PlayerData.getEntity(args[4]);
                 if (gen == null || rarity == null || target == null)
                 {

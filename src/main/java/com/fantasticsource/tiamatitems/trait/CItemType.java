@@ -61,7 +61,7 @@ public class CItemType extends Component
 
 
         //Apply and/or overwrite most main data
-        MiscTags.setItemGenVersion(stack, CSettings.SETTINGS.getVersion());
+        MiscTags.setItemGenVersion(stack, CSettings.LOCAL_SETTINGS.getVersion());
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);
@@ -71,7 +71,7 @@ public class CItemType extends Component
 
 
         //Prep generation vars
-        double itemTypeAndLevelMultiplier = traitLevelMultiplier * (CSettings.SETTINGS.baseMultiplier + (CSettings.SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
+        double itemTypeAndLevelMultiplier = traitLevelMultiplier * (CSettings.LOCAL_SETTINGS.baseMultiplier + (CSettings.LOCAL_SETTINGS.multiplierBonusPerLevel * rarity.itemLevelModifier + level));
         double totalValue = value + MiscTags.getItemValueMod(stack);
 
 
@@ -120,7 +120,7 @@ public class CItemType extends Component
             LinkedHashMap<CRecalculableTraitPool, ArrayList<CRecalculableTrait>> traitPools = new LinkedHashMap<>();
             for (String poolName : randomTraitPoolNames)
             {
-                CRecalculableTraitPool pool = CSettings.SETTINGS.recalcTraitPools.get(poolName);
+                CRecalculableTraitPool pool = CSettings.LOCAL_SETTINGS.recalcTraitPools.get(poolName);
                 if (pool == null)
                 {
                     System.err.println(TextFormatting.RED + "Could not find recalculable pool: " + poolName);
@@ -158,7 +158,7 @@ public class CItemType extends Component
                     String poolSetName2 = tokens[0];
                     if (!poolSetName2.equals(poolSetName)) continue;
 
-                    CRecalculableTraitPool pool = CSettings.SETTINGS.recalcTraitPools.get(tokens[1]);
+                    CRecalculableTraitPool pool = CSettings.LOCAL_SETTINGS.recalcTraitPools.get(tokens[1]);
                     if (pool == null || !weightedPools.contains(pool)) continue;
 
                     ArrayList<CRecalculableTrait> list = traitPools.get(pool);
@@ -232,7 +232,7 @@ public class CItemType extends Component
                 LinkedHashMap<CUnrecalculableTraitPool, ArrayList<CUnrecalculableTrait>> traitPools = new LinkedHashMap<>();
                 for (String poolName : randomTraitPoolNames)
                 {
-                    CUnrecalculableTraitPool pool = CSettings.SETTINGS.unrecalcTraitPools.get(poolName);
+                    CUnrecalculableTraitPool pool = CSettings.LOCAL_SETTINGS.unrecalcTraitPools.get(poolName);
                     if (pool == null)
                     {
                         System.err.println(TextFormatting.RED + "Could not find unrecalculable pool: " + poolName);
@@ -308,7 +308,7 @@ public class CItemType extends Component
             else
             {
                 CRecalculableTrait trait = null;
-                for (CRecalculableTrait trait2 : CSettings.SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
+                for (CRecalculableTrait trait2 : CSettings.LOCAL_SETTINGS.recalcTraitPools.get(tokens[1]).traitGenWeights.keySet())
                 {
                     if (trait2.name.equals(tokens[2]))
                     {

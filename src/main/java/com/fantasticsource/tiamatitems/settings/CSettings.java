@@ -1,6 +1,7 @@
 package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tiamatitems.RarityData;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
@@ -27,7 +28,7 @@ public class CSettings extends Component
 {
     public static final String FILENAME = MODID + File.separator + "settings.dat";
     public static final int ITEM_GEN_CODE_VERSION = 0;
-    public static CSettings SETTINGS = new CSettings(), EDITED_SETTINGS = new CSettings();
+    public static CSettings LOCAL_SETTINGS = new CSettings(), PENDING_LOCAL_SETTINGS = new CSettings();
     public static LinkedHashMap<String, Double> attributeBalanceMultipliers = new LinkedHashMap<>();
     public int itemGenConfigVersion = 0;
     public int maxItemLevel = 20;
@@ -54,7 +55,7 @@ public class CSettings extends Component
         try
         {
             FileOutputStream stream = new FileOutputStream(file);
-            EDITED_SETTINGS.save(stream);
+            PENDING_LOCAL_SETTINGS.save(stream);
             stream.close();
             System.out.println(TextFormatting.GREEN + "Saved settings; they will be applied next server restart");
             player.sendMessage(new TextComponentString(TextFormatting.GREEN + "Saved settings; they will be applied next server restart"));
@@ -74,8 +75,9 @@ public class CSettings extends Component
         if (!file.exists()) return;
 
         FileInputStream stream = new FileInputStream(file);
-        SETTINGS = new CSettings().load(stream);
-        EDITED_SETTINGS = (CSettings) SETTINGS.copy();
+        LOCAL_SETTINGS = new CSettings().load(stream);
+        RarityData.rarities = LOCAL_SETTINGS.rarities;
+        PENDING_LOCAL_SETTINGS = (CSettings) LOCAL_SETTINGS.copy();
         stream.close();
     }
 

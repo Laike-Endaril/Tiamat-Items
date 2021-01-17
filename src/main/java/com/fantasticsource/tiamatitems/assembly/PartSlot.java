@@ -40,7 +40,7 @@ public class PartSlot implements IPartSlot
 
     public HashSet<String> getValidItemTypes()
     {
-        return CSettings.SETTINGS.slotTypes.getOrDefault(slotType, new LinkedHashSet<>());
+        return CSettings.LOCAL_SETTINGS.slotTypes.getOrDefault(slotType, new LinkedHashSet<>());
     }
 
     public boolean partIsValidForSlot(ItemStack part)

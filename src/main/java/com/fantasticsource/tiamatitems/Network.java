@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
 import io.netty.buffer.ByteBuf;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -40,7 +42,7 @@ public class Network
         WRAPPER.registerMessage(EditItemPacketHandler.class, EditItemPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(OpenSettingsPacketHandler.class, OpenSettingsPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(SaveSettingsPacketPartHandler.class, SaveSettingsPacketPart.class, discriminator++, Side.SERVER);
-        WRAPPER.registerMessage(ItemgenVersionPacketHandler.class, ItemgenVersionPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(ClientDataPacketHandler.class, ClientDataPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RequestTooltipUpdatePacketHandler.class, RequestTooltipUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(UpdatedTooltipPacketHandler.class, UpdatedTooltipPacket.class, discriminator++, Side.CLIENT);
     }
@@ -144,7 +146,7 @@ public class Network
         @Override
         public void toBytes(ByteBuf buf)
         {
-            CSettings.EDITED_SETTINGS.write(buf);
+            CSettings.PENDING_LOCAL_SETTINGS.write(buf);
         }
 
         @Override
@@ -251,8 +253,8 @@ public class Network
                     buffer.writeBytes(bytes);
 
                     //Set edited version 1 higher than current
-                    CSettings.EDITED_SETTINGS = new CSettings().read(buffer);
-                    CSettings.EDITED_SETTINGS.itemGenConfigVersion = CSettings.SETTINGS.itemGenConfigVersion + 1;
+                    CSettings.PENDING_LOCAL_SETTINGS = new CSettings().read(buffer);
+                    CSettings.PENDING_LOCAL_SETTINGS.itemGenConfigVersion = CSettings.LOCAL_SETTINGS.itemGenConfigVersion + 1;
 
                     CSettings.updateVersionAndSave(ctx.getServerHandler().player);
                 }
@@ -262,16 +264,17 @@ public class Network
     }
 
 
-    public static class ItemgenVersionPacket implements IMessage
+    public static class ClientDataPacket implements IMessage
     {
+        public LinkedHashMap<String, CRarity> rarities;
         public long version;
 
-        public ItemgenVersionPacket()
+        public ClientDataPacket()
         {
             //Required
         }
 
-        public ItemgenVersionPacket(long version)
+        public ClientDataPacket(long version)
         {
             this.version = version;
         }
@@ -280,22 +283,35 @@ public class Network
         public void toBytes(ByteBuf buf)
         {
             buf.writeLong(version);
+            buf.writeInt(CSettings.LOCAL_SETTINGS.rarities.size());
+            for (CRarity rarity : CSettings.LOCAL_SETTINGS.rarities.values()) rarity.write(buf);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
             version = buf.readLong();
+            rarities = new LinkedHashMap<>();
+            CRarity rarity;
+            for (int i = buf.readInt(); i > 0; i--)
+            {
+                rarity = new CRarity().read(buf);
+                rarities.put(rarity.name, rarity);
+            }
         }
     }
 
-    public static class ItemgenVersionPacketHandler implements IMessageHandler<ItemgenVersionPacket, IMessage>
+    public static class ClientDataPacketHandler implements IMessageHandler<ClientDataPacket, IMessage>
     {
         @Override
         @SideOnly(Side.CLIENT)
-        public IMessage onMessage(ItemgenVersionPacket packet, MessageContext ctx)
+        public IMessage onMessage(ClientDataPacket packet, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(() -> ClientData.serverItemGenConfigVersion = packet.version);
+            Minecraft.getMinecraft().addScheduledTask(() ->
+            {
+                ClientData.serverItemGenConfigVersion = packet.version;
+                RarityData.rarities = packet.rarities;
+            });
             return null;
         }
     }
