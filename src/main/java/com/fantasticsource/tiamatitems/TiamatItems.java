@@ -8,6 +8,7 @@ import com.fantasticsource.tiamatitems.compat.Compat;
 import com.fantasticsource.tiamatitems.itemeditor.BlockItemEditor;
 import com.fantasticsource.tiamatitems.itemeditor.ItemItemEditor;
 import com.fantasticsource.tiamatitems.nbt.DropTransformationTags;
+import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.settings.BlockSettings;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.ItemSettings;
@@ -225,7 +226,8 @@ public class TiamatItems
         Entity entity = event.getEntity();
         if (event.getWorld().isRemote || !(entity instanceof EntityItem)) return;
 
-        ItemAssembly.validate(((EntityItem) entity).getItem());
+        if (MiscTags.getItemEthereal(((EntityItem) entity).getItem())) entity.setDead();
+        else ItemAssembly.validate(((EntityItem) entity).getItem());
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

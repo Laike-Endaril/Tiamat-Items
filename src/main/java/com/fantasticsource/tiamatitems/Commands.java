@@ -34,6 +34,7 @@ public class Commands extends CommandBase
         subcommands.put("generate", 2);
         subcommands.put("setvalue", 2);
         subcommands.put("setvaluelock", 2);
+        subcommands.put("setethereal", 2);
         subcommands.put("assemble", 2);
         subcommands.put("disassemble", 2);
     }
@@ -64,6 +65,7 @@ public class Commands extends CommandBase
             return AQUA + "/" + getName() + " generate <itemType> <level> <rarity> [playername]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.generate.comment")
                     + "\n" + AQUA + "/" + getName() + " setvalue <value>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvalue.comment")
                     + "\n" + AQUA + "/" + getName() + " setvaluelock <boolean>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setvaluelock.comment")
+                    + "\n" + AQUA + "/" + getName() + " setethereal <boolean>" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.setethereal.comment")
                     + "\n" + AQUA + "/" + getName() + " assemble" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.assemble.comment");
         }
 
@@ -97,6 +99,7 @@ public class Commands extends CommandBase
                     break;
 
                 case "setvaluelock":
+                case "setethereal":
                     result.add("true");
                     result.add("false");
                     break;
@@ -259,6 +262,40 @@ public class Commands extends CommandBase
                 }
 
                 MiscTags.setItemValueLock(stack, lock);
+
+                break;
+
+
+            case "setethereal":
+                if (!(sender instanceof EntityPlayerMP))
+                {
+                    notifyCommandListener(sender, this, MODID + ".error.notPlayer");
+                    return;
+                }
+                if (args.length != 2)
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+                stack = GlobalInventory.getVanillaMainhandItem((EntityPlayerMP) sender);
+                if (stack.isEmpty())
+                {
+                    notifyCommandListener(sender, this, getUsage(sender));
+                    return;
+                }
+
+
+                boolean ethereal = Boolean.parseBoolean(args[1]);
+
+                if (AssemblyTags.hasInternalCore(stack))
+                {
+                    ItemStack core = AssemblyTags.getInternalCore(stack);
+                    MiscTags.setItemEthereal(core, ethereal);
+                    AssemblyTags.setInternalCore(stack, core);
+                }
+
+                MiscTags.setItemEthereal(stack, ethereal);
 
                 break;
 

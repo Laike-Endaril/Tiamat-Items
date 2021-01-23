@@ -339,6 +339,53 @@ public class MiscTags
     }
 
 
+    public static void setItemEthereal(ItemStack stack, boolean ethereal)
+    {
+        if (!ethereal)
+        {
+            clearItemEthereal(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setBoolean("ethereal", true);
+    }
+
+    public static boolean getItemEthereal(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return false;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        return compound.getBoolean("ethereal");
+    }
+
+    public static void clearItemEthereal(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("ethereal")) return;
+
+        compound.removeTag("ethereal");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
+
     public static void setItemGenVersion(ItemStack stack, long version)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
