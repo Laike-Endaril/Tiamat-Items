@@ -159,7 +159,6 @@ public class TiamatItems
     {
         TextureCache.clear(event);
         ClientData.clear();
-        RarityData.rarities = CSettings.LOCAL_SETTINGS.rarities;
     }
 
     @SubscribeEvent
