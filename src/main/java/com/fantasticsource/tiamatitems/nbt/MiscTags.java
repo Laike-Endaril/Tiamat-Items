@@ -1,8 +1,10 @@
 package com.fantasticsource.tiamatitems.nbt;
 
 import com.fantasticsource.tiamatitems.RarityData;
+import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -35,6 +37,20 @@ public class MiscTags
         return compound.getString("type");
     }
 
+
+    public static void setItemLevelRecursiveAndRecalc(EntityPlayerMP player, ItemStack stack, int level)
+    {
+        setItemLevel(stack, level);
+
+        if (AssemblyTags.hasInternalCore(stack))
+        {
+            ItemStack core = AssemblyTags.getInternalCore(stack);
+            setItemLevel(core, level);
+            AssemblyTags.setInternalCore(stack, core);
+        }
+
+        ItemAssembly.recalc(player, stack, true);
+    }
 
     public static void setItemLevel(ItemStack stack, int level)
     {

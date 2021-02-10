@@ -254,6 +254,13 @@ public class ItemAssembly
     }
 
 
+    public static void recalc(EntityPlayerMP player, ItemStack stack, boolean returnPartsIfValid)
+    {
+        if (!returnPartsIfValid) recalc(stack);
+        else for (ItemStack stack1 : recalc(stack)) MCTools.give(player, stack1);
+    }
+
+
     /**
      * Completely recalculates an item (recursively)
      *
