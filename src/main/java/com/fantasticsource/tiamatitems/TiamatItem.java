@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
+import com.fantasticsource.tiamatitems.settings.CRarity;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -75,7 +76,18 @@ public class TiamatItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flagIn)
     {
-        //TODO tooltips
+        String shortDesc = "";
+
+        CRarity rarity = MiscTags.getItemRarity(stack);
+        if (rarity != null) shortDesc = rarity.name;
+
+        int level = MiscTags.getItemLevel(stack);
+        if (level != 0) shortDesc += shortDesc.equals("") ? "Level " + level : " Level " + level;
+
+        String itemType = MiscTags.getItemTypeName(stack);
+        if (!itemType.equals("")) shortDesc += shortDesc.equals("") ? itemType : " " + itemType;
+
+        if (!shortDesc.equals("")) tooltip.add(shortDesc);
     }
 
     @Override
