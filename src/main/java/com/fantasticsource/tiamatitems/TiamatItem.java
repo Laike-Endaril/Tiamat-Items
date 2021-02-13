@@ -79,7 +79,7 @@ public class TiamatItem extends Item
         String shortDesc = "";
 
         CRarity rarity = MiscTags.getItemRarity(stack);
-        if (rarity != null) shortDesc = rarity.name;
+        if (rarity != null) shortDesc = rarity.textColor + rarity.name;
 
         int level = MiscTags.getItemLevel(stack);
         if (level != 0) shortDesc += shortDesc.equals("") ? "Level " + level : " Level " + level;
