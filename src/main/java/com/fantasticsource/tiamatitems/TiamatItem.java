@@ -76,18 +76,9 @@ public class TiamatItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flagIn)
     {
-        String shortDesc = "";
-
         CRarity rarity = MiscTags.getItemRarity(stack);
-        if (rarity != null) shortDesc = rarity.textColor + rarity.name;
-
-        int level = MiscTags.getItemLevel(stack);
-        if (level != 0) shortDesc += shortDesc.equals("") ? "Level " + level : " Level " + level;
-
-        String itemType = MiscTags.getItemTypeName(stack);
-        if (!itemType.equals("")) shortDesc += shortDesc.equals("") ? itemType : " " + itemType;
-
-        if (!shortDesc.equals("")) tooltip.add(shortDesc);
+        if (rarity != null) tooltip.add(rarity.textColor + "Level " + MiscTags.getItemLevel(stack) + " " + rarity.name);
+        else tooltip.add("Level " + MiscTags.getItemLevel(stack));
     }
 
     @Override
