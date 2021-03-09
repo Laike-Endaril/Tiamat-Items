@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +34,17 @@ public class TextureTags
         for (int i = 0; i < list.tagCount(); i++) result.add(Tools.fixFileSeparators(list.getStringTagAt(i)));
 
         return result;
+    }
+
+    public static void setItemLayers(ItemStack stack, int state, ArrayList<String> layers)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = MCTools.getOrGenerateSubCompound(stack.getTagCompound(), DOMAIN);
+
+        NBTTagList list = new NBTTagList();
+        for (String layer : layers) list.appendTag(new NBTTagString(layer));
+
+        compound.setTag("layers" + state, list);
     }
 
     public static void clearItemLayerGroup(ItemStack stack, int state)
