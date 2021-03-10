@@ -1,6 +1,6 @@
 package com.fantasticsource.tiamatitems;
 
-import com.fantasticsource.mctools.Slottings;
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_FULL;
 import static com.fantasticsource.tiamatitems.nbt.AssemblyTags.STATE_USABLE;
@@ -49,7 +51,13 @@ public class TiamatItem extends Item
     {
         if (AssemblyTags.getState(stack) < STATE_USABLE) return false;
 
-        String slotting = Slottings.getItemSlotting(stack);
+        String slotting = "None";
+        if (stack.hasTagCompound())
+        {
+            NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), DOMAIN);
+            if (compound != null && compound.hasKey("slotting")) slotting = compound.getString("slotting");
+        }
+
         if (slotting.equals("Any")) return true;
 
         switch (armorType)
