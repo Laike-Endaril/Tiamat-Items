@@ -158,7 +158,7 @@ public class TiamatItems
     public static void clientDisconnectFromServer(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
     {
         TextureCache.clear(event);
-        ClientData.clear();
+        EffectiveData.clearVersion();
     }
 
     @SubscribeEvent

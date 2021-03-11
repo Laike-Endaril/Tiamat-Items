@@ -1,7 +1,7 @@
 package com.fantasticsource.tiamatitems.settings;
 
 import com.fantasticsource.mctools.MCTools;
-import com.fantasticsource.tiamatitems.RarityData;
+import com.fantasticsource.tiamatitems.EffectiveData;
 import com.fantasticsource.tiamatitems.trait.CItemType;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitPool;
 import com.fantasticsource.tiamatitems.trait.unrecalculable.CUnrecalculableTraitPool;
@@ -76,7 +76,7 @@ public class CSettings extends Component
 
         FileInputStream stream = new FileInputStream(file);
         LOCAL_SETTINGS = new CSettings().load(stream);
-        RarityData.rarities = LOCAL_SETTINGS.rarities;
+        EffectiveData.rarities = LOCAL_SETTINGS.rarities;
         PENDING_LOCAL_SETTINGS = (CSettings) LOCAL_SETTINGS.copy();
         stream.close();
     }

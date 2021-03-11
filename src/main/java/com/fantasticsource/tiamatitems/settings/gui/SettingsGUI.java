@@ -14,7 +14,7 @@ import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.StringListGUI;
 import com.fantasticsource.mctools.gui.screen.TextSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.YesNoGUI;
-import com.fantasticsource.tiamatitems.ClientData;
+import com.fantasticsource.tiamatitems.EffectiveData;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
@@ -97,7 +97,7 @@ public class SettingsGUI extends GUIScreen
         tabView.tabViews.get(0).addAll
                 (
                         new GUITextSpacer(gui),
-                        new GUIText(gui, " Current Version: " + ClientData.serverItemGenConfigVersion),
+                        new GUIText(gui, " Current Version: " + EffectiveData.serverItemGenConfigVersion),
                         new GUIElement(gui, 1, 0),
                         pendingVersion,
                         new GUITextSpacer(gui),
@@ -607,7 +607,7 @@ public class SettingsGUI extends GUIScreen
 
             //Send to server and update pending version in current GUI
             saveToServer(gui.settings);
-            pendingVersion.setText(" Pending Version: " + (ClientData.serverItemGenConfigVersion + 1));
+            pendingVersion.setText(" Pending Version: " + (EffectiveData.serverItemGenConfigVersion + 1));
         });
         saveAndClose.addClickActions(() ->
         {

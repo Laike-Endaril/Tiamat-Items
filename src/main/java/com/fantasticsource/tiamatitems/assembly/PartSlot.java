@@ -1,8 +1,8 @@
 package com.fantasticsource.tiamatitems.assembly;
 
+import com.fantasticsource.tiamatitems.EffectiveData;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
-import com.fantasticsource.tiamatitems.settings.CSettings;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class PartSlot implements IPartSlot
 
     public HashSet<String> getValidItemTypes()
     {
-        return CSettings.LOCAL_SETTINGS.slotTypes.getOrDefault(slotType, new LinkedHashSet<>());
+        return EffectiveData.slotTypes.getOrDefault(slotType, new LinkedHashSet<>());
     }
 
     public boolean partIsValidForSlot(ItemStack part)

@@ -27,7 +27,7 @@ public class ClientItemStackFixer
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void tooltip(ItemTooltipEvent event)
     {
-        if (ClientData.serverItemGenConfigVersion == -1) return;
+        if (EffectiveData.serverItemGenConfigVersion == -1) return;
 
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty() || !stack.hasTagCompound()) return;
@@ -35,7 +35,7 @@ public class ClientItemStackFixer
         String itemTypeName = MiscTags.getItemTypeName(stack);
         if (itemTypeName.equals("")) return;
 
-        if (MiscTags.getItemGenVersion(stack) == ClientData.serverItemGenConfigVersion) return;
+        if (MiscTags.getItemGenVersion(stack) == EffectiveData.serverItemGenConfigVersion) return;
 
 
         List<String> tooltip = event.getToolTip();

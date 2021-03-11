@@ -24,9 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
@@ -266,8 +264,9 @@ public class Network
 
     public static class ClientDataPacket implements IMessage
     {
-        public LinkedHashMap<String, CRarity> rarities;
-        public long version;
+        long version;
+        LinkedHashMap<String, CRarity> rarities;
+        LinkedHashMap<String, LinkedHashSet<String>> slotTypes;
 
         public ClientDataPacket()
         {
@@ -283,8 +282,17 @@ public class Network
         public void toBytes(ByteBuf buf)
         {
             buf.writeLong(version);
+
             buf.writeInt(CSettings.LOCAL_SETTINGS.rarities.size());
             for (CRarity rarity : CSettings.LOCAL_SETTINGS.rarities.values()) rarity.write(buf);
+
+            buf.writeInt(CSettings.LOCAL_SETTINGS.slotTypes.size());
+            for (Map.Entry<String, LinkedHashSet<String>> entry : CSettings.LOCAL_SETTINGS.slotTypes.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buf, entry.getKey());
+                buf.writeInt(entry.getValue().size());
+                for (String s : entry.getValue()) ByteBufUtils.writeUTF8String(buf, s);
+            }
         }
 
         @Override
@@ -298,6 +306,14 @@ public class Network
                 rarity = new CRarity().read(buf);
                 rarities.put(rarity.name, rarity);
             }
+
+            slotTypes = new LinkedHashMap<>();
+            for (int i = buf.readInt(); i > 0; i--)
+            {
+                LinkedHashSet<String> itemTypes = new LinkedHashSet<>();
+                slotTypes.put(ByteBufUtils.readUTF8String(buf), itemTypes);
+                for (int i2 = buf.readInt(); i2 > 0; i2--) itemTypes.add(ByteBufUtils.readUTF8String(buf));
+            }
         }
     }
 
@@ -309,8 +325,9 @@ public class Network
         {
             Minecraft.getMinecraft().addScheduledTask(() ->
             {
-                ClientData.serverItemGenConfigVersion = packet.version;
-                RarityData.rarities = packet.rarities;
+                EffectiveData.serverItemGenConfigVersion = packet.version;
+                EffectiveData.rarities = packet.rarities;
+                EffectiveData.slotTypes = packet.slotTypes;
             });
             return null;
         }
