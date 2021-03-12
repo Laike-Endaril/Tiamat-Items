@@ -30,17 +30,13 @@ public class AssemblyTags
         if (partSlots.size() == 0) return STATE_FULL;
 
 
-        boolean empty = true, full = true, usable = true;
+        boolean empty = true;
         ItemStack part;
         int state = STATE_FULL;
         for (IPartSlot partSlot : partSlots)
         {
             part = partSlot.getPart();
-            if (part.isEmpty())
-            {
-                full = false;
-                if (partSlot.getRequired()) usable = false;
-            }
+            if (part.isEmpty()) state = Tools.min(state, partSlot.getRequired() ? STATE_UNUSABLE : STATE_USABLE);
             else
             {
                 empty = false;
@@ -48,13 +44,8 @@ public class AssemblyTags
             }
         }
 
-        if (empty) return STATE_EMPTY;
-
-
-        if (!full && state > STATE_USABLE) state = STATE_USABLE;
-        if (!usable && state > STATE_UNUSABLE) state = STATE_UNUSABLE;
-
-        return state;
+        //If empty but usable, we return usable instead of empty
+        return empty && state == STATE_UNUSABLE ? STATE_EMPTY : state;
     }
 
 
