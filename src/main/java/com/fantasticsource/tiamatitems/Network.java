@@ -121,7 +121,7 @@ public class Network
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             server.addScheduledTask(() ->
             {
-                if (player.isCreative() || MCTools.isOP(player))
+                if (MCTools.isOP(player))
                 {
                     InventoryPlayer inv = ctx.getServerHandler().player.inventory;
                     inv.setInventorySlotContents(inv.currentItem, packet.stack.value);

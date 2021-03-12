@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.settings;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.Network;
 import com.fantasticsource.tiamatitems.TiamatItems;
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ public class BlockSettings extends Block
     {
         if (worldIn.isRemote) return true;
 
-        if (player.isCreative()) Network.WRAPPER.sendTo(new Network.OpenSettingsPacket(), (EntityPlayerMP) player);
+        if (MCTools.isOP((EntityPlayerMP) player)) Network.WRAPPER.sendTo(new Network.OpenSettingsPacket(), (EntityPlayerMP) player);
         return true;
     }
 }
