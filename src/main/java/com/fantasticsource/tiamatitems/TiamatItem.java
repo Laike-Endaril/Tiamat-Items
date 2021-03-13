@@ -7,9 +7,7 @@ import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -91,15 +89,51 @@ public class TiamatItem extends Item
     {
         addTooltipLines(tooltip, stack);
 
+        if (flag.isAdvanced()) tooltip.add("");
+    }
+
+    protected void addTooltipLines(List<String> tooltip, ItemStack stack)
+    {
+        addTooltipLines(tooltip, stack, "");
+    }
+
+    protected void addTooltipLines(List<String> tooltip, ItemStack stack, String prefix)
+    {
+        CRarity rarity = MiscTags.getItemRarity(stack);
+        if (rarity != null) tooltip.add(prefix + rarity.textColor + "Level " + MiscTags.getItemLevel(stack) + " " + rarity.name);
+        else tooltip.add(prefix + "Level " + MiscTags.getItemLevel(stack));
+
+        ArrayList<String> passiveModStrings = PassiveAttributeModTags.getPassiveMods(stack);
+        for (String passiveModString : passiveModStrings)
+        {
+            tooltip.add(prefix + passiveModString);
+        }
+
+        tooltip.add(prefix + TextFormatting.YELLOW + "Value: " + MiscTags.getItemValue(stack));
+
+
         if (GuiScreen.isShiftKeyDown())
         {
-            for (ItemStack part : AssemblyTags.getNonEmptyParts(stack))
+            for (IPartSlot partSlot : AssemblyTags.getPartSlots(stack))
             {
-                tooltip.add("+");
+                ItemStack part = partSlot.getPart();
+                tooltip.add(prefix);
 
-                for (String line : part.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL))
+                if (partSlot.getRequired())
                 {
-                    tooltip.add("+" + line);
+                    if (part.isEmpty()) tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.RED + " (required, empty)");
+                    else tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.GREEN + " (required, empty)");
+                }
+                else
+                {
+                    if (part.isEmpty()) tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.GOLD + " (empty)");
+                    else tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot");
+                }
+
+                if (!part.isEmpty())
+                {
+                    tooltip.add(prefix + "#" + part.getDisplayName());
+                    addTooltipLines(tooltip, part, prefix + "#");
                 }
             }
         }
@@ -115,23 +149,6 @@ public class TiamatItem extends Item
                 }
             }
         }
-
-        if (flag.isAdvanced()) tooltip.add("");
-    }
-
-    protected void addTooltipLines(List<String> tooltip, ItemStack stack)
-    {
-        CRarity rarity = MiscTags.getItemRarity(stack);
-        if (rarity != null) tooltip.add(rarity.textColor + "Level " + MiscTags.getItemLevel(stack) + " " + rarity.name);
-        else tooltip.add("Level " + MiscTags.getItemLevel(stack));
-
-        ArrayList<String> passiveModStrings = PassiveAttributeModTags.getPassiveMods(stack);
-        for (String passiveModString : passiveModStrings)
-        {
-            tooltip.add(passiveModString);
-        }
-
-        tooltip.add(TextFormatting.GOLD + "Value: " + MiscTags.getItemValue(stack));
     }
 
     @Override
