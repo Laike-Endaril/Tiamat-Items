@@ -280,6 +280,7 @@ public class AssemblyTags
     }
 
 
+    //Careful with any edits; this is used by recalc
     public static ArrayList<ItemStack> getNonEmptyPartsRecursive(ItemStack stack, boolean includeInputCore)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
