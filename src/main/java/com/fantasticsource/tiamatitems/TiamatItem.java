@@ -7,6 +7,7 @@ import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -22,7 +23,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -103,18 +106,50 @@ public class TiamatItem extends Item
         if (rarity != null) tooltip.add(prefix + rarity.textColor + "Level " + MiscTags.getItemLevel(stack) + " " + rarity.name);
         else tooltip.add(prefix + "Level " + MiscTags.getItemLevel(stack));
 
+        ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(stack);
+        int value = MiscTags.getItemValue(stack);
+
         ArrayList<String> passiveModStrings = PassiveAttributeModTags.getPassiveMods(stack);
+        if (GuiScreen.isShiftKeyDown())
+        {
+            for (IPartSlot partSlot : partSlots)
+            {
+                ItemStack part = partSlot.getPart();
+                value -= MiscTags.getItemValue(part);
+                for (String toRemove : PassiveAttributeModTags.getPassiveMods(part)) passiveModStrings.remove(toRemove);
+            }
+        }
+        LinkedHashMap<String, Double>[] mods = new LinkedHashMap[3];
+        mods[0] = new LinkedHashMap<>();
+        mods[1] = new LinkedHashMap<>();
+        mods[2] = new LinkedHashMap<>();
         for (String passiveModString : passiveModStrings)
         {
-            tooltip.add(prefix + passiveModString);
+            String[] tokens = Tools.fixedSplit(passiveModString, ";");
+            int operation = Integer.parseInt(tokens[2]);
+            if (operation == 2)
+            {
+                mods[operation].put(tokens[0], mods[operation].getOrDefault(tokens[0], 0d) + Double.parseDouble(tokens[1]));
+            }
+            else
+            {
+                mods[operation].put(tokens[0], mods[operation].getOrDefault(tokens[0], 0d) + Double.parseDouble(tokens[1]));
+            }
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            for (Map.Entry<String, Double> entry : mods[i].entrySet())
+            {
+                tooltip.add(prefix + MCTools.getAttributeModString(entry.getKey(), entry.getValue(), i));
+            }
         }
 
-        tooltip.add(prefix + TextFormatting.YELLOW + "Value: " + MiscTags.getItemValue(stack));
+        tooltip.add(prefix + TextFormatting.YELLOW + "Value: " + value);
 
 
         if (GuiScreen.isShiftKeyDown())
         {
-            for (IPartSlot partSlot : AssemblyTags.getPartSlots(stack))
+            for (IPartSlot partSlot : partSlots)
             {
                 ItemStack part = partSlot.getPart();
                 tooltip.add(prefix);
@@ -139,12 +174,12 @@ public class TiamatItem extends Item
         }
         else
         {
-            for (IPartSlot partSlot : AssemblyTags.getPartSlots(stack))
+            for (IPartSlot partSlot : partSlots)
             {
                 if (!partSlot.getPart().isEmpty())
                 {
                     tooltip.add("");
-                    tooltip.add(TextFormatting.DARK_BLUE + "Press shift to see parts");
+                    tooltip.add(TextFormatting.BLUE + "Press shift to see parts");
                     break;
                 }
             }
