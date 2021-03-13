@@ -403,14 +403,15 @@ public class ItemAssembly
         }
 
 
+        //Set part tags
+        AssemblyTags.setPartSlots(assembly, partSlots);
+
+
         //Apply recalculable traits from parts
         if (!assembly.hasTagCompound()) assembly.setTagCompound(new NBTTagCompound());
         int value = MiscTags.getItemValue(assembly);
-        for (IPartSlot partSlot : partSlots)
+        for (ItemStack part : AssemblyTags.getNonEmptyPartsRecursive(assembly, false))
         {
-            ItemStack part = partSlot.getPart();
-            if (part.isEmpty()) continue;
-
             CItemType partItemType = CSettings.LOCAL_SETTINGS.itemTypes.get(MiscTags.getItemTypeName(part));
             CRarity partRarity = MiscTags.getItemRarity(part);
             if (partItemType == null || partRarity == null) continue;
@@ -454,14 +455,6 @@ public class ItemAssembly
             value += MiscTags.getItemValue(part);
         }
         MiscTags.setItemValue(assembly, value);
-
-
-        //Reset core to saved one from before (NBT merge above corrupts it)
-        AssemblyTags.setInternalCore(assembly, core);
-
-
-        //Set part tags
-        AssemblyTags.setPartSlots(assembly, partSlots);
 
 
         //Set current stack to new calculated one

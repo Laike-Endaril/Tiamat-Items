@@ -264,4 +264,38 @@ public class AssemblyTags
             if (mainTag.hasNoTags()) stack.setTagCompound(null);
         }
     }
+
+
+    public static ArrayList<ItemStack> getNonEmptyParts(ItemStack stack)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        for (IPartSlot partSlot : getPartSlots(stack))
+        {
+            ItemStack part = partSlot.getPart();
+            if (!part.isEmpty()) result.add(part);
+        }
+
+        return result;
+    }
+
+
+    public static ArrayList<ItemStack> getNonEmptyPartsRecursive(ItemStack stack, boolean includeInputCore)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        if (includeInputCore)
+        {
+            if (hasInternalCore(stack)) result.add(getInternalCore(stack));
+            else result.add(stack);
+        }
+
+        for (IPartSlot partSlot : getPartSlots(stack))
+        {
+            ItemStack part = partSlot.getPart();
+            if (!part.isEmpty()) result.addAll(getNonEmptyPartsRecursive(part, true));
+        }
+
+        return result;
+    }
 }
