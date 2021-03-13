@@ -22,10 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
@@ -102,13 +99,15 @@ public class TiamatItem extends Item
 
     protected void addTooltipLines(List<String> tooltip, ItemStack stack, String prefix)
     {
+        //Rarity and level
         CRarity rarity = MiscTags.getItemRarity(stack);
         if (rarity != null) tooltip.add(prefix + rarity.textColor + "Level " + MiscTags.getItemLevel(stack) + " " + rarity.name);
         else tooltip.add(prefix + "Level " + MiscTags.getItemLevel(stack));
 
+
+        //Passive attribute mods and value
         ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(stack);
         int value = MiscTags.getItemValue(stack);
-
         ArrayList<String> passiveModStrings = PassiveAttributeModTags.getPassiveMods(stack);
         if (GuiScreen.isShiftKeyDown())
         {
@@ -119,34 +118,43 @@ public class TiamatItem extends Item
                 for (String toRemove : PassiveAttributeModTags.getPassiveMods(part)) passiveModStrings.remove(toRemove);
             }
         }
-        LinkedHashMap<String, Double>[] mods = new LinkedHashMap[3];
-        mods[0] = new LinkedHashMap<>();
-        mods[1] = new LinkedHashMap<>();
-        mods[2] = new LinkedHashMap<>();
+        HashMap<String, Double>[] mods = new HashMap[3];
+        mods[0] = new HashMap<>();
+        mods[1] = new HashMap<>();
+        mods[2] = new HashMap<>();
         for (String passiveModString : passiveModStrings)
         {
             String[] tokens = Tools.fixedSplit(passiveModString, ";");
             int operation = Integer.parseInt(tokens[2]);
             if (operation == 2)
             {
-                mods[operation].put(tokens[0], mods[operation].getOrDefault(tokens[0], 0d) + Double.parseDouble(tokens[1]));
+                mods[operation].put(tokens[0], mods[operation].getOrDefault(tokens[0], 1d) * Double.parseDouble(tokens[1]));
             }
             else
             {
                 mods[operation].put(tokens[0], mods[operation].getOrDefault(tokens[0], 0d) + Double.parseDouble(tokens[1]));
             }
         }
-        for (int i = 0; i < 3; i++)
+        for (int i = 2; i >= 0; i--)
         {
-            for (Map.Entry<String, Double> entry : mods[i].entrySet())
+            List<Map.Entry<String, Double>> list = Arrays.asList(mods[i].entrySet().toArray(new Map.Entry[0]));
+            if (list.size() > 0) tooltip.add(prefix);
+            list.sort((o1, o2) ->
+            {
+                double d1 = Math.abs(o1.getValue()), d2 = Math.abs(o2.getValue());
+                if (d1 == d2) return 0;
+                return d2 < d1 ? -1 : 1;
+            });
+            for (Map.Entry<String, Double> entry : list)
             {
                 tooltip.add(prefix + MCTools.getAttributeModString(entry.getKey(), entry.getValue(), i));
             }
         }
-
+        tooltip.add(prefix);
         tooltip.add(prefix + TextFormatting.YELLOW + "Value: " + value);
 
 
+        //Part slots
         if (GuiScreen.isShiftKeyDown())
         {
             for (IPartSlot partSlot : partSlots)
