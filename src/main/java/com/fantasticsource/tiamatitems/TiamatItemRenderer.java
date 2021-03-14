@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems;
 
 import com.evilnotch.iitemrender.handlers.IItemRenderer;
 import com.evilnotch.iitemrender.handlers.IItemRendererHandler;
+import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
@@ -96,6 +97,9 @@ public class TiamatItemRenderer implements IItemRenderer
     @Override
     public void render(ItemStack stack, IBakedModel model, ItemCameraTransforms.TransformType transformType, float v)
     {
+        if (transformType == ItemCameraTransforms.TransformType.HEAD && TransientAWSkinHandler.getTransientSkins(stack).size() > 0) return;
+
+
         int state = AssemblyTags.getState(stack);
 
         if (!TextureTags.itemHasMainLayerTag(stack, state))
