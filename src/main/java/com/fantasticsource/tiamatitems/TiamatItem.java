@@ -9,6 +9,7 @@ import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -175,8 +176,10 @@ public class TiamatItem extends Item
 
                 if (!part.isEmpty())
                 {
-                    tooltip.add(prefix + "#" + part.getDisplayName());
-                    addTooltipLines(tooltip, part, prefix + "#");
+                    for (String line : part.getTooltip(null, ITooltipFlag.TooltipFlags.NORMAL))
+                    {
+                        tooltip.add(prefix + "#" + line);
+                    }
                 }
             }
         }
