@@ -93,11 +93,13 @@ public class TiamatItem extends Item
         if (flag.isAdvanced()) tooltip.add("");
     }
 
+    @SideOnly(Side.CLIENT)
     protected void addTooltipLines(List<String> tooltip, ItemStack stack)
     {
         addTooltipLines(tooltip, stack, "");
     }
 
+    @SideOnly(Side.CLIENT)
     protected void addTooltipLines(List<String> tooltip, ItemStack stack, String prefix)
     {
         //Rarity and level
