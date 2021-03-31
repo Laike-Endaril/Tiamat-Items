@@ -13,11 +13,15 @@ import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 
 public class ItemAssembly
 {
+    public static final boolean VERBOSE_DEBUG = false;
+
+
     /**
      * @return All removed parts, if any, and/or the parts passed in if they cannot be placed in a slot
      */
@@ -289,11 +293,33 @@ public class ItemAssembly
         }
 
 
+        if (VERBOSE_DEBUG)
+        {
+            debug("Part count: " + partCount);
+            for (IPartSlot partSlot : oldPartSlots)
+            {
+                debug("");
+                debug("Type: " + partSlot.getSlotType());
+                debug("Is required: " + partSlot.getRequired());
+                debug("Contains valid part: " + partSlot.partIsValidForSlot(partSlot.getPart()));
+                debug("Part: " + partSlot.getPart().getDisplayName());
+            }
+        }
+
+
         //Check for valid item type and rarity
         CItemType itemType = CSettings.LOCAL_SETTINGS.itemTypes.get(MiscTags.getItemTypeName(stack));
         CRarity rarity = MiscTags.getItemRarity(stack);
         if (itemType == null || rarity == null)
         {
+            if (VERBOSE_DEBUG)
+            {
+                debug("");
+                if (itemType == null) debug("Item type is null: " + MiscTags.getItemTypeName(stack) + " for itemstack: " + stack.getDisplayName());
+                else debug("Rarity is null: " + MiscTags.getItemRarity(stack) + " for itemstack: " + stack.getDisplayName());
+            }
+
+
             stack.setTagCompound(null);
             stack.setCount(0);
 
@@ -306,6 +332,13 @@ public class ItemAssembly
         ItemStack assembly = AssemblyTags.hasInternalCore(stack) ? AssemblyTags.getInternalCore(stack) : stack;
         if (assembly.isEmpty())
         {
+            if (VERBOSE_DEBUG)
+            {
+                debug("");
+                debug("Core is empty for itemstack: " + stack.getDisplayName());
+            }
+
+
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
             stack.setCount(0);
@@ -318,6 +351,13 @@ public class ItemAssembly
         //Validate native traits on core and recalculate them if necessary, applying recalculable traits
         if (!recalcEmptyPartTraits(assembly))
         {
+            if (VERBOSE_DEBUG)
+            {
+                debug("");
+                debug("Failed to recalc empty part traits for itemstack: " + stack.getDisplayName());
+            }
+
+
             //If the core itself is invalid, empty the stack and return all old parts that were on it
             stack.setTagCompound(null);
             stack.setCount(0);
@@ -327,13 +367,16 @@ public class ItemAssembly
         }
 
 
-        //Copy new core from assembly
-        ItemStack core = AssemblyTags.getInternalCore(assembly);
-
-
         //If there were no parts on the given stack, we can return now
         if (partCount == 0)
         {
+            if (VERBOSE_DEBUG)
+            {
+                debug("");
+                debug("Return assembly with no parts in slots");
+            }
+
+
             stack.setTagCompound(assembly.getTagCompound());
             return result;
         }
@@ -353,6 +396,25 @@ public class ItemAssembly
 
                 if (newPartSlot.getSlotType().equals(oldPartSlot.slotType) && newPartSlot.getRequired() == oldPartSlot.required && newPartSlot.partIsValidForSlot(part))
                 {
+                    if (VERBOSE_DEBUG)
+                    {
+                        debug("");
+                        debug("Found full match to reinsert part");
+                        debug("");
+                        debug("Old...");
+                        debug("Type: " + oldPartSlot.getSlotType());
+                        debug("Is required: " + oldPartSlot.getRequired());
+                        debug("Contains valid part: " + oldPartSlot.partIsValidForSlot(oldPartSlot.getPart()));
+                        debug("Part: " + oldPartSlot.getPart().getDisplayName());
+                        debug("");
+                        debug("New...");
+                        debug("Type: " + newPartSlot.getSlotType());
+                        debug("Is required: " + newPartSlot.getRequired());
+                        debug("Contains valid part: " + newPartSlot.partIsValidForSlot(newPartSlot.getPart()));
+                        debug("Part: " + newPartSlot.getPart().getDisplayName());
+                    }
+
+
                     newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
@@ -371,6 +433,25 @@ public class ItemAssembly
 
                 if (newPartSlot.getSlotType().equals(oldPartSlot.slotType) && newPartSlot.partIsValidForSlot(part))
                 {
+                    if (VERBOSE_DEBUG)
+                    {
+                        debug("");
+                        debug("Found partial match to reinsert part");
+                        debug("");
+                        debug("Old...");
+                        debug("Type: " + oldPartSlot.getSlotType());
+                        debug("Is required: " + oldPartSlot.getRequired());
+                        debug("Contains valid part: " + oldPartSlot.partIsValidForSlot(oldPartSlot.getPart()));
+                        debug("Part: " + oldPartSlot.getPart().getDisplayName());
+                        debug("");
+                        debug("New...");
+                        debug("Type: " + newPartSlot.getSlotType());
+                        debug("Is required: " + newPartSlot.getRequired());
+                        debug("Contains valid part: " + newPartSlot.partIsValidForSlot(newPartSlot.getPart()));
+                        debug("Part: " + newPartSlot.getPart().getDisplayName());
+                    }
+
+
                     newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
@@ -389,6 +470,25 @@ public class ItemAssembly
 
                 if (newPartSlot.partIsValidForSlot(part))
                 {
+                    if (VERBOSE_DEBUG)
+                    {
+                        debug("");
+                        debug("Found mismatch to reinsert part");
+                        debug("");
+                        debug("Old...");
+                        debug("Type: " + oldPartSlot.getSlotType());
+                        debug("Is required: " + oldPartSlot.getRequired());
+                        debug("Contains valid part: " + oldPartSlot.partIsValidForSlot(oldPartSlot.getPart()));
+                        debug("Part: " + oldPartSlot.getPart().getDisplayName());
+                        debug("");
+                        debug("New...");
+                        debug("Type: " + newPartSlot.getSlotType());
+                        debug("Is required: " + newPartSlot.getRequired());
+                        debug("Contains valid part: " + newPartSlot.partIsValidForSlot(newPartSlot.getPart()));
+                        debug("Part: " + newPartSlot.getPart().getDisplayName());
+                    }
+
+
                     newPartSlot.setPart(part);
                     oldPartSlots.remove(oldPartSlot);
                     break;
@@ -399,6 +499,19 @@ public class ItemAssembly
         //Add remaining parts to list of resulting leftovers
         for (IPartSlot oldPartSlot : oldPartSlots)
         {
+            if (VERBOSE_DEBUG)
+            {
+                debug("");
+                debug("Did not find anywhere to reinsert part");
+                debug("");
+                debug("Old...");
+                debug("Type: " + oldPartSlot.getSlotType());
+                debug("Is required: " + oldPartSlot.getRequired());
+                debug("Contains valid part: " + oldPartSlot.partIsValidForSlot(oldPartSlot.getPart()));
+                debug("Part: " + oldPartSlot.getPart().getDisplayName());
+            }
+
+
             result.add(oldPartSlot.getPart());
         }
 
@@ -477,6 +590,24 @@ public class ItemAssembly
         //TODO generate assembly affixes
 
 
+        if (VERBOSE_DEBUG)
+        {
+            debug("");
+            debug("Final part check...");
+            for (IPartSlot partSlot : AssemblyTags.getPartSlots(stack))
+            {
+                debug("");
+                debug("Type: " + partSlot.getSlotType());
+                debug("Is required: " + partSlot.getRequired());
+                debug("Contains valid part: " + partSlot.partIsValidForSlot(partSlot.getPart()));
+                debug("Part: " + partSlot.getPart().getDisplayName());
+            }
+            debug("");
+            debug("Removed parts...");
+            for (ItemStack removed : result) debug(removed.getDisplayName());
+        }
+
+
         //Return removed parts
         return result;
     }
@@ -502,5 +633,11 @@ public class ItemAssembly
         //Re-apply item type and return
         itemType.applyItemType(stack, MiscTags.getItemLevel(stack), rarity);
         return true;
+    }
+
+
+    protected static void debug(String message)
+    {
+        System.out.println(TextFormatting.LIGHT_PURPLE + message);
     }
 }
