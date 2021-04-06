@@ -48,7 +48,9 @@ public class CRTraitElement_GenericDouble extends CRecalculableTraitElement
         NBTTagCompound compound = stack.getTagCompound();
 
         double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
-        MCTools.getOrGenerateSubCompound(compound, MODID, "generic").setDouble(name, amount);
+        compound = MCTools.getOrGenerateSubCompound(compound, MODID, "generic");
+        if (compound.hasKey(name)) amount += compound.getDouble(name);
+        compound.setDouble(name, amount);
     }
 
 
