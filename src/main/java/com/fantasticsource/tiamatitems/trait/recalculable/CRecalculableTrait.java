@@ -12,12 +12,12 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public final class CRecalculableTrait extends CTrait
 {
     public boolean addToAssemblyFromPart = true;
-    public HashSet<CRecalculableTraitElement> elements = new HashSet<>();
+    public LinkedHashSet<CRecalculableTraitElement> elements = new LinkedHashSet<>();
 
 
     /**

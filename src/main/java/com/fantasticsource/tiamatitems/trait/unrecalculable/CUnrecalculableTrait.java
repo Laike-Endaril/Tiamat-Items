@@ -8,11 +8,11 @@ import net.minecraft.item.ItemStack;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class CUnrecalculableTrait extends CTrait
 {
-    public HashSet<CUnrecalculableTraitElement> elements = new HashSet<>();
+    public LinkedHashSet<CUnrecalculableTraitElement> elements = new LinkedHashSet<>();
 
 
     /**
