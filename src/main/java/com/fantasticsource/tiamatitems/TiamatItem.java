@@ -168,7 +168,7 @@ public class TiamatItem extends Item
                 if (partSlot.getRequired())
                 {
                     if (part.isEmpty()) tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.RED + " (required, empty)");
-                    else tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.GREEN + " (required, empty)");
+                    else tooltip.add(prefix + TextFormatting.BLUE + partSlot.getSlotType() + " Slot" + TextFormatting.GREEN + " (required)");
                 }
                 else
                 {
