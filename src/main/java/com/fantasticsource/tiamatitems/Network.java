@@ -6,6 +6,7 @@ import com.fantasticsource.mctools.component.CItemStack;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
+import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -534,6 +535,7 @@ public class Network
                     partSlot.setPart(newPart);
                     AssemblyTags.setPartSlots(assembly, partSlots);
                     MCTools.destroyItemStack(newPart);
+                    ItemAssembly.recalc(player, assembly, true);
                 }
             });
             return null;
