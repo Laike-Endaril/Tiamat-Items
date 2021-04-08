@@ -6,11 +6,10 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
-import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
-import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.screen.ItemstackSelectionGUI;
 import com.fantasticsource.mctools.gui.screen.MessageGUI;
 import com.fantasticsource.tiamatitems.Network;
@@ -52,18 +51,11 @@ public class AssemblerGUI extends GUIScreen
 
 
         //View for part slots
-        GUIScrollView view = new GUIScrollView(this, 0.98, 1 - spacer.y - spacer.height);
-        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(this, 0.02, 1 - spacer.y - spacer.height, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, view);
-        root.addAll(view, scrollbar);
+        GUIAutocroppedView view = new GUIAutocroppedView(this);
+        root.addAll(view);
 
 
         //Actions
-        spacer.addRecalcActions(() ->
-        {
-            view.height = 1 - spacer.y - spacer.height;
-            scrollbar.height = 1 - spacer.y - spacer.height;
-        });
-
         assembly.addClickActions(() ->
         {
             ItemStack prevAssembly = assembly.getItemStack();
