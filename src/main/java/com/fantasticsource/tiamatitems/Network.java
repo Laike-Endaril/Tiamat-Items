@@ -3,9 +3,11 @@ package com.fantasticsource.tiamatitems;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
+import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import com.fantasticsource.tiamatactions.action.CAction;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
+import com.fantasticsource.tiamatitems.assembly.AssemblerGUI;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
@@ -56,6 +58,7 @@ public class Network
         WRAPPER.registerMessage(RequestTooltipUpdatePacketHandler.class, RequestTooltipUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(UpdatedTooltipPacketHandler.class, UpdatedTooltipPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RequestAssemblyChangePacketHandler.class, RequestAssemblyChangePacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(UpdatedAssemblyPacketHandler.class, UpdatedAssemblyPacket.class, discriminator++, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(Network.class);
     }
@@ -536,6 +539,61 @@ public class Network
                     AssemblyTags.setPartSlots(assembly, partSlots);
                     MCTools.destroyItemStack(newPart);
                     ItemAssembly.recalc(player, assembly, true);
+                    WRAPPER.sendTo(new UpdatedAssemblyPacket(assembly), player);
+                }
+            });
+            return null;
+        }
+    }
+
+
+    public static class UpdatedAssemblyPacket implements IMessage
+    {
+        public ItemStack stack;
+
+        public UpdatedAssemblyPacket()
+        {
+            //Required
+        }
+
+        public UpdatedAssemblyPacket(ItemStack stack)
+        {
+            this.stack = stack;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            new CItemStack().set(stack).write(buf);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            stack = new CItemStack().read(buf).value;
+        }
+    }
+
+    public static class UpdatedAssemblyPacketHandler implements IMessageHandler<UpdatedAssemblyPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(UpdatedAssemblyPacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.currentScreen instanceof AssemblerGUI && ItemMatcher.stacksMatch(AssemblyTags.getInternalCore(packet.stack), AssemblyTags.getInternalCore(((AssemblerGUI) mc.currentScreen).assembly.getItemStack())))
+                {
+                    ((AssemblerGUI) mc.currentScreen).assembly.setItemStack(packet.stack);
+                }
+                else for (GUIScreen.ScreenEntry screenEntry : GUIScreen.SCREEN_STACK)
+                {
+                    if (screenEntry.screen instanceof AssemblerGUI && ItemMatcher.stacksMatch(AssemblyTags.getInternalCore(packet.stack), AssemblyTags.getInternalCore(((AssemblerGUI) screenEntry.screen).assembly.getItemStack())))
+                    {
+                        ((AssemblerGUI) screenEntry.screen).assembly.setItemStack(packet.stack);
+                        break;
+                    }
                 }
             });
             return null;

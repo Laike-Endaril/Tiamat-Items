@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 public class AssemblerGUI extends GUIScreen
 {
+    public GUIItemStack assembly;
+
     public AssemblerGUI()
     {
         drawStack = false;
@@ -39,7 +41,7 @@ public class AssemblerGUI extends GUIScreen
 
 
         //Main slot
-        GUIItemStack assembly = new GUIItemStack(this, 16, 16, ItemStack.EMPTY);
+        assembly = new GUIItemStack(this, 16, 16, ItemStack.EMPTY);
         GUIGradientBorder assemblyBorder = new GUIGradientBorder(this, 1, 1, 0.1, getIdleColor(Color.WHITE), Color.BLANK, getHoverColor(Color.WHITE), Color.BLANK, Color.WHITE, Color.BLANK);
         assembly.add(assemblyBorder);
         root.add(assembly);
@@ -103,15 +105,15 @@ public class AssemblerGUI extends GUIScreen
                             //Change part border color
                             if (partSlot.partIsValidForSlot(element.getItemStack()))
                             {
-                                assemblyBorder.setColors(getIdleColor(Color.GREEN), Color.BLANK, getHoverColor(Color.GREEN), Color.BLANK, Color.GREEN, Color.BLANK);
+                                elementBorder.setColors(getIdleColor(Color.GREEN), Color.BLANK, getHoverColor(Color.GREEN), Color.BLANK, Color.GREEN, Color.BLANK);
                             }
                             else if (!partSlot.getRequired())
                             {
-                                assemblyBorder.setColors(getIdleColor(Color.WHITE), Color.BLANK, getHoverColor(Color.WHITE), Color.BLANK, Color.WHITE, Color.BLANK);
+                                elementBorder.setColors(getIdleColor(Color.WHITE), Color.BLANK, getHoverColor(Color.WHITE), Color.BLANK, Color.WHITE, Color.BLANK);
                             }
                             else
                             {
-                                assemblyBorder.setColors(getIdleColor(Color.RED), Color.BLANK, getHoverColor(Color.RED), Color.BLANK, Color.RED, Color.BLANK);
+                                elementBorder.setColors(getIdleColor(Color.RED), Color.BLANK, getHoverColor(Color.RED), Color.BLANK, Color.RED, Color.BLANK);
                             }
 
                             element.add(elementBorder);
@@ -130,15 +132,15 @@ public class AssemblerGUI extends GUIScreen
                                         //Change part border color
                                         if (partSlot.partIsValidForSlot(element.getItemStack()))
                                         {
-                                            assemblyBorder.setColors(getIdleColor(Color.GREEN), Color.BLANK, getHoverColor(Color.GREEN), Color.BLANK, Color.GREEN, Color.BLANK);
+                                            elementBorder.setColors(getIdleColor(Color.GREEN), Color.BLANK, getHoverColor(Color.GREEN), Color.BLANK, Color.GREEN, Color.BLANK);
                                         }
                                         else if (!partSlot.getRequired())
                                         {
-                                            assemblyBorder.setColors(getIdleColor(Color.WHITE), Color.BLANK, getHoverColor(Color.WHITE), Color.BLANK, Color.WHITE, Color.BLANK);
+                                            elementBorder.setColors(getIdleColor(Color.WHITE), Color.BLANK, getHoverColor(Color.WHITE), Color.BLANK, Color.WHITE, Color.BLANK);
                                         }
                                         else
                                         {
-                                            assemblyBorder.setColors(getIdleColor(Color.RED), Color.BLANK, getHoverColor(Color.RED), Color.BLANK, Color.RED, Color.BLANK);
+                                            elementBorder.setColors(getIdleColor(Color.RED), Color.BLANK, getHoverColor(Color.RED), Color.BLANK, Color.RED, Color.BLANK);
                                         }
 
                                         //Send server request to change server-side
