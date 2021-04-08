@@ -1,9 +1,13 @@
 package com.fantasticsource.tiamatitems;
 
+import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.CItemStack;
+import com.fantasticsource.mctools.items.ItemMatcher;
 import com.fantasticsource.tiamatactions.action.CAction;
+import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.itemeditor.ItemEditorGUI;
+import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tiamatitems.settings.CSettings;
 import com.fantasticsource.tiamatitems.settings.gui.SettingsGUI;
@@ -15,7 +19,12 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -30,6 +39,8 @@ import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
 public class Network
 {
+    public static final HashMap<UUID, BlockPos> LAST_ASSEMBLER_INTERACTION_POSITIONS = new HashMap<>();
+
     public static final SimpleNetworkWrapper WRAPPER = new SimpleNetworkWrapper(MODID);
     private static int discriminator = 0;
     protected static final HashMap<UUID, SaveSettingsPacketPart[]> SAVE_SETTINGS_PACKET_PARTS = new HashMap<>();
@@ -43,6 +54,9 @@ public class Network
         WRAPPER.registerMessage(ClientDataPacketHandler.class, ClientDataPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RequestTooltipUpdatePacketHandler.class, RequestTooltipUpdatePacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(UpdatedTooltipPacketHandler.class, UpdatedTooltipPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(RequestAssemblyChangePacketHandler.class, RequestAssemblyChangePacket.class, discriminator++, Side.SERVER);
+
+        MinecraftForge.EVENT_BUS.register(Network.class);
     }
 
 
@@ -424,5 +438,112 @@ public class Network
             });
             return null;
         }
+    }
+
+
+    public static class RequestAssemblyChangePacket implements IMessage
+    {
+        public ItemStack assembly, newPart;
+        public int index;
+
+        public RequestAssemblyChangePacket()
+        {
+            //Required
+        }
+
+        public RequestAssemblyChangePacket(ItemStack assembly, int index, ItemStack newPart)
+        {
+            this.assembly = assembly;
+            this.newPart = newPart;
+            this.index = index;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            new CItemStack().set(assembly).write(buf).set(newPart).write(buf);
+            buf.writeInt(index);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            assembly = new CItemStack().read(buf).value;
+            newPart = new CItemStack().read(buf).value;
+            index = buf.readInt();
+        }
+    }
+
+    public static class RequestAssemblyChangePacketHandler implements IMessageHandler<RequestAssemblyChangePacket, IMessage>
+    {
+        @Override
+        public IMessage onMessage(RequestAssemblyChangePacket packet, MessageContext ctx)
+        {
+            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
+            {
+                EntityPlayerMP player = ctx.getServerHandler().player;
+                BlockPos lastAssemblerPos = LAST_ASSEMBLER_INTERACTION_POSITIONS.get(player.getUniqueID());
+                if (player.isCreative() || (lastAssemblerPos != null && player.getPosition().distanceSq(lastAssemblerPos) <= Math.pow(player.interactionManager.getBlockReachDistance(), 2)))
+                {
+                    ItemStack assembly = null, newPart = null;
+                    for (ItemStack stack : GlobalInventory.getAllNonSkinItems(player))
+                    {
+                        if (ItemMatcher.stacksMatch(stack, packet.newPart))
+                        {
+                            newPart = stack;
+                            if (assembly != null) break;
+                            continue;
+                        }
+
+                        if (ItemMatcher.stacksMatch(stack, packet.assembly, true))
+                        {
+                            assembly = stack;
+                            if (newPart != null) break;
+                        }
+                    }
+
+                    if (assembly == null)
+                    {
+                        System.err.println(TextFormatting.RED + "Possible hack: could not find assembly to edit for player: " + player.getName());
+                        return;
+                    }
+
+                    if (newPart == null)
+                    {
+                        System.err.println(TextFormatting.RED + "Possible hack: could not find new part for assembly for player: " + player.getName());
+                        return;
+                    }
+
+
+                    ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(assembly);
+                    if (packet.index < 0 || packet.index > partSlots.size())
+                    {
+                        System.err.println(TextFormatting.RED + "Possible hack: index out of range for assembly for player: " + player.getName());
+                        return;
+                    }
+
+                    IPartSlot partSlot = partSlots.get(packet.index);
+                    if (!newPart.isEmpty() && !partSlot.partIsValidForSlot(newPart))
+                    {
+                        System.err.println(TextFormatting.RED + "Possible hack: part is not valid for part slot of assembly for player: " + player.getName());
+                        return;
+                    }
+
+
+                    MCTools.give(player, partSlot.getPart());
+                    partSlot.setPart(newPart);
+                    AssemblyTags.setPartSlots(assembly, partSlots);
+                    MCTools.destroyItemStack(newPart);
+                }
+            });
+            return null;
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void clearAssemblerPosition(PlayerEvent.PlayerLoggedOutEvent event)
+    {
+        LAST_ASSEMBLER_INTERACTION_POSITIONS.remove(event.player.getUniqueID());
     }
 }
