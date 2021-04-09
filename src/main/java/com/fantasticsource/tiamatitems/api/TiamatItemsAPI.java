@@ -30,7 +30,7 @@ public class TiamatItemsAPI
 
     public static boolean isUsable(ItemStack stack)
     {
-        return tiamatItemsAPIMethods == null ? null : tiamatItemsAPIMethods.isUsable(stack);
+        return tiamatItemsAPIMethods == null || tiamatItemsAPIMethods.isUsable(stack);
     }
 
     public static ArrayList<IPartSlot> getPartSlots(ItemStack stack)
