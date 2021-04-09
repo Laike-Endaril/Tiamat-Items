@@ -234,4 +234,11 @@ public class TiamatItems
     {
         ItemAssembly.validate(event.getItem().getItem());
     }
+
+    @SubscribeEvent
+    public static void test(EntityItemPickupEvent event)
+    {
+        ItemStack stack = event.getItem().getItem();
+        if (stack.getItem() == tiamatItem && tiamatItem.getMaxDamage(stack) > 0) tiamatItem.setDamage(stack, tiamatItem.getDamage(stack) + 100);
+    }
 }

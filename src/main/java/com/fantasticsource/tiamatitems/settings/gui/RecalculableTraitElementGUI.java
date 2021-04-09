@@ -319,11 +319,14 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
             GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + durabilityElement.minAmount, FilterFloat.INSTANCE);
             GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + durabilityElement.maxAmount, FilterFloat.INSTANCE);
+            GUILabeledBoolean destroyable = new GUILabeledBoolean(gui, " Destroyable: ", durabilityElement.destroyable);
             gui.root.addAll(
                     new GUITextSpacer(gui),
                     minAmount,
                     new GUITextSpacer(gui),
-                    maxAmount
+                    maxAmount,
+                    new GUITextSpacer(gui),
+                    destroyable
             );
 
             //Add main header actions
@@ -338,6 +341,7 @@ public class RecalculableTraitElementGUI extends GUIScreen
 
                 durabilityElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
                 durabilityElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+                durabilityElement.destroyable = destroyable.getValue();
 
 
                 //Close GUI

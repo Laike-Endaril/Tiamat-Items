@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatitems.trait.recalculable.element;
 
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElement;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CDouble;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import java.io.OutputStream;
 public class CRTraitElement_Durability extends CRecalculableTraitElement
 {
     public double minAmount = 0, maxAmount = 0;
+    public boolean destroyable = false;
 
 
     protected String getColorAndSign(double amount)
@@ -39,11 +41,11 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
     {
         if (args == null)
         {
-            return (getColorAndSign(minAmount) + Math.abs(minAmount) + TextFormatting.RESET + " to " + getColorAndSign(maxAmount) + Math.abs(maxAmount) + TextFormatting.RESET + " Durability");
+            return (getColorAndSign(minAmount) + Math.abs(minAmount) + TextFormatting.RESET + " to " + getColorAndSign(maxAmount) + Math.abs(maxAmount) + TextFormatting.RESET + " Durability" + (destroyable ? " (destroyable)" : ""));
         }
 
         double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
-        return (getColorAndSign(amount) + Math.abs(amount) + " Durability");
+        return (getColorAndSign(amount) + Math.abs(amount) + " Durability" + (destroyable ? " (destroyable)" : ""));
     }
 
 
@@ -53,7 +55,8 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
         double amount = getStandardAmount(args, 0, minAmount, maxAmount, itemTypeAndLevelMultiplier);
         if (amount == 0) return;
 
-        MiscTags.setItemDurability(stack, (int) amount);
+        MiscTags.setItemDurability(stack, (int) amount + MiscTags.getItemDurability(stack));
+        if (destroyable) MiscTags.setDestroyable(stack);
     }
 
 
@@ -64,6 +67,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
 
         buf.writeDouble(minAmount);
         buf.writeDouble(maxAmount);
+        buf.writeBoolean(destroyable);
 
         return this;
     }
@@ -75,6 +79,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
 
         minAmount = buf.readDouble();
         maxAmount = buf.readDouble();
+        destroyable = buf.readBoolean();
 
         return this;
     }
@@ -85,6 +90,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
         super.save(stream);
 
         new CDouble().set(minAmount).save(stream).set(maxAmount).save(stream);
+        new CBoolean().set(destroyable).save(stream);
 
         return this;
     }
@@ -97,6 +103,7 @@ public class CRTraitElement_Durability extends CRecalculableTraitElement
         CDouble cd = new CDouble();
         minAmount = cd.load(stream).value;
         maxAmount = cd.load(stream).value;
+        destroyable = new CBoolean().load(stream).value;
 
         return this;
     }

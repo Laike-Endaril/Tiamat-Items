@@ -320,9 +320,7 @@ public class ItemAssembly
             }
 
 
-            stack.setTagCompound(null);
-            stack.setCount(0);
-
+            MCTools.destroyItemStack(stack);
             for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
             return result;
         }
@@ -340,9 +338,7 @@ public class ItemAssembly
 
 
             //If the core itself is invalid, empty the stack and return all old parts that were on it
-            stack.setTagCompound(null);
-            stack.setCount(0);
-
+            MCTools.destroyItemStack(stack);
             for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
             return result;
         }
@@ -359,9 +355,16 @@ public class ItemAssembly
 
 
             //If the core itself is invalid, empty the stack and return all old parts that were on it
-            stack.setTagCompound(null);
-            stack.setCount(0);
+            MCTools.destroyItemStack(stack);
+            for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
+            return result;
+        }
 
+
+        //If we're now destroyable and at 0 or less remaining durability, destroy the item
+        if (MiscTags.isDestroyable(assembly) && MiscTags.getItemDamage(stack) >= MiscTags.getItemDurability(stack))
+        {
+            MCTools.destroyItemStack(stack);
             for (IPartSlot partSlot : oldPartSlots) result.add(partSlot.getPart());
             return result;
         }

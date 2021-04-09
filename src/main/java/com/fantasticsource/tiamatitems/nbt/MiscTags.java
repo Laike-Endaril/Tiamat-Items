@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tiamatitems.EffectiveData;
 import com.fantasticsource.tiamatitems.assembly.ItemAssembly;
 import com.fantasticsource.tiamatitems.settings.CRarity;
@@ -516,6 +517,87 @@ public class MiscTags
             mainTag.removeTag(DOMAIN);
             if (mainTag.hasNoTags()) stack.setTagCompound(null);
         }
+    }
+
+    public static void setItemDamage(ItemStack stack, int damage)
+    {
+        if (damage == 0)
+        {
+            clearItemDamage(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = MCTools.getOrGenerateSubCompound(stack.getTagCompound(), DOMAIN);
+        compound.setInteger("damage", damage);
+
+        if (compound.hasKey("core"))
+        {
+            compound = MCTools.getOrGenerateSubCompound(compound, "core", DOMAIN);
+            compound.setInteger("damage", damage);
+        }
+    }
+
+    public static int getItemDamage(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return 0;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return 0;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("damage")) return 0;
+
+        return compound.getInteger("damage");
+    }
+
+    public static void clearItemDamage(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("damage")) return;
+
+        compound.removeTag("damage");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+        else if (compound.hasKey("core"))
+        {
+            mainTag = compound.getCompoundTag("core");
+            if (!mainTag.hasKey(DOMAIN)) return;
+
+            compound = mainTag.getCompoundTag(DOMAIN);
+            if (!compound.hasKey("damage")) return;
+
+            compound.removeTag("damage");
+            if (compound.hasNoTags()) mainTag.removeTag(DOMAIN);
+        }
+    }
+
+    public static void setDestroyable(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        MCTools.getOrGenerateSubCompound(stack.getTagCompound(), DOMAIN).setBoolean("destroyable", true);
+    }
+
+    public static boolean isDestroyable(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), DOMAIN);
+        return compound != null && compound.getBoolean("destroyable");
+    }
+
+    public static void clearDestroyable(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), DOMAIN);
+        if (compound != null) compound.removeTag("destroyable");
     }
 
 

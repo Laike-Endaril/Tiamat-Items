@@ -108,6 +108,17 @@ public class TiamatItem extends Item
         else tooltip.add(prefix + "Level " + MiscTags.getItemLevel(stack));
 
 
+        //Durability
+        int durability = getMaxDamage(stack);
+        if (durability > 0)
+        {
+            int damage = getDamage(stack);
+            if (damage < durability >> 1) tooltip.add(prefix + TextFormatting.GREEN + (durability - damage) + "/" + durability + TextFormatting.GRAY + " Durability");
+            else if (damage < (durability * 3) >> 2) tooltip.add(prefix + TextFormatting.YELLOW + (durability - damage) + "/" + durability + TextFormatting.GRAY + " Durability");
+            else tooltip.add(prefix + TextFormatting.RED + (durability - damage) + "/" + durability + TextFormatting.GRAY + " Durability");
+        }
+
+
         //Passive attribute mods and value
         ArrayList<IPartSlot> partSlots = AssemblyTags.getPartSlots(stack);
         int value = MiscTags.getItemValue(stack);
@@ -223,19 +234,52 @@ public class TiamatItem extends Item
     @Override
     public boolean isDamageable()
     {
-        return true;
+        //This is used by vanilla in such a way that I'd rather it be false than true
+        //I've done my own systems instead; see the methods below
+        return false;
+    }
+
+    public boolean isDestroyable(ItemStack stack)
+    {
+        return MiscTags.isDestroyable(stack);
+    }
+
+    public void setDestroyable(ItemStack stack, boolean destroyable)
+    {
+        if (destroyable) MiscTags.setDestroyable(stack);
+        else MiscTags.clearDestroyable(stack);
+    }
+
+    @Override
+    public int getDamage(ItemStack stack)
+    {
+        return MiscTags.getItemDamage(stack);
+    }
+
+    public void damage(ItemStack stack, int damage)
+    {
+        setDamage(stack, damage + getDamage(stack));
     }
 
     @Override
     public void setDamage(ItemStack stack, int damage)
     {
-        //TODO
-//        super.setDamage(stack, damage);
-//        int max = getMaxDamage(stack);
-//        if (damage >= max)
-//        {
-//            ItemStack copy = MCTools.cloneItemStack(stack);
-//            ServerTickTimer.schedule(1, () -> setDamage(stack, max));
-//        }
+        int durability = getMaxDamage(stack);
+        if (durability == 0)
+        {
+            if (isDestroyable(stack)) MCTools.destroyItemStack(stack);
+            return;
+        }
+
+
+        damage = Tools.min(damage, durability);
+        if (isDestroyable(stack) && damage == durability) MCTools.destroyItemStack(stack);
+        else MiscTags.setItemDamage(stack, damage);
+    }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack)
+    {
+        return getMaxDamage(stack) > 0;
     }
 }
