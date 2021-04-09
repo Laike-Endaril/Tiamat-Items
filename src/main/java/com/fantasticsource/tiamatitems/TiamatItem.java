@@ -231,10 +231,16 @@ public class TiamatItem extends Item
         return MiscTags.getItemDurability(stack);
     }
 
+    public boolean hasDurability(ItemStack stack)
+    {
+        return MiscTags.hasItemDurability(stack);
+    }
+
     @Override
     public boolean isDamageable()
     {
         //This is used by vanilla in such a way that I'd rather it be false than true
+        //If it were stack-sensitive I could've used it, but it's not
         //I've done my own systems instead; see the methods below
         return false;
     }
@@ -280,6 +286,6 @@ public class TiamatItem extends Item
     @Override
     public boolean showDurabilityBar(ItemStack stack)
     {
-        return getMaxDamage(stack) > 0;
+        return hasDurability(stack);
     }
 }

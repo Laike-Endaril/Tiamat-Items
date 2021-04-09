@@ -473,19 +473,18 @@ public class MiscTags
 
     public static void setItemDurability(ItemStack stack, int durability)
     {
-        if (durability == 0)
-        {
-            clearItemDurability(stack);
-            return;
-        }
-
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        MCTools.getOrGenerateSubCompound(stack.getTagCompound(), DOMAIN).setInteger("durability", durability);
+    }
+
+    public static boolean hasItemDurability(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return false;
+
         NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return false;
 
-        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
-        compound = compound.getCompoundTag(DOMAIN);
-
-        compound.setInteger("durability", durability);
+        return compound.getCompoundTag(DOMAIN).hasKey("durability");
     }
 
     public static int getItemDurability(ItemStack stack)
