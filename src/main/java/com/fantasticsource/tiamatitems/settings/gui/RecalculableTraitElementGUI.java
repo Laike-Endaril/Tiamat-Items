@@ -19,6 +19,7 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public class RecalculableTraitElementGUI extends GUIScreen
 {
@@ -62,7 +63,103 @@ public class RecalculableTraitElementGUI extends GUIScreen
         GUILabeledBoolean ignoreMultipliers = new GUILabeledBoolean(gui, " Ignore Multipliers: ", traitElement.ignoreMultipliers);
         gui.root.addAll(new GUITextSpacer(gui), ignoreMultipliers);
 
-        if (traitElement.getClass() == CRTraitElement_ActiveAttributeMod.class)
+        if (traitElement.getClass() == CRTraitElement_BetterPassiveAttributeMod.class)
+        {
+            CRTraitElement_BetterPassiveAttributeMod attributeElement = (CRTraitElement_BetterPassiveAttributeMod) traitElement;
+
+            GUILabeledTextInput modName = new GUILabeledTextInput(gui, " Mod Name: ", attributeElement.mod.name.equals("") ? UUID.randomUUID().toString() : attributeElement.mod.name, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.mod.betterAttributeName.equals("") ? "generic.name" : attributeElement.mod.betterAttributeName, FilterNotEmpty.INSTANCE);
+            //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.mod.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput priority = new GUILabeledTextInput(gui, " Priority (Calculation Order): ", "" + attributeElement.mod.priority, FilterInt.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    modName,
+                    new GUITextSpacer(gui),
+                    attribute,
+                    new GUITextSpacer(gui),
+                    operation,
+                    new GUITextSpacer(gui),
+                    minAmount,
+                    new GUITextSpacer(gui),
+                    maxAmount,
+                    new GUITextSpacer(gui),
+                    priority
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!modName.valid() || !attribute.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid() || !priority.valid()) return;
+
+
+                //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
+                attributeElement.mod.name = modName.getText();
+                attributeElement.mod.betterAttributeName = attribute.getText();
+                attributeElement.mod.operation = FilterInt.INSTANCE.parse(operation.getText());
+                attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+                attributeElement.mod.priority = FilterInt.INSTANCE.parse(priority.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CRTraitElement_ActiveFaerunArmorAttributeMod.class)
+        {
+            CRTraitElement_ActiveFaerunArmorAttributeMod attributeElement = (CRTraitElement_ActiveFaerunArmorAttributeMod) traitElement;
+
+            GUILabeledTextInput modName = new GUILabeledTextInput(gui, " Mod Name: ", attributeElement.mod.name.equals("") ? UUID.randomUUID().toString() : attributeElement.mod.name, FilterNotEmpty.INSTANCE);
+            GUILabeledTextInput attribute = new GUILabeledTextInput(gui, " Attribute Name: ", attributeElement.mod.betterAttributeName.equals("") ? "generic.name" : attributeElement.mod.betterAttributeName, FilterNotEmpty.INSTANCE);
+            //TODO when editing, instead of giving direct access to operations, give these options: "Adjust Amount (+/-x)", "Adjust Percentage (+/-%)", "Mutliply"
+            GUILabeledTextInput operation = new GUILabeledTextInput(gui, " Operation: ", "" + attributeElement.mod.operation, OPERATION_FILTER);
+            GUILabeledTextInput minAmount = new GUILabeledTextInput(gui, " Min Amount: ", "" + attributeElement.minAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput maxAmount = new GUILabeledTextInput(gui, " Max Amount: ", "" + attributeElement.maxAmount, FilterFloat.INSTANCE);
+            GUILabeledTextInput priority = new GUILabeledTextInput(gui, " Priority (Calculation Order): ", "" + attributeElement.mod.priority, FilterInt.INSTANCE);
+            gui.root.addAll(
+                    new GUITextSpacer(gui),
+                    modName,
+                    new GUITextSpacer(gui),
+                    attribute,
+                    new GUITextSpacer(gui),
+                    operation,
+                    new GUITextSpacer(gui),
+                    minAmount,
+                    new GUITextSpacer(gui),
+                    maxAmount,
+                    new GUITextSpacer(gui),
+                    priority
+            );
+
+            //Add main header actions
+            done.addClickActions(() ->
+            {
+                //Validation
+                if (!modName.valid() || !attribute.valid() || !operation.valid() || !minAmount.valid() || !maxAmount.valid() || !priority.valid()) return;
+
+
+                //Processing
+                traitElement.ignoreMultipliers = ignoreMultipliers.getValue();
+
+                attributeElement.mod.name = modName.getText();
+                attributeElement.mod.betterAttributeName = attribute.getText();
+                attributeElement.mod.operation = FilterInt.INSTANCE.parse(operation.getText());
+                attributeElement.minAmount = FilterFloat.INSTANCE.parse(minAmount.getText());
+                attributeElement.maxAmount = FilterFloat.INSTANCE.parse(maxAmount.getText());
+                attributeElement.mod.priority = FilterInt.INSTANCE.parse(priority.getText());
+
+
+                //Close GUI
+                gui.close();
+            });
+        }
+        else if (traitElement.getClass() == CRTraitElement_ActiveAttributeMod.class)
         {
             CRTraitElement_ActiveAttributeMod attributeElement = (CRTraitElement_ActiveAttributeMod) traitElement;
 

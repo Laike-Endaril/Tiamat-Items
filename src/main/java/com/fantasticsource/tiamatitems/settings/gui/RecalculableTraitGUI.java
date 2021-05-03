@@ -15,6 +15,7 @@ import com.fantasticsource.tiamatitems.trait.recalculable.CRecalculableTraitElem
 import com.fantasticsource.tiamatitems.trait.recalculable.element.*;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +26,8 @@ public class RecalculableTraitGUI extends GUIScreen
 
     static
     {
+        OPTIONS.put(" Passive Better Attribute Modifier", CRTraitElement_BetterPassiveAttributeMod.class);
+        if (Loader.isModLoaded("faerunutils")) OPTIONS.put(" Faerun Active Armor Attribute Modifier", CRTraitElement_ActiveFaerunArmorAttributeMod.class);
         OPTIONS.put(" Active Attribute Modifier", CRTraitElement_ActiveAttributeMod.class);
         OPTIONS.put(" Passive Attribute Modifier", CRTraitElement_PassiveAttributeMod.class);
         OPTIONS.put(" Stack Size Limit", CRTraitElement_StackLimit.class);
