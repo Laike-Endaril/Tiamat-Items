@@ -198,14 +198,10 @@ public class TiamatItem extends Item
         }
         else
         {
-            for (IPartSlot partSlot : partSlots)
+            if (partSlots.size() > 0)
             {
-                if (!partSlot.getPart().isEmpty())
-                {
-                    tooltip.add("");
-                    tooltip.add(TextFormatting.BLUE + "HOLD shift to see parts");
-                    break;
-                }
+                tooltip.add("");
+                tooltip.add(TextFormatting.BLUE + "Hold shift to see parts");
             }
         }
     }
