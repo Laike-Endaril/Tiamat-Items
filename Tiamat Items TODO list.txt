@@ -11,7 +11,7 @@ roll minus min = 33
 
 * Item Editor GUI
 
-Completely rework
+Completely rework or remove
 
 
 
