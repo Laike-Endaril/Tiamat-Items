@@ -21,11 +21,11 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 
-public class AssemblerGUI extends GUIScreen
+public class ModifyItemGUI extends GUIScreen
 {
     public GUIItemStack assembly;
 
-    public AssemblerGUI()
+    public ModifyItemGUI()
     {
         drawStack = false;
         root.setSubElementAutoplaceMethod(GUIElement.AP_CENTERED_H_TOP_TO_BOTTOM);
@@ -121,7 +121,7 @@ public class AssemblerGUI extends GUIScreen
                             {
                                 ItemStack prevPart = element.getItemStack();
                                 ArrayList<ItemStack> invParts = GlobalInventory.getAllNonSkinItems(Minecraft.getMinecraft().player);
-                                invParts.removeIf(stack -> !partSlot.partIsValidForSlot(stack));
+                                invParts.removeIf(stack -> !partSlot.partIsValidForSlot(stack) || stack == assembly.getItemStack());
                                 invParts.add(0, prevPart);
                                 if (!prevPart.isEmpty()) invParts.add(1, ItemStack.EMPTY);
                                 ItemstackSelectionGUI gui2 = new ItemstackSelectionGUI(element, "Select Part for " + partSlot.getSlotType() + " Slot", invParts.toArray(new ItemStack[0]));

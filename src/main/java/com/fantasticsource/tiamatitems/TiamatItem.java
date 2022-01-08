@@ -1,7 +1,9 @@
 package com.fantasticsource.tiamatitems;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
+import com.fantasticsource.tiamatitems.assembly.ModifyItemGUI;
 import com.fantasticsource.tiamatitems.nbt.AssemblyTags;
 import com.fantasticsource.tiamatitems.nbt.MiscTags;
 import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
@@ -21,10 +23,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.fantasticsource.tiamatitems.Keys.MODIFY_ITEM;
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 import static com.fantasticsource.tiamatitems.TiamatItems.MODID;
 
@@ -202,6 +206,44 @@ public class TiamatItem extends Item
             {
                 tooltip.add("");
                 tooltip.add(TextFormatting.BLUE + "Hold shift to see parts");
+            }
+        }
+
+
+        //Item modification
+        if (!partSlots.isEmpty())
+        {
+            tooltip.add("");
+            tooltip.add(TextFormatting.GOLD + "Press " + MODIFY_ITEM.getDisplayName() + " to modify item");
+
+            switch (MODIFY_ITEM.getKeyModifier())
+            {
+                case CONTROL:
+                    if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
+                    {
+                        GUIScreen.showStacked(new ModifyItemGUI());
+                    }
+                    break;
+
+                case SHIFT:
+                    if (GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
+                    {
+                        GUIScreen.showStacked(new ModifyItemGUI());
+                    }
+                    break;
+
+                case ALT:
+                    if (GuiScreen.isAltKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
+                    {
+                        GUIScreen.showStacked(new ModifyItemGUI());
+                    }
+                    break;
+
+                default:
+                    if (Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
+                    {
+                        GUIScreen.showStacked(new ModifyItemGUI());
+                    }
             }
         }
     }

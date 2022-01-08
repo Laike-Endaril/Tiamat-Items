@@ -92,6 +92,7 @@ public class TiamatItems
     public static void preInit(FMLPreInitializationEvent event)
     {
         Network.init();
+        Keys.init(event);
         MinecraftForge.EVENT_BUS.register(TiamatItems.class);
         MinecraftForge.EVENT_BUS.register(TransientAttributeModEvent.class);
         MinecraftForge.EVENT_BUS.register(DropTransformationTags.class);
