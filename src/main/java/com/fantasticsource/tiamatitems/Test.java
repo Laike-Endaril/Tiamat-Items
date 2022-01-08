@@ -52,7 +52,7 @@ public class Test
         rarity.traitPoolSetRollCounts.put("ActLC", 1); //1x left click action
         rarity.traitPoolSetRollCounts.put("ActRC", 1); //1x right click action
         rarity.traitPoolSetRollCounts.put("Gen", 1); //1x general trait
-//        rarity.traitPoolSetRollCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
+        rarity.traitPoolSetRollCounts.put("Socket", 6); //6x part slot trait (each generates 0-1 slots)
 
         CSettings.LOCAL_SETTINGS.rarities.put(rarity.name, rarity);
     }
@@ -63,6 +63,7 @@ public class Test
         LinkedHashSet<String> validItemTypes = new LinkedHashSet<>();
         validItemTypes.add("Gem");
         validItemTypes.add("Rune");
+        validItemTypes.add("Socket Splitter");
         CSettings.LOCAL_SETTINGS.slotTypes.put("Socket", validItemTypes);
 
         CRecalculableTraitPool pool = new CRecalculableTraitPool();
@@ -149,6 +150,7 @@ public class Test
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axehead";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axehead Slot";
@@ -164,6 +166,7 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Handle";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axe Handle Slot";
@@ -179,6 +182,7 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "2H Axe Skin";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "2H Axe Skin Slot";
@@ -216,6 +220,27 @@ public class Test
         itemType.randomRecalculableTraitPoolSets.put("ActRC", poolSet);
 
         poolSet = new LinkedHashSet<>();
+        poolSet.add("General");
+        itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
+
+        poolSet = new LinkedHashSet<>();
+        poolSet.add("Sockets");
+        itemType.randomRecalculableTraitPoolSets.put("Socket", poolSet);
+
+
+        CSettings.LOCAL_SETTINGS.itemTypes.put(itemType.name, itemType);
+    }
+
+    public static void createSocketSplitterItemType()
+    {
+        //Item type
+        CItemType itemType = new CItemType();
+        itemType.name = "Socket Splitter";
+        itemType.slotting = "Hand";
+        itemType.traitLevelMultiplier = 1;
+
+
+        LinkedHashSet<String> poolSet = new LinkedHashSet<>();
         poolSet.add("General");
         itemType.randomRecalculableTraitPoolSets.put("Gen", poolSet);
 
@@ -386,6 +411,7 @@ public class Test
 
         CRTraitElement_PartSlot partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Soul";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Soul Slot";
@@ -401,6 +427,7 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Core";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Core Slot";
@@ -416,6 +443,7 @@ public class Test
 
         partSlot = new CRTraitElement_PartSlot();
         partSlot.partSlotType = "Chestplate Trim";
+        partSlot.ignoreMultipliers = true;
 
         trait = new CRecalculableTrait();
         trait.name = "Chestplate Trim Slot";

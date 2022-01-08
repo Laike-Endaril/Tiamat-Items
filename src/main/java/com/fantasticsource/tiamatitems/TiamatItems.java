@@ -194,6 +194,8 @@ public class TiamatItems
             Test.createChestplateCoreItemType();
             Test.createChestplateTrimItemType();
 
+            Test.createSocketSplitterItemType();
+
             CSettings.PENDING_LOCAL_SETTINGS = (CSettings) CSettings.LOCAL_SETTINGS.copy();
         }
     }
