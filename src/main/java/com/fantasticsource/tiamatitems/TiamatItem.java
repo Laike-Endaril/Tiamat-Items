@@ -10,6 +10,7 @@ import com.fantasticsource.tiamatitems.nbt.PassiveAttributeModTags;
 import com.fantasticsource.tiamatitems.nbt.TextureTags;
 import com.fantasticsource.tiamatitems.settings.CRarity;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -211,7 +212,8 @@ public class TiamatItem extends Item
 
 
         //Item modification
-        if (!partSlots.isEmpty())
+        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        if (!partSlots.isEmpty() && (!(screen instanceof ModifyItemGUI) || ((ModifyItemGUI) screen).getAssemblyStack() != stack))
         {
             tooltip.add("");
             tooltip.add(TextFormatting.GOLD + "Press " + MODIFY_ITEM.getDisplayName() + " to modify item");
@@ -221,28 +223,28 @@ public class TiamatItem extends Item
                 case CONTROL:
                     if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
                     {
-                        GUIScreen.showStacked(new ModifyItemGUI());
+                        GUIScreen.showStacked(new ModifyItemGUI(stack));
                     }
                     break;
 
                 case SHIFT:
                     if (GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
                     {
-                        GUIScreen.showStacked(new ModifyItemGUI());
+                        GUIScreen.showStacked(new ModifyItemGUI(stack));
                     }
                     break;
 
                 case ALT:
                     if (GuiScreen.isAltKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
                     {
-                        GUIScreen.showStacked(new ModifyItemGUI());
+                        GUIScreen.showStacked(new ModifyItemGUI(stack));
                     }
                     break;
 
                 default:
                     if (Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
                     {
-                        GUIScreen.showStacked(new ModifyItemGUI());
+                        GUIScreen.showStacked(new ModifyItemGUI(stack));
                     }
             }
         }

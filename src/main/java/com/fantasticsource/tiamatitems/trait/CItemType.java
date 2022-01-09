@@ -24,10 +24,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 
 public class CItemType extends Component
 {
@@ -62,6 +59,7 @@ public class CItemType extends Component
 
         //Apply and/or overwrite most main data
         MiscTags.setItemGenVersion(stack, CSettings.LOCAL_SETTINGS.getVersion());
+        if (MiscTags.getID(stack) == null) MiscTags.setID(stack, new UUID(System.currentTimeMillis(), System.nanoTime()));
 
         MiscTags.setItemType(stack, name);
         MiscTags.setItemLevel(stack, level);

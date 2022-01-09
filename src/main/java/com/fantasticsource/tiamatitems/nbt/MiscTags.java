@@ -11,11 +11,35 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.fantasticsource.tiamatitems.TiamatItems.DOMAIN;
 
 public class MiscTags
 {
+    public static void setID(ItemStack stack, UUID id)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+
+        compound = compound.getCompoundTag(DOMAIN);
+        compound.setUniqueId("id", id);
+    }
+
+    public static UUID getID(ItemStack stack)
+    {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null || !compound.hasKey(DOMAIN)) return null;
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("idMost")) return null;
+
+        return compound.getUniqueId("id");
+    }
+
+
     public static void setItemType(ItemStack stack, String typeName)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());

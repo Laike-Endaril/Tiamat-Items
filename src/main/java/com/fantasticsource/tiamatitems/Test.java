@@ -80,6 +80,7 @@ public class Test
         {
             trait = new CRecalculableTrait();
             trait.name = "Socket" + i;
+            trait.addToAssemblyFromPart = false;
             trait.elements.add(partSlot);
             trait.minValue = 0;
             trait.maxValue = 3;

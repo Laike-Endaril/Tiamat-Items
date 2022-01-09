@@ -1,3 +1,7 @@
+Fix issue with nested item modification not updating top-level stats correctly
+
+
+
 Name generation...
 When calculating a name due to assembly, generation, or recalculation of stats, use 2 highest attributes on item to determine name, using this comparison method:
 head : always 5-10  roll 8

@@ -480,6 +480,8 @@ public class Network
         {
             FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
             {
+                ItemStack oldAssembly = MCTools.cloneItemStack(packet.assembly);
+
                 EntityPlayerMP player = ctx.getServerHandler().player;
                 ItemStack assembly = null, newPart = null;
                 for (ItemStack stack : GlobalInventory.getAllNonSkinItems(player))
@@ -491,9 +493,10 @@ public class Network
                         continue;
                     }
 
-                    if (ItemMatcher.stacksMatch(stack, packet.assembly, true))
+                    ItemStack found = AssemblyTags.findMatchWithin(stack, packet.assembly);
+                    if (found != null)
                     {
-                        assembly = stack;
+                        assembly = found;
                         if (newPart != null) break;
                     }
                 }
@@ -531,7 +534,7 @@ public class Network
                 AssemblyTags.setPartSlots(assembly, partSlots);
                 MCTools.destroyItemStack(newPart);
                 ItemAssembly.recalc(player, assembly, true);
-                WRAPPER.sendTo(new UpdatedAssemblyPacket(assembly), player);
+                WRAPPER.sendTo(new UpdatedAssemblyPacket(oldAssembly, assembly), player);
             });
             return null;
         }
@@ -540,28 +543,30 @@ public class Network
 
     public static class UpdatedAssemblyPacket implements IMessage
     {
-        public ItemStack stack;
+        public ItemStack oldAssembly, newAssembly;
 
         public UpdatedAssemblyPacket()
         {
             //Required
         }
 
-        public UpdatedAssemblyPacket(ItemStack stack)
+        public UpdatedAssemblyPacket(ItemStack oldAssembly, ItemStack newAssembly)
         {
-            this.stack = stack;
+            this.oldAssembly = oldAssembly;
+            this.newAssembly = newAssembly;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            new CItemStack().set(stack).write(buf);
+            new CItemStack().set(oldAssembly).write(buf).set(newAssembly).write(buf);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            stack = new CItemStack().read(buf).value;
+            oldAssembly = new CItemStack().read(buf).value;
+            newAssembly = new CItemStack().read(buf).value;
         }
     }
 
@@ -574,15 +579,15 @@ public class Network
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(() ->
             {
-                if (mc.currentScreen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(AssemblyTags.getInternalCore(packet.stack), AssemblyTags.getInternalCore(((ModifyItemGUI) mc.currentScreen).assembly.getItemStack())))
+                if (mc.currentScreen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(packet.oldAssembly, ((ModifyItemGUI) mc.currentScreen).getAssemblyStack()))
                 {
-                    ((ModifyItemGUI) mc.currentScreen).assembly.setItemStack(packet.stack);
+                    ((ModifyItemGUI) mc.currentScreen).setAssemblyStack(packet.newAssembly);
                 }
                 else for (GUIScreen.ScreenEntry screenEntry : GUIScreen.SCREEN_STACK)
                 {
-                    if (screenEntry.screen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(AssemblyTags.getInternalCore(packet.stack), AssemblyTags.getInternalCore(((ModifyItemGUI) screenEntry.screen).assembly.getItemStack())))
+                    if (screenEntry.screen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(packet.oldAssembly, ((ModifyItemGUI) screenEntry.screen).getAssemblyStack()))
                     {
-                        ((ModifyItemGUI) screenEntry.screen).assembly.setItemStack(packet.stack);
+                        ((ModifyItemGUI) mc.currentScreen).setAssemblyStack(packet.newAssembly);
                         break;
                     }
                 }

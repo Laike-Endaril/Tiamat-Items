@@ -1,5 +1,6 @@
 package com.fantasticsource.tiamatitems.nbt;
 
+import com.fantasticsource.mctools.items.ItemMatcher;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.assembly.PartSlot;
 import com.fantasticsource.tools.Tools;
@@ -298,5 +299,17 @@ public class AssemblyTags
         }
 
         return result;
+    }
+
+
+    public static ItemStack findMatchWithin(ItemStack assembly, ItemStack toMatch)
+    {
+        if (ItemMatcher.stacksMatch(assembly, toMatch, true)) return assembly;
+        for (IPartSlot partSlot : AssemblyTags.getPartSlots(assembly))
+        {
+            ItemStack result = findMatchWithin(partSlot.getPart(), toMatch);
+            if (result != null) return result;
+        }
+        return null;
     }
 }
