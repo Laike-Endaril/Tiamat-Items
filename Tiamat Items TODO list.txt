@@ -1,4 +1,4 @@
-Fix issue with nested item modification not updating top-level stats correctly
+The assembly stats may not be updating correctly in nested item modification GUIs
 
 
 

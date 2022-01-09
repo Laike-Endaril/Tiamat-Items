@@ -24,7 +24,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -218,35 +217,7 @@ public class TiamatItem extends Item
             tooltip.add("");
             tooltip.add(TextFormatting.GOLD + "Press " + MODIFY_ITEM.getDisplayName() + " to modify item");
 
-            switch (MODIFY_ITEM.getKeyModifier())
-            {
-                case CONTROL:
-                    if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
-                    {
-                        GUIScreen.showStacked(new ModifyItemGUI(stack));
-                    }
-                    break;
-
-                case SHIFT:
-                    if (GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
-                    {
-                        GUIScreen.showStacked(new ModifyItemGUI(stack));
-                    }
-                    break;
-
-                case ALT:
-                    if (GuiScreen.isAltKeyDown() && Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
-                    {
-                        GUIScreen.showStacked(new ModifyItemGUI(stack));
-                    }
-                    break;
-
-                default:
-                    if (Keyboard.isKeyDown(MODIFY_ITEM.getKeyCode()))
-                    {
-                        GUIScreen.showStacked(new ModifyItemGUI(stack));
-                    }
-            }
+            if (MODIFY_ITEM.wasJustPressed()) GUIScreen.showStacked(new ModifyItemGUI(stack));
         }
     }
 

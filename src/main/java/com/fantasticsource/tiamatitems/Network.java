@@ -483,7 +483,7 @@ public class Network
                 ItemStack oldAssembly = MCTools.cloneItemStack(packet.assembly);
 
                 EntityPlayerMP player = ctx.getServerHandler().player;
-                ItemStack assembly = null, newPart = null;
+                ItemStack assembly = null, newPart = null, topLevelAssembly = null;
                 for (ItemStack stack : GlobalInventory.getAllNonSkinItems(player))
                 {
                     if (ItemMatcher.stacksMatch(stack, packet.newPart))
@@ -497,6 +497,7 @@ public class Network
                     if (found != null)
                     {
                         assembly = found;
+                        if (found != stack) topLevelAssembly = stack;
                         if (newPart != null) break;
                     }
                 }
@@ -533,7 +534,7 @@ public class Network
                 partSlot.setPart(newPart);
                 AssemblyTags.setPartSlots(assembly, partSlots);
                 MCTools.destroyItemStack(newPart);
-                ItemAssembly.recalc(player, assembly, true);
+                ItemAssembly.recalc(player, topLevelAssembly != null ? topLevelAssembly : assembly, true);
                 WRAPPER.sendTo(new UpdatedAssemblyPacket(oldAssembly, assembly), player);
             });
             return null;
@@ -579,13 +580,14 @@ public class Network
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(() ->
             {
-                if (mc.currentScreen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(packet.oldAssembly, ((ModifyItemGUI) mc.currentScreen).getAssemblyStack()))
+                ItemStack oldCore = AssemblyTags.getInternalCore(packet.oldAssembly);
+                if (mc.currentScreen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(oldCore, AssemblyTags.getInternalCore(((ModifyItemGUI) mc.currentScreen).getAssemblyStack())))
                 {
                     ((ModifyItemGUI) mc.currentScreen).setAssemblyStack(packet.newAssembly);
                 }
                 else for (GUIScreen.ScreenEntry screenEntry : GUIScreen.SCREEN_STACK)
                 {
-                    if (screenEntry.screen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(packet.oldAssembly, ((ModifyItemGUI) screenEntry.screen).getAssemblyStack()))
+                    if (screenEntry.screen instanceof ModifyItemGUI && ItemMatcher.stacksMatch(oldCore, AssemblyTags.getInternalCore(((ModifyItemGUI) screenEntry.screen).getAssemblyStack())))
                     {
                         ((ModifyItemGUI) mc.currentScreen).setAssemblyStack(packet.newAssembly);
                         break;
